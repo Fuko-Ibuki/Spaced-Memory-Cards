@@ -32,7 +32,7 @@ a{ color:inherit; }
    1. 设计令牌 (Design Tokens)
    ============================================================ */
 :root{
-  /* -- 明快主题基调（多邻国式活力绿 + Anki纸感卡片） -- */
+  /* -- 明快主题基调（多邻国式活力绿 + 卡其绿暗纸面） -- */
   --bg:#12161b;
   --bg-elevated:#1a2029;
   --bg-soft:#212832;
@@ -40,12 +40,12 @@ a{ color:inherit; }
   --border:#2e3640;
   --border-soft:#242b34;
 
-  --paper:#0f3323;
-  --paper-alt:#164531;
-  --paper-line:#2c6647;
-  --ink:#f2fdf6;
-  --ink-soft:#a9dbbd;
-  --ink-faint:#6fa588;
+  --paper:#2a3326;
+  --paper-alt:#3a422f;
+  --paper-line:#6a7656;
+  --ink:#f4f7e8;
+  --ink-soft:#d2d9b7;
+  --ink-faint:#9aa57d;
   --surface-lift-1:rgba(255,255,255,.07);
   --surface-lift-2:rgba(255,255,255,.13);
 
@@ -330,6 +330,21 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 .dropzone p{ margin:0; color:var(--text-soft); font-size:13.5px; line-height:1.6; }
 .dz-hint{ font-size:12px; color:var(--text-faint); margin-top:2px; }
 .hidden-input{ position:absolute; width:1px;height:1px; opacity:0; overflow:hidden; }
+.format-guide{
+  width:100%; max-width:640px; margin-top:14px; padding:16px;
+  background:var(--bg-elevated); border:1px solid var(--border-soft); border-radius:var(--radius-lg);
+  text-align:left;
+}
+.format-guide h4{ font-size:14px; color:var(--text); margin-bottom:10px; font-family:inherit; }
+.format-guide p{ margin:0 0 10px; color:var(--text-soft); font-size:12.8px; line-height:1.7; }
+.format-guide-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+.format-item{
+  border:1px solid var(--border-soft); background:var(--bg-soft); border-radius:var(--radius-md);
+  padding:10px 11px; min-width:0;
+}
+.format-item b{ display:block; color:var(--text); font-size:12.5px; margin-bottom:4px; }
+.format-item span{ display:block; color:var(--text-faint); font-size:11.5px; line-height:1.55; overflow-wrap:anywhere; }
+.format-guide code{ color:var(--accent); font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.92em; }
 
 .demo-link{
   margin-top:18px; font-size:13px; color:var(--text-faint);
@@ -439,18 +454,6 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 .switch.on .knob{ transform:translateX(18px); background:var(--accent-ink); }
 
 .qty-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-.qty-seg{ flex-wrap:wrap; align-items:center; border-radius:18px; }
-.qty-custom-pill{
-  display:flex; align-items:center; gap:7px; border-radius:var(--radius-pill);
-  padding:3px 4px 3px 12px; color:var(--text-soft); font-size:12.5px; font-weight:700;
-}
-.qty-custom-pill.active{ background:var(--accent); color:var(--accent-ink); }
-.qty-custom-pill:focus-within{ background:var(--accent-glow); color:var(--text); }
-.qty-custom-input{
-  width:70px; padding:5px 8px; border-radius:var(--radius-pill); border:1px solid var(--border-soft);
-  background:var(--bg-elevated); color:var(--text); font-size:12.5px; text-align:center; outline:none;
-}
-.qty-custom-pill.active .qty-custom-input{ border-color:color-mix(in srgb, var(--accent-ink) 45%, transparent); color:var(--text); }
 .seg{ display:flex; background:var(--bg-soft); border:1px solid var(--border); border-radius:var(--radius-pill); padding:3px; }
 .seg button{ border:none; background:transparent; padding:7px 14px; border-radius:var(--radius-pill); font-size:12.5px; font-weight:600; color:var(--text-soft); cursor:pointer; }
 .seg button.active{ background:var(--accent); color:var(--accent-ink); }
@@ -943,6 +946,7 @@ main#view{ flex:1; display:flex; flex-direction:column; }
   .topnav{ padding:10px 12px; gap:8px; }
   .brand{ font-size:14px; gap:0; }
   .brand .brand-text{ display:none; }
+  .format-guide-grid{ grid-template-columns:1fr; }
   .streak-pill{ padding:5px 10px 5px 8px; font-size:12px; }
   .nav-tabs{ order:3; width:100%; }
   .container{ padding:0 14px; }
@@ -1120,29 +1124,37 @@ const Store = {
    ============================================================ */
 const DEMO_DECK_RAW = {
   meta:{
-    title:'新手教程：Spaced Memory Cards 怎么用',
+    title:'示例教程：使用方式与题库格式',
     subject:'应用使用指南',
-    description:'一份关于本应用自身操作方式的示例题库，用来快速体验三种学习模式。',
-    version:'1.0'
+    description:'一份关于本应用操作方式与题库数据格式的示例题库，用来快速体验三种学习模式。',
+    version:'1.1'
   },
   fillInTheBlank:[
     { id:1, question:'页面顶部用 🔥 图标显示的连续学习天数激励机制，设计上参照了___。', answers:['Duolingo/多邻国'] },
     { id:2, question:'在闪卡模式中，翻面查看答案要按下___键。', answers:['空格'] },
-    { id:3, question:'本应用支持闪卡模式、学习模式和___模式，共三种学习模式。', answers:['测试'] }
+    { id:3, question:'本应用支持闪卡模式、学习模式和___模式，共三种学习模式。', answers:['测试'] },
+    { id:4, chapter:'题库格式', question:'填空题题干中建议用___表示需要填写的位置。', answers:['___/三个下划线'] }
   ],
   singleChoice:[
     { id:1, question:'以下哪种题型的得分方式是"用户看到参考答案后自行估分"？', options:['单选题','判断题','简答题 / 综合分析题','填空题'], answer:'C' },
     { id:2, question:'"学习模式"在你答错一道客观题之后，通常会怎么处理这道题？', options:['直接跳过不再出现','立刻结束本轮学习','重新排入本轮队列稍后再考一次','自动帮你标记为正确'], answer:'C' },
-    { id:3, question:'闪卡模式里，如果你把刚复习的卡片评为"Again(完全不会)"，系统会怎么安排？', options:['很久之后才会再看到它','本轮结束前会再考你一次，且记忆等级清零','从题库中彻底删除','自动改成简单模式'], answer:'B' }
+    { id:3, question:'闪卡模式里，如果你把刚复习的卡片评为"Again(完全不会)"，系统会怎么安排？', options:['很久之后才会再看到它','本轮结束前会再考你一次，且记忆等级清零','从题库中彻底删除','自动改成简单模式'], answer:'B' },
+    { id:4, chapter:'题库格式', question:'单选题的正确答案字段可以怎样写？', options:['answer: "A"','answer: ["A","C"]','answer: true','answers: ["参考答案"]'], answer:'A' }
+  ],
+  multipleChoice:[
+    { id:1, chapter:'题库格式', question:'一个题库对象可以包含哪些题型数组字段？', options:['fillInTheBlank','singleChoice','trueFalse','shortAnswer / essay'], answer:['A','B','C','D'] },
+    { id:2, chapter:'题库格式', question:'关于 multipleChoice 多选题格式，哪些说法是正确的？', options:['options 是选项文本数组','answer 可以写成 ["A","C"]','chapter 是可选字段','answer 必须只能是一个字符串'], answer:['A','B','C'] }
   ],
   trueFalse:[
     { id:1, question:'测试模式会在你每答完一题后立刻告诉你这题对不对。', answer:false },
     { id:2, question:'开启"选项乱序"后，正确答案会跟着选项文字一起打乱位置，不会因此被误判。', answer:true },
-    { id:3, question:'简答题和综合分析题也能被系统百分之百精确自动判分。', answer:false }
+    { id:3, question:'简答题和综合分析题也能被系统百分之百精确自动判分。', answer:false },
+    { id:4, chapter:'题库格式', question:'题库文件可以只包含一种题型数组，不必六种题型全部写满。', answer:true }
   ],
   shortAnswer:[
     { id:1, question:'简述"学习模式"与"测试模式"在反馈时机上的核心区别。', answer:'学习模式：每答完一题立即给出对错反馈，答错的题会重新排入本轮队列，直到练熟为止，重在即时反馈和重复巩固。\n测试模式：模拟真实考试，一次性做完所有题目，中途不提示对错，最后统一进入判分环节，重在真实评估。' },
-    { id:2, question:'简述客观题与主观题在判分方式上的区别，以及总分是如何得出的。', answer:'客观题（单选、判断、填空）有唯一标准答案，由系统自动比对判分；主观题（简答、综合分析）没有唯一表述，因此在你看到参考答案后，由你自己估算掌握程度（0%/50%/80%/100%），两部分得分按各题设定的分值加权后相加，得到最终总分。' }
+    { id:2, question:'简述客观题与主观题在判分方式上的区别，以及总分是如何得出的。', answer:'客观题（单选、判断、填空）有唯一标准答案，由系统自动比对判分；主观题（简答、综合分析）没有唯一表述，因此在你看到参考答案后，由你自己估算掌握程度（0%/50%/80%/100%），两部分得分按各题设定的分值加权后相加，得到最终总分。' },
+    { id:3, chapter:'题库格式', question:'简述一个最小可用题库文件需要包含什么。', answer:'最小题库只需要导出一个对象，并至少包含一个题型数组，例如 singleChoice、fillInTheBlank、trueFalse、shortAnswer 或 essay。每道题通常包含 id、question 和该题型所需的 answer / answers / options 字段；chapter 是可选字段，用于筛选和整卷预览。' }
   ],
   essay:[
     { id:1, question:'结合 Anki、Quizlet、Duolingo 三款产品，说说本应用分别借鉴了它们哪些设计理念。', answer:'① Anki：单题聚焦的卡片流、空格翻面 + 数字键1-4评分的键盘操作方式，以及背后简化版的间隔重复算法，是闪卡模式的直接参照；\n② Quizlet：闪卡 / 学习 / 测试三种模式之间自由切换的产品结构，以及统计页面里清晰直观的图表与历史记录，参照了它的信息架构；\n③ Duolingo：答题后克制而及时的正负反馈动效，以及连续学习天数(streak)这种轻量激励机制，用来提升长期坚持复习的动力，同时避免过度打扰。' }
@@ -1177,7 +1189,7 @@ function parseDeckFile(text, filename){
     errors.push('裸表达式求值结果不是对象');
   }catch(e){ errors.push('按裸对象表达式解析失败：'+e.message); }
 
-  throw new Error('无法识别该文件的数据格式，已尝试 JSON / UMD模块 / 裸对象三种方式均失败。\n\n'+errors.join('\n')+'\n\n请确认文件包含 fillInTheBlank / singleChoice / multipleChoice / trueFalse / shortAnswer / essay 等字段。');
+  throw new Error('无法识别该文件的数据格式，已尝试 JSON / UMD模块 / 裸对象三种方式均失败。\n\n'+errors.join('\n')+'\n\n请确认文件至少包含 fillInTheBlank / singleChoice / trueFalse / shortAnswer / essay 中的一种或多种；多选题可使用 multipleChoice。');
 }
 
 function normalizeDeck(raw, sourceName){
@@ -1185,7 +1197,7 @@ function normalizeDeck(raw, sourceName){
   if (!src || typeof src!=='object') throw new Error('数据格式无法识别：既不是题库对象，也不是标准模块导出。');
 
   const hasAny = TYPE_ORDER.some(t => Array.isArray(src[t]) && src[t].length);
-  if (!hasAny) throw new Error('未在文件中找到任何题目数组，期望字段名为：fillInTheBlank / singleChoice / multipleChoice / trueFalse / shortAnswer / essay 之一。');
+  if (!hasAny) throw new Error('未在文件中找到任何题目数组，期望字段至少包含 fillInTheBlank / singleChoice / trueFalse / shortAnswer / essay 中的一种或多种；多选题可使用 multipleChoice。');
 
   const questions = [];
   const byType = {};
@@ -1596,6 +1608,18 @@ function renderLoadView(container){
         <div class="dz-hint">或直接将文件拖入此区域</div>
       </div>
       ${localDeckHtml}
+      <div class="format-guide">
+        <h4>题库数据格式</h4>
+        <p>文件导出一个对象即可，可直接写 JSON，也可在 JS 中使用 <code>module.exports = {...}</code>。<code>meta</code> 为可选信息；题型字段至少包含 <code>fillInTheBlank</code> / <code>singleChoice</code> / <code>trueFalse</code> / <code>shortAnswer</code> / <code>essay</code> 中的一种或多种；多选题可额外使用 <code>multipleChoice</code>。</p>
+        <div class="format-guide-grid">
+          <div class="format-item"><b>fillInTheBlank</b><span><code>question</code> 中用 <code>___</code> 表示空；答案写 <code>answers:["答案"]</code>。可选 <code>chapter</code>。</span></div>
+          <div class="format-item"><b>singleChoice</b><span><code>options:["A项","B项"]</code>，<code>answer:"A"</code> 或答案序号。</span></div>
+          <div class="format-item"><b>multipleChoice</b><span><code>answer:["A","C"]</code> 表示多选正确项；其它字段同单选。</span></div>
+          <div class="format-item"><b>trueFalse</b><span><code>answer:true</code> 表示“对”，<code>false</code> 表示“错”。</span></div>
+          <div class="format-item"><b>shortAnswer / essay</b><span><code>answer:"参考答案"</code>，测试模式下会进入自评判分。</span></div>
+          <div class="format-item"><b>通用字段</b><span><code>id</code> 建议填写；<code>chapter</code> 可用于筛选；题干字段统一为 <code>question</code>。</span></div>
+        </div>
+      </div>
       <div class="demo-link">还没有题库？<button id="load-demo-btn" type="button">先用示例教程试一试 →</button></div>
       <div id="load-error-slot" style="width:100%;display:flex;justify-content:center;"></div>
     </div>
@@ -1917,12 +1941,8 @@ function renderSetupView(container){
           ` : `
           <div class="section-title" style="margin-top:18px;">题量<span class="line"></span></div>
           <div class="qty-row">
-            <div class="seg qty-seg">${qtyHtml}
-              <label class="qty-custom-pill ${customQtyVal!==''?'active':''}">
-                <span>自定义</span>
-                <input type="number" class="qty-custom-input" id="qty-custom" min="1" max="${deck.totalQuestions}" placeholder="题数" value="${customQtyVal}">
-              </label>
-            </div>
+            <div class="seg">${qtyHtml}</div>
+            <input type="number" class="num-input" id="qty-custom" min="1" max="${deck.totalQuestions}" placeholder="自定义" value="${customQtyVal}">
           </div>`}
         </div>
 
