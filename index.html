@@ -785,7 +785,6 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 <div id="toast-root"></div>
 <div id="modal-root"></div>
 
-<script src="printingQualityQuiz.js"></script>
 <script>
 'use strict';
 /* ============================================================
@@ -2618,16 +2617,6 @@ async function initApp(){
         App.settings.tfFilter = (pol.trueCount>0 && pol.falseCount>0) ? (pol.trueCount<=pol.falseCount?'true':'false') : 'all';
       }
       App.view = 'setup';
-    } else if (window.printingQualityQuiz) {
-      // 自动加载 printingQualityQuiz.js 中的题库数据
-      try {
-        const deck = normalizeDeck(window.printingQualityQuiz, '印刷质量检测与标准化');
-        await finishDeckLoad(deck);
-        App.view = 'setup';
-      } catch(e) {
-        console.warn('自动加载题库失败:', e);
-        App.view = 'load';
-      }
     } else {
       App.view = 'load';
     }
