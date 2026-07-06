@@ -40,12 +40,14 @@ a{ color:inherit; }
   --border:#2e3640;
   --border-soft:#242b34;
 
-  --paper:#f5eedc;
-  --paper-alt:#ece1c4;
-  --paper-line:#ddd0ab;
-  --ink:#26201a;
-  --ink-soft:#6c6250;
-  --ink-faint:#9b9078;
+  --paper:#0f3323;
+  --paper-alt:#164531;
+  --paper-line:#2c6647;
+  --ink:#f2fdf6;
+  --ink-soft:#a9dbbd;
+  --ink-faint:#6fa588;
+  --surface-lift-1:rgba(255,255,255,.07);
+  --surface-lift-2:rgba(255,255,255,.13);
 
   --text:#eef1f3;
   --text-soft:#a7afb8;
@@ -59,14 +61,14 @@ a{ color:inherit; }
   --ambient-glow:rgba(255,201,60,.16);
 
   --success:#58c46e;
-  --success-bg:rgba(88,196,110,.16);
-  --success-strong:#7ddb90;
+  --success-bg:rgba(120,224,146,.24);
+  --success-strong:#8ff0a4;
   --danger:#ef5b5b;
-  --danger-bg:rgba(239,91,91,.16);
-  --danger-strong:#ff8686;
+  --danger-bg:rgba(239,91,91,.22);
+  --danger-strong:#ff9494;
   --info:#4fa6e0;
-  --info-bg:rgba(79,166,224,.18);
-  --info-strong:#7cc0ec;
+  --info-bg:rgba(79,166,224,.22);
+  --info-strong:#8ecbf1;
   --gold:#ffc93c;
   --gold-bg:rgba(255,201,60,.16);
   --gold-ink:#3a2a02;
@@ -105,6 +107,8 @@ html[data-theme="light"]{
   --ink:#26201a;
   --ink-soft:#6c6250;
   --ink-faint:#9b9078;
+  --surface-lift-1:rgba(255,255,255,.5);
+  --surface-lift-2:rgba(255,255,255,.75);
 
   --text:#212b22;
   --text-soft:#57624f;
@@ -166,6 +170,7 @@ html[data-theme="light"] body::before{ opacity:.35; }
 
 h1,h2,h3,h4{ margin:0; font-family:var(--font-display); font-weight:600; letter-spacing:.01em; }
 .num{ font-family:var(--font-num); font-style:italic; font-weight:500; }
+.streak-num{ font-weight:800; }
 
 :focus-visible{
   outline:2px solid var(--accent);
@@ -333,6 +338,23 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 .demo-link button{ background:none;border:none;color:var(--accent);font-weight:600;cursor:pointer;font-size:13px;padding:0; text-decoration:underline; text-decoration-color:transparent; transition:text-decoration-color .15s; }
 .demo-link button:hover{ text-decoration-color:var(--accent); }
 
+.local-deck-panel{
+  width:100%; max-width:640px; margin-top:18px;
+  background:var(--bg-elevated); border:1px solid var(--border-soft); border-radius:var(--radius-lg);
+  padding:16px; text-align:left;
+}
+.local-deck-title{ font-size:12px; font-weight:700; color:var(--text-faint); margin-bottom:10px; letter-spacing:.06em; text-transform:uppercase; }
+.local-deck-list{ display:flex; flex-direction:column; gap:8px; max-height:260px; overflow-y:auto; padding-right:2px; }
+.local-deck-btn{
+  display:flex; align-items:center; justify-content:space-between; gap:14px;
+  width:100%; border:1px solid var(--border-soft); background:var(--bg-soft); color:var(--text);
+  padding:11px 13px; border-radius:var(--radius-md); cursor:pointer; text-align:left;
+  transition:background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+}
+.local-deck-btn:hover{ background:var(--bg-hover); border-color:var(--accent); transform:translateY(-1px); }
+.local-deck-btn span{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px; font-weight:700; }
+.local-deck-btn b{ flex-shrink:0; font-family:var(--font-num); font-style:italic; color:var(--accent); font-size:13px; }
+
 .load-error{
   margin-top:16px; max-width:640px; width:100%;
   background:var(--danger-bg); border:1px solid color-mix(in srgb, var(--danger) 35%, transparent); color:var(--danger-strong);
@@ -350,9 +372,22 @@ main#view{ flex:1; display:flex; flex-direction:column; }
   color:var(--ink); box-shadow:var(--shadow-pop); margin-bottom:26px;
 }
 .deck-info-card .deck-emoji{ font-size:30px; }
-.deck-info-card h2{ font-size:19px; color:var(--ink); }
-.deck-info-card p{ margin:4px 0 0; font-size:12.5px; color:var(--ink-soft); line-height:1.6; }
-.deck-info-card .swap{ margin-left:auto; }
+.deck-info-card > div{ min-width:0; }
+.deck-info-card h2{ font-size:19px; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.deck-info-card p{ margin:4px 0 0; font-size:12.5px; color:var(--ink-soft); line-height:1.6; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.deck-info-card #browse-deck-btn{ margin-left:auto; }
+.deck-info-card .swap{ margin-left:12px; }
+.deck-switcher{
+  display:flex; flex-wrap:wrap; gap:8px; margin:-12px 0 24px; max-height:92px; overflow-y:auto; padding-right:2px;
+}
+.deck-switcher button{
+  display:flex; align-items:center; gap:8px; border:1px solid var(--border-soft); background:var(--bg-elevated);
+  color:var(--text-soft); border-radius:var(--radius-pill); padding:7px 12px; cursor:pointer; font-size:12.5px; font-weight:700;
+  max-width:260px;
+}
+.deck-switcher span{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.deck-switcher button.active{ border-color:var(--accent); background:var(--accent-glow); color:var(--text); }
+.deck-switcher b{ color:var(--accent); font-family:var(--font-num); font-style:italic; }
 
 .mode-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:28px; }
 .mode-card{
@@ -385,6 +420,14 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 .chips-row{ display:flex; flex-wrap:wrap; gap:9px; }
 .tf-filter-row{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-top:12px; padding-top:12px; border-top:1px dashed var(--border-soft); }
 .tf-filter-label{ font-size:12px; color:var(--text-faint); }
+.source-scope-row{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:14px; }
+.chapter-filter-row{ margin-top:12px; padding-top:12px; border-top:1px dashed var(--border-soft); }
+.chapter-chip-row{ display:flex; flex-wrap:wrap; gap:7px; margin-top:9px; max-height:112px; overflow:auto; padding-right:2px; }
+.chapter-chip{
+  border:1px solid var(--border-soft); background:var(--bg-soft); color:var(--text-soft); border-radius:var(--radius-pill);
+  padding:6px 10px; font-size:12px; font-weight:700; cursor:pointer;
+}
+.chapter-chip.active{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
 
 .toggle-row{ display:flex; align-items:center; justify-content:space-between; padding:13px 0; border-bottom:1px solid var(--border-soft); }
 .toggle-row:last-child{ border-bottom:none; }
@@ -396,6 +439,18 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 .switch.on .knob{ transform:translateX(18px); background:var(--accent-ink); }
 
 .qty-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.qty-seg{ flex-wrap:wrap; align-items:center; border-radius:18px; }
+.qty-custom-pill{
+  display:flex; align-items:center; gap:7px; border-radius:var(--radius-pill);
+  padding:3px 4px 3px 12px; color:var(--text-soft); font-size:12.5px; font-weight:700;
+}
+.qty-custom-pill.active{ background:var(--accent); color:var(--accent-ink); }
+.qty-custom-pill:focus-within{ background:var(--accent-glow); color:var(--text); }
+.qty-custom-input{
+  width:70px; padding:5px 8px; border-radius:var(--radius-pill); border:1px solid var(--border-soft);
+  background:var(--bg-elevated); color:var(--text); font-size:12.5px; text-align:center; outline:none;
+}
+.qty-custom-pill.active .qty-custom-input{ border-color:color-mix(in srgb, var(--accent-ink) 45%, transparent); color:var(--text); }
 .seg{ display:flex; background:var(--bg-soft); border:1px solid var(--border); border-radius:var(--radius-pill); padding:3px; }
 .seg button{ border:none; background:transparent; padding:7px 14px; border-radius:var(--radius-pill); font-size:12.5px; font-weight:600; color:var(--text-soft); cursor:pointer; }
 .seg button.active{ background:var(--accent); color:var(--accent-ink); }
@@ -411,7 +466,7 @@ main#view{ flex:1; display:flex; flex-direction:column; }
   transition:background var(--dur-fast) var(--ease);
 }
 .collapsible-head:hover{ background:var(--bg-soft); }
-.collapsible-head .chev{ transition:transform var(--dur) var(--ease); font-size:13px; color:var(--text-faint); flex-shrink:0; }
+.collapsible-head .chev{ transition:transform var(--dur) var(--ease); font-size:17px; color:var(--text-faint); flex-shrink:0; line-height:1; }
 .collapsible-head.open .chev{ transform:rotate(90deg); color:var(--accent); }
 .collapsible-body{ overflow:hidden; max-height:0; transition:max-height var(--dur-slow) var(--ease); }
 .collapsible-body.open{ max-height:600px; }
@@ -469,10 +524,36 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 .qcard.pulse-good{ box-shadow:var(--shadow-card), 0 0 0 3px var(--success); }
 .qcard.pulse-bad{ box-shadow:var(--shadow-card), 0 0 0 3px var(--danger); }
 
+.qcard-tools{ position:absolute; top:28px; right:34px; display:flex; align-items:center; gap:8px; z-index:2; }
+.bookmark-btn{
+  width:34px; height:34px; border-radius:50%; border:1px solid var(--paper-line);
+  background:var(--surface-lift-1); color:var(--ink-faint); cursor:pointer; font-size:20px; line-height:1;
+  display:flex; align-items:center; justify-content:center; transition:all var(--dur-fast) var(--ease);
+}
+.bookmark-btn:hover{ transform:translateY(-1px); background:var(--surface-lift-2); color:var(--gold); border-color:var(--gold); }
+.bookmark-btn.on{ background:var(--gold-bg); color:var(--gold); border-color:color-mix(in srgb, var(--gold) 60%, transparent); }
+.wrong-chip{
+  padding:5px 9px; border-radius:var(--radius-pill); background:var(--danger-bg); color:var(--danger-strong);
+  font-size:11px; font-weight:800; border:1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+}
+
 .qcard-type{ font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
 .qcard-type .dot{ width:5px;height:5px;border-radius:50%; background:currentColor; }
 .qcard-question{ font-family:var(--font-display); font-size:22px; line-height:1.65; color:var(--ink); font-weight:500; flex:0 0 auto; white-space:pre-wrap; }
 .qcard-question .blank{ display:inline-block; width:56px; height:1.05em; vertical-align:-4px; border-bottom:3px solid var(--ink-faint); border-radius:0; margin:0 2px; }
+.inline-blank-choice{
+  display:inline-flex; align-items:center; justify-content:center; min-width:70px; min-height:1.35em; margin:0 4px; padding:0 10px 2px;
+  border:1.5px solid transparent; border-bottom:3px solid var(--ink-faint); border-radius:0; background:transparent; color:var(--ink-soft);
+  appearance:none; font-family:inherit; font-size:.88em; line-height:1.2; font-weight:800; cursor:pointer; vertical-align:baseline; transition:all .18s var(--ease);
+}
+.blank-line-only{ display:inline-block; width:58px; height:.8em; transform:translateY(-1px); }
+.inline-blank-choice.filled{ color:var(--success-strong); border-color:transparent; border-bottom-color:var(--success); background:transparent; box-shadow:none; animation:blankFill .18s var(--ease); }
+.inline-blank-choice.correct{ color:var(--success-strong); border-color:transparent; border-bottom-color:var(--success); background:transparent; }
+.inline-blank-choice.wrong{ color:var(--danger-strong); border-color:transparent; border-bottom-color:var(--danger); background:transparent; }
+.inline-blank-choice.active{ border-color:var(--accent); border-bottom-color:var(--accent); border-radius:12px; background:var(--surface-lift-1); box-shadow:0 0 0 3px var(--accent-glow); animation:blankFocus .22s var(--ease); }
+@keyframes blankFocus{ from{ transform:translateX(-8px) scale(.96); } to{ transform:translateX(0) scale(1); } }
+@keyframes blankFill{ from{ transform:scale(.96); } to{ transform:scale(1); } }
+.per-blank-options{ margin-top:16px; }
 
 .blank-wrap{ position:relative; display:inline-block; min-width:96px; vertical-align:-6px; margin:0 2px; }
 .qcard-blank-input{
@@ -487,7 +568,7 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 .qcard-blank-input.correct{ color:var(--success-strong); }
 .qcard-blank-input.wrong{ color:var(--danger-strong); }
 
-.qcard-body{ margin-top:22px; flex:1; }
+.qcard-body{ margin-top:22px; flex:1; min-height:0; display:flex; flex-direction:column; }
 .qcard-hint{ margin-top:auto; padding-top:18px; text-align:center; font-size:12px; color:var(--ink-faint); }
 
 .reveal-divider{ margin:20px 0 16px; border:none; border-top:1.5px dashed var(--paper-line); }
@@ -498,18 +579,18 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 /* 选择题 / 判断题 选项 */
 .opt-list{ display:flex; flex-direction:column; gap:10px; margin-top:4px; }
 .opt-btn{
-  display:flex; align-items:center; gap:12px; text-align:left;
+  display:flex; align-items:flex-start; gap:12px; text-align:left; min-width:0;
   padding:13px 16px; border-radius:var(--radius-md);
-  border:1.5px solid var(--paper-line); background:rgba(255,255,255,.35);
+  border:1.5px solid var(--paper-line); background:var(--surface-lift-1);
   color:var(--ink); font-size:15px; cursor:pointer;
   transition:all var(--dur-fast) var(--ease);
 }
-.opt-btn:hover{ border-color:var(--ink-faint); background:rgba(255,255,255,.6); }
+.opt-btn:hover{ border-color:var(--ink-faint); background:var(--surface-lift-2); }
 .opt-btn .opt-key{
   width:24px;height:24px; border-radius:50%; background:var(--paper-alt); color:var(--ink-soft);
-  display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; margin-top:1px;
 }
-.opt-btn .opt-text{ display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; line-height:1.5; }
+.opt-btn .opt-text{ display:block; min-width:0; overflow-wrap:anywhere; word-break:break-word; line-height:1.5; }
 .opt-btn.selected{ border-color:var(--accent); background:var(--accent-glow); }
 .opt-btn.selected .opt-key{ background:var(--accent); color:var(--accent-ink); }
 .opt-btn.correct{ border-color:var(--success); background:var(--success-bg); }
@@ -525,17 +606,17 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 .blank-choice-opts{ display:flex; flex-wrap:wrap; gap:8px; }
 .mini-opt-btn{
   padding:8px 14px; border-radius:var(--radius-pill); border:1.5px solid var(--paper-line);
-  background:rgba(255,255,255,.35); color:var(--ink); font-size:13px; cursor:pointer;
+  background:var(--surface-lift-1); color:var(--ink); font-size:13px; cursor:pointer;
   transition:all var(--dur-fast) var(--ease);
 }
-.mini-opt-btn:hover{ border-color:var(--ink-faint); background:rgba(255,255,255,.6); }
+.mini-opt-btn:hover{ border-color:var(--ink-faint); background:var(--surface-lift-2); }
 .mini-opt-btn.selected{ border-color:var(--accent); background:var(--accent-glow); font-weight:700; }
 .mini-opt-btn.correct{ border-color:var(--success); background:var(--success-bg); color:var(--success-strong); font-weight:700; }
 .mini-opt-btn.wrong{ border-color:var(--danger); background:var(--danger-bg); color:var(--danger-strong); }
 .mini-opt-btn:disabled{ cursor:default; }
-.tf-btn{ flex:1; padding:22px 10px; border-radius:var(--radius-md); border:1.5px solid var(--paper-line); background:rgba(255,255,255,.35); font-size:17px; font-weight:600; color:var(--ink); cursor:pointer; transition:all var(--dur-fast) var(--ease); text-align:center; }
+.tf-btn{ flex:1; padding:22px 10px; border-radius:var(--radius-md); border:1.5px solid var(--paper-line); background:var(--surface-lift-1); font-size:17px; font-weight:600; color:var(--ink); cursor:pointer; transition:all var(--dur-fast) var(--ease); text-align:center; }
 .tf-btn .kbd{ opacity:.4; margin-left:6px; }
-.tf-btn:hover{ background:rgba(255,255,255,.6); }
+.tf-btn:hover{ background:var(--surface-lift-2); }
 .tf-btn.selected{ border-color:var(--accent); background:var(--accent-glow); }
 .tf-btn.correct{ border-color:var(--success); background:var(--success-bg); color:var(--success-strong); }
 .tf-btn.wrong{ border-color:var(--danger); background:var(--danger-bg); color:var(--danger-strong); }
@@ -543,13 +624,13 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 .essay-input{
   width:100%; min-height:130px; resize:vertical;
   border:1.5px solid var(--paper-line); border-radius:var(--radius-md);
-  background:rgba(255,255,255,.45); color:var(--ink);
+  background:var(--surface-lift-1); color:var(--ink);
   padding:14px 16px; font-size:14.5px; line-height:1.7; outline:none;
   font-family:inherit;
 }
-.essay-input:focus{ border-color:var(--accent); background:rgba(255,255,255,.7); }
+.essay-input:focus{ border-color:var(--accent); background:var(--surface-lift-2); }
 .essay-input::placeholder{ color:var(--ink-faint); }
-.your-answer-box{ background:rgba(255,255,255,.5); border:1px solid var(--paper-line); border-radius:var(--radius-md); padding:14px 16px; font-size:14px; line-height:1.75; color:var(--ink-soft); white-space:pre-wrap; }
+.your-answer-box{ background:var(--surface-lift-1); border:1px solid var(--paper-line); border-radius:var(--radius-md); padding:14px 16px; font-size:14px; line-height:1.75; color:var(--ink-soft); white-space:pre-wrap; }
 
 /* 卡片底部操作区 */
 .qcard-actions{ margin-top:24px; display:flex; gap:12px; justify-content:flex-end; }
@@ -573,7 +654,7 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 .rate-easy .kbd{ background:rgba(0,0,0,.15); }
 
 .flip-hint{ display:flex; align-items:center; justify-content:center; gap:10px; margin-top:26px; color:var(--ink-faint); font-size:12.5px; }
-.flip-hint .kbd{ background:rgba(0,0,0,.08); color:var(--ink-soft); opacity:1; padding:3px 8px; min-width:auto; font-size:11px; }
+.flip-hint .kbd{ background:var(--surface-lift-2); color:var(--ink-soft); opacity:1; padding:3px 8px; min-width:auto; font-size:11px; }
 
 /* 反馈浮层 */
 .feedback-flash{
@@ -671,8 +752,16 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 .history-table th{ text-align:left; color:var(--text-faint); font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; padding:8px 10px; border-bottom:1px solid var(--border-soft); }
 .history-table td{ padding:11px 10px; border-bottom:1px solid var(--border-soft); color:var(--text-soft); }
 .history-table tr:last-child td{ border-bottom:none; }
+.history-table .history-row{ cursor:pointer; transition:background var(--dur-fast) var(--ease); }
+.history-table .history-row:hover{ background:var(--bg-soft); }
 .history-table .mode-tag-sm{ font-size:10.5px; padding:2px 8px; border-radius:var(--radius-pill); background:var(--bg-soft); color:var(--text-faint); font-weight:600; }
 .history-table .score-cell{ color:var(--text); font-weight:600; font-family:var(--font-num); font-style:italic; }
+.record-preview-hint{ margin:-6px 0 10px; font-size:12.5px; }
+.record-delete-btn{
+  border:1px solid color-mix(in srgb, var(--danger) 35%, transparent); background:var(--danger-bg); color:var(--danger-strong);
+  border-radius:var(--radius-pill); padding:6px 10px; font-size:11.5px; font-weight:800; cursor:pointer;
+}
+.record-delete-btn:hover{ background:color-mix(in srgb, var(--danger) 22%, transparent); }
 
 .settings-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
 
@@ -721,35 +810,126 @@ main#view{ flex:1; display:flex; flex-direction:column; }
    ============================================================ */
 .browse-topbar{
   display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
-  position:sticky; top:0; z-index:25; background:var(--bg); padding:14px 0; margin-bottom:10px;
+  position:sticky; top:63px; z-index:25; background:var(--bg); padding:14px 0; margin-bottom:10px;
   border-bottom:1px solid var(--border-soft);
 }
+.browse-filter-pack{ display:flex; align-items:center; gap:10px; flex:1; min-width:260px; flex-wrap:wrap; }
+.browse-filter-line{ display:flex; align-items:center; gap:8px; flex-wrap:nowrap; }
+.browse-filter-line span{ color:var(--text-faint); font-size:12px; font-weight:700; }
+.chapter-dropdown{ position:relative; }
+.chapter-dropdown summary{
+  list-style:none; display:flex; align-items:center; gap:8px; min-width:126px;
+  border:1px solid var(--border); background:var(--bg-soft); color:var(--text-soft);
+  border-radius:var(--radius-pill); padding:8px 12px; font-size:12.5px; font-weight:800; cursor:pointer;
+}
+.chapter-dropdown summary::-webkit-details-marker{ display:none; }
+.chapter-dropdown summary span:first-child{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.chapter-dropdown[open] summary{ border-color:var(--accent); color:var(--text); background:var(--accent-glow); }
+.chapter-dropdown .chev{ margin-left:auto; font-size:10px; color:var(--text-faint); }
+.chapter-menu{
+  position:absolute; top:calc(100% + 8px); left:0; z-index:60; width:min(320px, calc(100vw - 40px)); max-height:300px; overflow:auto;
+  background:var(--bg-elevated); border:1px solid var(--border); border-radius:18px; padding:8px; box-shadow:var(--shadow-pop);
+}
+.chapter-menu-action{
+  width:100%; border:none; background:var(--accent); color:var(--accent-ink); border-radius:var(--radius-pill);
+  padding:9px 12px; font-size:12px; font-weight:800; cursor:pointer; margin-bottom:6px;
+}
+.chapter-check{
+  display:flex; align-items:center; gap:9px; padding:9px 10px; border-radius:12px; color:var(--text-soft);
+  font-size:12.5px; font-weight:700; cursor:pointer;
+}
+.chapter-check:hover{ background:var(--bg-soft); color:var(--text); }
+.chapter-check input{ accent-color:var(--accent); }
+.chapter-check span{ min-width:0; overflow-wrap:anywhere; word-break:break-word; }
+.browse-answer-fixed{
+  display:flex; align-items:center; gap:10px; background:var(--bg-elevated); border:1px solid var(--border-soft);
+  border-radius:var(--radius-pill); padding:8px 10px 8px 13px; box-shadow:var(--shadow-pop);
+}
+.wrong-test-strip{
+  display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+  margin:0 0 18px; padding:13px 15px; border:1px solid color-mix(in srgb, var(--danger) 26%, var(--border-soft));
+  background:color-mix(in srgb, var(--danger-bg) 58%, var(--bg-elevated)); border-radius:var(--radius-md);
+}
+.wrong-test-strip > div{ min-width:0; flex:1 1 260px; }
+.wrong-test-strip strong{ display:block; color:var(--text); font-size:13.5px; margin-bottom:2px; }
+.wrong-test-strip span{ color:var(--text-soft); font-size:12.5px; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; }
+.wrong-test-strip .btn{ flex-shrink:0; }
 .browse-shell{ display:flex; gap:24px; align-items:flex-start; }
 .browse-main{ flex:1; min-width:0; }
 .browse-sidebar{
-  width:230px; flex-shrink:0; position:sticky; top:78px; max-height:calc(100vh - 100px); overflow-y:auto;
+  width:230px; flex-shrink:0; position:sticky; top:142px; max-height:calc(100vh - 166px); overflow:auto;
   background:var(--bg-elevated); border:1px solid var(--border-soft); border-radius:var(--radius-lg); padding:16px;
 }
 .browse-sidebar h5{ font-size:11.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.05em; margin:16px 0 9px; font-weight:700; }
 .browse-sidebar h5:first-child{ margin-top:0; }
+.sidebar-legend{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; font-size:11px; color:var(--text-faint); }
+.sidebar-legend span{ display:flex; align-items:center; gap:4px; }
+.sidebar-legend i{ width:10px; height:10px; border-radius:3px; border:1px solid var(--border-soft); display:inline-block; }
 .nav-grid{ display:flex; flex-wrap:wrap; gap:5px; }
 .nav-cell{
   width:26px;height:26px; border-radius:7px; background:var(--bg-soft); border:1px solid var(--border-soft);
   font-size:12px; font-weight:600; display:flex; align-items:center; justify-content:center; color:var(--text-soft);
   cursor:pointer; text-decoration:none; transition:all .15s ease; font-family:var(--font-num);
 }
-.nav-cell:hover{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); transform:scale(1.15); }
-.nav-cell.active{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+.nav-cell:hover{ transform:scale(1.15); filter:brightness(1.08); }
+.nav-cell:not(.status-ok):not(.status-mid):not(.status-no):not(.status-empty):hover,
+.nav-cell:not(.status-ok):not(.status-mid):not(.status-no):not(.status-empty).active{
+  background:var(--accent); color:var(--accent-ink); border-color:var(--accent);
+}
+.nav-cell.active{ box-shadow:0 0 0 2px var(--accent); }
+.sidebar-legend i.status-ok,.nav-cell.status-ok{ background:var(--success); border-color:var(--success); color:#fff; }
+.sidebar-legend i.status-mid,.nav-cell.status-mid{ background:var(--gold); border-color:var(--gold); color:var(--gold-ink); }
+.sidebar-legend i.status-no,.nav-cell.status-no{ background:var(--danger); border-color:var(--danger); color:#fff; }
+.sidebar-legend i.status-empty,.nav-cell.status-empty{ background:var(--bg-soft); border-color:var(--border-soft); color:var(--text-faint); }
 .browse-section{ margin-bottom:32px; }
 .browse-section h3{ font-size:15.5px; color:var(--text); margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border-soft); font-family:inherit; font-weight:700; }
-.browse-q{ margin-bottom:18px; padding-bottom:16px; border-bottom:1px solid var(--border-soft); scroll-margin-top:90px; }
+.browse-q{ margin-bottom:18px; padding-bottom:16px; border-bottom:1px solid var(--border-soft); scroll-margin-top:148px; }
+.browse-q.with-status{ border-left:4px solid var(--border-soft); padding-left:14px; }
+.browse-q.status-ok{ border-left-color:var(--success); }
+.browse-q.status-mid{ border-left-color:var(--gold); }
+.browse-q.status-no{ border-left-color:var(--danger); }
 .browse-q:last-child{ border-bottom:none; }
 .browse-q-num{ font-family:var(--font-num); font-style:italic; color:var(--accent); font-weight:600; margin-right:6px; }
-.browse-q-text{ font-size:15px; color:var(--text); line-height:1.7; }
-.browse-q-opts{ margin-top:8px; padding-left:22px; font-size:13.5px; color:var(--text-soft); line-height:1.85; }
-.browse-q-opts .opt-row.is-correct{ color:var(--success-strong); font-weight:600; }
-.browse-answer{ margin-top:8px; padding:10px 14px; background:var(--success-bg); border-radius:var(--radius-sm); color:var(--success-strong); font-size:13px; line-height:1.7; white-space:pre-wrap; }
+.browse-q-text{ min-width:0; font-size:15px; color:var(--text); line-height:1.7; overflow-wrap:anywhere; word-break:break-word; }
+.preview-q-head{ display:flex; align-items:flex-start; gap:12px; justify-content:space-between; }
+.preview-actions{ display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.mini-remove-btn{
+  border:1px solid color-mix(in srgb, var(--danger) 35%, transparent); background:var(--danger-bg); color:var(--danger-strong);
+  border-radius:var(--radius-pill); padding:6px 9px; font-size:11px; font-weight:800; cursor:pointer;
+}
+.preview-meta{ display:flex; flex-wrap:wrap; gap:7px; margin-top:7px; color:var(--text-faint); font-size:11.5px; }
+.chapter-pill,.preview-status{
+  display:inline-flex; align-items:center; border-radius:var(--radius-pill); padding:3px 8px; background:var(--bg-soft); color:var(--text-faint); font-weight:700;
+}
+.preview-status.ok{ background:var(--success-bg); color:var(--success-strong); }
+.preview-status.mid{ background:var(--gold-bg); color:var(--gold); }
+.preview-status.no{ background:var(--danger-bg); color:var(--danger-strong); }
+.browse-q-opts{ margin-top:8px; padding-left:22px; font-size:13.5px; color:var(--text-soft); line-height:1.85; overflow-wrap:anywhere; word-break:break-word; }
+.browse-q-opts .opt-row{ border-radius:8px; padding:2px 6px; overflow-wrap:anywhere; word-break:break-word; }
+.browse-q-opts .opt-row.is-correct{ color:var(--success-strong); font-weight:600; background:var(--success-bg); }
+.browse-q-opts .opt-row.is-wrong{ color:var(--danger-strong); background:var(--danger-bg); }
+.browse-q-opts .opt-row.is-picked{ font-weight:700; }
+.browse-answer{ margin-top:8px; padding:10px 14px; background:var(--success-bg); border-radius:var(--radius-sm); color:var(--success-strong); font-size:13px; line-height:1.7; white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
 .browse-blank-line{ display:inline-block; width:70px; border-bottom:2px solid var(--text-faint); height:1em; vertical-align:-4px; margin:0 3px; }
+.browse-inline-answer{
+  display:inline-block; min-width:70px; min-height:1.2em; padding:0 7px 1px; margin:0 3px; border-bottom:2px solid var(--success);
+  color:var(--success-strong); background:transparent; font-weight:800; line-height:1.2; text-align:center; vertical-align:baseline;
+}
+.tf-mini-row{ display:flex; gap:8px; margin-top:10px; }
+.tf-mini{ flex:0 0 auto; padding:8px 14px; border-radius:var(--radius-pill); background:var(--bg-soft); color:var(--text-soft); font-size:13px; }
+.tf-mini.is-correct{ background:var(--success-bg); color:var(--success-strong); font-weight:800; }
+.tf-mini.is-wrong{ background:var(--danger-bg); color:var(--danger-strong); font-weight:800; }
+.preview-user-line{ margin-top:9px; padding:8px 12px; border-radius:var(--radius-sm); font-size:13px; overflow-wrap:anywhere; word-break:break-word; }
+.preview-user-line.ok{ background:var(--success-bg); color:var(--success-strong); }
+.preview-user-line.no{ background:var(--danger-bg); color:var(--danger-strong); }
+.record-topbar{
+  display:flex; align-items:center; gap:14px; position:sticky; top:63px; z-index:25; background:var(--bg);
+  padding:14px 0; border-bottom:1px solid var(--border-soft); margin-bottom:18px;
+}
+.record-title{ flex:1; min-width:0; }
+.record-title h2{ font-size:18px; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.record-title p{ margin:4px 0 0; color:var(--text-faint); font-size:12.5px; }
+.record-paper .browse-q{ scroll-margin-top:148px; }
 @media (max-width:900px){
   .browse-shell{ flex-direction:column; }
   .browse-sidebar{ width:100%; position:static; max-height:none; order:-1; }
@@ -772,8 +952,15 @@ main#view{ flex:1; display:flex; flex-direction:column; }
   .rate-btn{ font-size:11.5px; padding:11px 4px; }
   .report-hero .score-big{ font-size:56px; }
   .deck-info-card{ flex-wrap:wrap; }
-  .deck-info-card .swap{ margin-left:0; width:100%; }
+  .deck-info-card #browse-deck-btn{ margin-left:0; }
+  .deck-info-card .swap{ margin-left:10px; }
   .self-grade-grid{ grid-template-columns:repeat(2,1fr); }
+  .browse-topbar,.record-topbar{ top:49px; align-items:flex-start; }
+  .record-topbar{ flex-wrap:wrap; }
+  .record-title{ order:3; flex-basis:100%; }
+  .browse-answer-fixed{ margin-left:auto; }
+  .qcard-tools{ top:18px; right:20px; }
+  .qcard-type{ padding-right:86px; }
 }
 </style>
 </head>
@@ -785,7 +972,6 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 <div id="toast-root"></div>
 <div id="modal-root"></div>
 
-<script src="printingQualityQuiz.js"></script>
 <script>
 'use strict';
 /* ============================================================
@@ -794,14 +980,21 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 const QuestionTypes = {
   fillInTheBlank: { label:'填空题', short:'填空', objective:true,  defaultPoints:2,  icon:'✎' },
   singleChoice:   { label:'单选题', short:'单选', objective:true,  defaultPoints:2,  icon:'◉' },
+  multipleChoice: { label:'多选题', short:'多选', objective:true,  defaultPoints:3,  icon:'☑' },
   trueFalse:      { label:'判断题', short:'判断', objective:true,  defaultPoints:1,  icon:'✓' },
   shortAnswer:    { label:'简答题', short:'简答', objective:false, defaultPoints:5,  icon:'✍' },
   essay:          { label:'综合分析题', short:'综合分析', objective:false, defaultPoints:10, icon:'📑' }
 };
-const TYPE_ORDER = ['fillInTheBlank','singleChoice','trueFalse','shortAnswer','essay'];
+const TYPE_ORDER = ['fillInTheBlank','singleChoice','multipleChoice','trueFalse','shortAnswer','essay'];
 const SRS_INTERVAL_DAYS = [0,1,2,4,7,14,30,60]; // index = 记忆等级(level)
 const RATING_TO_PCT = { again:0, hard:50, good:80, easy:100 };
-const STORAGE_KEYS = { settings:'settings', progress:'progress', lastDeck:'lastDeck', deckRegistry:'deckRegistry' };
+const STORAGE_KEYS = { settings:'settings', progress:'progress', lastDeck:'lastDeck', deckRegistry:'deckRegistry', activeSession:'activeSession' };
+const LOCAL_DECK_FILES = ['XiThoughtQuiz.js','AutoMechanicsQuiz.js','PrintingQualityQuiz.js'];
+const LOCAL_DECK_GLOBALS = {
+  'XiThoughtQuiz.js':'xiGaiPrinciplesQuiz',
+  'AutoMechanicsQuiz.js':'autoMechanicsQuiz',
+  'PrintingQualityQuiz.js':'printingQualityQuiz'
+};
 
 /* ============================================================
    §1. 工具函数
@@ -865,6 +1058,9 @@ const Utils = {
       reader.onerror = () => reject(new Error('文件读取失败'));
       reader.readAsText(file, 'utf-8');
     });
+  },
+  deepClone(obj){
+    return JSON.parse(JSON.stringify(obj));
   }
 };
 
@@ -981,7 +1177,7 @@ function parseDeckFile(text, filename){
     errors.push('裸表达式求值结果不是对象');
   }catch(e){ errors.push('按裸对象表达式解析失败：'+e.message); }
 
-  throw new Error('无法识别该文件的数据格式，已尝试 JSON / UMD模块 / 裸对象三种方式均失败。\n\n'+errors.join('\n')+'\n\n请确认文件包含 fillInTheBlank / singleChoice / trueFalse / shortAnswer / essay 等字段。');
+  throw new Error('无法识别该文件的数据格式，已尝试 JSON / UMD模块 / 裸对象三种方式均失败。\n\n'+errors.join('\n')+'\n\n请确认文件包含 fillInTheBlank / singleChoice / multipleChoice / trueFalse / shortAnswer / essay 等字段。');
 }
 
 function normalizeDeck(raw, sourceName){
@@ -989,7 +1185,7 @@ function normalizeDeck(raw, sourceName){
   if (!src || typeof src!=='object') throw new Error('数据格式无法识别：既不是题库对象，也不是标准模块导出。');
 
   const hasAny = TYPE_ORDER.some(t => Array.isArray(src[t]) && src[t].length);
-  if (!hasAny) throw new Error('未在文件中找到任何题目数组，期望字段名为：fillInTheBlank / singleChoice / trueFalse / shortAnswer / essay 之一。');
+  if (!hasAny) throw new Error('未在文件中找到任何题目数组，期望字段名为：fillInTheBlank / singleChoice / multipleChoice / trueFalse / shortAnswer / essay 之一。');
 
   const questions = [];
   const byType = {};
@@ -1000,7 +1196,14 @@ function normalizeDeck(raw, sourceName){
     byType[type] = [];
     arr.forEach((q,idx)=>{
       const uid = type+'-'+(q.id!=null ? q.id : idx);
-      const base = { uid, type, question:String(q.question||'').trim(), objective:QuestionTypes[type].objective };
+      const base = {
+        uid,
+        rawId:q.id!=null ? q.id : idx,
+        type,
+        chapter:String(q.chapter||'').trim(),
+        question:String(q.question||'').trim(),
+        objective:QuestionTypes[type].objective
+      };
       if (!base.question){ skipped.push(uid+':题目为空'); return; }
 
       if (type==='singleChoice'){
@@ -1008,6 +1211,13 @@ function normalizeDeck(raw, sourceName){
         const correctIdx = typeof q.answer==='number' ? q.answer : Utils.letterToIndex(q.answer);
         base.options = q.options.map((text,i)=>({ text:String(text), correct:i===correctIdx }));
         if (!base.options.some(o=>o.correct)){ skipped.push(uid+':未找到匹配的正确选项(answer='+q.answer+')'); return; }
+      } else if (type==='multipleChoice'){
+        if (!Array.isArray(q.options) || !q.options.length){ skipped.push(uid+':缺少选项'); return; }
+        const answerArr = Array.isArray(q.answer) ? q.answer : String(q.answer||'').split(/[,\s、，]+/).filter(Boolean);
+        const correctIdxs = answerArr.map(a=>typeof a==='number' ? a : Utils.letterToIndex(a)).filter(i=>i>=0);
+        const correctSet = new Set(correctIdxs);
+        base.options = q.options.map((text,i)=>({ text:String(text), correct:correctSet.has(i) }));
+        if (!base.options.some(o=>o.correct)){ skipped.push(uid+':未找到匹配的正确选项(answer='+JSON.stringify(q.answer)+')'); return; }
       } else if (type==='trueFalse'){
         if (typeof q.answer!=='boolean'){ skipped.push(uid+':answer 不是布尔值'); return; }
         base.answer = q.answer;
@@ -1039,12 +1249,17 @@ function normalizeDeck(raw, sourceName){
 const App = {
   view:'load',
   deck:null,
+  localDecks:[],
   settings:null,
   progress:null,
   srs:{},
   session:null,
   lastReport:null,
-  statsFilterDeck:'all'
+  statsFilterDeck:'all',
+  recordDetailId:null,
+  browseScope:'all',
+  browseBackView:'setup',
+  browseChapters:[]
 };
 
 function defaultSettings(){
@@ -1052,7 +1267,7 @@ function defaultSettings(){
   const points={}; TYPE_ORDER.forEach(t=>points[t]=QuestionTypes[t].defaultPoints);
   return { shuffleQuestions:true, shuffleOptions:true, includeTypes, mode:'flashcard',
            questionLimit:'all', points, flashcardScope:'due', theme:'light', themeMode:'auto',
-           mockExam:false, selectionMode:false };
+           mockExam:false, selectionMode:false, sourceScope:'all', chapterFilter:'all' };
 }
 async function loadSettings(){
   const saved = await Store.getJSON(STORAGE_KEYS.settings, null);
@@ -1067,7 +1282,8 @@ async function saveSettings(){ await Store.setJSON(STORAGE_KEYS.settings, App.se
 
 function defaultProgress(){
   return { streak:{current:0,longest:0,lastDate:null}, sessions:[],
-           totals:{totalSessions:0,totalQuestionsAnswered:0,totalScorePoints:0,totalMaxPoints:0,totalTimeMs:0} };
+           totals:{totalSessions:0,totalQuestionsAnswered:0,totalScorePoints:0,totalMaxPoints:0,totalTimeMs:0},
+           reviewBook:{}, wrongBook:{}, questionStats:{} };
 }
 async function loadProgress(){
   const saved = await Store.getJSON(STORAGE_KEYS.progress, null);
@@ -1076,7 +1292,10 @@ async function loadProgress(){
   return Object.assign({}, base, saved, {
     streak:Object.assign({}, base.streak, saved.streak||{}),
     totals:Object.assign({}, base.totals, saved.totals||{}),
-    sessions:Array.isArray(saved.sessions) ? saved.sessions : []
+    sessions:Array.isArray(saved.sessions) ? saved.sessions : [],
+    reviewBook:saved.reviewBook && typeof saved.reviewBook==='object' ? saved.reviewBook : {},
+    wrongBook:saved.wrongBook && typeof saved.wrongBook==='object' ? saved.wrongBook : {},
+    questionStats:saved.questionStats && typeof saved.questionStats==='object' ? saved.questionStats : {}
   });
 }
 async function saveProgress(){ await Store.setJSON(STORAGE_KEYS.progress, App.progress); }
@@ -1090,6 +1309,109 @@ async function registerDeck(deck){
   const entry = { id:deck.id, title:deck.meta.title, totalQuestions:deck.totalQuestions, lastUsed:Date.now() };
   if (idx>=0) reg[idx]=entry; else reg.push(entry);
   await Store.setJSON(STORAGE_KEYS.deckRegistry, reg);
+}
+
+function normalizeUidList(list){
+  return Array.isArray(list) ? [...new Set(list.filter(Boolean).map(String))] : [];
+}
+function getDeckUidList(kind, deckId){
+  const p = App.progress || defaultProgress();
+  const bucket = kind==='wrong' ? (p.wrongBook || (p.wrongBook={})) : (p.reviewBook || (p.reviewBook={}));
+  bucket[deckId] = normalizeUidList(bucket[deckId]);
+  return bucket[deckId];
+}
+function getDeckUidSet(kind, deckId){
+  return new Set(getDeckUidList(kind, deckId));
+}
+function isInNotebook(kind, uid, deckId){
+  if (!App.progress || !deckId) return false;
+  return getDeckUidSet(kind, deckId).has(uid);
+}
+async function addToNotebook(kind, uid, opts={}){
+  if (!App.deck || !uid) return false;
+  const list = getDeckUidList(kind, App.deck.id);
+  if (!list.includes(uid)) list.push(uid);
+  await saveProgress();
+  if (opts.toast) toast(kind==='wrong'?'已加入错题本':'已加入复习本', {icon:kind==='wrong'?'✗':'★'});
+  render();
+  return true;
+}
+async function removeFromNotebook(kind, uid, opts={}){
+  if (!App.deck || !uid) return false;
+  const list = getDeckUidList(kind, App.deck.id);
+  const next = list.filter(x=>x!==uid);
+  const bucket = kind==='wrong' ? App.progress.wrongBook : App.progress.reviewBook;
+  bucket[App.deck.id] = next;
+  await saveProgress();
+  if (opts.toast) toast(kind==='wrong'?'已移出错题本':'已移出复习本', {icon:'−'});
+  render();
+  return true;
+}
+async function toggleReviewBook(uid){
+  if (!App.deck || !uid) return;
+  if (isInNotebook('review', uid, App.deck.id)){
+    await removeFromNotebook('review', uid, {toast:true});
+  } else {
+    await addToNotebook('review', uid, {toast:true});
+  }
+}
+function getQuestionStats(deckId){
+  if (!App.progress.questionStats) App.progress.questionStats = {};
+  if (!App.progress.questionStats[deckId]) App.progress.questionStats[deckId] = {};
+  return App.progress.questionStats[deckId];
+}
+function getChapters(deck){
+  return [...new Set((deck.questions||[]).map(q=>q.chapter).filter(Boolean))];
+}
+function normalizeChapterSelection(chapters){
+  const selected = Array.isArray(App.browseChapters) ? App.browseChapters.filter(ch=>chapters.includes(ch)) : [];
+  App.browseChapters = [...new Set(selected)];
+  return App.browseChapters;
+}
+function chapterDropdownHtml(chapters, selected){
+  if (!chapters.length) return '';
+  const label = selected.length ? `章节 ${selected.length}` : '全部章节';
+  return `<details class="chapter-dropdown">
+    <summary><span>${Utils.escapeHtml(label)}</span><span class="chev">▾</span></summary>
+    <div class="chapter-menu">
+      <button type="button" class="chapter-menu-action" data-browse-chapter-all="1">全部章节</button>
+      ${chapters.map(ch=>`<label class="chapter-check">
+        <input type="checkbox" data-browse-chapter="${Utils.escapeHtml(ch)}" ${selected.includes(ch)?'checked':''}>
+        <span>${Utils.escapeHtml(ch)}</span>
+      </label>`).join('')}
+    </div>
+  </details>`;
+}
+function matchesChapter(q, s){
+  return !s.chapterFilter || s.chapterFilter==='all' || q.chapter===s.chapterFilter;
+}
+function matchesSourceScope(q, s, deckId){
+  const scope = s.sourceScope || 'all';
+  if (scope==='review') return isInNotebook('review', q.uid, deckId);
+  if (scope==='wrong') return isInNotebook('wrong', q.uid, deckId);
+  return true;
+}
+function snapshotQuestion(q){
+  const out = {
+    uid:q.uid, rawId:q.rawId, type:q.type, chapter:q.chapter||'',
+    question:q.question, objective:q.objective
+  };
+  if (q.options) out.options = q.options.map(o=>({text:o.text, correct:!!o.correct}));
+  if (q.answer!=null) out.answer = q.answer;
+  if (q.answers) out.answers = q.answers.slice();
+  if (q.reference) out.reference = q.reference;
+  return out;
+}
+function findDeckQuestion(uid){
+  return App.deck && App.deck.questions ? App.deck.questions.find(q=>q.uid===uid) : null;
+}
+
+function persistActiveSession(){
+  if (!App.session || App.session.status!=='active' || !App.deck) return Store.remove(STORAGE_KEYS.activeSession);
+  return Store.setJSON(STORAGE_KEYS.activeSession, { deckId:App.deck.id, savedAt:Date.now(), session:App.session, srs:App.srs });
+}
+async function clearActiveSessionDraft(){
+  await Store.remove(STORAGE_KEYS.activeSession);
 }
 
 /* ============================================================
@@ -1131,6 +1453,7 @@ function updateStreak(streakState, nowTs){
    ============================================================ */
 function toast(msg, opts={}){
   const root = document.getElementById('toast-root');
+  root.querySelectorAll('.toast').forEach(el=>el.remove());
   const el = document.createElement('div');
   el.className = 'toast';
   el.innerHTML = (opts.icon ? `<span>${opts.icon}</span>` : '') + `<span>${Utils.escapeHtml(msg)}</span>`;
@@ -1173,6 +1496,7 @@ function render(){
   else if (App.view==='grading') renderGradingView(view);
   else if (App.view==='report') renderReportView(view);
   else if (App.view==='stats') renderStatsView(view);
+  else if (App.view==='record') renderRecordDetailView(view);
   else if (App.view==='browse') renderBrowseView(view);
   else renderLoadView(view);
 }
@@ -1185,10 +1509,10 @@ function renderNav(){
   nav.innerHTML = `
     <div class="brand"><span class="brand-mark">🗂️</span><span class="brand-text">Spaced Memory Cards</span></div>
     <div class="nav-spacer"></div>
-    ${streak>0 ? `<div class="streak-pill" id="streak-pill"><span class="flame">🔥</span><span class="num">${streak}</span>天</div>` : ''}
+    ${streak>0 ? `<div class="streak-pill" id="streak-pill"><span class="flame">🔥</span><span class="streak-num">${streak}</span>天</div>` : ''}
     <div class="nav-tabs">
       <button class="nav-tab ${studyActive?'active':''}" data-nav="study">学习</button>
-      <button class="nav-tab ${App.view==='stats'?'active':''}" data-nav="stats">统计</button>
+      <button class="nav-tab ${['stats','record'].includes(App.view)?'active':''}" data-nav="stats">统计</button>
     </div>
     <button class="icon-btn" id="theme-toggle" type="button" title="${themeTitle()}">${themeIcon()}</button>
   `;
@@ -1215,19 +1539,29 @@ function applyTheme(){
   return theme;
 }
 function themeIcon(){
-  if ((App.settings.themeMode||'auto')==='auto') return '🌗';
-  return App.settings.theme==='dark' ? '☾' : '☀';
+  const mode = App.settings.themeMode||'auto';
+  if (mode==='auto'){
+    return `<svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 000 17z" fill="currentColor"/></svg>`;
+  }
+  if (App.settings.theme==='dark'){
+    return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M20.2 14.7A8.7 8.7 0 019.3 3.8a8.7 8.7 0 1010.9 10.9z" fill="currentColor"/></svg>`;
+  }
+  return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><circle cx="12" cy="12" r="4.3"/><path d="M12 2.8v2.4M12 18.8v2.4M4.3 4.3l1.7 1.7M18 18l1.7 1.7M2.8 12h2.4M18.8 12h2.4M4.3 19.7L6 18M18 6l1.7-1.7"/></svg>`;
 }
 function themeTitle(){
   const mode = App.settings.themeMode||'auto';
-  if (mode==='auto') return '深色模式：跟随系统，点击可手动切换';
-  return App.settings.theme==='dark' ? '深色模式：已手动开启，点击切换为浅色' : '深色模式：已手动关闭，点击切换为深色';
+  if (mode==='auto') return '深色模式：跟随系统，点击可切换为反向的手动模式';
+  return App.settings.theme==='dark' ? '深色模式：已手动开启，点击恢复跟随系统' : '深色模式：已手动关闭，点击恢复跟随系统';
 }
 function toggleTheme(){
   const mode = App.settings.themeMode || 'auto';
-  if (mode==='auto'){ App.settings.themeMode='manual'; App.settings.theme='light'; }
-  else if (App.settings.theme==='light'){ App.settings.theme='dark'; }
-  else { App.settings.themeMode='auto'; }
+  if (mode==='auto'){
+    const sysTheme = systemPrefersDark() ? 'dark' : 'light';
+    App.settings.themeMode = 'manual';
+    App.settings.theme = sysTheme==='dark' ? 'light' : 'dark';
+  } else {
+    App.settings.themeMode = 'auto';
+  }
   applyTheme();
   saveSettings();
   render();
@@ -1241,6 +1575,15 @@ function bumpStreakPill(){
    §9. 视图：加载题库
    ============================================================ */
 function renderLoadView(container){
+  const localDeckHtml = App.localDecks && App.localDecks.length ? `
+      <div class="local-deck-panel">
+        <div class="local-deck-title">同目录题库</div>
+        <div class="local-deck-list">
+          ${App.localDecks.map(d=>`<button type="button" class="local-deck-btn" data-local-deck="${d.id}">
+            <span>${Utils.escapeHtml(d.meta.title)}</span><b>${d.totalQuestions}题</b>
+          </button>`).join('')}
+        </div>
+      </div>` : '';
   container.className = 'view-pad';
   container.innerHTML = `
     <div class="center-col" style="min-height:72vh;">
@@ -1252,6 +1595,7 @@ function renderLoadView(container){
         <input type="file" id="file-input" class="hidden-input" accept=".js,.json,application/json,text/javascript">
         <div class="dz-hint">或直接将文件拖入此区域</div>
       </div>
+      ${localDeckHtml}
       <div class="demo-link">还没有题库？<button id="load-demo-btn" type="button">先用示例教程试一试 →</button></div>
       <div id="load-error-slot" style="width:100%;display:flex;justify-content:center;"></div>
     </div>
@@ -1268,6 +1612,7 @@ function renderLoadView(container){
   dz.addEventListener('drop', e=>{ const file = e.dataTransfer.files && e.dataTransfer.files[0]; if (file) handleFile(file); });
 
   document.getElementById('load-demo-btn').onclick = ()=>loadDeckFromRaw(DEMO_DECK_RAW, '新手教程示例题库');
+  container.querySelectorAll('[data-local-deck]').forEach(btn=>btn.onclick=()=>selectLocalDeck(btn.dataset.localDeck));
 }
 async function handleFile(file){
   const name = file.name || '未命名文件';
@@ -1289,6 +1634,58 @@ function showLoadError(msg){
   const slot = document.getElementById('load-error-slot');
   if (slot) slot.innerHTML = `<div class="load-error fade-in">⚠️ ${Utils.escapeHtml(msg)}</div>`;
 }
+function localDeckFileNames(){
+  const fromWindow = Array.isArray(window.QUIZ_BANK_FILES) ? window.QUIZ_BANK_FILES : [];
+  return [...new Set(fromWindow.concat(LOCAL_DECK_FILES).filter(Boolean))];
+}
+function loadLocalDeckByScript(filename){
+  return new Promise(resolve=>{
+    const globalName = LOCAL_DECK_GLOBALS[filename];
+    const beforeKeys = new Set(Object.keys(window));
+    const script = document.createElement('script');
+    script.src = filename;
+    script.async = true;
+    script.onload = ()=>{
+      let raw = globalName ? window[globalName] : null;
+      if (!raw){
+        const newKeys = Object.keys(window).filter(k=>!beforeKeys.has(k));
+        for (const k of newKeys){
+          const v = window[k];
+          if (v && typeof v==='object' && (v.data || TYPE_ORDER.some(t=>Array.isArray(v[t])))){ raw = v; break; }
+        }
+      }
+      script.remove();
+      try{ resolve(raw ? normalizeDeck(raw, filename) : null); }
+      catch(e){ resolve(null); }
+    };
+    script.onerror = ()=>{ script.remove(); resolve(null); };
+    document.head.appendChild(script);
+  });
+}
+async function loadLocalDeckFiles(){
+  const files = localDeckFileNames();
+  const loaded = [];
+  await Promise.all(files.map(async filename=>{
+    let deck = null;
+    try{
+      const res = await fetch(filename, {cache:'no-store'});
+      if (res.ok){
+        const text = await res.text();
+        deck = parseDeckFile(text, filename);
+      }
+    }catch(e){}
+    if (!deck) deck = await loadLocalDeckByScript(filename);
+    if (deck){
+      deck.sourceName = filename;
+      if (!loaded.some(d=>d.id===deck.id)) loaded.push(deck);
+    }
+  }));
+  return loaded.sort((a,b)=>a.meta.title.localeCompare(b.meta.title, 'zh-Hans-CN'));
+}
+async function selectLocalDeck(deckId){
+  const deck = App.localDecks.find(d=>d.id===deckId);
+  if (deck) await finishDeckLoad(Utils.deepClone(deck));
+}
 function tfPolarityCounts(deck){
   const tf = (deck.byType && deck.byType.trueFalse) || [];
   const trueCount = tf.filter(q=>q.answer===true).length;
@@ -1300,6 +1697,7 @@ async function finishDeckLoad(deck){
   App.srs = await loadSrs(deck.id);
   await registerDeck(deck);
   await Store.setJSON(STORAGE_KEYS.lastDeck, deck);
+  await clearActiveSessionDraft();
   TYPE_ORDER.forEach(t=>{
     if (deck.byType[t] && deck.byType[t].length && !(t in App.settings.includeTypes)) App.settings.includeTypes[t]=true;
   });
@@ -1315,7 +1713,7 @@ async function finishDeckLoad(deck){
    §10. 视图：学习设置
    ============================================================ */
 function computeSelectedQuestions(deck, s){
-  let qs = deck.questions.filter(q => s.includeTypes[q.type]);
+  let qs = deck.questions.filter(q => s.includeTypes[q.type] && matchesChapter(q, s) && matchesSourceScope(q, s, deck.id));
   if (s.mode!=='test' && s.tfFilter && s.tfFilter!=='all'){
     const want = s.tfFilter==='true';
     qs = qs.filter(q => q.type!=='trueFalse' || q.answer===want);
@@ -1333,11 +1731,49 @@ const MODE_INFO = {
 };
 let advancedOpen = false; // 高级设置展开状态，不随重渲染重置，只有用户主动点击折叠才会变化
 function getEffectiveByType(deck, s){
-  if (s.mode==='test' || !s.tfFilter || s.tfFilter==='all') return deck.byType;
-  const want = s.tfFilter==='true';
-  const out = Object.assign({}, deck.byType);
-  out.trueFalse = (deck.byType.trueFalse||[]).filter(q=>q.answer===want);
+  const out = {};
+  TYPE_ORDER.forEach(t=>{
+    out[t] = (deck.byType[t]||[]).filter(q => matchesChapter(q, s) && matchesSourceScope(q, s, deck.id));
+  });
+  if (s.mode!=='test' && s.tfFilter && s.tfFilter!=='all'){
+    const want = s.tfFilter==='true';
+    out.trueFalse = (out.trueFalse||[]).filter(q=>q.answer===want);
+  }
   return out;
+}
+function hasCompletedDeckOnce(deck){
+  const stats = getQuestionStats(deck.id);
+  return deck.questions.length>0 && deck.questions.every(q=>stats[q.uid] && stats[q.uid].attempts>0);
+}
+function weightedSampleQuestions(pool, n, deck, completedOnce){
+  const stats = getQuestionStats(deck.id);
+  const wrongSet = getDeckUidSet('wrong', deck.id);
+  const reviewSet = getDeckUidSet('review', deck.id);
+  const shuffledPool = Utils.shuffle(pool);
+  const unattempted = shuffledPool.filter(q=>!(stats[q.uid] && stats[q.uid].attempts>0));
+  const picked = unattempted.slice(0, n);
+  if (picked.length>=n) return picked;
+  const pickedSet = new Set(picked.map(q=>q.uid));
+  const rest = shuffledPool.filter(q=>!pickedSet.has(q.uid));
+  while (picked.length<n && rest.length){
+    const weighted = rest.map(q=>{
+      let weight = 1;
+      if (wrongSet.has(q.uid)) weight += completedOnce ? 4 : 1.5;
+      if (reviewSet.has(q.uid)) weight += completedOnce ? 2 : 1;
+      return { q, weight };
+    });
+    const total = weighted.reduce((sum,x)=>sum+x.weight,0);
+    let roll = Math.random()*total;
+    let idx = 0;
+    for (; idx<weighted.length; idx++){
+      roll -= weighted[idx].weight;
+      if (roll<=0) break;
+    }
+    const chosen = weighted[Math.min(idx, weighted.length-1)].q;
+    picked.push(chosen);
+    rest.splice(rest.findIndex(q=>q.uid===chosen.uid), 1);
+  }
+  return picked;
 }
 function planMockExam(deck, s, targetScore){
   const byType = getEffectiveByType(deck, s);
@@ -1348,32 +1784,23 @@ function planMockExam(deck, s, targetScore){
   if (!totalAvail) return null;
   const counts = {};
   types.forEach(t=>{ counts[t] = Math.min(1, avail[t]); }); // 每种已选题型先保底1题
-  let used = types.reduce((sum,t)=>sum+counts[t]*(Number(s.points[t])||1),0);
-  let remaining = targetScore-used;
-  if (remaining>0){
-    types.forEach((t,i)=>{
-      const isLast = i===types.length-1;
-      const pv = Number(s.points[t])||1;
-      const share = isLast ? remaining : remaining*(avail[t]/totalAvail);
-      const add = Utils.clamp(Math.round(share/pv), 0, avail[t]-counts[t]);
-      counts[t]+=add;
-    });
-  }
-  let currentTotal = types.reduce((sum,t)=>sum+counts[t]*(Number(s.points[t])||1),0);
-  let diff = Math.round((targetScore-currentTotal)*100)/100;
-  const bySmallPoint = types.slice().sort((a,b)=>(Number(s.points[a])||1)-(Number(s.points[b])||1));
+  let achievedTotal = types.reduce((sum,t)=>sum+counts[t]*(Number(s.points[t])||1),0);
   let guard=0;
-  while (Math.abs(diff)>=0.01 && guard<300){
+  while (achievedTotal < targetScore-0.001 && guard<600){
     guard++;
-    let adjusted=false;
-    for (const t of bySmallPoint){
-      const pv = Number(s.points[t])||1;
-      if (diff>0 && counts[t]<avail[t] && pv<=diff+0.001){ counts[t]++; diff=Math.round((diff-pv)*100)/100; adjusted=true; break; }
-      if (diff<0 && counts[t]>0 && pv<=(-diff)+0.001){ counts[t]--; diff=Math.round((diff+pv)*100)/100; adjusted=true; break; }
-    }
-    if (!adjusted) break;
+    const remaining = targetScore - achievedTotal;
+    let candidates = types.filter(t=>counts[t]<avail[t] && (Number(s.points[t])||1)<=remaining+0.001);
+    if (!candidates.length) break;
+    candidates.sort((a,b)=>{
+      const ar = counts[a] / Math.max(1, avail[a]);
+      const br = counts[b] / Math.max(1, avail[b]);
+      if (Math.abs(ar-br)>0.0001) return ar-br;
+      return (avail[b]/totalAvail) - (avail[a]/totalAvail);
+    });
+    const chosen = candidates[0];
+    counts[chosen]++;
+    achievedTotal = Math.round((achievedTotal + (Number(s.points[chosen])||1))*100)/100;
   }
-  const achievedTotal = Math.round((targetScore-diff)*100)/100;
   const totalCount = types.reduce((sum,t)=>sum+counts[t],0);
   return { counts, achievedTotal, totalCount };
 }
@@ -1392,12 +1819,18 @@ function renderSetupView(container){
       <span class="mode-icon">${m.icon}</span><h4>${m.title}</h4><p>${m.desc}</p><span class="mode-tag">${m.tag}</span>
     </button>`;
   }).join('');
+  const chapters = getChapters(deck);
+  if (s.chapterFilter!=='all' && !chapters.includes(s.chapterFilter)) s.chapterFilter = 'all';
+  if (typeof s.questionLimit==='number'){
+    s.questionLimit = Utils.clamp(Math.floor(s.questionLimit)||1, 1, Math.max(1, deck.totalQuestions));
+  }
   const mockPlan = s.mockExam ? planMockExam(deck, s, 100) : null;
   const selectedQs = s.mockExam && mockPlan
     ? deck.questions.filter(q=>false) /* 占位，实际抽题在 buildQueue 中按 mockPlan 处理 */
     : computeSelectedQuestions(deck, s);
-  const previewCount = s.mockExam && mockPlan ? mockPlan.totalCount : selectedQs.length;
-  const previewScore = s.mockExam && mockPlan ? mockPlan.achievedTotal : selectedQs.reduce((sum,q)=>sum+(Number(s.points[q.type])||0),0);
+  const previewQs = (!s.mockExam && s.questionLimit!=='all') ? selectedQs.slice(0, s.questionLimit) : selectedQs;
+  const previewCount = s.mockExam && mockPlan ? mockPlan.totalCount : previewQs.length;
+  const previewScore = s.mockExam && mockPlan ? mockPlan.achievedTotal : previewQs.reduce((sum,q)=>sum+(Number(s.points[q.type])||0),0);
   const dueN = dueCount(deck, App.srs);
   const quickNums = [10,20,30,50].filter(n=>n<deck.totalQuestions);
   const qtyHtml = quickNums.map(n=>`<button type="button" data-qty="${n}" class="${s.questionLimit===n?'active':''}">${n}题</button>`).join('')
@@ -1406,6 +1839,31 @@ function renderSetupView(container){
   const mockPreviewLine = mockPlan ? TYPE_ORDER.filter(t=>mockPlan.counts[t]>0).map(t=>`${QuestionTypes[t].label} ${mockPlan.counts[t]}题`).join('、') : '';
   const tfPol = tfPolarityCounts(deck);
   const showTfFilter = s.mode!=='test' && s.includeTypes.trueFalse && tfPol.trueCount>0 && tfPol.falseCount>0;
+  const reviewCount = getDeckUidList('review', deck.id).filter(uid=>findDeckQuestion(uid)).length;
+  const wrongCount = getDeckUidList('wrong', deck.id).filter(uid=>findDeckQuestion(uid)).length;
+  const sourceScope = s.sourceScope || 'all';
+  const sourceScopeHtml = [
+    {key:'all', label:'全部题库', count:deck.totalQuestions},
+    {key:'review', label:'复习本', count:reviewCount},
+    {key:'wrong', label:'错题本', count:wrongCount}
+  ].map(x=>`<button type="button" data-source-scope="${x.key}" class="${sourceScope===x.key?'active':''}">${x.label} ${x.count}</button>`).join('');
+  const chapterHtml = chapters.length ? `
+    <div class="chapter-filter-row">
+      <span class="tf-filter-label">章节筛选</span>
+      <div class="chapter-chip-row">
+        <button type="button" class="chapter-chip ${(s.chapterFilter||'all')==='all'?'active':''}" data-chapter-filter="all">全部</button>
+        ${chapters.map(ch=>`<button type="button" class="chapter-chip ${s.chapterFilter===ch?'active':''}" data-chapter-filter="${Utils.escapeHtml(ch)}">${Utils.escapeHtml(ch)}</button>`).join('')}
+      </div>
+    </div>` : '';
+  const localDeckSelector = App.localDecks && App.localDecks.length>1 ? `
+    <div class="deck-switcher">
+      ${App.localDecks.map(d=>`<button type="button" class="${d.id===deck.id?'active':''}" data-local-deck="${d.id}">
+        <span>${Utils.escapeHtml(d.meta.title)}</span><b>${d.totalQuestions}</b>
+      </button>`).join('')}
+    </div>` : '';
+  const mockRuleText = hasCompletedDeckOnce(deck)
+    ? '抽题规则：已完成整库首轮，错题本权重最高，复习本权重适度提高；仍会保留题型配比。'
+    : '抽题规则：优先抽取未考过的题目；整库全部完成一遍后，会提高错题本与复习本抽取权重。';
 
   container.className = 'view-pad fade-in';
   container.innerHTML = `
@@ -1419,6 +1877,7 @@ function renderSetupView(container){
         <button class="btn btn-ghost" id="browse-deck-btn" type="button">📖 浏览整卷</button>
         <button class="btn btn-secondary swap" id="swap-deck-btn" type="button">更换题库</button>
       </div>
+      ${localDeckSelector}
 
       <div class="section-title">学习模式<span class="line"></span></div>
       <div class="mode-grid">${modeCards}</div>
@@ -1426,7 +1885,15 @@ function renderSetupView(container){
       <div class="setup-grid">
         <div class="panel">
           <div class="section-title">题目范围<span class="line"></span></div>
-          <div class="chips-row">${typeChips}</div>
+          <div class="source-scope-row">
+            <span class="tf-filter-label">学习来源</span>
+            <div class="seg">${sourceScopeHtml}</div>
+          </div>
+          <div class="chips-row">${typeChips}
+            <button type="button" class="type-chip" id="type-select-all" style="border-style:dashed;">全选</button>
+            <button type="button" class="type-chip" id="type-select-none" style="border-style:dashed;">全不选</button>
+          </div>
+          ${chapterHtml}
           ${showTfFilter ? `
           <div class="tf-filter-row">
             <span class="tf-filter-label">判断题范围（便于集中记忆）</span>
@@ -1446,12 +1913,16 @@ function renderSetupView(container){
             <div class="switch ${s.mockExam?'on':''}" data-switch="mockExam"><div class="knob"></div></div>
           </div>
           ${s.mockExam ? `
-            <div class="mock-preview">${mockPlan ? `将抽取 <b>${mockPlan.totalCount}</b> 题：${mockPreviewLine}，合计 <b>${mockPlan.achievedTotal}</b> 分${mockPlan.achievedTotal<100?'（题库题量有限，暂无法凑满100分）':''}` : '请先勾选至少一种题型'}</div>
+            <div class="mock-preview">${mockPlan ? `将抽取 <b>${mockPlan.totalCount}</b> 题：${mockPreviewLine}，合计 <b>${mockPlan.achievedTotal}</b> 分${mockPlan.achievedTotal<100?'（题库题量有限，暂无法凑满100分）':''}<br>${mockRuleText}` : '请先勾选至少一种题型'}</div>
           ` : `
           <div class="section-title" style="margin-top:18px;">题量<span class="line"></span></div>
           <div class="qty-row">
-            <div class="seg">${qtyHtml}</div>
-            <input type="number" class="num-input" id="qty-custom" min="1" max="${deck.totalQuestions}" placeholder="自定义" value="${customQtyVal}">
+            <div class="seg qty-seg">${qtyHtml}
+              <label class="qty-custom-pill ${customQtyVal!==''?'active':''}">
+                <span>自定义</span>
+                <input type="number" class="qty-custom-input" id="qty-custom" min="1" max="${deck.totalQuestions}" placeholder="题数" value="${customQtyVal}">
+              </label>
+            </div>
           </div>`}
         </div>
 
@@ -1466,7 +1937,7 @@ function renderSetupView(container){
             <div class="switch ${s.shuffleOptions?'on':''}" data-switch="shuffleOptions"><div class="knob"></div></div>
           </div>
           <div class="toggle-row">
-            <div><div class="label">✨ 选择模式（免打字）</div><div class="desc">简答题变多选、填空题变单选，混淆项随机取自题库其余题目</div></div>
+            <div><div class="label">选择模式</div><div class="desc">简答题变单选、填空题按空逐项选择，混淆项随机取自题库其余题目</div></div>
             <div class="switch ${s.selectionMode?'on':''}" data-switch="selectionMode"><div class="knob"></div></div>
           </div>
         </div>
@@ -1478,6 +1949,7 @@ function renderSetupView(container){
           <div class="points-grid">
             ${presentTypes.map(t=>`<div class="points-item"><span>${QuestionTypes[t].label}</span><input type="number" class="num-input" min="0" step="0.5" data-points="${t}" value="${s.points[t]}"></div>`).join('')}
           </div>
+          <button type="button" class="btn btn-ghost" id="restore-points-btn" style="margin-top:14px;font-size:12.5px;padding:8px 14px;">↺ 恢复默认分值</button>
         </div>
       </div>
 
@@ -1489,9 +1961,16 @@ function renderSetupView(container){
   `;
 
   document.getElementById('swap-deck-btn').onclick = ()=>{ App.view='load'; render(); };
-  document.getElementById('browse-deck-btn').onclick = ()=>{ App.view='browse'; render(); };
+  document.getElementById('browse-deck-btn').onclick = ()=>{ App.browseScope='all'; App.browseBackView='setup'; App.view='browse'; render(); };
+  container.querySelectorAll('[data-local-deck]').forEach(btn=>btn.onclick=()=>selectLocalDeck(btn.dataset.localDeck));
   container.querySelectorAll('[data-mode]').forEach(btn=>btn.onclick=()=>{ s.mode=btn.dataset.mode; saveSettings(); render(); });
   container.querySelectorAll('[data-type]').forEach(btn=>btn.onclick=()=>{ const t=btn.dataset.type; s.includeTypes[t]=!s.includeTypes[t]; saveSettings(); render(); });
+  container.querySelectorAll('[data-source-scope]').forEach(btn=>btn.onclick=()=>{ s.sourceScope=btn.dataset.sourceScope; saveSettings(); render(); });
+  container.querySelectorAll('[data-chapter-filter]').forEach(btn=>btn.onclick=()=>{ s.chapterFilter=btn.dataset.chapterFilter; saveSettings(); render(); });
+  const selAllBtn = document.getElementById('type-select-all');
+  if (selAllBtn) selAllBtn.onclick = ()=>{ presentTypes.forEach(t=>s.includeTypes[t]=true); saveSettings(); render(); };
+  const selNoneBtn = document.getElementById('type-select-none');
+  if (selNoneBtn) selNoneBtn.onclick = ()=>{ presentTypes.forEach(t=>s.includeTypes[t]=false); saveSettings(); render(); };
   container.querySelectorAll('[data-switch]').forEach(sw=>sw.onclick=()=>{
     const key = sw.dataset.switch;
     s[key] = key==='flashcardScope' ? (s[key]==='due'?'all':'due') : !s[key];
@@ -1504,10 +1983,14 @@ function renderSetupView(container){
     s.tfFilter = btn.dataset.tffilter; saveSettings(); render();
   });
   const qtyCustom = document.getElementById('qty-custom');
-  if (qtyCustom) qtyCustom.onchange = ()=>{
-    const v = parseInt(qtyCustom.value,10);
-    if (v>0){ s.questionLimit = Utils.clamp(v,1,deck.totalQuestions); saveSettings(); render(); }
-  };
+  if (qtyCustom){
+    const applyCustomQty = ()=>{
+      const v = parseInt(qtyCustom.value,10);
+      if (v>0){ s.questionLimit = Utils.clamp(v,1,deck.totalQuestions); saveSettings(); render(); }
+    };
+    qtyCustom.onchange = applyCustomQty;
+    qtyCustom.onkeydown = e=>{ if (e.key==='Enter'){ e.preventDefault(); applyCustomQty(); } };
+  }
   const advHead=document.getElementById('adv-head'), advBody=document.getElementById('adv-body');
   advHead.onclick = ()=>{ advancedOpen=!advancedOpen; advHead.classList.toggle('open'); advBody.classList.toggle('open'); };
   container.querySelectorAll('[data-points]').forEach(inp=>inp.onchange=()=>{
@@ -1515,6 +1998,11 @@ function renderSetupView(container){
     s.points[t] = isNaN(v) ? 0 : Math.max(0,v);
     saveSettings(); render();
   });
+  const restorePointsBtn = document.getElementById('restore-points-btn');
+  if (restorePointsBtn) restorePointsBtn.onclick = ()=>{
+    TYPE_ORDER.forEach(t=>{ s.points[t] = QuestionTypes[t].defaultPoints; });
+    saveSettings(); render();
+  };
   document.getElementById('start-btn').onclick = startSession;
 }
 
@@ -1536,7 +2024,7 @@ function gradeObjective(card, userInput){
     return { isCorrect, scoreEarned:isCorrect?points:0, maxScore:points,
       userAnswerDisplay: userTexts.join(' / '), correctAnswerDisplay: correctTexts.join(' / ') };
   }
-  if (card._multiSelect){
+  if (card.type==='multipleChoice' || card._multiSelect){
     const selected = Array.isArray(userInput) ? userInput : [];
     const correctIdxs = card.options.map((o,i)=>o.correct?i:-1).filter(i=>i>=0);
     const selectedSet = new Set(selected), correctSet = new Set(correctIdxs);
@@ -1575,6 +2063,7 @@ function gradeFlashcardRating(card, ratingKey){
   const pct = RATING_TO_PCT[ratingKey] ?? 0;
   let correctAnswerDisplay;
   if (card.type==='singleChoice') correctAnswerDisplay = card.options.find(o=>o.correct).text;
+  else if (card.type==='multipleChoice') correctAnswerDisplay = card.options.filter(o=>o.correct).map(o=>o.text).join('、');
   else if (card.type==='trueFalse') correctAnswerDisplay = card.answer?'对':'错';
   else if (card.type==='fillInTheBlank') correctAnswerDisplay = card.answers.join(' / ');
   else correctAnswerDisplay = card.reference;
@@ -1589,14 +2078,19 @@ function resultStatus(r){
 function recordResult(card, gradeInfo){
   const sess = App.session;
   const already = sess.results.find(r=>r.uid===card.uid);
-  if (already) return already;
-  const entry = Object.assign({ uid:card.uid, type:card.type, question:card.question, graded:true }, gradeInfo);
+  if (already){
+    if (sess && sess.mode==='learn'){
+      Object.assign(already, gradeInfo, { graded:true });
+    }
+    return already;
+  }
+  const entry = Object.assign({ uid:card.uid, type:card.type, chapter:card.chapter||'', question:card.question, graded:true }, gradeInfo);
   sess.results.push(entry);
   return entry;
 }
 function recordPendingSubjective(card, userText){
   App.session.results.push({
-    uid:card.uid, type:card.type, question:card.question, reference:card.reference,
+    uid:card.uid, type:card.type, chapter:card.chapter||'', question:card.question, reference:card.reference,
     maxScore:Number(App.settings.points[card.type])||0, pendingUserText:userText||'', graded:false
   });
 }
@@ -1667,11 +2161,12 @@ function buildQueue(deck, s){
   if (s.mockExam){
     const plan = planMockExam(deck, s, 100);
     const byType = getEffectiveByType(deck, s);
+    const completedOnce = hasCompletedDeckOnce(deck);
     qs = [];
     if (plan){
       TYPE_ORDER.forEach(t=>{
         const n = plan.counts[t]||0;
-        if (n>0) qs = qs.concat(Utils.shuffle(byType[t]).slice(0,n));
+        if (n>0) qs = qs.concat(weightedSampleQuestions(byType[t], n, deck, completedOnce));
       });
     }
     qs = Utils.shuffle(qs);
@@ -1695,13 +2190,35 @@ function startSession(){
   App.session = {
     mode:s.mode, status:'active', phase:'quiz',
     queue, totalInitial:queue.length,
-    revealed:false, selectedOptionIdx:null, selectedOptionIdxs:[], selectedPerBlank:null, selectedTF:null, userTextAnswer:'',
+    sourceScope:s.sourceScope||'all',
+    chapterFilter:s.chapterFilter||'all',
+    baseSrs:Utils.deepClone(App.srs||{}),
+    questionSnapshots:queue.map(snapshotQuestion),
+    paperUids:queue.map(q=>q.uid),
+    revealed:false, selectedOptionIdx:null, selectedOptionIdxs:[], selectedPerBlank:null, activeBlankIdx:0, selectedTF:null, userTextAnswer:'',
     feedbackFlash:null, lastUserInput:null, lastGradeCorrect:null,
     requeueCounts:{}, results:[], gradingIndex:0, answeredStack:[],
     startedAt:Date.now(), cardStartedAt:Date.now()
   };
   App.view = 'quiz';
+  persistActiveSession();
   render();
+}
+function startWrongBookTest(){
+  const deck = App.deck, s = App.settings;
+  if (!deck || !s) return;
+  const wrongUids = getDeckUidList('wrong', deck.id).filter(uid=>findDeckQuestion(uid));
+  if (!wrongUids.length){ toast('错题本没有可测试的题目', {icon:'□'}); return; }
+  const wrongSet = new Set(wrongUids);
+  const presentTypes = TYPE_ORDER.filter(t=>(deck.byType[t]||[]).some(q=>wrongSet.has(q.uid)));
+  TYPE_ORDER.forEach(t=>{ s.includeTypes[t] = presentTypes.includes(t); });
+  s.mode = 'test';
+  s.sourceScope = 'wrong';
+  s.mockExam = false;
+  s.questionLimit = 'all';
+  s.chapterFilter = 'all';
+  saveSettings();
+  startSession();
 }
 function transitionRender(renderFn){
   const existing = document.getElementById('qcard-el');
@@ -1716,6 +2233,7 @@ function completeCurrentCard(opts){
   opts = opts || {};
   const sess = App.session;
   const card = sess.queue.shift();
+  sess.pendingCompletion = null;
   if (opts.requeue){
     const insertAt = Math.min(sess.queue.length, opts.requeueDelay==null?3:opts.requeueDelay);
     sess.queue.splice(insertAt, 0, card);
@@ -1726,8 +2244,10 @@ function completeCurrentCard(opts){
   if (!sess.queue.length){ finishQuizPhase(); return; }
   sess.revealed=false; sess.selectedOptionIdx=null; sess.selectedOptionIdxs=[]; sess.selectedTF=null; sess.userTextAnswer='';
   sess.selectedPerBlank=null;
+  sess.activeBlankIdx=0;
   sess.feedbackFlash=null; sess.lastUserInput=null; sess.lastGradeCorrect=null;
   sess.cardStartedAt = Date.now();
+  persistActiveSession();
   transitionRender(render);
 }
 function goToPreviousQuestion(){
@@ -1740,42 +2260,80 @@ function goToPreviousQuestion(){
   sess.revealed=false;
   sess.feedbackFlash=null; sess.lastUserInput=null; sess.lastGradeCorrect=null;
   sess.cardStartedAt = Date.now();
+  sess.pendingCompletion = null;
+  persistActiveSession();
   transitionRender(render);
 }
 function finishQuizPhase(){
   const sess = App.session;
   const hasPending = sess.results.some(r=>r.graded===false);
   if (hasPending){ sess.phase='grading'; sess.gradingIndex=0; App.view='grading'; }
-  else { finalizeSession(); App.view='report'; }
+  else {
+    finalizeSession().then(()=>{ App.view='report'; render(); });
+    return;
+  }
+  if (App.session && App.session.status==='active') persistActiveSession();
   render();
 }
-function finalizeSession(){
-  const sess = App.session;
-  const endedAt = Date.now();
+function buildRecordFromSession(sess, opts={}){
+  const endedAt = opts.endedAt || Date.now();
   const byType = {};
   TYPE_ORDER.forEach(t=>{ byType[t] = { correct:0, mid:0, total:0, score:0, maxScore:0 }; });
   let score=0, maxScore=0;
-  sess.results.forEach(r=>{
+  const gradedResults = sess.results.filter(r=>r.graded!==false);
+  gradedResults.forEach(r=>{
     score += r.scoreEarned||0; maxScore += r.maxScore||0;
     const b = byType[r.type];
     b.total++; b.score += r.scoreEarned||0; b.maxScore += r.maxScore||0;
     const status = resultStatus(r);
     if (status==='ok') b.correct++; else if (status==='mid') b.mid++;
   });
-  const record = {
-    id: Utils.uid('sess'), deckId:App.deck.id, deckTitle:App.deck.meta.title, mode:sess.mode,
+  return {
+    id: opts.id || Utils.uid('sess'), deckId:App.deck.id, deckTitle:App.deck.meta.title, mode:sess.mode,
     startedAt:sess.startedAt, endedAt, durationMs:endedAt-sess.startedAt,
-    totalQuestions:sess.results.length,
+    totalQuestions:gradedResults.length,
     score:Math.round(score*100)/100, maxScore:Math.round(maxScore*100)/100,
     percentage: maxScore>0 ? Math.round((score/maxScore)*1000)/10 : 0,
     byType,
-    details: sess.results.map(r=>({
-      uid:r.uid, type:r.type, question:r.question,
+    partial:!!opts.partial,
+    sourceScope:sess.sourceScope||'all',
+    chapterFilter:sess.chapterFilter||'all',
+    paperUids:(sess.paperUids||[]).slice(),
+    questionSnapshots:(sess.questionSnapshots||[]).map(snapshotQuestion),
+    details: gradedResults.map(r=>({
+      uid:r.uid, type:r.type, chapter:r.chapter||'', question:r.question,
       userAnswer:r.userAnswerDisplay, correctAnswer:r.correctAnswerDisplay,
       status:resultStatus(r), scoreEarned:r.scoreEarned, maxScore:r.maxScore
     }))
   };
-  const { state:newStreak, bumped } = updateStreak(App.progress.streak, endedAt);
+}
+function updateQuestionStatsFromRecord(record){
+  const stats = getQuestionStats(record.deckId);
+  record.details.forEach(d=>{
+    const cur = stats[d.uid] || {attempts:0, correct:0, wrong:0, mid:0};
+    cur.attempts++;
+    if (d.status==='ok') cur.correct++;
+    else if (d.status==='mid') cur.mid++;
+    else cur.wrong++;
+    cur.lastStatus = d.status;
+    cur.lastAt = record.endedAt;
+    stats[d.uid] = cur;
+  });
+}
+function applyNotebookUpdatesFromRecord(record){
+  const wrongList = getDeckUidList('wrong', record.deckId);
+  record.details.forEach(d=>{
+    if (d.status==='no' && !wrongList.includes(d.uid)) wrongList.push(d.uid);
+    if (record.sourceScope==='wrong' && d.status==='ok'){
+      const idx = wrongList.indexOf(d.uid);
+      if (idx>=0) wrongList.splice(idx, 1);
+    }
+  });
+}
+async function finalizeSession(){
+  const sess = App.session;
+  const record = buildRecordFromSession(sess);
+  const { state:newStreak, bumped } = updateStreak(App.progress.streak, record.endedAt);
   App.progress.streak = newStreak;
   App.progress.sessions.unshift(record);
   if (App.progress.sessions.length>300) App.progress.sessions.length = 300;
@@ -1784,7 +2342,11 @@ function finalizeSession(){
   App.progress.totals.totalScorePoints += record.score;
   App.progress.totals.totalMaxPoints += record.maxScore;
   App.progress.totals.totalTimeMs += record.durationMs;
-  saveProgress();
+  updateQuestionStatsFromRecord(record);
+  applyNotebookUpdatesFromRecord(record);
+  await saveProgress();
+  if (sess.mode==='flashcard') await saveSrs();
+  await clearActiveSessionDraft();
   sess.status = 'finished';
   App.lastReport = record;
   App.session = null;
@@ -1819,6 +2381,18 @@ function renderQuizView(container){
   const prevBtn = document.getElementById('quiz-prev-btn');
   if (prevBtn) prevBtn.onclick = goToPreviousQuestion;
   bindCardEvents(sess, card);
+  schedulePendingCompletion(sess);
+}
+function schedulePendingCompletion(sess){
+  if (!sess || !sess.pendingCompletion) return;
+  if (sess._pendingTimer) clearTimeout(sess._pendingTimer);
+  const pending = sess.pendingCompletion;
+  sess._pendingTimer = setTimeout(()=>{
+    if (!App.session || App.session!==sess || !sess.pendingCompletion) return;
+    const cur = sess.queue[0];
+    if (pending.requeue && cur) sess.requeueCounts[cur.uid] = (sess.requeueCounts[cur.uid]||0)+1;
+    completeCurrentCard({ requeue:pending.requeue, requeueDelay:pending.requeueDelay });
+  }, Math.max(0, (pending.dueAt||Date.now())-Date.now()));
 }
 function cardClasses(sess){
   let cls = 'qcard';
@@ -1869,6 +2443,15 @@ function renderSelfGradeGrid(){
 function renderCardHtml(sess, card){
   return sess.mode==='flashcard' ? renderFlashcardFace(sess, card) : renderInteractiveFace(sess, card);
 }
+function renderQuestionTools(card){
+  if (!App.deck) return '';
+  const starred = isInNotebook('review', card.uid, App.deck.id);
+  const wrong = isInNotebook('wrong', card.uid, App.deck.id);
+  return `<div class="qcard-tools">
+    <button type="button" class="bookmark-btn ${starred?'on':''}" data-bookmark="${card.uid}" title="${starred?'移出复习本':'加入复习本'}">${starred?'★':'☆'}</button>
+    ${wrong ? `<span class="wrong-chip">错题本</span>` : ''}
+  </div>`;
+}
 function renderFlashcardFace(sess, card){
   const revealed = sess.revealed;
   const isFillBlank = card.type==='fillInTheBlank';
@@ -1877,7 +2460,7 @@ function renderFlashcardFace(sess, card){
     : `<div class="qcard-question">${renderQuestionText(card)}</div>`;
 
   let bodyHtml = '';
-  if (card.type==='singleChoice'){
+  if (card.type==='singleChoice' || card.type==='multipleChoice'){
     bodyHtml = `<div class="opt-list">` + card.options.map(o=>{
       const cls = (revealed && o.correct) ? 'correct' : '';
       return `<div class="opt-btn ${cls}" style="cursor:default;">${Utils.escapeHtml(o.text)}</div>`;
@@ -1892,30 +2475,64 @@ function renderFlashcardFace(sess, card){
   }
   const bottomHtml = revealed ? renderRateGrid(card) : `<div class="flip-hint"><span class="kbd">SPACE</span>翻面查看答案</div>`;
   return `<div class="${cardClasses(sess)}" id="qcard-el">
+    ${renderQuestionTools(card)}
     ${typeLabelHtml(card, '闪卡')}
     ${questionHtml}
     <div class="qcard-body">${bodyHtml}</div>
     ${bottomHtml}
   </div>`;
 }
+function renderPerBlankQuestionHtml(card, sel, activeIdx, revealed){
+  let i = 0;
+  const blanks = card._blankOptions || [];
+  const html = Utils.escapeHtml(card.question).replace(/_{2,}/g, ()=>{
+    const bi = i++;
+    const opts = blanks[bi] || [];
+    const picked = sel[bi]!=null ? opts[sel[bi]] : null;
+    let cls = 'inline-blank-choice';
+    if (bi===activeIdx && !revealed) cls += ' active';
+    if (picked) cls += ' filled';
+    if (revealed && picked) cls += picked.correct ? ' correct' : ' wrong';
+    const content = picked ? Utils.escapeHtml(picked.text) : '<span class="blank-line-only" aria-hidden="true"></span>';
+    return `<button type="button" class="${cls}" data-blank-nav="${bi}" ${revealed?'disabled':''} aria-label="填空">${content}</button>`;
+  });
+  if (i===0){
+    return html + blanks.map((opts,bi)=>{
+      const picked = sel[bi]!=null ? opts[sel[bi]] : null;
+      let cls = 'inline-blank-choice';
+      if (bi===activeIdx && !revealed) cls += ' active';
+      if (picked) cls += ' filled';
+      if (revealed && picked) cls += picked.correct ? ' correct' : ' wrong';
+      const content = picked ? Utils.escapeHtml(picked.text) : '<span class="blank-line-only" aria-hidden="true"></span>';
+      return ` <button type="button" class="${cls}" data-blank-nav="${bi}" ${revealed?'disabled':''} aria-label="填空">${content}</button>`;
+    }).join('');
+  }
+  return html;
+}
 function renderInteractiveFace(sess, card){
   const mode = sess.mode;
   let body = '', actions = '';
   if (card._perBlankChoice){
     const sel = sess.selectedPerBlank || new Array(card._blankOptions.length).fill(null);
-    body = card._blankOptions.map((opts,bi)=>{
-      const optsHtml = opts.map((o,oi)=>{
-        let cls = sel[bi]===oi ? 'selected' : '';
-        if (sess.revealed){ if (o.correct) cls='correct'; else if (sel[bi]===oi) cls='wrong'; }
-        return `<button type="button" class="mini-opt-btn ${cls}" data-blank="${bi}" data-oi="${oi}" ${sess.revealed?'disabled':''}>${Utils.escapeHtml(o.text)}</button>`;
-      }).join('');
-      return `<div class="blank-choice-row"><div class="blank-choice-label">空 ${bi+1}</div><div class="blank-choice-opts">${optsHtml}</div></div>`;
+    const active = Utils.clamp(sess.activeBlankIdx||0, 0, card._blankOptions.length-1);
+    const activeOpts = card._blankOptions[active] || [];
+    const optsHtml = activeOpts.map((o,oi)=>{
+      let cls = sel[active]===oi ? 'selected' : '';
+      return `<button type="button" class="opt-btn ${cls}" data-blank-option="${oi}" ${sess.revealed?'disabled':''}>
+        <span class="opt-key">${String.fromCharCode(65+oi)}</span><span class="opt-text">${Utils.escapeHtml(o.text)}</span></button>`;
     }).join('');
+    body = `<div class="qcard-question">${renderPerBlankQuestionHtml(card, sel, active, sess.revealed)}</div>`;
+    if (!sess.revealed){
+      body += `<div class="opt-list per-blank-options">${optsHtml}</div>`;
+    }
     if (!sess.revealed){
       const allPicked = sel.every(v=>v!=null);
-      actions = `<div class="qcard-actions"><button type="button" class="btn btn-primary" id="confirm-btn" ${allPicked?'':'disabled'}>确认 <span class="kbd">⏎</span></button></div>`;
+      const showConfirm = allPicked && active===card._blankOptions.length-1;
+      const prevBtn = active>0 ? `<button type="button" class="btn btn-secondary" id="prev-blank-btn">上一空</button>` : '';
+      const confirmBtn = showConfirm ? `<button type="button" class="btn btn-primary" id="confirm-btn">确认 <span class="kbd">⏎</span></button>` : '';
+      actions = (prevBtn || confirmBtn) ? `<div class="qcard-actions">${prevBtn}${confirmBtn}</div>` : '';
     }
-  } else if (card._multiSelect){
+  } else if (card.type==='multipleChoice' || card._multiSelect){
     const selIdxs = sess.selectedOptionIdxs || [];
     body = `<div class="opt-list">` + card.options.map((o,i)=>{
       const isSel = selIdxs.includes(i);
@@ -1962,10 +2579,12 @@ function renderInteractiveFace(sess, card){
     }
   }
   const isChoiceStyled = card._dynamicChoice || card._perBlankChoice;
-  const modeLabel = (mode==='learn'?'学习模式':'测试模式') + (isChoiceStyled?(card._perBlankChoice?' · 选择模式(按顺序逐空选择)':(card._multiSelect?' · 选择模式(可多选)':' · 选择模式')):'');
+  const showTopQuestion = !(card._perBlankChoice) && (card.type!=='fillInTheBlank' || isChoiceStyled);
+  const modeLabel = (mode==='learn'?'学习模式':'测试模式') + (isChoiceStyled?(card._perBlankChoice?' · 选择模式(按顺序逐空选择)':((card.type==='multipleChoice'||card._multiSelect)?' · 选择模式(可多选)':' · 选择模式')):(card.type==='multipleChoice'?' · 可多选':''));
   return `<div class="${cardClasses(sess)}" id="qcard-el">
+    ${renderQuestionTools(card)}
     ${typeLabelHtml(card, modeLabel)}
-    ${(card.type!=='fillInTheBlank' || isChoiceStyled) ? `<div class="qcard-question">${isChoiceStyled?Utils.escapeHtml(card.question).replace(/_{2,}/g,'<span class="blank" aria-hidden="true"></span>'):renderQuestionText(card)}</div>` : ''}
+    ${showTopQuestion ? `<div class="qcard-question">${isChoiceStyled?Utils.escapeHtml(card.question).replace(/_{2,}/g,'<span class="blank" aria-hidden="true"></span>'):renderQuestionText(card)}</div>` : ''}
     <div class="qcard-body">${body}</div>
     ${actions}
   </div>`;
@@ -1998,14 +2617,31 @@ function updateMultiSelectUI(){
 function updatePerBlankUI(){
   const sess = App.session;
   const sel = sess.selectedPerBlank || [];
-  document.querySelectorAll('[data-blank]').forEach(btn=>{
-    const bi = +btn.dataset.blank, oi = +btn.dataset.oi;
-    btn.classList.toggle('selected', sel[bi]===oi);
+  const active = sess.activeBlankIdx || 0;
+  document.querySelectorAll('[data-blank-option]').forEach(btn=>{
+    const oi = +btn.dataset.blankOption;
+    btn.classList.toggle('selected', sel[active]===oi);
   });
   const cb = document.getElementById('confirm-btn');
   if (cb) cb.disabled = !sel.every(v=>v!=null);
 }
+function choosePerBlankOption(oi){
+  const sess = App.session, card = sess.queue[0];
+  if (!card || !card._perBlankChoice || sess.revealed) return;
+  sess.selectedPerBlank = sess.selectedPerBlank || new Array(card._blankOptions.length).fill(null);
+  const active = Utils.clamp(sess.activeBlankIdx||0, 0, card._blankOptions.length-1);
+  sess.selectedPerBlank[active] = oi;
+  if (active < card._blankOptions.length-1){
+    sess.activeBlankIdx = active+1;
+  }
+  persistActiveSession();
+  render();
+}
 function bindCardEvents(sess, card){
+  document.querySelectorAll('[data-bookmark]').forEach(btn=>btn.addEventListener('click', e=>{
+    e.stopPropagation();
+    toggleReviewBook(btn.dataset.bookmark);
+  }));
   if (sess.mode==='flashcard'){
     if (!sess.revealed){
       const el = document.getElementById('qcard-el');
@@ -2018,15 +2654,22 @@ function bindCardEvents(sess, card){
   if (card._perBlankChoice){
     if (!sess.revealed){
       sess.selectedPerBlank = sess.selectedPerBlank || new Array(card._blankOptions.length).fill(null);
-      document.querySelectorAll('[data-blank]').forEach(btn=>btn.addEventListener('click', ()=>{
-        const bi = +btn.dataset.blank, oi = +btn.dataset.oi;
-        sess.selectedPerBlank[bi] = oi;
-        updatePerBlankUI();
+      document.querySelectorAll('[data-blank-nav]').forEach(btn=>btn.addEventListener('click', ()=>{
+        sess.activeBlankIdx = +btn.dataset.blankNav;
+        persistActiveSession();
+        render();
       }));
+      document.querySelectorAll('[data-blank-option]').forEach(btn=>btn.addEventListener('click', ()=>choosePerBlankOption(+btn.dataset.blankOption)));
+      const prevBlankBtn = document.getElementById('prev-blank-btn');
+      if (prevBlankBtn) prevBlankBtn.onclick = ()=>{
+        sess.activeBlankIdx = Math.max(0, (sess.activeBlankIdx||0)-1);
+        persistActiveSession();
+        render();
+      };
       const cb = document.getElementById('confirm-btn');
       if (cb) cb.onclick = ()=>{ if (sess.selectedPerBlank.every(v=>v!=null)) submitObjectiveAnswer(sess.selectedPerBlank.slice()); };
     }
-  } else if (card._multiSelect){
+  } else if (card.type==='multipleChoice' || card._multiSelect){
     if (!sess.revealed){
       document.querySelectorAll('[data-opt]').forEach(btn=>btn.addEventListener('click', ()=>{
         const idx = +btn.dataset.opt;
@@ -2034,19 +2677,20 @@ function bindCardEvents(sess, card){
         const pos = sess.selectedOptionIdxs.indexOf(idx);
         if (pos>=0) sess.selectedOptionIdxs.splice(pos,1); else sess.selectedOptionIdxs.push(idx);
         updateMultiSelectUI();
+        persistActiveSession();
       }));
       const cb = document.getElementById('confirm-btn');
       if (cb) cb.onclick = ()=>{ if ((sess.selectedOptionIdxs||[]).length) submitObjectiveAnswer(sess.selectedOptionIdxs); };
     }
   } else if (card.type==='singleChoice' || card._dynamicChoice){
     if (!sess.revealed){
-      document.querySelectorAll('[data-opt]').forEach(btn=>btn.addEventListener('click', ()=>{ sess.selectedOptionIdx=+btn.dataset.opt; updateOptionSelectionUI(); }));
+      document.querySelectorAll('[data-opt]').forEach(btn=>btn.addEventListener('click', ()=>{ sess.selectedOptionIdx=+btn.dataset.opt; updateOptionSelectionUI(); persistActiveSession(); }));
       const cb = document.getElementById('confirm-btn');
       if (cb) cb.onclick = ()=>{ if (sess.selectedOptionIdx!=null) submitObjectiveAnswer(sess.selectedOptionIdx); };
     }
   } else if (card.type==='trueFalse'){
     if (!sess.revealed){
-      document.querySelectorAll('[data-tf]').forEach(btn=>btn.addEventListener('click', ()=>{ sess.selectedTF = btn.dataset.tf==='true'; updateTFSelectionUI(); }));
+      document.querySelectorAll('[data-tf]').forEach(btn=>btn.addEventListener('click', ()=>{ sess.selectedTF = btn.dataset.tf==='true'; updateTFSelectionUI(); persistActiveSession(); }));
       const cb = document.getElementById('confirm-btn');
       if (cb) cb.onclick = ()=>{ if (sess.selectedTF!=null) submitObjectiveAnswer(sess.selectedTF); };
     }
@@ -2054,7 +2698,7 @@ function bindCardEvents(sess, card){
     const input = document.getElementById('blank-input');
     if (input && !sess.revealed){
       input.focus();
-      input.addEventListener('input', ()=>{ sess.userTextAnswer = input.value; });
+      input.addEventListener('input', ()=>{ sess.userTextAnswer = input.value; persistActiveSession(); });
       input.addEventListener('keydown', e=>{ if (e.key==='Enter'){ e.preventDefault(); submitObjectiveAnswer(sess.userTextAnswer); } });
     }
     const cb = document.getElementById('confirm-btn');
@@ -2063,7 +2707,7 @@ function bindCardEvents(sess, card){
     if (!sess.revealed){
       const ta = document.getElementById('essay-input');
       if (ta){
-        ta.addEventListener('input', ()=>{ sess.userTextAnswer = ta.value; });
+        ta.addEventListener('input', ()=>{ sess.userTextAnswer = ta.value; persistActiveSession(); });
         ta.addEventListener('keydown', e=>{ if ((e.metaKey||e.ctrlKey) && e.key==='Enter'){ e.preventDefault(); submitEssayAnswer(); } });
       }
       const cb = document.getElementById('confirm-btn');
@@ -2084,6 +2728,7 @@ function flipCurrentCard(){
   const sess = App.session;
   if (!sess || sess.mode!=='flashcard' || sess.revealed) return;
   sess.revealed = true;
+  persistActiveSession();
   render();
 }
 function submitFlashcardRating(ratingKey){
@@ -2092,7 +2737,6 @@ function submitFlashcardRating(ratingKey){
   recordResult(card, g);
   const newSrsState = applySrsRating(App.srs[card.uid], ratingKey);
   App.srs[card.uid] = newSrsState;
-  saveSrs();
   completeCurrentCard({ requeue:newSrsState.requeue, requeueDelay:3 });
 }
 function stashAnswerForCard(sess, card, input){
@@ -2102,6 +2746,7 @@ function stashAnswerForCard(sess, card, input){
 function restoreAnswerForCard(sess, card){
   const saved = (sess.answersByUid||{})[card.uid];
   sess.selectedOptionIdx=null; sess.selectedOptionIdxs=[]; sess.selectedTF=null; sess.userTextAnswer='';
+  sess.activeBlankIdx=0;
   sess.selectedPerBlank = card._perBlankChoice ? new Array(card._blankOptions.length).fill(null) : sess.selectedPerBlank;
   if (saved===undefined) return;
   if (card._perBlankChoice) sess.selectedPerBlank = Array.isArray(saved) ? saved.slice() : sess.selectedPerBlank;
@@ -2130,13 +2775,11 @@ function submitLearnObjective(userInput){
   sess.revealed = true;
   sess.lastUserInput = userInput;
   sess.lastGradeCorrect = g.isCorrect;
+  const requeueNeeded = !g.isCorrect && (sess.requeueCounts[card.uid]||0) < 1;
+  sess.pendingCompletion = { requeue:requeueNeeded, requeueDelay:3, dueAt:Date.now()+(g.isCorrect ? 750 : 1150) };
+  persistActiveSession();
   render();
   flashFeedback(g.isCorrect ? 'good' : 'bad');
-  const requeueNeeded = !g.isCorrect && (sess.requeueCounts[card.uid]||0) < 1;
-  setTimeout(()=>{
-    if (requeueNeeded) sess.requeueCounts[card.uid] = (sess.requeueCounts[card.uid]||0)+1;
-    completeCurrentCard({ requeue:requeueNeeded, requeueDelay:3 });
-  }, g.isCorrect ? 750 : 1150);
 }
 function submitLearnSubjective(ratingKey){
   const sess = App.session, card = sess.queue[0];
@@ -2154,13 +2797,26 @@ function submitEssayAnswer(){
     completeCurrentCard({ requeue:false });
   } else {
     sess.revealed = true;
+    persistActiveSession();
     render();
   }
 }
-function confirmExitSession(){
-  confirmModal('退出本轮学习？', '当前这一轮的进度不会被保存，确定要退出吗？', ()=>{
-    App.session = null; App.view = 'setup'; render();
-  }, { danger:true, confirmLabel:'退出' });
+async function confirmExitSession(){
+  const sess = App.session;
+  if (!sess){ App.view='setup'; render(); return; }
+  if (sess._pendingTimer) clearTimeout(sess._pendingTimer);
+  if (sess.baseSrs) App.srs = Utils.deepClone(sess.baseSrs);
+  const hasAnswered = sess.results.some(r=>r.graded!==false);
+  const partial = hasAnswered ? buildRecordFromSession(sess, {partial:true, id:Utils.uid('exit')}) : null;
+  await clearActiveSessionDraft();
+  App.session = null;
+  if (partial && partial.totalQuestions>0){
+    App.lastReport = partial;
+    App.view = 'report';
+  } else {
+    App.view = 'setup';
+  }
+  render();
 }
 
 /* ============================================================
@@ -2170,7 +2826,7 @@ function renderGradingView(container){
   const sess = App.session;
   if (!sess){ App.view='setup'; render(); return; }
   const pending = sess.results.filter(r=>r.graded===false);
-  if (sess.gradingIndex>=pending.length){ finalizeSession(); App.view='report'; render(); return; }
+  if (sess.gradingIndex>=pending.length){ finalizeSession().then(()=>{ App.view='report'; render(); }); return; }
   const entry = pending[sess.gradingIndex];
   container.className = 'quiz-shell fade-in';
   container.innerHTML = `
@@ -2199,6 +2855,7 @@ function renderGradingView(container){
     btn.addEventListener('click', ()=>{
       finalizeGradingEntry(entry, btn.dataset.sg);
       sess.gradingIndex++;
+      persistActiveSession();
       transitionRender(render);
     });
   });
@@ -2245,7 +2902,17 @@ function handleGlobalKeydown(e){
     return;
   }
   if (inTextField) return; // 交给输入框自身的 keydown 处理 Enter / Ctrl+Enter
-  if (card._multiSelect){
+  if (card._perBlankChoice){
+    const active = Utils.clamp(sess.activeBlankIdx||0, 0, card._blankOptions.length-1);
+    const idx = +e.key-1;
+    if (e.key>='1' && e.key<='8' && idx<(card._blankOptions[active]||[]).length){
+      e.preventDefault();
+      choosePerBlankOption(idx);
+    } else if (e.key==='Enter' && (sess.selectedPerBlank||[]).every(v=>v!=null)){
+      e.preventDefault();
+      submitObjectiveAnswer(sess.selectedPerBlank.slice());
+    }
+  } else if (card.type==='multipleChoice' || card._multiSelect){
     const idx = +e.key-1;
     if (e.key>='1' && e.key<='8' && idx<card.options.length){
       e.preventDefault();
@@ -2253,15 +2920,16 @@ function handleGlobalKeydown(e){
       const pos = sess.selectedOptionIdxs.indexOf(idx);
       if (pos>=0) sess.selectedOptionIdxs.splice(pos,1); else sess.selectedOptionIdxs.push(idx);
       updateMultiSelectUI();
+      persistActiveSession();
     } else if (e.key==='Enter' && (sess.selectedOptionIdxs||[]).length){ e.preventDefault(); submitObjectiveAnswer(sess.selectedOptionIdxs); }
   } else if (card.type==='singleChoice' || card._dynamicChoice){
     if (['1','2','3','4'].includes(e.key)){
       const idx = +e.key-1;
-      if (idx<card.options.length){ e.preventDefault(); sess.selectedOptionIdx=idx; updateOptionSelectionUI(); }
+      if (idx<card.options.length){ e.preventDefault(); sess.selectedOptionIdx=idx; updateOptionSelectionUI(); persistActiveSession(); }
     } else if (e.key==='Enter' && sess.selectedOptionIdx!=null){ e.preventDefault(); submitObjectiveAnswer(sess.selectedOptionIdx); }
   } else if (card.type==='trueFalse'){
-    if (e.key==='1'){ e.preventDefault(); sess.selectedTF=true; updateTFSelectionUI(); }
-    else if (e.key==='2'){ e.preventDefault(); sess.selectedTF=false; updateTFSelectionUI(); }
+    if (e.key==='1'){ e.preventDefault(); sess.selectedTF=true; updateTFSelectionUI(); persistActiveSession(); }
+    else if (e.key==='2'){ e.preventDefault(); sess.selectedTF=false; updateTFSelectionUI(); persistActiveSession(); }
     else if (e.key==='Enter' && sess.selectedTF!=null){ e.preventDefault(); submitObjectiveAnswer(sess.selectedTF); }
   }
 }
@@ -2276,75 +2944,180 @@ document.addEventListener('keydown', handleGlobalKeydown);
 function renderBrowseView(container){
   const deck = App.deck;
   const showAns = App._browseShowAnswers !== false;
-  const presentTypes = TYPE_ORDER.filter(t=>deck.byType[t] && deck.byType[t].length);
+  const scope = App.browseScope || 'all';
+  const chapters = getChapters(deck);
+  const selectedChapters = normalizeChapterSelection(chapters);
+  let qs = deck.questions.slice();
+  if (scope==='review') qs = qs.filter(q=>isInNotebook('review', q.uid, deck.id));
+  if (scope==='wrong') qs = qs.filter(q=>isInNotebook('wrong', q.uid, deck.id));
+  if (selectedChapters.length) qs = qs.filter(q=>selectedChapters.includes(q.chapter));
+  const grouped = TYPE_ORDER.map(t=>({type:t, questions:qs.filter(q=>q.type===t)})).filter(g=>g.questions.length);
+  const wrongCount = getDeckUidList('wrong', deck.id).filter(uid=>findDeckQuestion(uid)).length;
+  const scopeButtons = [
+    {key:'all', label:'整卷', count:deck.totalQuestions},
+    {key:'review', label:'复习本', count:getDeckUidList('review', deck.id).filter(uid=>findDeckQuestion(uid)).length},
+    {key:'wrong', label:'错题本', count:wrongCount}
+  ].map(x=>`<button type="button" data-browse-scope="${x.key}" class="${scope===x.key?'active':''}">${x.label} ${x.count}</button>`).join('');
+  const chapterFilterHtml = chapters.length ? `<div class="browse-filter-line"><span>章节</span>${chapterDropdownHtml(chapters, selectedChapters)}</div>` : '';
+  const wrongTestStrip = scope==='wrong' && wrongCount>0 ? `
+    <div class="wrong-test-strip">
+      <div>
+        <strong>错题本测试</strong>
+        <span>将从错题本的 ${wrongCount} 题开始测试；测试中答对的题目会在结算后自动移出错题本。</span>
+      </div>
+      <button class="btn btn-primary" id="wrong-test-btn" type="button">从错题本开始测试</button>
+    </div>` : '';
 
-  const sidebarHtml = presentTypes.map(t=>{
-    const cells = deck.byType[t].map((q,i)=>`<a href="#bq-${q.uid}" class="nav-cell" data-jump="${q.uid}" title="${Utils.escapeHtml(q.question.slice(0,30))}">${i+1}</a>`).join('');
-    return `<h5>${QuestionTypes[t].label} (${deck.byType[t].length})</h5><div class="nav-grid">${cells}</div>`;
-  }).join('');
+  const sidebarHtml = renderPreviewSidebar(grouped, 'bq');
 
-  const mainHtml = presentTypes.map(t=>{
-    const items = deck.byType[t].map((q,i)=>renderBrowseQuestion(q, i+1, showAns)).join('');
-    return `<div class="browse-section"><h3>${QuestionTypes[t].icon} ${QuestionTypes[t].label}（${deck.byType[t].length} 题，原始顺序）</h3>${items}</div>`;
-  }).join('');
+  const mainHtml = grouped.length ? grouped.map(g=>{
+    const items = g.questions.map((q,i)=>renderPreviewQuestion(q, i+1, {showAns, idPrefix:'bq', actions:true})).join('');
+    return `<div class="browse-section"><h3>${QuestionTypes[g.type].label}（${g.questions.length} 题）</h3>${items}</div>`;
+  }).join('') : `<div class="empty-state"><span class="e-icon">□</span><p>当前筛选下没有题目</p></div>`;
 
   container.className = 'view-pad fade-in';
   container.innerHTML = `
     <div class="container" style="max-width:1120px;">
       <div class="browse-topbar">
         <button class="btn btn-secondary" id="browse-back-btn" type="button">← 返回设置</button>
-        <div class="toggle-row" style="border:none;padding:0;">
+        <div class="browse-filter-pack">
+          <div class="seg">${scopeButtons}</div>
+          ${chapterFilterHtml}
+        </div>
+        <div class="browse-answer-fixed">
           <div class="label" style="font-size:13px;">显示答案</div>
-          <div class="switch ${showAns?'on':''}" id="browse-answer-switch" style="margin-left:12px;"><div class="knob"></div></div>
+          <div class="switch ${showAns?'on':''}" id="browse-answer-switch"><div class="knob"></div></div>
         </div>
       </div>
+      ${wrongTestStrip}
       <div class="browse-shell">
         <div class="browse-main">${mainHtml}</div>
         <div class="browse-sidebar">${sidebarHtml}</div>
       </div>
     </div>
   `;
-  document.getElementById('browse-back-btn').onclick = ()=>{ App.view='setup'; render(); };
+  document.getElementById('browse-back-btn').onclick = ()=>{ App.view=App.browseBackView||'setup'; render(); };
   document.getElementById('browse-answer-switch').onclick = ()=>{ App._browseShowAnswers = !showAns; render(); };
+  const wrongTestBtn = document.getElementById('wrong-test-btn');
+  if (wrongTestBtn) wrongTestBtn.onclick = startWrongBookTest;
+  container.querySelectorAll('[data-browse-scope]').forEach(btn=>btn.onclick=()=>{ App.browseScope=btn.dataset.browseScope; render(); });
+  container.querySelectorAll('[data-browse-chapter]').forEach(inp=>inp.onchange=()=>{
+    const ch = inp.dataset.browseChapter;
+    const set = new Set(App.browseChapters||[]);
+    if (inp.checked) set.add(ch); else set.delete(ch);
+    App.browseChapters = [...set];
+    render();
+  });
+  const chapterAll = container.querySelector('[data-browse-chapter-all]');
+  if (chapterAll) chapterAll.onclick = ()=>{ App.browseChapters=[]; render(); };
+  bindPreviewQuestionActions(container);
   container.querySelectorAll('[data-jump]').forEach(a=>{
     a.addEventListener('click', e=>{
       e.preventDefault();
       const target = document.getElementById('bq-'+a.dataset.jump);
-      if (target) target.scrollIntoView({behavior:'smooth', block:'start'});
+      if (target) target.scrollIntoView({block:'start'});
     });
   });
   setupBrowseScrollSpy(container);
 }
-function renderBrowseQuestion(q, num, showAns){
+function renderPreviewSidebar(grouped, idPrefix, opts={}){
+  const detailMap = opts.detailMap || null;
+  const statusLegend = detailMap ? (opts.mode==='flashcard'
+    ? `<div class="sidebar-legend"><span><i class="status-ok"></i>已掌握</span><span><i class="status-mid"></i>复习中</span><span><i class="status-no"></i>错题</span><span><i class="status-empty"></i>未学习</span></div>`
+    : `<div class="sidebar-legend"><span><i class="status-ok"></i>正确</span><span><i class="status-no"></i>错误</span></div>`) : '';
+  const body = grouped.map(g=>{
+    const entries = g.questions ? g.questions.map(q=>({question:q})) : g.items;
+    const cells = entries.map((entry,i)=>{
+      const q = entry.question;
+      const d = detailMap ? detailMap.get(q.uid) : null;
+      let statusClass = '';
+      if (detailMap){
+        let heatStatus = d ? d.status : 'empty';
+        if (opts.mode!=='flashcard') heatStatus = heatStatus==='ok' ? 'ok' : (heatStatus==='empty' ? 'empty' : 'no');
+        statusClass = ` status-${heatStatus==='mid'?'mid':(heatStatus==='ok'?'ok':(heatStatus==='empty'?'empty':'no'))}`;
+      }
+      return `<a href="#${idPrefix}-${q.uid}" class="nav-cell${statusClass}" data-jump="${q.uid}" title="${Utils.escapeHtml(q.question.slice(0,30))}">${i+1}</a>`;
+    }).join('');
+    return `<h5>${QuestionTypes[g.type].label} (${entries.length})</h5><div class="nav-grid">${cells}</div>`;
+  }).join('');
+  return statusLegend + body;
+}
+function renderInlineFillQuestion(q, showAns){
+  let i = 0;
+  const answers = q.answers || [];
+  return Utils.escapeHtml(q.question).replace(/_{2,}/g, ()=>{
+    const ans = answers[i] != null ? answers[i] : answers[answers.length-1];
+    i++;
+    if (!showAns) return '<span class="browse-blank-line" aria-hidden="true"></span>';
+    return `<span class="browse-inline-answer">${Utils.escapeHtml(String(ans||'').split('/')[0])}</span>`;
+  });
+}
+function userAnswerParts(detail){
+  if (!detail || !detail.userAnswer) return [];
+  return String(detail.userAnswer).split(/[、/]/).map(s=>s.trim()).filter(Boolean);
+}
+function renderPreviewQuestion(q, num, opts={}){
+  const showAns = !!opts.showAns;
+  const detail = opts.detail || null;
+  const idPrefix = opts.idPrefix || 'bq';
+  const rawStatus = detail ? detail.status : '';
+  const status = (opts.mode && opts.mode!=='flashcard' && rawStatus==='mid') ? 'no' : rawStatus;
+  const starred = App.deck && isInNotebook('review', q.uid, App.deck.id);
+  const wrong = App.deck && isInNotebook('wrong', q.uid, App.deck.id);
+  const actions = opts.actions ? `<div class="preview-actions">
+    <button type="button" class="bookmark-btn ${starred?'on':''}" data-review-toggle="${q.uid}" title="${starred?'移出复习本':'加入复习本'}">${starred?'★':'☆'}</button>
+    ${wrong ? `<button type="button" class="mini-remove-btn" data-wrong-remove="${q.uid}">移出错题本</button>` : ''}
+  </div>` : '';
   let bodyHtml = '';
-  if (q.type==='singleChoice'){
+  if ((q.type==='singleChoice' || q.type==='multipleChoice') && Array.isArray(q.options)){
+    const parts = userAnswerParts(detail);
     bodyHtml = `<div class="browse-q-opts">` + q.options.map((o,i)=>{
-      const isCorrect = showAns && o.correct;
-      return `<div class="opt-row ${isCorrect?'is-correct':''}">${String.fromCharCode(65+i)}. ${Utils.escapeHtml(o.text)}${isCorrect?' ✓':''}</div>`;
+      const userPicked = parts.includes(o.text);
+      const cls = `${showAns && o.correct?'is-correct':''} ${detail && userPicked && !o.correct?'is-wrong':''} ${detail && userPicked?'is-picked':''}`;
+      return `<div class="opt-row ${cls}"><span>${String.fromCharCode(65+i)}.</span> ${Utils.escapeHtml(o.text)}${showAns && o.correct?' ✓':''}${detail && userPicked?' · 你的选择':''}</div>`;
     }).join('') + `</div>`;
   } else if (q.type==='trueFalse'){
-    bodyHtml = showAns ? `<div class="browse-answer">答：${q.answer?'对':'错'}</div>` : '';
+    const choices = [true,false].map(v=>{
+      const correct = showAns && q.answer===v;
+      const picked = detail && detail.userAnswer===(v?'对':'错');
+      return `<div class="tf-mini ${correct?'is-correct':''} ${picked&&!correct?'is-wrong':''} ${picked?'is-picked':''}">${v?'对':'错'}${correct?' ✓':''}${picked?' · 你的选择':''}</div>`;
+    }).join('');
+    bodyHtml = `<div class="tf-mini-row">${choices}</div>`;
   } else if (q.type==='fillInTheBlank'){
-    bodyHtml = showAns ? `<div class="browse-answer">答：${Utils.escapeHtml(q.answers.join(' / '))}</div>` : '';
-  } else {
-    bodyHtml = showAns ? `<div class="browse-answer">${Utils.escapeHtml(q.reference)}</div>` : '';
+    if (detail) bodyHtml = `<div class="preview-user-line ${detail.status==='ok'?'ok':'no'}">你的答案：${Utils.escapeHtml(detail.userAnswer||'（未作答）')}</div>`;
+  } else if (showAns){
+    bodyHtml = `<div class="browse-answer">${Utils.escapeHtml(q.reference || (detail&&detail.correctAnswer) || '')}</div>`;
   }
-  const qText = q.type==='fillInTheBlank'
-    ? Utils.escapeHtml(q.question).replace(/_{2,}/g, '<span class="browse-blank-line" aria-hidden="true"></span>')
-    : Utils.escapeHtml(q.question);
-  return `<div class="browse-q" id="bq-${q.uid}">
-    <div class="browse-q-text"><span class="browse-q-num">${num}.</span>${qText}</div>
+  if (!bodyHtml && showAns && detail && detail.correctAnswer){
+    bodyHtml = `<div class="browse-answer">${Utils.escapeHtml(detail.correctAnswer)}</div>`;
+  }
+  const qText = q.type==='fillInTheBlank' ? renderInlineFillQuestion(q, showAns) : Utils.escapeHtml(q.question);
+  const statusBadge = detail ? `<span class="preview-status ${status}">${status==='ok'?'正确':(status==='mid'?'复习中':'错误')}</span>` : '';
+  return `<div class="browse-q ${detail?'with-status status-'+status:''}" id="${idPrefix}-${q.uid}">
+    <div class="preview-q-head">
+      <div class="browse-q-text"><span class="browse-q-num">${num}.</span>${qText}</div>
+      ${actions}
+    </div>
+    <div class="preview-meta">
+      ${q.chapter ? `<span class="chapter-pill">${Utils.escapeHtml(q.chapter)}</span>` : ''}
+      ${statusBadge}
+      ${detail ? `<span>${detail.scoreEarned}/${detail.maxScore} 分</span>` : ''}
+    </div>
     ${bodyHtml}
   </div>`;
 }
-function setupBrowseScrollSpy(container){
+function bindPreviewQuestionActions(container){
+  container.querySelectorAll('[data-review-toggle]').forEach(btn=>btn.onclick=()=>toggleReviewBook(btn.dataset.reviewToggle));
+  container.querySelectorAll('[data-wrong-remove]').forEach(btn=>btn.onclick=()=>removeFromNotebook('wrong', btn.dataset.wrongRemove, {toast:true}));
+}
+function setupBrowseScrollSpy(container, idPrefix='bq'){
   const cells = container.querySelectorAll('[data-jump]');
   const targets = [...container.querySelectorAll('.browse-q')];
   if (!('IntersectionObserver' in window) || !targets.length) return;
   const obs = new IntersectionObserver((entries)=>{
     entries.forEach(entry=>{
       if (entry.isIntersecting){
-        const uid = entry.target.id.replace('bq-','');
+        const uid = entry.target.id.replace(idPrefix+'-','');
         cells.forEach(c=>c.classList.toggle('active', c.dataset.jump===uid));
       }
     });
@@ -2397,20 +3170,15 @@ function renderReportView(container){
       <div class="section-title" style="margin-top:22px;">逐题详情<span class="line"></span></div>
       <div class="qa-list">${qaListHtml}</div>
       <div class="report-actions">
-        <button class="btn btn-secondary" id="report-restart-btn" type="button">再来一轮</button>
-        <button class="btn btn-secondary" id="report-stats-btn" type="button">查看统计</button>
-        <button class="btn btn-primary" id="report-export-btn" type="button">导出本次记录</button>
+        <button class="btn btn-secondary" id="report-stats-btn" type="button">${r.partial?'返回设置':'查看统计'}</button>
+        <button class="btn btn-primary" id="report-restart-btn" type="button">再来一轮</button>
       </div>
     </div>
   `;
   animateScoreCounter(r.score);
   container.querySelectorAll('[data-qa]').forEach(item=>item.querySelector('.qa-head').addEventListener('click', ()=>item.classList.toggle('open')));
   document.getElementById('report-restart-btn').onclick = startSession;
-  document.getElementById('report-stats-btn').onclick = ()=>{ App.view='stats'; render(); };
-  document.getElementById('report-export-btn').onclick = ()=>{
-    Utils.downloadJSON(`学习记录_${Utils.fmtDateShort(r.endedAt)}_${r.id}.json`, r);
-    toast('已导出本次学习记录', {icon:'⬇️'});
-  };
+  document.getElementById('report-stats-btn').onclick = ()=>{ App.view=r.partial?'setup':'stats'; render(); };
 }
 function animateScoreCounter(target){
   const el = document.getElementById('score-counter');
@@ -2457,6 +3225,80 @@ function aggregateByType(sessions){
   sessions.forEach(s=>TYPE_ORDER.forEach(t=>{ const b=s.byType&&s.byType[t]; if(b){ agg[t].score+=b.score; agg[t].maxScore+=b.maxScore; } }));
   return TYPE_ORDER.filter(t=>agg[t].maxScore>0).map(t=>({ type:t, pct:Math.round((agg[t].score/agg[t].maxScore)*100) }));
 }
+function findSessionRecord(id){
+  return (App.progress.sessions||[]).find(s=>s.id===id) || (App.lastReport && App.lastReport.id===id ? App.lastReport : null);
+}
+function questionFromRecord(record, uid, detail){
+  const snap = (record.questionSnapshots||[]).find(q=>q.uid===uid);
+  if (snap) return snap;
+  if (App.deck && App.deck.id===record.deckId){
+    const q = findDeckQuestion(uid);
+    if (q) return q;
+  }
+  if (detail){
+    return {
+      uid:detail.uid, type:detail.type, chapter:detail.chapter||'', question:detail.question,
+      objective:QuestionTypes[detail.type] ? QuestionTypes[detail.type].objective : true,
+      reference:detail.correctAnswer,
+      answers:detail.type==='fillInTheBlank' ? [detail.correctAnswer] : undefined
+    };
+  }
+  return null;
+}
+function recordQuestionList(record){
+  const detailMap = new Map((record.details||[]).map(d=>[d.uid,d]));
+  const uids = (record.paperUids&&record.paperUids.length) ? record.paperUids : (record.details||[]).map(d=>d.uid);
+  return uids.map(uid=>{
+    const detail = detailMap.get(uid);
+    const question = questionFromRecord(record, uid, detail);
+    return question ? { question, detail:detail||null } : null;
+  }).filter(Boolean);
+}
+function renderRecordDetailView(container){
+  const record = findSessionRecord(App.recordDetailId);
+  if (!record){ App.view='stats'; render(); return; }
+  const showAns = App._recordShowAnswers !== false;
+  const items = recordQuestionList(record);
+  const grouped = TYPE_ORDER.map(t=>({type:t, items:items.filter(x=>x.question.type===t)})).filter(g=>g.items.length);
+  const detailMap = new Map((record.details||[]).map(d=>[d.uid,d]));
+  const sidebarHtml = renderPreviewSidebar(grouped, 'rq', {detailMap, mode:record.mode});
+  const groupedHtml = grouped.map(g=>{
+    const qHtml = g.items.map((x,i)=>renderPreviewQuestion(x.question, i+1, {showAns, detail:x.detail, idPrefix:'rq', actions:false, mode:record.mode})).join('');
+    return `<div class="browse-section"><h3>${QuestionTypes[g.type].label}（${g.items.length} 题）</h3>${qHtml}</div>`;
+  }).join('');
+  container.className = 'view-pad fade-in';
+  container.innerHTML = `
+    <div class="container" style="max-width:1120px;">
+      <div class="record-topbar">
+        <button class="btn btn-secondary" id="record-back-btn" type="button">← 返回统计</button>
+        <div class="record-title">
+          <h2>${Utils.escapeHtml(record.deckTitle)}</h2>
+          <p>${Utils.fmtDateTime(record.startedAt)} · ${(MODE_INFO[record.mode]&&MODE_INFO[record.mode].title)||record.mode} · ${record.score}/${record.maxScore} 分 · ${record.percentage}%</p>
+        </div>
+        <div class="browse-answer-fixed">
+          <div class="label" style="font-size:13px;">显示答案</div>
+          <div class="switch ${showAns?'on':''}" id="record-answer-switch"><div class="knob"></div></div>
+        </div>
+      </div>
+      <div class="browse-shell">
+        <div class="browse-main record-paper">
+          ${groupedHtml || `<div class="empty-state"><span class="e-icon">□</span><p>这条记录没有逐题详情</p></div>`}
+        </div>
+        <div class="browse-sidebar">${sidebarHtml}</div>
+      </div>
+    </div>
+  `;
+  document.getElementById('record-back-btn').onclick = ()=>{ App.view='stats'; render(); };
+  document.getElementById('record-answer-switch').onclick = ()=>{ App._recordShowAnswers = !showAns; render(); };
+  container.querySelectorAll('[data-jump]').forEach(a=>{
+    a.addEventListener('click', e=>{
+      e.preventDefault();
+      const target = document.getElementById('rq-'+a.dataset.jump);
+      if (target) target.scrollIntoView({block:'start'});
+    });
+  });
+  setupBrowseScrollSpy(container, 'rq');
+}
 
 /* ============================================================
    §17. 视图：统计仪表盘
@@ -2469,13 +3311,14 @@ function renderStatsView(container){
   const typeAgg = aggregateByType(sessions);
   const typeChart = buildTypeBarChart(typeAgg.map(a=>Object.assign({},a,{sub:a.pct+'%'})));
   const historyRows = sessions.slice(0,50).map(s=>`
-    <tr>
+    <tr class="history-row" data-session-id="${s.id}" title="查看整卷记录">
       <td>${Utils.fmtDateTime(s.startedAt)}</td>
       <td><span class="mode-tag-sm">${(MODE_INFO[s.mode]&&MODE_INFO[s.mode].title)||s.mode}</span></td>
       <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${Utils.escapeHtml(s.deckTitle)}</td>
       <td class="score-cell">${s.score}/${s.maxScore}</td>
       <td>${s.percentage}%</td>
       <td>${Utils.fmtClock(s.durationMs)}</td>
+      <td><button type="button" class="record-delete-btn" data-delete-session="${s.id}" title="删除这条学习记录">删除</button></td>
     </tr>`).join('');
 
   container.innerHTML = `
@@ -2494,44 +3337,65 @@ function renderStatsView(container){
       <div class="panel chart-panel"><h4>最近正确率趋势</h4>${trendChart}</div>
       <div class="panel chart-panel"><h4>各题型累计得分率</h4>${typeChart}</div>
       <div class="section-title">学习记录<span class="line"></span></div>
+      ${sessions.length ? `<p class="muted record-preview-hint">点击任意记录可进入整卷预览，右侧导航栏会标出正误并可快速定位。</p>` : ''}
       ${sessions.length ? `<div style="overflow-x:auto;"><table class="history-table">
-        <thead><tr><th>时间</th><th>模式</th><th>题库</th><th>得分</th><th>正确率</th><th>用时</th></tr></thead>
+        <thead><tr><th>时间</th><th>模式</th><th>题库</th><th>得分</th><th>正确率</th><th>用时</th><th>操作</th></tr></thead>
         <tbody>${historyRows}</tbody></table></div>`
         : `<div class="empty-state"><span class="e-icon">📭</span><p>还没有任何学习记录，快去开始第一轮学习吧！</p></div>`}
       <div class="section-title" style="margin-top:26px;">数据管理<span class="line"></span></div>
       <div class="panel">
         <p class="muted" style="font-size:12.5px;margin:0 0 12px;">当前存储方式：${Store.backend()==='cloud'?'Claude 云端会话存储（随本次对话保存）':'本机浏览器本地存储（保存在这台设备上，下次打开同一文件仍可读取）'}</p>
         <div class="settings-actions">
-          <button class="btn btn-secondary" id="export-config-btn" type="button">导出配置文件</button>
-          <button class="btn btn-secondary" id="export-history-btn" type="button">导出全部学习记录</button>
-          <button class="btn btn-secondary" id="import-data-btn" type="button">导入数据文件</button>
-          <button class="btn btn-danger" id="clear-history-btn" type="button">清空学习记录</button>
+          <button class="btn btn-secondary" id="export-data-btn" type="button">导出数据</button>
+          <button class="btn btn-secondary" id="import-data-btn" type="button">导入数据</button>
+          <button class="btn btn-danger" id="clear-history-btn" type="button">清空数据</button>
           <input type="file" id="import-data-input" class="hidden-input" accept="application/json,.json">
         </div>
-        <p class="muted" style="font-size:11.5px;margin:10px 0 0;">导入时会自动识别文件类型（配置 / 学习记录），无需分别选择入口；学习记录导入采用合并方式，不会覆盖已有记录。</p>
+        <p class="muted" style="font-size:11.5px;margin:10px 0 0;">导出包含设置、学习记录、复习本、错题本与逐题统计；导入时自动合并已有记录。</p>
       </div>
     </div>
   `;
-  document.getElementById('export-config-btn').onclick = exportConfig;
-  document.getElementById('export-history-btn').onclick = exportHistory;
+  container.querySelectorAll('[data-session-id]').forEach(row=>row.addEventListener('click', ()=>{
+    App.recordDetailId = row.dataset.sessionId;
+    App.view = 'record';
+    render();
+  }));
+  container.querySelectorAll('[data-delete-session]').forEach(btn=>btn.addEventListener('click', e=>{
+    e.stopPropagation();
+    const id = btn.dataset.deleteSession;
+    confirmModal('删除这条学习记录？', '此操作会从统计中移除该轮学习记录，并重新计算总览数据。', ()=>deleteSessionRecord(id), { danger:true, confirmLabel:'删除' });
+  }));
+  document.getElementById('export-data-btn').onclick = exportAllData;
   document.getElementById('import-data-btn').onclick = ()=>document.getElementById('import-data-input').click();
   document.getElementById('import-data-input').onchange = (e)=>{ if (e.target.files[0]) importData(e.target.files[0]); e.target.value=''; };
   document.getElementById('clear-history-btn').onclick = ()=>{
-    confirmModal('清空全部学习记录？', '此操作会删除连续学习天数、历史轮次与统计数据，且无法恢复。', async ()=>{
+    confirmModal('清空全部数据？', '此操作会删除设置、连续学习天数、历史轮次、复习本、错题本与逐题统计，且无法恢复。', async ()=>{
+      App.settings = defaultSettings();
       App.progress = defaultProgress();
+      App.srs = {};
+      App.session = null;
+      await saveSettings();
       await saveProgress();
-      toast('已清空学习记录', {icon:'🗑️'});
+      await clearActiveSessionDraft();
+      await Store.remove(STORAGE_KEYS.lastDeck);
+      if (App.deck) await Store.remove('srs:'+App.deck.id);
+      applyTheme();
+      toast('已清空数据', {icon:'🗑️'});
       render();
     }, { danger:true, confirmLabel:'清空' });
   };
 }
-function exportConfig(){
-  Utils.downloadJSON('SpacedMemoryCards_配置.json', { _type:'yika-config', version:1, settings:App.settings });
-  toast('配置已导出', {icon:'⬇️'});
-}
-function exportHistory(){
-  Utils.downloadJSON(`SpacedMemoryCards_学习记录_${Utils.todayStr()}.json`, { _type:'yika-history', version:1, exportedAt:Date.now(), progress:App.progress });
-  toast('学习记录已导出', {icon:'⬇️'});
+function exportAllData(){
+  Utils.downloadJSON(`SpacedMemoryCards_数据_${Utils.todayStr()}.json`, {
+    _type:'smc-data',
+    version:2,
+    exportedAt:Date.now(),
+    settings:App.settings,
+    progress:App.progress,
+    deck:App.deck ? {id:App.deck.id, title:App.deck.meta.title} : null,
+    srs:App.deck ? {[App.deck.id]:App.srs||{}} : {}
+  });
+  toast('数据已导出', {icon:'⬇️'});
 }
 function recomputeStreakFromSessions(sessions){
   const days = [...new Set(sessions.map(s=>Utils.todayStr(s.endedAt||s.startedAt)))].sort();
@@ -2549,7 +3413,39 @@ function recomputeStreakFromSessions(sessions){
   if (lastDay!==today && lastDay!==yesterday) current = 0;
   return { current, longest, lastDate:lastDay };
 }
-async function importConfigObj(incoming){
+function rebuildProgressDerivedState(){
+  const sessions = App.progress.sessions || [];
+  const totals = { totalSessions:0, totalQuestionsAnswered:0, totalScorePoints:0, totalMaxPoints:0, totalTimeMs:0 };
+  const questionStats = {};
+  sessions.forEach(s=>{
+    totals.totalSessions++;
+    totals.totalQuestionsAnswered += s.totalQuestions||0;
+    totals.totalScorePoints += s.score||0;
+    totals.totalMaxPoints += s.maxScore||0;
+    totals.totalTimeMs += s.durationMs||0;
+    const deckStats = questionStats[s.deckId] || (questionStats[s.deckId] = {});
+    (s.details||[]).forEach(d=>{
+      const cur = deckStats[d.uid] || (deckStats[d.uid] = {attempts:0, correct:0, wrong:0, mid:0});
+      cur.attempts++;
+      if (d.status==='ok') cur.correct++;
+      else if (d.status==='mid') cur.mid++;
+      else cur.wrong++;
+      cur.lastStatus = d.status;
+      cur.lastAt = Math.max(cur.lastAt||0, s.endedAt||s.startedAt||0);
+    });
+  });
+  App.progress.totals = totals;
+  App.progress.streak = recomputeStreakFromSessions(sessions);
+  App.progress.questionStats = questionStats;
+}
+async function deleteSessionRecord(id){
+  App.progress.sessions = (App.progress.sessions||[]).filter(s=>s.id!==id);
+  rebuildProgressDerivedState();
+  await saveProgress();
+  toast('学习记录已删除', {icon:'−'});
+  render();
+}
+async function importConfigObj(incoming, opts={}){
   if (!incoming || typeof incoming!=='object') throw new Error('文件内容不是合法的配置对象');
   const base = defaultSettings();
   App.settings = Object.assign({}, base, incoming, {
@@ -2558,9 +3454,9 @@ async function importConfigObj(incoming){
   });
   await saveSettings();
   applyTheme();
-  toast('配置已导入', {icon:'✅'});
+  if (!opts.silent) toast('配置已导入', {icon:'✅'});
 }
-async function importHistoryObj(progressObj){
+async function importHistoryObj(progressObj, opts={}){
   if (!progressObj || !Array.isArray(progressObj.sessions)) throw new Error('文件内容不是合法的学习记录');
   const incomingSessions = progressObj.sessions;
   const existingIds = new Set(App.progress.sessions.map(s=>s.id));
@@ -2574,18 +3470,54 @@ async function importHistoryObj(progressObj){
   App.progress.sessions = merged;
   App.progress.totals = totals;
   App.progress.streak = recomputeStreakFromSessions(merged);
+  ['reviewBook','wrongBook'].forEach(k=>{
+    App.progress[k] = App.progress[k] || {};
+    const incoming = progressObj[k] || {};
+    Object.keys(incoming).forEach(deckId=>{
+      const set = new Set(normalizeUidList(App.progress[k][deckId]).concat(normalizeUidList(incoming[deckId])));
+      App.progress[k][deckId] = [...set];
+    });
+  });
+  App.progress.questionStats = App.progress.questionStats || {};
+  const incomingStats = progressObj.questionStats || {};
+  Object.keys(incomingStats).forEach(deckId=>{
+    App.progress.questionStats[deckId] = App.progress.questionStats[deckId] || {};
+    Object.keys(incomingStats[deckId]||{}).forEach(uid=>{
+      const a = App.progress.questionStats[deckId][uid] || {};
+      const b = incomingStats[deckId][uid] || {};
+      App.progress.questionStats[deckId][uid] = {
+        attempts:Math.max(a.attempts||0, b.attempts||0),
+        correct:Math.max(a.correct||0, b.correct||0),
+        wrong:Math.max(a.wrong||0, b.wrong||0),
+        mid:Math.max(a.mid||0, b.mid||0),
+        lastStatus:(a.lastAt||0) >= (b.lastAt||0) ? a.lastStatus : b.lastStatus,
+        lastAt:Math.max(a.lastAt||0, b.lastAt||0)
+      };
+    });
+  });
   await saveProgress();
-  toast(`已导入并合并 ${newOnes.length} 条新记录`, {icon:'✅'});
+  if (!opts.silent) toast(`已导入并合并 ${newOnes.length} 条新记录`, {icon:'✅'});
+}
+async function importAllDataObj(obj){
+  if (obj.settings) await importConfigObj(obj.settings, {silent:true});
+  if (obj.progress) await importHistoryObj(obj.progress, {silent:true});
+  if (obj.srs && App.deck && obj.srs[App.deck.id]){
+    App.srs = Object.assign({}, App.srs||{}, obj.srs[App.deck.id]);
+    await saveSrs();
+  }
+  toast('数据导入完成', {icon:'✅'});
 }
 async function importData(file){
   try{
     const text = await Utils.readFileAsText(file);
     const obj = JSON.parse(text);
-    if (obj && obj._type==='yika-config') await importConfigObj(obj.settings);
+    if (obj && obj._type==='smc-data') await importAllDataObj(obj);
+    else if (obj && obj._type==='yika-config') await importConfigObj(obj.settings);
     else if (obj && obj._type==='yika-history') await importHistoryObj(obj.progress);
+    else if (obj && obj.settings && obj.progress) await importAllDataObj(obj);
     else if (obj && obj.settings && !obj.progress) await importConfigObj(obj.settings); // 兼容无 _type 标记的旧配置文件
     else if (obj && obj.progress && Array.isArray(obj.progress.sessions)) await importHistoryObj(obj.progress); // 兼容无 _type 标记的旧记录文件
-    else throw new Error('无法识别该文件，请确认选择的是本应用导出的"配置文件"或"学习记录"JSON。');
+    else throw new Error('无法识别该文件，请确认选择的是本应用导出的数据 JSON。');
     render();
   }catch(e){ toast('导入失败：'+e.message, {icon:'⚠️', duration:3600}); }
 }
@@ -2606,27 +3538,38 @@ async function initApp(){
       else if (mq.addListener) mq.addListener(onSystemThemeChange);
     }
 
+    App.localDecks = await loadLocalDeckFiles();
     const cachedDeck = await Store.getJSON(STORAGE_KEYS.lastDeck, null);
-    if (cachedDeck && Array.isArray(cachedDeck.questions) && cachedDeck.questions.length){
-      App.deck = cachedDeck;
-      App.srs = await loadSrs(cachedDeck.id);
+    const activeDraft = await Store.getJSON(STORAGE_KEYS.activeSession, null);
+    let initialDeck = null;
+    if (activeDraft && activeDraft.deckId){
+      initialDeck = App.localDecks.find(d=>d.id===activeDraft.deckId) || (cachedDeck && cachedDeck.id===activeDraft.deckId ? cachedDeck : null);
+    }
+    if (!initialDeck && cachedDeck && Array.isArray(cachedDeck.questions) && cachedDeck.questions.length){
+      initialDeck = App.localDecks.find(d=>d.id===cachedDeck.id) || cachedDeck;
+    }
+    if (!initialDeck && App.localDecks.length===1){
+      initialDeck = App.localDecks[0];
+    }
+
+    if (initialDeck && Array.isArray(initialDeck.questions) && initialDeck.questions.length){
+      App.deck = Utils.deepClone(initialDeck);
+      App.srs = await loadSrs(App.deck.id);
       TYPE_ORDER.forEach(t=>{
-        if (cachedDeck.byType[t] && cachedDeck.byType[t].length && !(t in App.settings.includeTypes)) App.settings.includeTypes[t]=true;
+        if (App.deck.byType[t] && App.deck.byType[t].length && !(t in App.settings.includeTypes)) App.settings.includeTypes[t]=true;
       });
       if (!App.settings.tfFilter){
-        const pol = tfPolarityCounts(cachedDeck);
+        const pol = tfPolarityCounts(App.deck);
         App.settings.tfFilter = (pol.trueCount>0 && pol.falseCount>0) ? (pol.trueCount<=pol.falseCount?'true':'false') : 'all';
       }
-      App.view = 'setup';
-    } else if (window.printingQualityQuiz) {
-      // 自动加载 printingQualityQuiz.js 中的题库数据
-      try {
-        const deck = normalizeDeck(window.printingQualityQuiz, '印刷质量检测与标准化');
-        await finishDeckLoad(deck);
+      await registerDeck(App.deck);
+      await Store.setJSON(STORAGE_KEYS.lastDeck, App.deck);
+      if (activeDraft && activeDraft.deckId===App.deck.id && activeDraft.session && activeDraft.session.status==='active'){
+        App.session = activeDraft.session;
+        App.srs = activeDraft.srs || App.srs || {};
+        App.view = App.session.phase==='grading' ? 'grading' : 'quiz';
+      } else {
         App.view = 'setup';
-      } catch(e) {
-        console.warn('自动加载题库失败:', e);
-        App.view = 'load';
       }
     } else {
       App.view = 'load';
