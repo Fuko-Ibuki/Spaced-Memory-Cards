@@ -239,6 +239,7 @@ button:focus-visible{ outline-offset:2px; }
   display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:15px;
   transition:transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
 }
+.icon-btn svg{ width:16px; height:16px; display:block; flex:0 0 16px; }
 .icon-btn:hover{ background:var(--bg-hover); color:var(--text); transform:translateY(-1px); }
 
 main#view{ flex:1; display:flex; flex-direction:column; }
@@ -395,6 +396,11 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 .deck-switcher{
   display:flex; flex-wrap:wrap; gap:8px; margin:-12px 0 24px; max-height:92px; overflow-y:auto; padding-right:2px;
 }
+.deck-switch-select{ display:none; width:100%; margin:-12px 0 24px; }
+.deck-switch-select select{
+  width:100%; border:1px solid var(--border); border-radius:var(--radius-pill);
+  background:var(--bg-elevated); color:var(--text); padding:10px 14px; font-size:13px; font-weight:700;
+}
 .deck-switcher button{
   display:flex; align-items:center; gap:8px; border:1px solid var(--border-soft); background:var(--bg-elevated);
   color:var(--text-soft); border-radius:var(--radius-pill); padding:7px 12px; cursor:pointer; font-size:12.5px; font-weight:700;
@@ -474,6 +480,8 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 .collapsible-body{ overflow:hidden; max-height:0; transition:max-height var(--dur-slow) var(--ease); }
 .collapsible-body.open{ max-height:600px; }
 .adv-panel{ margin-top:16px; }
+.mobile-collapse-head{ display:none; }
+.mobile-collapse-body{ display:block; }
 .points-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-top:16px; }
 .points-item{ display:flex; align-items:center; justify-content:space-between; gap:8px; background:var(--bg-soft); padding:10px 12px; border-radius:var(--radius-md); border:1px solid var(--border-soft); }
 .points-item span{ font-size:12.5px; color:var(--text-soft); }
@@ -529,7 +537,7 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 
 .qcard-tools{ position:absolute; top:28px; right:34px; display:flex; align-items:center; gap:8px; z-index:2; }
 .bookmark-btn{
-  width:34px; height:34px; border-radius:50%; border:1px solid var(--paper-line);
+  width:34px; height:34px; aspect-ratio:1; flex:0 0 34px; padding:0; border-radius:50%; border:1px solid var(--paper-line);
   background:var(--surface-lift-1); color:var(--ink-faint); cursor:pointer; font-size:20px; line-height:1;
   display:flex; align-items:center; justify-content:center; transition:all var(--dur-fast) var(--ease);
 }
@@ -541,22 +549,26 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 }
 
 .qcard-type{ font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
-.qcard-type .dot{ width:5px;height:5px;border-radius:50%; background:currentColor; }
+.qcard-type .dot{ width:5px;height:5px; flex:0 0 5px; aspect-ratio:1; border-radius:50%; background:currentColor; }
 .qcard-question{ font-family:var(--font-display); font-size:22px; line-height:1.65; color:var(--ink); font-weight:500; flex:0 0 auto; white-space:pre-wrap; }
 .qcard-question .blank{ display:inline-block; width:56px; height:1.05em; vertical-align:-4px; border-bottom:3px solid var(--ink-faint); border-radius:0; margin:0 2px; }
 .inline-blank-choice{
-  display:inline-flex; align-items:center; justify-content:center; min-width:70px; min-height:1.35em; margin:0 4px; padding:0 10px 2px;
-  border:1.5px solid transparent; border-bottom:3px solid var(--ink-faint); border-radius:0; background:transparent; color:var(--ink-soft);
-  appearance:none; font-family:inherit; font-size:.88em; line-height:1.2; font-weight:800; cursor:pointer; vertical-align:baseline; transition:all .18s var(--ease);
+  position:relative; display:inline-flex; align-items:center; justify-content:center; min-width:70px; min-height:1.45em; margin:0 4px; padding:0 10px 4px;
+  border:none; border-radius:0; background:transparent; color:var(--ink-soft); box-sizing:border-box;
+  appearance:none; -webkit-appearance:none; font-family:inherit; font-size:.88em; line-height:1.2; font-weight:800; cursor:pointer; vertical-align:baseline; transition:all .18s var(--ease);
 }
+.inline-blank-choice::after{ content:""; position:absolute; left:9px; right:9px; bottom:0; height:3px; background:var(--ink-faint); border-radius:0; }
 .blank-line-only{ display:inline-block; width:58px; height:.8em; transform:translateY(-1px); }
-.inline-blank-choice.filled{ color:var(--success-strong); border-color:transparent; border-bottom-color:var(--success); background:transparent; box-shadow:none; animation:blankFill .18s var(--ease); }
-.inline-blank-choice.correct{ color:var(--success-strong); border-color:transparent; border-bottom-color:var(--success); background:transparent; }
-.inline-blank-choice.wrong{ color:var(--danger-strong); border-color:transparent; border-bottom-color:var(--danger); background:transparent; }
-.inline-blank-choice.active{ border-color:var(--accent); border-bottom-color:var(--accent); border-radius:12px; background:var(--surface-lift-1); box-shadow:0 0 0 3px var(--accent-glow); animation:blankFocus .22s var(--ease); }
+.inline-blank-choice.filled{ color:var(--success-strong); background:transparent; box-shadow:none; animation:blankFill .18s var(--ease); }
+.inline-blank-choice.filled::after,.inline-blank-choice.correct::after{ background:var(--success); }
+.inline-blank-choice.correct{ color:var(--success-strong); background:transparent; }
+.inline-blank-choice.wrong{ color:var(--danger-strong); background:transparent; }
+.inline-blank-choice.wrong::after{ background:var(--danger); }
+.inline-blank-choice.active{ border:1.5px solid var(--accent); border-radius:12px; background:var(--surface-lift-1); box-shadow:0 0 0 3px var(--accent-glow); animation:blankFocus .22s var(--ease); }
+.inline-blank-choice.active::after{ left:10px; right:10px; bottom:3px; background:var(--accent); border-radius:var(--radius-pill); }
 @keyframes blankFocus{ from{ transform:translateX(-8px) scale(.96); } to{ transform:translateX(0) scale(1); } }
 @keyframes blankFill{ from{ transform:scale(.96); } to{ transform:scale(1); } }
-.per-blank-options{ margin-top:16px; }
+.per-blank-options{ margin-top:24px; }
 
 .blank-wrap{ position:relative; display:inline-block; min-width:96px; vertical-align:-6px; margin:0 2px; }
 .qcard-blank-input{
@@ -571,7 +583,7 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 .qcard-blank-input.correct{ color:var(--success-strong); }
 .qcard-blank-input.wrong{ color:var(--danger-strong); }
 
-.qcard-body{ margin-top:22px; flex:1; min-height:0; display:flex; flex-direction:column; }
+.qcard-body{ margin-top:26px; flex:1; min-height:0; display:flex; flex-direction:column; }
 .qcard-hint{ margin-top:auto; padding-top:18px; text-align:center; font-size:12px; color:var(--ink-faint); }
 
 .reveal-divider{ margin:20px 0 16px; border:none; border-top:1.5px dashed var(--paper-line); }
@@ -580,7 +592,9 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 .reveal-label{ font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:8px; }
 
 /* 选择题 / 判断题 选项 */
-.opt-list{ display:flex; flex-direction:column; gap:10px; margin-top:4px; }
+.opt-list{ display:grid; grid-auto-rows:minmax(52px,1fr); align-items:stretch; gap:10px; margin-top:4px; }
+.opt-list.opt-list-free{ display:flex; flex-direction:column; }
+.opt-list:not(.opt-list-free) .opt-btn{ height:100%; }
 .opt-btn{
   display:flex; align-items:flex-start; gap:12px; text-align:left; min-width:0;
   padding:13px 16px; border-radius:var(--radius-md);
@@ -859,6 +873,7 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 .wrong-test-strip .btn{ flex-shrink:0; }
 .browse-shell{ display:flex; gap:24px; align-items:flex-start; }
 .browse-main{ flex:1; min-width:0; }
+.browse-nav-toggle{ display:none; }
 .browse-sidebar{
   width:230px; flex-shrink:0; position:sticky; top:142px; max-height:calc(100vh - 166px); overflow:auto;
   background:var(--bg-elevated); border:1px solid var(--border-soft); border-radius:var(--radius-lg); padding:16px;
@@ -933,6 +948,8 @@ main#view{ flex:1; display:flex; flex-direction:column; }
 .record-title h2{ font-size:18px; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .record-title p{ margin:4px 0 0; color:var(--text-faint); font-size:12.5px; }
 .record-paper .browse-q{ scroll-margin-top:148px; }
+.history-date-cell span{ display:inline; }
+.history-date-cell span + span::before{ content:" "; }
 @media (max-width:900px){
   .browse-shell{ flex-direction:column; }
   .browse-sidebar{ width:100%; position:static; max-height:none; order:-1; }
@@ -943,13 +960,47 @@ main#view{ flex:1; display:flex; flex-direction:column; }
    14. 响应式
    ============================================================ */
 @media (max-width:640px){
-  .topnav{ padding:10px 12px; gap:8px; }
-  .brand{ font-size:14px; gap:0; }
+  .topnav{
+    display:grid; grid-template-columns:auto auto minmax(0,1fr) auto; align-items:center;
+    padding:10px 12px; gap:8px;
+  }
+  .brand{ grid-column:1; grid-row:1; font-size:14px; gap:0; }
   .brand .brand-text{ display:none; }
+  .nav-spacer{ display:none; }
   .format-guide-grid{ grid-template-columns:1fr; }
-  .streak-pill{ padding:5px 10px 5px 8px; font-size:12px; }
-  .nav-tabs{ order:3; width:100%; }
+  .streak-pill{ grid-column:2; grid-row:1; justify-self:start; padding:5px 9px 5px 7px; font-size:12px; }
+  .nav-tabs{ grid-column:3; grid-row:1; width:max-content; max-width:100%; justify-content:center; justify-self:center; }
+  .nav-tab{ padding:7px 12px; }
+  .icon-btn{ grid-column:4; grid-row:1; justify-self:end; }
   .container{ padding:0 14px; }
+  .setup-container{ display:flex; flex-direction:column; }
+  .setup-container .deck-info-card{ order:1; }
+  .setup-container .deck-switcher,.setup-container .deck-switch-select{ order:2; }
+  .setup-container > .section-title{ order:3; }
+  .setup-container .mode-grid{ order:4; }
+  .setup-container .start-bar{ order:5; }
+  .setup-container .setup-grid{ order:6; }
+  .setup-container .adv-panel{ order:7; }
+  .mode-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-bottom:16px; }
+  .mode-card{ padding:12px 8px 10px; text-align:center; border-radius:var(--radius-md); }
+  .mode-card .mode-icon{ font-size:20px; margin-bottom:6px; }
+  .mode-card h4{ font-size:13px; margin-bottom:0; white-space:nowrap; }
+  .mode-card p,.mode-card .mode-tag{ display:none; }
+  .mobile-collapse-head{
+    display:flex; align-items:center; justify-content:space-between; width:100%;
+    border:none; background:transparent; color:var(--text); padding:0; font-size:14px; font-weight:800; cursor:pointer;
+  }
+  .mobile-collapse-head .chev{ color:var(--text-faint); transition:transform var(--dur-fast) var(--ease); }
+  .setup-panel .mobile-collapse-body{ display:none; margin-top:14px; }
+  .setup-panel.open .mobile-collapse-body{ display:block; }
+  .setup-panel.open .mobile-collapse-head .chev{ transform:rotate(90deg); }
+  .setup-panel .mobile-collapse-body > .section-title:first-child{ display:none; }
+  .start-bar{ flex-direction:column; align-items:stretch; gap:10px; margin-top:0; margin-bottom:18px; padding-top:0; border-top:none; }
+  .start-bar .est{ text-align:center; }
+  .deck-switcher{ flex-wrap:nowrap; overflow-x:auto; max-height:none; padding:0 2px 8px; margin:-10px 0 18px; scroll-snap-type:x proximity; }
+  .deck-switcher button{ flex:0 0 calc((100% - 16px)/3); max-width:none; justify-content:center; scroll-snap-align:start; }
+  .deck-switcher.too-many{ display:none; }
+  .deck-switch-select.too-many{ display:block; margin:-10px 0 18px; }
   .qcard{ padding:26px 20px 24px; min-height:260px; }
   .qcard-question{ font-size:18px; }
   .rate-grid{ gap:7px; }
@@ -959,10 +1010,43 @@ main#view{ flex:1; display:flex; flex-direction:column; }
   .deck-info-card #browse-deck-btn{ margin-left:0; }
   .deck-info-card .swap{ margin-left:10px; }
   .self-grade-grid{ grid-template-columns:repeat(2,1fr); }
-  .browse-topbar,.record-topbar{ top:49px; align-items:flex-start; }
-  .record-topbar{ flex-wrap:wrap; }
+  .browse-topbar{
+    top:49px; align-items:center; justify-content:center;
+    padding:10px 0 12px; margin-bottom:14px; border-bottom:none;
+  }
+  .browse-filter-pack{
+    flex:0 1 auto; min-width:0; width:100%;
+    justify-content:center; gap:0;
+  }
+  .browse-filter-pack > .seg{
+    max-width:100%; margin:0 auto; justify-content:center;
+    box-shadow:0 8px 20px -16px rgba(0,0,0,.45);
+  }
+  .browse-filter-pack > .seg button{
+    flex:0 0 auto; padding:7px 12px; white-space:nowrap;
+  }
+  .record-topbar{ top:49px; align-items:flex-start; flex-wrap:wrap; }
   .record-title{ order:3; flex-basis:100%; }
-  .browse-answer-fixed{ margin-left:auto; }
+  .browse-topbar .browse-answer-fixed,
+  .record-topbar .browse-answer-fixed{
+    position:fixed; right:14px; bottom:calc(14px + env(safe-area-inset-bottom, 0px));
+    z-index:85; margin:0; padding:8px 10px 8px 12px;
+    box-shadow:var(--shadow-pop);
+  }
+  .browse-filter-line,#browse-back-btn{ display:none; }
+  .browse-shell{ padding-bottom:76px; }
+  .browse-nav-toggle{ display:flex; width:100%; justify-content:center; margin:0 0 10px; order:-2; }
+  .browse-sidebar{ order:-1; }
+  .browse-main{ order:0; }
+  .browse-sidebar.mobile-collapsed{ display:none; }
+  .browse-main .empty-state{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; }
+  .chart-panel svg text{ font-size:12px; }
+  .tb-row{ gap:8px; }
+  .tb-row .tb-label{ width:64px; font-size:12px; }
+  .tb-row .tb-pct{ width:48px; font-size:11.5px; }
+  .history-table th,.history-table td{ white-space:nowrap; padding:10px 8px; }
+  .history-date-cell span{ display:inline; }
+  .history-date-cell span + span::before{ content:""; display:block; }
   .qcard-tools{ top:18px; right:20px; }
   .qcard-type{ padding-right:86px; }
 }
@@ -1271,7 +1355,8 @@ const App = {
   recordDetailId:null,
   browseScope:'all',
   browseBackView:'setup',
-  browseChapters:[]
+  browseChapters:[],
+  setupCollapse:{ range:false, answer:false, advanced:false }
 };
 
 function defaultSettings(){
@@ -1515,7 +1600,7 @@ function render(){
 function renderNav(){
   const nav = document.getElementById('topnav');
   if (!App.progress){ nav.style.display='none'; return; }
-  nav.style.display='flex';
+  nav.style.display='';
   const streak = App.progress.streak.current;
   const studyActive = ['load','setup','quiz','grading','report'].includes(App.view);
   nav.innerHTML = `
@@ -1708,7 +1793,7 @@ async function loadLocalDeckFiles(){
 }
 async function selectLocalDeck(deckId){
   const deck = App.localDecks.find(d=>d.id===deckId);
-  if (deck) await finishDeckLoad(Utils.deepClone(deck));
+  if (deck) await finishDeckLoad(Utils.deepClone(deck), {switching:true});
 }
 function tfPolarityCounts(deck){
   const tf = (deck.byType && deck.byType.trueFalse) || [];
@@ -1716,7 +1801,7 @@ function tfPolarityCounts(deck){
   const falseCount = tf.filter(q=>q.answer===false).length;
   return { total:tf.length, trueCount, falseCount };
 }
-async function finishDeckLoad(deck){
+async function finishDeckLoad(deck, opts={}){
   App.deck = deck;
   App.srs = await loadSrs(deck.id);
   await registerDeck(deck);
@@ -1729,7 +1814,7 @@ async function finishDeckLoad(deck){
   App.settings.tfFilter = (pol.trueCount>0 && pol.falseCount>0) ? (pol.trueCount<=pol.falseCount?'true':'false') : 'all';
   App.session = null;
   App.view = 'setup';
-  toast(`已加载「${deck.meta.title}」，共 ${deck.totalQuestions} 题`, {icon:'📚'});
+  toast(opts.switching ? '已切换' : `已加载「${deck.meta.title}」，共 ${deck.totalQuestions} 题`, {icon:'📚'});
   render();
 }
 
@@ -1753,7 +1838,7 @@ const MODE_INFO = {
   learn:{ icon:'🎯', title:'学习模式', desc:'主动作答 + 即时反馈，答错会重新排队，直到你掌握为止。', tag:'逐步攻克' },
   test:{ icon:'📝', title:'测试模式', desc:'模拟真实考试，一次性作答完毕后统一判分，给出完整报告。', tag:'真实评估' }
 };
-let advancedOpen = false; // 高级设置展开状态，不随重渲染重置，只有用户主动点击折叠才会变化
+let advancedOpen = false; // 桌面端高级设置展开状态
 function getEffectiveByType(deck, s){
   const out = {};
   TYPE_ORDER.forEach(t=>{
@@ -1879,26 +1964,37 @@ function renderSetupView(container){
         ${chapters.map(ch=>`<button type="button" class="chapter-chip ${s.chapterFilter===ch?'active':''}" data-chapter-filter="${Utils.escapeHtml(ch)}">${Utils.escapeHtml(ch)}</button>`).join('')}
       </div>
     </div>` : '';
+  const manyLocalDecks = App.localDecks && App.localDecks.length>3;
   const localDeckSelector = App.localDecks && App.localDecks.length>1 ? `
-    <div class="deck-switcher">
+    <div class="deck-switcher ${manyLocalDecks?'too-many':''}">
       ${App.localDecks.map(d=>`<button type="button" class="${d.id===deck.id?'active':''}" data-local-deck="${d.id}">
         <span>${Utils.escapeHtml(d.meta.title)}</span><b>${d.totalQuestions}</b>
       </button>`).join('')}
+    </div>
+    <div class="deck-switch-select ${manyLocalDecks?'too-many':''}">
+      <select id="deck-switch-select" aria-label="切换题库">
+        ${App.localDecks.map(d=>`<option value="${d.id}" ${d.id===deck.id?'selected':''}>${Utils.escapeHtml(d.meta.title)}（${d.totalQuestions}题）</option>`).join('')}
+      </select>
     </div>` : '';
   const mockRuleText = hasCompletedDeckOnce(deck)
     ? '抽题规则：已完成整库首轮，错题本权重最高，复习本权重适度提高；仍会保留题型配比。'
     : '抽题规则：优先抽取未考过的题目；整库全部完成一遍后，会提高错题本与复习本抽取权重。';
+  const mobileLayout = window.matchMedia && window.matchMedia('(max-width:640px)').matches;
+  const collapseState = App.setupCollapse || (App.setupCollapse = { range:false, answer:false, advanced:false });
+  const rangeOpen = !mobileLayout || !!collapseState.range;
+  const answerOpen = !mobileLayout || !!collapseState.answer;
+  const advancedVisible = mobileLayout ? !!collapseState.advanced : advancedOpen;
 
   container.className = 'view-pad fade-in';
   container.innerHTML = `
-    <div class="container">
+    <div class="container setup-container">
       <div class="deck-info-card">
         <span class="deck-emoji">📚</span>
         <div>
           <h2>${Utils.escapeHtml(deck.meta.title)}</h2>
           <p>${Utils.escapeHtml(deck.meta.description||deck.meta.subject||'')} · 共 ${deck.totalQuestions} 题</p>
         </div>
-        <button class="btn btn-ghost" id="browse-deck-btn" type="button">📖 浏览整卷</button>
+        <button class="btn btn-secondary" id="browse-deck-btn" type="button">浏览整卷</button>
         <button class="btn btn-secondary swap" id="swap-deck-btn" type="button">更换题库</button>
       </div>
       ${localDeckSelector}
@@ -1907,7 +2003,9 @@ function renderSetupView(container){
       <div class="mode-grid">${modeCards}</div>
 
       <div class="setup-grid">
-        <div class="panel">
+        <div class="panel setup-panel ${rangeOpen?'open':''}" data-collapse-key="range">
+          <button type="button" class="mobile-collapse-head"><span>题目范围</span><span class="chev">▸</span></button>
+          <div class="mobile-collapse-body">
           <div class="section-title">题目范围<span class="line"></span></div>
           <div class="source-scope-row">
             <span class="tf-filter-label">学习来源</span>
@@ -1944,9 +2042,12 @@ function renderSetupView(container){
             <div class="seg">${qtyHtml}</div>
             <input type="number" class="num-input" id="qty-custom" min="1" max="${deck.totalQuestions}" placeholder="自定义" value="${customQtyVal}">
           </div>`}
+          </div>
         </div>
 
-        <div class="panel">
+        <div class="panel setup-panel ${answerOpen?'open':''}" data-collapse-key="answer">
+          <button type="button" class="mobile-collapse-head"><span>答题设置</span><span class="chev">▸</span></button>
+          <div class="mobile-collapse-body">
           <div class="section-title">答题设置<span class="line"></span></div>
           <div class="toggle-row">
             <div><div class="label">题目顺序乱序</div><div class="desc">每次学习打乱题目出现顺序</div></div>
@@ -1960,12 +2061,13 @@ function renderSetupView(container){
             <div><div class="label">选择模式</div><div class="desc">简答题变单选、填空题按空逐项选择，混淆项随机取自题库其余题目</div></div>
             <div class="switch ${s.selectionMode?'on':''}" data-switch="selectionMode"><div class="knob"></div></div>
           </div>
+          </div>
         </div>
       </div>
 
       <div class="panel adv-panel">
-        <div class="collapsible-head ${advancedOpen?'open':''}" id="adv-head"><span class="chev">▸</span><span>高级设置 · 各题型分值</span><span class="line"></span></div>
-        <div class="collapsible-body ${advancedOpen?'open':''}" id="adv-body">
+        <div class="collapsible-head ${advancedVisible?'open':''}" id="adv-head"><span class="chev">▸</span><span>高级设置 · 各题型分值</span><span class="line"></span></div>
+        <div class="collapsible-body ${advancedVisible?'open':''}" id="adv-body">
           <div class="points-grid">
             ${presentTypes.map(t=>`<div class="points-item"><span>${QuestionTypes[t].label}</span><input type="number" class="num-input" min="0" step="0.5" data-points="${t}" value="${s.points[t]}"></div>`).join('')}
           </div>
@@ -1983,6 +2085,20 @@ function renderSetupView(container){
   document.getElementById('swap-deck-btn').onclick = ()=>{ App.view='load'; render(); };
   document.getElementById('browse-deck-btn').onclick = ()=>{ App.browseScope='all'; App.browseBackView='setup'; App.view='browse'; render(); };
   container.querySelectorAll('[data-local-deck]').forEach(btn=>btn.onclick=()=>selectLocalDeck(btn.dataset.localDeck));
+  const deckSelect = document.getElementById('deck-switch-select');
+  if (deckSelect) deckSelect.onchange = ()=>selectLocalDeck(deckSelect.value);
+  container.querySelectorAll('.mobile-collapse-head').forEach(btn=>btn.onclick=()=>{
+    const panel = btn.closest('.setup-panel');
+    if (panel){
+      const open = !panel.classList.contains('open');
+      panel.classList.toggle('open', open);
+      const key = panel.dataset.collapseKey;
+      if (key){
+        App.setupCollapse = App.setupCollapse || { range:false, answer:false, advanced:false };
+        App.setupCollapse[key] = open;
+      }
+    }
+  });
   container.querySelectorAll('[data-mode]').forEach(btn=>btn.onclick=()=>{ s.mode=btn.dataset.mode; saveSettings(); render(); });
   container.querySelectorAll('[data-type]').forEach(btn=>btn.onclick=()=>{ const t=btn.dataset.type; s.includeTypes[t]=!s.includeTypes[t]; saveSettings(); render(); });
   container.querySelectorAll('[data-source-scope]').forEach(btn=>btn.onclick=()=>{ s.sourceScope=btn.dataset.sourceScope; saveSettings(); render(); });
@@ -2012,7 +2128,14 @@ function renderSetupView(container){
     qtyCustom.onkeydown = e=>{ if (e.key==='Enter'){ e.preventDefault(); applyCustomQty(); } };
   }
   const advHead=document.getElementById('adv-head'), advBody=document.getElementById('adv-body');
-  advHead.onclick = ()=>{ advancedOpen=!advancedOpen; advHead.classList.toggle('open'); advBody.classList.toggle('open'); };
+  advHead.onclick = ()=>{
+    const open = !advBody.classList.contains('open');
+    advancedOpen = open;
+    App.setupCollapse = App.setupCollapse || { range:false, answer:false, advanced:false };
+    App.setupCollapse.advanced = open;
+    advHead.classList.toggle('open', open);
+    advBody.classList.toggle('open', open);
+  };
   container.querySelectorAll('[data-points]').forEach(inp=>inp.onchange=()=>{
     const t=inp.dataset.points, v=parseFloat(inp.value);
     s.points[t] = isNaN(v) ? 0 : Math.max(0,v);
@@ -2549,8 +2672,9 @@ function renderInteractiveFace(sess, card){
       const allPicked = sel.every(v=>v!=null);
       const showConfirm = allPicked && active===card._blankOptions.length-1;
       const prevBtn = active>0 ? `<button type="button" class="btn btn-secondary" id="prev-blank-btn">上一空</button>` : '';
+      const nextBtn = active<card._blankOptions.length-1 && sel[active]!=null ? `<button type="button" class="btn btn-secondary" id="next-blank-btn">下一空</button>` : '';
       const confirmBtn = showConfirm ? `<button type="button" class="btn btn-primary" id="confirm-btn">确认 <span class="kbd">⏎</span></button>` : '';
-      actions = (prevBtn || confirmBtn) ? `<div class="qcard-actions">${prevBtn}${confirmBtn}</div>` : '';
+      actions = (prevBtn || nextBtn || confirmBtn) ? `<div class="qcard-actions">${prevBtn}${nextBtn}${confirmBtn}</div>` : '';
     }
   } else if (card.type==='multipleChoice' || card._multiSelect){
     const selIdxs = sess.selectedOptionIdxs || [];
@@ -2563,7 +2687,8 @@ function renderInteractiveFace(sess, card){
     }).join('') + `</div>`;
     if (!sess.revealed) actions = `<div class="qcard-actions"><button type="button" class="btn btn-primary" id="confirm-btn" ${selIdxs.length===0?'disabled':''}>确认 <span class="kbd">⏎</span></button></div>`;
   } else if (card.type==='singleChoice' || card._dynamicChoice){
-    body = `<div class="opt-list">` + card.options.map((o,i)=>{
+    const optListClass = (card._dynamicChoice && (card.type==='shortAnswer'||card.type==='essay')) ? 'opt-list opt-list-free' : 'opt-list';
+    body = `<div class="${optListClass}">` + card.options.map((o,i)=>{
       let cls = sess.selectedOptionIdx===i ? 'selected' : '';
       if (sess.revealed){ if (o.correct) cls='correct'; else if (sess.selectedOptionIdx===i) cls='wrong'; }
       return `<button type="button" class="opt-btn ${cls}" data-opt="${i}" ${sess.revealed?'disabled':''}>
@@ -2600,7 +2725,7 @@ function renderInteractiveFace(sess, card){
   }
   const isChoiceStyled = card._dynamicChoice || card._perBlankChoice;
   const showTopQuestion = !(card._perBlankChoice) && (card.type!=='fillInTheBlank' || isChoiceStyled);
-  const modeLabel = (mode==='learn'?'学习模式':'测试模式') + (isChoiceStyled?(card._perBlankChoice?' · 选择模式(按顺序逐空选择)':((card.type==='multipleChoice'||card._multiSelect)?' · 选择模式(可多选)':' · 选择模式')):(card.type==='multipleChoice'?' · 可多选':''));
+  const modeLabel = (mode==='learn'?'学习模式':'测试模式') + (isChoiceStyled?(card._perBlankChoice?' · 选择模式':((card.type==='multipleChoice'||card._multiSelect)?' · 选择模式(可多选)':' · 选择模式')):(card.type==='multipleChoice'?' · 可多选':''));
   return `<div class="${cardClasses(sess)}" id="qcard-el">
     ${renderQuestionTools(card)}
     ${typeLabelHtml(card, modeLabel)}
@@ -2683,6 +2808,12 @@ function bindCardEvents(sess, card){
       const prevBlankBtn = document.getElementById('prev-blank-btn');
       if (prevBlankBtn) prevBlankBtn.onclick = ()=>{
         sess.activeBlankIdx = Math.max(0, (sess.activeBlankIdx||0)-1);
+        persistActiveSession();
+        render();
+      };
+      const nextBlankBtn = document.getElementById('next-blank-btn');
+      if (nextBlankBtn) nextBlankBtn.onclick = ()=>{
+        sess.activeBlankIdx = Math.min(card._blankOptions.length-1, (sess.activeBlankIdx||0)+1);
         persistActiveSession();
         render();
       };
@@ -3012,7 +3143,8 @@ function renderBrowseView(container){
       ${wrongTestStrip}
       <div class="browse-shell">
         <div class="browse-main">${mainHtml}</div>
-        <div class="browse-sidebar">${sidebarHtml}</div>
+        <button class="btn btn-secondary browse-nav-toggle" type="button">题目导航</button>
+        <div class="browse-sidebar mobile-collapsed">${sidebarHtml}</div>
       </div>
     </div>
   `;
@@ -3020,6 +3152,11 @@ function renderBrowseView(container){
   document.getElementById('browse-answer-switch').onclick = ()=>{ App._browseShowAnswers = !showAns; render(); };
   const wrongTestBtn = document.getElementById('wrong-test-btn');
   if (wrongTestBtn) wrongTestBtn.onclick = startWrongBookTest;
+  const browseNavToggle = container.querySelector('.browse-nav-toggle');
+  if (browseNavToggle) browseNavToggle.onclick = ()=>{
+    const sidebar = container.querySelector('.browse-sidebar');
+    if (sidebar) sidebar.classList.toggle('mobile-collapsed');
+  };
   container.querySelectorAll('[data-browse-scope]').forEach(btn=>btn.onclick=()=>{ App.browseScope=btn.dataset.browseScope; render(); });
   container.querySelectorAll('[data-browse-chapter]').forEach(inp=>inp.onchange=()=>{
     const ch = inp.dataset.browseChapter;
@@ -3223,15 +3360,15 @@ function buildTypeBarChart(items){
 }
 function buildSparkline(values){
   if (!values.length) return `<div class="chart-empty">还没有学习记录</div>`;
-  const w=600,h=150,pad=22;
-  const n=values.length, stepX = n>1 ? (w-2*pad)/(n-1) : 0;
-  const points = values.map((v,i)=>[ pad+i*stepX, pad+(1-Utils.clamp(v,0,100)/100)*(h-2*pad) ]);
+  const w=600,h=150,padL=34,padR=8,padY=22;
+  const n=values.length, stepX = n>1 ? (w-padL-padR)/(n-1) : 0;
+  const points = values.map((v,i)=>[ padL+i*stepX, padY+(1-Utils.clamp(v,0,100)/100)*(h-2*padY) ]);
   const pathD = points.map((p,i)=>(i===0?'M':'L')+p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
-  const areaD = pathD+` L${points[points.length-1][0].toFixed(1)},${h-pad} L${points[0][0].toFixed(1)},${h-pad} Z`;
+  const areaD = pathD+` L${points[points.length-1][0].toFixed(1)},${h-padY} L${points[0][0].toFixed(1)},${h-padY} Z`;
   const dots = points.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.5" fill="var(--accent)"/>`).join('');
   const gridLines = [0,50,100].map(v=>{
-    const y=pad+(1-v/100)*(h-2*pad);
-    return `<line x1="${pad}" y1="${y.toFixed(1)}" x2="${w-pad}" y2="${y.toFixed(1)}" stroke="var(--border-soft)" stroke-width="1"/><text x="2" y="${(y+3).toFixed(1)}" font-size="10" fill="var(--text-faint)">${v}</text>`;
+    const y=padY+(1-v/100)*(h-2*padY);
+    return `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${w-padR}" y2="${y.toFixed(1)}" stroke="var(--border-soft)" stroke-width="1"/><text x="2" y="${(y+4).toFixed(1)}" font-size="12" fill="var(--text-faint)">${v}</text>`;
   }).join('');
   return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;aspect-ratio:${w}/${h};height:auto;overflow:visible;display:block;">
     ${gridLines}
@@ -3304,12 +3441,18 @@ function renderRecordDetailView(container){
         <div class="browse-main record-paper">
           ${groupedHtml || `<div class="empty-state"><span class="e-icon">□</span><p>这条记录没有逐题详情</p></div>`}
         </div>
-        <div class="browse-sidebar">${sidebarHtml}</div>
+        <button class="btn btn-secondary browse-nav-toggle" type="button">题目导航</button>
+        <div class="browse-sidebar mobile-collapsed">${sidebarHtml}</div>
       </div>
     </div>
   `;
   document.getElementById('record-back-btn').onclick = ()=>{ App.view='stats'; render(); };
   document.getElementById('record-answer-switch').onclick = ()=>{ App._recordShowAnswers = !showAns; render(); };
+  const recordNavToggle = container.querySelector('.browse-nav-toggle');
+  if (recordNavToggle) recordNavToggle.onclick = ()=>{
+    const sidebar = container.querySelector('.browse-sidebar');
+    if (sidebar) sidebar.classList.toggle('mobile-collapsed');
+  };
   container.querySelectorAll('[data-jump]').forEach(a=>{
     a.addEventListener('click', e=>{
       e.preventDefault();
@@ -3330,16 +3473,18 @@ function renderStatsView(container){
   const trendChart = sessions.length ? buildSparkline(sessions.slice(0,20).slice().reverse().map(s=>s.percentage)) : `<div class="chart-empty">还没有学习记录，快去开始第一轮学习吧</div>`;
   const typeAgg = aggregateByType(sessions);
   const typeChart = buildTypeBarChart(typeAgg.map(a=>Object.assign({},a,{sub:a.pct+'%'})));
-  const historyRows = sessions.slice(0,50).map(s=>`
-    <tr class="history-row" data-session-id="${s.id}" title="查看整卷记录">
-      <td>${Utils.fmtDateTime(s.startedAt)}</td>
+  const historyRows = sessions.slice(0,50).map(s=>{
+    const dateParts = Utils.fmtDateTime(s.startedAt).split(' ');
+    return `<tr class="history-row" data-session-id="${s.id}" title="查看整卷记录">
+      <td class="history-date-cell"><span>${dateParts[0]}</span><span>${dateParts[1]||''}</span></td>
       <td><span class="mode-tag-sm">${(MODE_INFO[s.mode]&&MODE_INFO[s.mode].title)||s.mode}</span></td>
       <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${Utils.escapeHtml(s.deckTitle)}</td>
       <td class="score-cell">${s.score}/${s.maxScore}</td>
       <td>${s.percentage}%</td>
       <td>${Utils.fmtClock(s.durationMs)}</td>
       <td><button type="button" class="record-delete-btn" data-delete-session="${s.id}" title="删除这条学习记录">删除</button></td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 
   container.innerHTML = `
     <div class="container">
