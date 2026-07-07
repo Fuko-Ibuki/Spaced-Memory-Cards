@@ -1839,6 +1839,13 @@ const MODE_INFO = {
   test:{ icon:'📝', title:'测试模式', desc:'模拟真实考试，一次性作答完毕后统一判分，给出完整报告。', tag:'真实评估' }
 };
 let advancedOpen = false; // 桌面端高级设置展开状态
+function ensureSetupCollapse(){
+  return App.setupCollapse || (App.setupCollapse = { range:false, answer:false, advanced:false });
+}
+function setMobileSetupCollapse(openKey){
+  const state = ensureSetupCollapse();
+  ['range','answer','advanced'].forEach(key=>{ state[key] = key===openKey; });
+}
 function getEffectiveByType(deck, s){
   const out = {};
   TYPE_ORDER.forEach(t=>{
@@ -1980,10 +1987,11 @@ function renderSetupView(container){
     ? '抽题规则：已完成整库首轮，错题本权重最高，复习本权重适度提高；仍会保留题型配比。'
     : '抽题规则：优先抽取未考过的题目；整库全部完成一遍后，会提高错题本与复习本抽取权重。';
   const mobileLayout = window.matchMedia && window.matchMedia('(max-width:640px)').matches;
-  const collapseState = App.setupCollapse || (App.setupCollapse = { range:false, answer:false, advanced:false });
-  const rangeOpen = !mobileLayout || !!collapseState.range;
-  const answerOpen = !mobileLayout || !!collapseState.answer;
-  const advancedVisible = mobileLayout ? !!collapseState.advanced : advancedOpen;
+  const collapseState = ensureSetupCollapse();
+  const activeMobileCollapse = mobileLayout ? ['range','answer','advanced'].find(key=>collapseState[key]) : null;
+  const rangeOpen = !mobileLayout || activeMobileCollapse==='range';
+  const answerOpen = !mobileLayout || activeMobileCollapse==='answer';
+  const advancedVisible = mobileLayout ? activeMobileCollapse==='advanced' : advancedOpen;
 
   container.className = 'view-pad fade-in';
   container.innerHTML = `
@@ -2094,8 +2102,12 @@ function renderSetupView(container){
       panel.classList.toggle('open', open);
       const key = panel.dataset.collapseKey;
       if (key){
-        App.setupCollapse = App.setupCollapse || { range:false, answer:false, advanced:false };
-        App.setupCollapse[key] = open;
+        if (mobileLayout){
+          setMobileSetupCollapse(open ? key : null);
+          render();
+          return;
+        }
+        ensureSetupCollapse()[key] = open;
       }
     }
   });
@@ -2130,9 +2142,13 @@ function renderSetupView(container){
   const advHead=document.getElementById('adv-head'), advBody=document.getElementById('adv-body');
   advHead.onclick = ()=>{
     const open = !advBody.classList.contains('open');
+    if (mobileLayout){
+      setMobileSetupCollapse(open ? 'advanced' : null);
+      render();
+      return;
+    }
     advancedOpen = open;
-    App.setupCollapse = App.setupCollapse || { range:false, answer:false, advanced:false };
-    App.setupCollapse.advanced = open;
+    ensureSetupCollapse().advanced = open;
     advHead.classList.toggle('open', open);
     advBody.classList.toggle('open', open);
   };
