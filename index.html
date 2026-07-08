@@ -242,9 +242,9 @@ button:focus-visible{ outline-offset:2px; }
 .icon-btn svg{ width:16px; height:16px; display:block; flex:0 0 16px; margin:auto; overflow:visible; }
 .icon-btn:hover{ background:var(--bg-hover); color:var(--text); transform:translateY(-1px); }
 
-main#view{ flex:1; display:flex; flex-direction:column; position:relative; z-index:30; background:var(--bg); will-change:transform, opacity; touch-action:pan-y; }
-main#view.view-dragging{ transition:none; }
-main#view.view-snap{ transition:transform .34s cubic-bezier(.22,1,.36,1), opacity .34s cubic-bezier(.22,1,.36,1); }
+main#view{ flex:1; display:flex; flex-direction:column; position:relative; z-index:30; background:var(--bg); touch-action:pan-y; }
+main#view.view-dragging{ transition:none; will-change:transform, opacity; }
+main#view.view-snap{ transition:transform .34s cubic-bezier(.22,1,.36,1), opacity .34s cubic-bezier(.22,1,.36,1); will-change:transform, opacity; }
 body.view-swipe-active{ overscroll-behavior-x:contain; }
 .view-swipe-preview{
   position:fixed; left:0; right:0; top:60px; bottom:0; z-index:20;
@@ -571,14 +571,14 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .qcard-type{ font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:16px; padding-right:118px; display:flex; align-items:center; gap:8px; overflow-wrap:anywhere; }
 .qcard-type .dot{ width:5px;height:5px; flex:0 0 5px; aspect-ratio:1; border-radius:50%; background:currentColor; }
 .qcard-question{ font-family:var(--font-display); font-size:22px; line-height:1.65; color:var(--ink); font-weight:500; flex:0 0 auto; white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
-.qcard-question .blank{ display:inline-block; width:56px; height:1.05em; vertical-align:-4px; border-bottom:3px solid var(--ink-faint); border-radius:0; margin:0 2px; }
+.qcard-question .blank{ display:inline-block; width:86px; height:1.05em; vertical-align:-4px; border-bottom:3px solid var(--ink-faint); border-radius:0; margin:0 2px; }
 .inline-blank-choice{
   position:relative; display:inline-flex; align-items:center; justify-content:center; min-width:70px; min-height:1.45em; margin:0 4px; padding:0 10px 4px;
   border:none; border-radius:0; background:transparent; color:var(--ink-soft); box-sizing:border-box;
   appearance:none; -webkit-appearance:none; font-family:inherit; font-size:.88em; line-height:1.2; font-weight:800; cursor:pointer; vertical-align:baseline; transition:all .18s var(--ease);
 }
 .inline-blank-choice::after{ content:""; position:absolute; left:9px; right:9px; bottom:0; height:3px; background:var(--ink-faint); border-radius:0; }
-.blank-line-only{ display:inline-block; width:58px; height:.8em; transform:translateY(-1px); }
+.blank-line-only{ display:inline-block; width:82px; height:.8em; transform:translateY(-1px); }
 .inline-blank-choice.filled{ color:var(--success-strong); background:transparent; box-shadow:none; animation:blankFill .18s var(--ease); }
 .inline-blank-choice.filled::after,.inline-blank-choice.correct::after{ background:var(--success); }
 .inline-blank-choice.correct{ color:var(--success-strong); background:transparent; }
@@ -590,7 +590,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 @keyframes blankFill{ from{ transform:scale(.96); } to{ transform:scale(1); } }
 .per-blank-options{ margin-top:34px; }
 
-.blank-wrap{ position:relative; display:inline-flex; align-items:center; min-width:96px; height:1.45em; vertical-align:middle; margin:0 2px; }
+.blank-wrap{ position:relative; display:inline-flex; align-items:center; width:max(112px, calc(var(--blank-chars, 6) * 1.05em + 24px)); max-width:100%; height:1.45em; vertical-align:middle; margin:0 2px; transition:width var(--dur-fast) var(--ease); }
 .qcard-blank-input{
   border:none; background:transparent; width:100%; box-sizing:border-box;
   font-family:var(--font-display); font-size:1em; line-height:1.1; font-weight:800; color:var(--ink); text-align:center;
@@ -929,12 +929,13 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .nav-cell-num{ display:block; line-height:1; transform:translateY(.5px); }
 .nav-chapter-label{ display:none; }
 .nav-cell:hover{ transform:scale(1.15); filter:brightness(1.08); }
-.nav-cell:not(.status-ok):not(.status-mid):not(.status-no):not(.status-empty):hover,
-.nav-cell:not(.status-ok):not(.status-mid):not(.status-no):not(.status-empty).active{
+.nav-cell:not(.status-ok):not(.status-good):not(.status-mid):not(.status-no):not(.status-empty):hover,
+.nav-cell:not(.status-ok):not(.status-good):not(.status-mid):not(.status-no):not(.status-empty).active{
   background:var(--accent); color:var(--accent-ink); border-color:var(--accent);
 }
 .nav-cell.active{ box-shadow:0 0 0 2px var(--accent); }
 .sidebar-legend i.status-ok,.nav-cell.status-ok{ background:var(--success); border-color:var(--success); color:#fff; }
+.sidebar-legend i.status-good,.nav-cell.status-good{ background:var(--info); border-color:var(--info); color:#fff; }
 .sidebar-legend i.status-mid,.nav-cell.status-mid{ background:var(--gold); border-color:var(--gold); color:var(--gold-ink); }
 .sidebar-legend i.status-no,.nav-cell.status-no{ background:var(--danger); border-color:var(--danger); color:#fff; }
 .sidebar-legend i.status-empty,.nav-cell.status-empty{ background:var(--bg-soft); border-color:var(--border-soft); color:var(--text-faint); }
@@ -967,9 +968,9 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .browse-q-opts .opt-row.is-wrong{ color:var(--danger-strong); background:var(--danger-bg); }
 .browse-q-opts .opt-row.is-picked{ font-weight:700; }
 .browse-answer{ margin-top:8px; padding:10px 14px; background:var(--success-bg); border-radius:var(--radius-sm); color:var(--success-strong); font-size:13px; line-height:1.7; white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
-.browse-blank-line{ display:inline-block; width:70px; border-bottom:2px solid var(--text-faint); height:1em; vertical-align:-4px; margin:0 3px; }
+.browse-blank-line{ display:inline-block; width:86px; border-bottom:2px solid var(--text-faint); height:1em; vertical-align:-4px; margin:0 3px; }
 .browse-inline-answer{
-  display:inline-block; min-width:70px; min-height:1.2em; padding:0 7px 1px; margin:0 3px; border-bottom:2px solid var(--success);
+  display:inline-block; min-width:86px; min-height:1.2em; padding:0 7px 1px; margin:0 3px; border-bottom:2px solid var(--success);
   color:var(--success-strong); background:transparent; font-weight:800; line-height:1.2; text-align:center; vertical-align:baseline;
 }
 .tf-mini-row{ display:flex; gap:8px; margin-top:10px; }
@@ -1045,6 +1046,9 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   .deck-switch-select.too-many{ display:block; margin:-10px 0 18px; }
   .qcard{ padding:26px 20px 24px; min-height:260px; }
   .qcard-question{ font-size:18px; }
+  .qcard-question .blank{ width:76px; }
+  .blank-line-only{ width:74px; }
+  .blank-wrap{ width:max(104px, calc(var(--blank-chars, 6) * 1.05em + 22px)); }
   .rate-grid{ gap:7px; }
   .rate-btn{ font-size:11.5px; padding:11px 4px; }
   .report-hero .score-big{ font-size:56px; }
@@ -1055,8 +1059,9 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   .browse-topbar{
     top:61px; align-items:center; justify-content:center;
     padding:10px 14px 12px; margin-bottom:14px; border-bottom:none;
-    overflow:visible;
+    overflow:visible; background:transparent; backdrop-filter:none;
   }
+  .view-pad.has-fixed-previewbar.fade-in{ animation:none; }
   .browse-filter-pack{
     flex:0 1 auto; min-width:0; width:100%;
     justify-content:center; gap:8px;
@@ -1084,13 +1089,13 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   .browse-topbar .browse-answer-fixed,
   .record-topbar .browse-answer-fixed{
     position:fixed; right:14px; bottom:calc(14px + env(safe-area-inset-bottom, 0px));
-    z-index:85; margin:0; padding:8px 10px 8px 12px;
+    z-index:170; margin:0; padding:8px 10px 8px 12px;
     box-shadow:var(--shadow-pop);
   }
   .browse-filter-line,#browse-back-btn{ display:none; }
   .browse-shell{ padding-bottom:76px; }
   .browse-nav-toggle{
-    display:flex; position:fixed; left:14px; bottom:calc(14px + env(safe-area-inset-bottom, 0px)); z-index:86;
+    display:flex; position:fixed; left:14px; bottom:calc(14px + env(safe-area-inset-bottom, 0px)); z-index:171;
     justify-content:center; margin:0; padding:10px 14px; border-radius:var(--radius-pill);
     box-shadow:var(--shadow-pop);
   }
@@ -1099,7 +1104,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
     border-radius:var(--radius-md); padding:12px; box-shadow:var(--shadow-pop);
   }
   .mobile-nav-dropdown{
-    display:block; position:fixed; left:14px; right:14px; bottom:calc(66px + env(safe-area-inset-bottom, 0px)); z-index:84;
+    display:block; position:fixed; left:14px; right:14px; bottom:calc(66px + env(safe-area-inset-bottom, 0px)); z-index:169;
     max-height:min(58vh,460px); margin:0; text-align:left;
     animation:navDrawerUp .18s var(--ease);
   }
@@ -1113,6 +1118,8 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   }
   .mobile-nav-dropdown.show-chapters .nav-chapter-label:first-child{ margin-top:0; }
   .browse-main{ order:0; width:100%; }
+  .browse-blank-line{ width:76px; }
+  .browse-inline-answer{ min-width:76px; }
   .browse-sidebar.mobile-collapsed{ display:none; }
   .browse-main .empty-state{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; min-height:46vh; margin:0 auto; }
   .chart-panel{ padding:18px 14px; min-height:0; overflow:visible; }
@@ -1223,6 +1230,11 @@ const Utils = {
   fmtDateShort(ts){
     const d = new Date(ts);
     return `${this.pad2(d.getMonth()+1)}-${this.pad2(d.getDate())}`;
+  },
+  fmtScore(n){
+    const num = Number(n);
+    if (!Number.isFinite(num)) return '0';
+    return (Math.round((num + Number.EPSILON)*100)/100).toFixed(2).replace(/\.?0+$/,'');
   },
   downloadJSON(filename, obj){
     const blob = new Blob([JSON.stringify(obj,null,2)], {type:'application/json'});
@@ -1729,9 +1741,13 @@ function confirmModal(title, bodyHtml, onConfirm, opts={}){
    ============================================================ */
 function render(){
   renderNav();
+  document.body.classList.remove('view-swipe-active');
+  document.querySelectorAll('.view-swipe-preview').forEach(el=>el.remove());
   const view = document.getElementById('view');
   view.innerHTML = '';
   view.className = '';
+  view.style.transform = '';
+  view.style.opacity = '';
   renderViewContent(App.view, view);
 }
 function renderViewContent(viewName, view){
@@ -2346,7 +2362,7 @@ function renderSetupView(container){
             <button type="button" class="switch ${s.mockExam?'on':''}" data-switch="mockExam" aria-label="模拟考试模式" aria-pressed="${s.mockExam?'true':'false'}"><span class="knob"></span></button>
           </div>
           ${s.mockExam ? `
-            <div class="mock-preview">${mockPlan ? `将抽取 <b>${mockPlan.totalCount}</b> 题：${mockPreviewLine}，合计 <b>${mockPlan.achievedTotal}</b> 分${mockPlan.achievedTotal<100?'（题库题量有限，暂无法凑满100分）':''}<br>${mockRuleText}` : '请先勾选至少一种题型'}</div>
+            <div class="mock-preview">${mockPlan ? `将抽取 <b>${mockPlan.totalCount}</b> 题：${mockPreviewLine}，合计 <b>${Utils.fmtScore(mockPlan.achievedTotal)}</b> 分${mockPlan.achievedTotal<100?'（题库题量有限，暂无法凑满100分）':''}<br>${mockRuleText}` : '请先勾选至少一种题型'}</div>
           ` : `
           <div class="section-title" style="margin-top:18px;">题量<span class="line"></span></div>
           <div class="qty-row">
@@ -2387,7 +2403,7 @@ function renderSetupView(container){
       </div>
 
       <div class="start-bar">
-        <div class="est">已选 <b class="num">${previewCount}</b> 题 · 满分 <b class="num">${previewScore}</b> 分</div>
+        <div class="est">已选 <b class="num">${previewCount}</b> 题 · 满分 <b class="num">${Utils.fmtScore(previewScore)}</b> 分</div>
         <button class="btn btn-primary btn-lg" id="start-btn" type="button" ${previewCount===0?'disabled':''}>开始学习 (${previewCount}题) →</button>
       </div>
     </div>
@@ -2767,7 +2783,7 @@ function buildRecordFromSession(sess, opts={}){
     details: gradedResults.map(r=>({
       uid:r.uid, type:r.type, chapter:r.chapter||'', question:r.question,
       userAnswer:r.userAnswerDisplay, correctAnswer:r.correctAnswerDisplay,
-      status:resultStatus(r), scoreEarned:r.scoreEarned, maxScore:r.maxScore
+      status:resultStatus(r), pct:typeof r.pct==='number'?r.pct:undefined, scoreEarned:r.scoreEarned, maxScore:r.maxScore
     }))
   };
 }
@@ -2878,6 +2894,15 @@ function renderQuestionText(card){
   let text = Utils.escapeHtml(card.question);
   if (card.type==='fillInTheBlank') text = text.replace(/_{2,}/g, '<span class="blank" aria-hidden="true"></span>');
   return text;
+}
+function blankInputChars(value){
+  const text = String(value||'');
+  const weighted = Array.from(text).reduce((sum,ch)=>sum + (/[\u2E80-\u9FFF\uF900-\uFAFF]/.test(ch) ? 1.15 : .62), 0);
+  return Math.max(6, Math.ceil(weighted));
+}
+function syncBlankInputWidth(input){
+  const wrap = input && input.closest('.blank-wrap');
+  if (wrap) wrap.style.setProperty('--blank-chars', blankInputChars(input.value));
 }
 function renderFilledBlankHtml(card){
   let i = 0;
@@ -3033,7 +3058,7 @@ function renderInteractiveFace(sess, card){
   } else if (card.type==='fillInTheBlank'){
     const parts = Utils.escapeHtml(card.question).split(/_{2,}/);
     const inputCls = sess.revealed ? (sess.lastGradeCorrect?'correct':'wrong') : '';
-    const inputHtml = `<span class="blank-wrap"><input type="text" class="qcard-blank-input ${inputCls}" id="blank-input" value="${Utils.escapeHtml(sess.userTextAnswer||'')}" ${sess.revealed?'disabled':''} placeholder="" autocomplete="off" autocapitalize="off" spellcheck="false"><span class="blank-underline"></span></span>`;
+    const inputHtml = `<span class="blank-wrap" style="--blank-chars:${blankInputChars(sess.userTextAnswer||'')}"><input type="text" class="qcard-blank-input ${inputCls}" id="blank-input" value="${Utils.escapeHtml(sess.userTextAnswer||'')}" ${sess.revealed?'disabled':''} placeholder="" autocomplete="off" autocapitalize="off" spellcheck="false"><span class="blank-underline"></span></span>`;
     body = `<div class="qcard-question">${parts.join(inputHtml)}</div>`;
     if (sess.revealed){
       body += `<div class="reveal-divider"></div><div class="reveal-label">正确答案</div><div class="reveal-answer">${Utils.escapeHtml(card.answers.join(' / '))}</div>`;
@@ -3179,9 +3204,10 @@ function bindCardEvents(sess, card){
     }
   } else if (card.type==='fillInTheBlank'){
     const input = document.getElementById('blank-input');
+    if (input) syncBlankInputWidth(input);
     if (input && !sess.revealed){
       input.focus();
-      input.addEventListener('input', ()=>{ sess.userTextAnswer = input.value; persistActiveSession(); });
+      input.addEventListener('input', ()=>{ syncBlankInputWidth(input); sess.userTextAnswer = input.value; persistActiveSession(); });
       input.addEventListener('keydown', e=>{ if (e.key==='Enter'){ e.preventDefault(); submitObjectiveAnswer(sess.userTextAnswer); } });
     }
     const cb = document.getElementById('confirm-btn');
@@ -3571,7 +3597,7 @@ function renderBrowseView(container){
 function renderPreviewSidebar(grouped, idPrefix, opts={}){
   const detailMap = opts.detailMap || null;
   const statusLegend = detailMap ? (opts.mode==='flashcard'
-    ? `<div class="sidebar-legend"><span><i class="status-ok"></i>已掌握</span><span><i class="status-mid"></i>复习中</span><span><i class="status-no"></i>错题</span><span><i class="status-empty"></i>未学习</span></div>`
+    ? `<div class="sidebar-legend"><span><i class="status-no"></i>未掌握</span><span><i class="status-mid"></i>复习中</span><span><i class="status-good"></i>基本掌握</span><span><i class="status-ok"></i>已掌握</span></div>`
     : `<div class="sidebar-legend"><span><i class="status-ok"></i>正确</span><span><i class="status-no"></i>错误</span></div>`) : '';
   const body = grouped.map(g=>{
     const entries = g.questions ? g.questions.map(q=>({question:q})) : g.items;
@@ -3582,8 +3608,9 @@ function renderPreviewSidebar(grouped, idPrefix, opts={}){
       let statusClass = '';
       if (detailMap){
         let heatStatus = d ? d.status : 'empty';
-        if (opts.mode!=='flashcard') heatStatus = heatStatus==='ok' ? 'ok' : (heatStatus==='empty' ? 'empty' : 'no');
-        statusClass = ` status-${heatStatus==='mid'?'mid':(heatStatus==='ok'?'ok':(heatStatus==='empty'?'empty':'no'))}`;
+        if (opts.mode==='flashcard') heatStatus = flashcardHeatStatus(d);
+        else heatStatus = heatStatus==='ok' ? 'ok' : (heatStatus==='empty' ? 'empty' : 'no');
+        statusClass = ` status-${['ok','good','mid','no','empty'].includes(heatStatus)?heatStatus:'no'}`;
       }
       const chapter = opts.showChapters ? (q.chapter || (entry.detail && entry.detail.chapter) || (d && d.chapter) || '') : '';
       const chapterLabel = chapter && chapter!==lastChapter ? `<div class="nav-chapter-label">${Utils.escapeHtml(chapter)}</div>` : '';
@@ -3593,6 +3620,16 @@ function renderPreviewSidebar(grouped, idPrefix, opts={}){
     return `<h5>${QuestionTypes[g.type].label} (${entries.length})</h5><div class="nav-grid">${cells}</div>`;
   }).join('');
   return statusLegend + body;
+}
+function flashcardHeatStatus(detail){
+  if (!detail) return 'empty';
+  let pct = typeof detail.pct==='number' ? detail.pct : null;
+  if (pct==null && Number(detail.maxScore)>0) pct = (Number(detail.scoreEarned)||0) / Number(detail.maxScore) * 100;
+  if (pct==null) return detail.status || 'empty';
+  if (pct>=99.5) return 'ok';
+  if (pct>=80) return 'good';
+  if (pct>=50) return 'mid';
+  return 'no';
 }
 function renderInlineFillQuestion(q, showAns){
   let i = 0;
@@ -3653,7 +3690,7 @@ function renderPreviewQuestion(q, num, opts={}){
     <div class="preview-meta">
       ${q.chapter ? `<span class="chapter-pill">${Utils.escapeHtml(q.chapter)}</span>` : ''}
       ${statusBadge}
-      ${detail ? `<span>${detail.scoreEarned}/${detail.maxScore} 分</span>` : ''}
+      ${detail ? `<span>${Utils.fmtScore(detail.scoreEarned)}/${Utils.fmtScore(detail.maxScore)} 分</span>` : ''}
     </div>
     ${bodyHtml}
   </div>`;
@@ -3685,7 +3722,7 @@ function renderReportView(container){
 
   const typeBreakdownHtml = buildTypeBarChart(
     TYPE_ORDER.filter(t=>r.byType[t] && r.byType[t].total>0)
-      .map(t=>({ type:t, pct: r.byType[t].maxScore>0 ? Math.round((r.byType[t].score/r.byType[t].maxScore)*100) : 0, sub:`${r.byType[t].score}/${r.byType[t].maxScore}分` }))
+      .map(t=>({ type:t, pct: r.byType[t].maxScore>0 ? Math.round((r.byType[t].score/r.byType[t].maxScore)*100) : 0, sub:`${Utils.fmtScore(r.byType[t].score)}/${Utils.fmtScore(r.byType[t].maxScore)}分` }))
   );
 
   const qaListHtml = r.details.map((d,i)=>{
@@ -3694,7 +3731,7 @@ function renderReportView(container){
       <div class="qa-head" tabindex="0" role="button" aria-expanded="false">
         <div class="qa-status ${d.status}">${statusIcon}</div>
         <div class="qa-q">${Utils.escapeHtml(d.question)}</div>
-        <div class="qa-score">${d.scoreEarned}/${d.maxScore}</div>
+        <div class="qa-score">${Utils.fmtScore(d.scoreEarned)}/${Utils.fmtScore(d.maxScore)}</div>
         <div class="chev">▸</div>
       </div>
       <div class="qa-detail"><div class="qa-detail-inner">
@@ -3707,7 +3744,7 @@ function renderReportView(container){
   container.innerHTML = `
     <div class="container">
       <div class="report-hero">
-        <div class="score-big"><span id="score-counter">0</span><small>/${r.maxScore}</small></div>
+        <div class="score-big"><span id="score-counter">0</span><small>/${Utils.fmtScore(r.maxScore)}</small></div>
         <div class="score-label">${Utils.escapeHtml(recordContextLabel(r))}</div>
         ${r.mode==='flashcard' ? `<div class="score-label" style="margin-top:2px;font-size:11.5px;opacity:.7;">闪卡模式得分由你的自我评分换算而来，用于估算记忆掌握度</div>` : ''}
       </div>
@@ -3748,12 +3785,12 @@ function renderReportView(container){
 function animateScoreCounter(target){
   const el = document.getElementById('score-counter');
   if (!el) return;
-  const dur=700, start=performance.now(), isInt = Math.round(target*10)%10===0;
+  const dur=700, start=performance.now();
   function step(now){
     const p = Utils.clamp((now-start)/dur,0,1);
     const eased = 1-Math.pow(1-p,3);
-    el.textContent = (target*eased).toFixed(isInt?0:1);
-    if (p<1) requestAnimationFrame(step); else el.textContent = isInt?Math.round(target):target;
+    el.textContent = Utils.fmtScore(target*eased);
+    if (p<1) requestAnimationFrame(step); else el.textContent = Utils.fmtScore(target);
   }
   requestAnimationFrame(step);
 }
@@ -3843,7 +3880,7 @@ function renderRecordDetailView(container){
         <button class="btn btn-secondary" id="record-back-btn" type="button">← 返回统计</button>
         <div class="record-title">
           <h2>${Utils.escapeHtml(contextLabel)}</h2>
-          <p>${Utils.fmtDateTime(record.startedAt)} · ${record.score}/${record.maxScore} 分 · ${record.percentage}%</p>
+          <p>${Utils.fmtDateTime(record.startedAt)} · ${Utils.fmtScore(record.score)}/${Utils.fmtScore(record.maxScore)} 分 · ${record.percentage}%</p>
         </div>
         <div class="browse-answer-fixed">
           <div class="label" style="font-size:13px;">显示答案</div>
@@ -3856,7 +3893,7 @@ function renderRecordDetailView(container){
         <div class="browse-main record-paper">
           <div class="record-mobile-title">
             <h2>${Utils.escapeHtml(contextLabel)}</h2>
-            <p>${Utils.fmtDateTime(record.startedAt)} · ${record.score}/${record.maxScore} 分 · ${record.percentage}%</p>
+            <p>${Utils.fmtDateTime(record.startedAt)} · ${Utils.fmtScore(record.score)}/${Utils.fmtScore(record.maxScore)} 分 · ${record.percentage}%</p>
           </div>
           ${groupedHtml || `<div class="empty-state"><span class="e-icon">□</span><p>这条记录没有逐题详情</p></div>`}
         </div>
@@ -3911,7 +3948,7 @@ function renderStatsView(container){
     return `<tr class="history-row" data-session-id="${s.id}" tabindex="0" title="查看整卷记录">
       <td class="history-date-cell"><span>${dateParts[0]}</span><span>${dateParts[1]||''}</span></td>
       <td class="history-context-cell" title="${Utils.escapeHtml(contextLabel)}">${Utils.escapeHtml(contextLabel)}</td>
-      <td class="score-cell">${s.score}/${s.maxScore}</td>
+      <td class="score-cell">${Utils.fmtScore(s.score)}/${Utils.fmtScore(s.maxScore)}</td>
       <td>${s.percentage}%</td>
       <td>${Utils.fmtClock(s.durationMs)}</td>
       <td><button type="button" class="record-delete-btn" data-delete-session="${s.id}" title="删除这条学习记录">删除</button></td>
