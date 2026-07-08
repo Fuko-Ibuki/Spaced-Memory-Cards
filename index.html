@@ -220,6 +220,11 @@ button:focus-visible{ outline-offset:2px; }
   white-space:nowrap;
 }
 .streak-pill .flame{ font-size:14px; filter:drop-shadow(0 0 6px color-mix(in srgb, var(--gold) 60%, transparent)); }
+.streak-pill.streak-placeholder{
+  display:flex;
+  visibility:hidden;
+  pointer-events:none;
+}
 .streak-pill.bump{ animation:streakBump .5s var(--ease-spring); }
 @keyframes streakBump{ 0%{transform:scale(1)} 35%{transform:scale(1.28)} 100%{transform:scale(1)} }
 
@@ -791,8 +796,9 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .sparkline-scroll svg{ min-width:100%; }
 .chart-empty{ font-size:13px; color:var(--text-faint); text-align:center; padding:30px 0; }
 
-.history-table{ width:100%; border-collapse:collapse; font-size:13px; }
-.history-table th{ text-align:left; color:var(--text-faint); font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; padding:8px 10px; border-bottom:1px solid var(--border-soft); }
+.history-table-wrap{ width:100%; max-height:620px; overflow:auto; -webkit-overflow-scrolling:touch; }
+.history-table{ width:100%; min-width:720px; border-collapse:collapse; font-size:13px; }
+.history-table th{ position:sticky; top:0; z-index:1; background:var(--bg); text-align:left; color:var(--text-faint); font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; padding:8px 10px; border-bottom:1px solid var(--border-soft); }
 .history-table td{ padding:11px 10px; border-bottom:1px solid var(--border-soft); color:var(--text-soft); }
 .history-table tr:last-child td{ border-bottom:none; }
 .history-table .history-row{ cursor:pointer; transition:background var(--dur-fast) var(--ease); }
@@ -1004,19 +1010,31 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
    ============================================================ */
 @media (max-width:640px){
   .topnav{
-    display:grid; grid-template-columns:auto auto minmax(0,1fr) auto; align-items:center;
+    position:relative;
+    display:flex; align-items:center; justify-content:space-between;
     padding:10px 12px; gap:8px;
+    min-height:48px;
   }
-  .brand{ grid-column:1; grid-row:1; font-size:14px; gap:0; }
+  .brand{ font-size:14px; gap:0; margin-right:0; }
   .brand .brand-text{ display:none; }
   .nav-spacer{ display:none; }
   .format-guide-grid{ grid-template-columns:1fr; }
-  .streak-pill{ grid-column:2; grid-row:1; justify-self:start; padding:5px 9px 5px 7px; font-size:12px; }
-  .nav-tabs{ grid-column:3; grid-row:1; width:max-content; max-width:100%; justify-content:center; justify-self:center; }
+  .streak-pill{ padding:5px 9px 5px 7px; font-size:12px; }
+  .streak-pill.streak-placeholder{ display:flex; visibility:hidden; }
+  .nav-tabs{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%, -50%);
+    width:max-content;
+    max-width:calc(100vw - 132px);
+    justify-content:center;
+    z-index:1;
+  }
   .nav-tab{ padding:7px 12px; }
-  .icon-btn{ grid-column:4; grid-row:1; justify-self:end; }
+  .icon-btn{ position:relative; z-index:2; margin-left:auto; }
   .container{ padding:0 14px; }
-  .setup-container{ display:flex; flex-direction:column; }
+  .setup-container{ display:flex; flex-direction:column; padding-bottom:28px; }
   .setup-container .deck-info-card{ order:1; }
   .setup-container .deck-switcher,.setup-container .deck-switch-select{ order:2; }
   .setup-container > .section-title{ order:3; }
@@ -1038,8 +1056,9 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   .setup-panel.open .mobile-collapse-body{ display:block; }
   .setup-panel.open .mobile-collapse-head .chev{ transform:rotate(90deg); }
   .setup-panel .mobile-collapse-body > .section-title:first-child{ display:none; }
-  .start-bar{ flex-direction:column; align-items:stretch; gap:10px; margin-top:0; margin-bottom:18px; padding-top:0; border-top:none; }
+  .start-bar{ flex-direction:column; align-items:stretch; gap:10px; margin-top:0; margin-bottom:22px; padding:0 0 6px; border-top:none; overflow:visible; }
   .start-bar .est{ text-align:center; }
+  .start-bar .btn-lg{ margin-bottom:3px; }
   .deck-switcher{ flex-wrap:nowrap; overflow-x:auto; max-height:none; padding:0 2px 8px; margin:-10px 0 18px; scroll-snap-type:x proximity; }
   .deck-switcher button{ flex:0 0 calc((100% - 16px)/3); max-width:none; justify-content:center; scroll-snap-align:start; }
   .deck-switcher.too-many{ display:none; }
@@ -1051,6 +1070,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   .blank-wrap{ width:max(104px, calc(var(--blank-chars, 6) * 1.05em + 22px)); }
   .rate-grid{ gap:7px; }
   .rate-btn{ font-size:11.5px; padding:11px 4px; }
+  .rate-btn .kbd{ display:none; }
   .report-hero .score-big{ font-size:56px; }
   .deck-info-card{ flex-wrap:wrap; gap:12px; }
   .deck-info-card > div{ flex:1 1 calc(100% - 52px); }
@@ -1105,12 +1125,13 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   }
   .mobile-nav-dropdown{
     display:block; position:fixed; left:14px; right:14px; bottom:calc(66px + env(safe-area-inset-bottom, 0px)); z-index:169;
+    width:auto; max-width:calc(100vw - 28px); box-sizing:border-box;
     max-height:min(58vh,460px); margin:0; text-align:left;
     animation:navDrawerUp .18s var(--ease);
   }
   @keyframes navDrawerUp{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:none; } }
   .browse-shell > .browse-sidebar{ display:none; }
-  .browse-sidebar .nav-grid{ max-height:none; overflow:visible; padding:5px; }
+  .browse-sidebar .nav-grid{ max-height:none; overflow:visible; padding:5px; max-width:100%; box-sizing:border-box; }
   .browse-sidebar .nav-cell{ width:30px; height:30px; border-radius:9px; }
   .mobile-nav-dropdown.show-chapters .nav-chapter-label{
     display:block; flex:1 0 100%; margin:8px 0 2px;
@@ -1140,6 +1161,8 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   .tb-row{ gap:8px; }
   .tb-row .tb-label{ width:64px; font-size:12px; }
   .tb-row .tb-pct{ width:48px; font-size:11.5px; }
+  .history-table-wrap{ max-height:min(58vh,460px); margin:0 -2px; padding:0 2px 8px; }
+  .history-table{ min-width:680px; }
   .history-table th,.history-table td{ white-space:nowrap; padding:10px 8px; }
   .history-table .history-context-cell{ max-width:min(58vw,260px); }
   .history-date-cell span{ display:inline; }
@@ -1619,20 +1642,26 @@ function restoreBrowseScrollForScope(scope){
 }
 function capturePreviewAnchor(container){
   const top = previewViewportTop(container);
-  const items = [...container.querySelectorAll('.browse-q[id]')];
-  const target = items.find(el=>el.getBoundingClientRect().bottom > top + 8) || items[0];
+  const x = Math.min(window.innerWidth - 24, Math.max(24, window.innerWidth * .5));
+  let probeY = Math.min(window.innerHeight - 24, Math.max(top + 18, 90));
+  let target = null;
+  for (let i=0; i<8 && !target; i++){
+    const el = document.elementFromPoint(x, probeY + i*28);
+    target = el && el.closest ? el.closest('.browse-q[id]') : null;
+  }
+  if (!target) target = container.querySelector('.browse-q[id]');
   if (!target) return null;
   return { id:target.id, delta:target.getBoundingClientRect().top - top };
 }
 function restorePreviewAnchor(container, anchor){
   if (!anchor || !anchor.id) return;
-  requestAnimationFrame(()=>{
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
     const target = document.getElementById(anchor.id);
     if (!target) return;
     const top = previewViewportTop(container);
     const shift = target.getBoundingClientRect().top - top - anchor.delta;
     if (Math.abs(shift) > 1) window.scrollBy({ top:shift, behavior:'auto' });
-  });
+  }));
 }
 function matchesChapter(q, s){
   return !s.chapterFilter || s.chapterFilter==='all' || q.chapter===s.chapterFilter;
@@ -1770,7 +1799,7 @@ function renderNav(){
   nav.innerHTML = `
     <div class="brand"><span class="brand-mark">🗂️</span><span class="brand-text">Spaced Memory Cards</span></div>
     <div class="nav-spacer"></div>
-    ${streak>0 ? `<div class="streak-pill" id="streak-pill"><span class="flame">🔥</span><span class="streak-num">${streak}</span>天</div>` : ''}
+    <div class="streak-pill ${streak>0?'':'streak-placeholder'}" id="streak-pill" aria-hidden="${streak>0?'false':'true'}"><span class="flame">🔥</span><span class="streak-num">${Math.max(1, streak)}</span>天</div>
     <div class="nav-tabs">
       <button type="button" class="nav-tab ${studyActive?'active':''}" data-nav="study">学习</button>
       <button type="button" class="nav-tab ${['stats','record'].includes(App.view)?'active':''}" data-nav="stats">统计</button>
@@ -3972,7 +4001,7 @@ function renderStatsView(container){
       <div class="panel chart-panel"><h4>各题型累计得分率</h4>${typeChart}</div>
       <div class="section-title">学习记录<span class="line"></span></div>
       ${sessions.length ? `<p class="muted record-preview-hint">点击任意记录可进入整卷预览，右侧导航栏会标出正误并可快速定位。</p>` : ''}
-      ${sessions.length ? `<div style="overflow-x:auto;"><table class="history-table">
+      ${sessions.length ? `<div class="history-table-wrap"><table class="history-table">
         <thead><tr><th>时间</th><th>学习内容</th><th>得分</th><th>正确率</th><th>用时</th><th>操作</th></tr></thead>
         <tbody>${historyRows}</tbody></table></div>`
         : `<div class="empty-state"><span class="e-icon">📭</span><p>还没有任何学习记录，快去开始第一轮学习吧！</p></div>`}
@@ -4028,13 +4057,42 @@ function renderStatsView(container){
     }, { danger:true, confirmLabel:'清空' });
   };
 }
+function sanitizeProgressForExport(progress){
+  const out = Utils.deepClone(progress || defaultProgress());
+  const deleted = new Set(out.deletedSessionIds || []);
+  out.sessions = (out.sessions || []).filter(s=>s && s.id && !deleted.has(s.id));
+  const totals = { totalSessions:0, totalQuestionsAnswered:0, totalScorePoints:0, totalMaxPoints:0, totalTimeMs:0 };
+  const questionStats = {};
+  out.sessions.forEach(s=>{
+    totals.totalSessions++;
+    totals.totalQuestionsAnswered += s.totalQuestions||0;
+    totals.totalScorePoints += s.score||0;
+    totals.totalMaxPoints += s.maxScore||0;
+    totals.totalTimeMs += s.durationMs||0;
+    const deckStats = questionStats[s.deckId] || (questionStats[s.deckId] = {});
+    (s.details||[]).forEach(d=>{
+      const cur = deckStats[d.uid] || (deckStats[d.uid] = {attempts:0, correct:0, wrong:0, mid:0});
+      cur.attempts++;
+      if (d.status==='ok') cur.correct++;
+      else if (d.status==='mid') cur.mid++;
+      else cur.wrong++;
+      cur.lastStatus = d.status;
+      cur.lastAt = Math.max(cur.lastAt||0, s.endedAt||s.startedAt||0);
+    });
+  });
+  out.totals = totals;
+  out.streak = recomputeStreakFromSessions(out.sessions);
+  out.questionStats = questionStats;
+  return out;
+}
 function exportAllData(){
+  const progress = sanitizeProgressForExport(App.progress);
   Utils.downloadJSON(`SpacedMemoryCards_数据_${Utils.todayStr()}.json`, {
     _type:'smc-data',
     version:2,
     exportedAt:Date.now(),
     settings:App.settings,
-    progress:App.progress,
+    progress,
     deck:App.deck ? {id:App.deck.id, title:App.deck.meta.title} : null,
     srs:App.deck ? {[App.deck.id]:App.srs||{}} : {}
   });
@@ -4082,6 +4140,7 @@ function rebuildProgressDerivedState(){
   App.progress.questionStats = questionStats;
 }
 async function deleteSessionRecord(id){
+  App.progress.deletedSessionIds = Array.from(new Set([...(App.progress.deletedSessionIds||[]), id]));
   App.progress.sessions = (App.progress.sessions||[]).filter(s=>s.id!==id);
   rebuildProgressDerivedState();
   await saveProgress();
@@ -4101,10 +4160,16 @@ async function importConfigObj(incoming, opts={}){
 }
 async function importHistoryObj(progressObj, opts={}){
   if (!progressObj || !Array.isArray(progressObj.sessions)) throw new Error('文件内容不是合法的学习记录');
+  const deletedIds = new Set([...(App.progress.deletedSessionIds||[]), ...(progressObj.deletedSessionIds||[])]);
+  App.progress.deletedSessionIds = [...deletedIds];
   const incomingSessions = progressObj.sessions;
   const existingIds = new Set(App.progress.sessions.map(s=>s.id));
-  const newOnes = incomingSessions.filter(s=>s && s.id && !existingIds.has(s.id));
-  const merged = App.progress.sessions.concat(newOnes).sort((a,b)=>b.startedAt-a.startedAt).slice(0,300);
+  const newOnes = incomingSessions.filter(s=>s && s.id && !deletedIds.has(s.id) && !existingIds.has(s.id));
+  const merged = App.progress.sessions
+    .filter(s=>s && s.id && !deletedIds.has(s.id))
+    .concat(newOnes)
+    .sort((a,b)=>b.startedAt-a.startedAt)
+    .slice(0,300);
   App.progress.sessions = merged;
   ['reviewBook','wrongBook'].forEach(k=>{
     App.progress[k] = App.progress[k] || {};
