@@ -1698,6 +1698,27 @@ function restorePreviewAnchor(container, anchor){
   const nextTop = window.scrollY + target.getBoundingClientRect().top - top - anchor.delta;
   if (Math.abs(nextTop - window.scrollY) > 1) window.scrollTo({ top:nextTop, behavior:'auto' });
 }
+function captureDesktopPreviewNav(container){
+  if (isMobileViewport()) return null;
+  const sidebar = container.querySelector('.browse-shell > .browse-sidebar');
+  if (!sidebar) return null;
+  const active = sidebar.querySelector('.nav-cell.active');
+  return {
+    scrollTop:sidebar.scrollTop,
+    activeUid:active ? active.dataset.jump : ''
+  };
+}
+function restoreDesktopPreviewNav(container, state){
+  if (!state || isMobileViewport()) return;
+  const sidebar = container.querySelector('.browse-shell > .browse-sidebar');
+  if (!sidebar) return;
+  sidebar.scrollTop = state.scrollTop || 0;
+  if (state.activeUid){
+    sidebar.querySelectorAll('.nav-cell').forEach(cell=>{
+      cell.classList.toggle('active', cell.dataset.jump===state.activeUid);
+    });
+  }
+}
 function matchesChapter(q, s){
   return !s.chapterFilter || s.chapterFilter==='all' || q.chapter===s.chapterFilter;
 }
@@ -3642,8 +3663,10 @@ function renderBrowseView(container){
   document.getElementById('browse-back-btn').onclick = ()=>{ App.view=App.browseBackView||'setup'; render(); };
   document.getElementById('browse-answer-switch').onclick = ()=>{
     const anchor = capturePreviewAnchor(container);
+    const navState = captureDesktopPreviewNav(container);
     App._browseShowAnswers = !showAns;
     render();
+    restoreDesktopPreviewNav(document.getElementById('view'), navState);
     restorePreviewAnchor(document.getElementById('view'), anchor);
   };
   const wrongTestBtn = document.getElementById('wrong-test-btn');
@@ -4011,8 +4034,10 @@ function renderRecordDetailView(container){
   document.getElementById('record-back-btn').onclick = ()=>{ App.view='stats'; render(); };
   document.getElementById('record-answer-switch').onclick = ()=>{
     const anchor = capturePreviewAnchor(container);
+    const navState = captureDesktopPreviewNav(container);
     App._recordShowAnswers = !showAns;
     render();
+    restoreDesktopPreviewNav(document.getElementById('view'), navState);
     restorePreviewAnchor(document.getElementById('view'), anchor);
   };
   const recordNavToggle = container.querySelector('.browse-nav-toggle');
