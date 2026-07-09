@@ -263,6 +263,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
    4. 按钮
    ============================================================ */
 .btn{
+  position:relative; isolation:isolate;
   display:inline-flex; align-items:center; justify-content:center; gap:8px;
   border-radius:var(--radius-pill);
   border:none;
@@ -278,15 +279,36 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .btn-primary{ background:var(--accent); color:var(--accent-ink); box-shadow:0 4px 0 0 var(--accent-shade); }
 .btn-primary:hover:not(:disabled){ background:var(--accent-strong); }
 .btn-primary:active:not(:disabled){ box-shadow:0 1px 0 0 var(--accent-shade); }
+.btn:focus-visible{
+  outline:none;
+  box-shadow:var(--btn-depth-shadow, none);
+}
+.btn:focus-visible::before{
+  content:""; position:absolute; top:-10px; right:-10px; bottom:calc(-10px - var(--btn-depth, 0px)); left:-10px; z-index:-1;
+  border-radius:999px;
+  background:color-mix(in srgb, var(--accent) 20%, transparent);
+  box-shadow:inset 0 0 0 0 transparent;
+  pointer-events:none;
+}
+.btn-primary{ --btn-depth:4px; --btn-depth-shadow:0 4px 0 0 var(--accent-shade); }
+.btn-primary:active:not(:disabled){ --btn-depth:1px; --btn-depth-shadow:0 1px 0 0 var(--accent-shade); }
 .btn-secondary{ background:var(--bg-soft); color:var(--text); box-shadow:0 4px 0 0 var(--border); }
 .btn-secondary:hover:not(:disabled){ background:var(--bg-hover); }
 .btn-secondary:active:not(:disabled){ box-shadow:0 1px 0 0 var(--border); }
+.btn-secondary{ --btn-depth:4px; --btn-depth-shadow:0 4px 0 0 var(--border); }
+.btn-secondary:active:not(:disabled){ --btn-depth:1px; --btn-depth-shadow:0 1px 0 0 var(--border); }
 .btn-ghost{ background:transparent; color:var(--text-soft); box-shadow:none !important; }
 .btn-ghost:hover:not(:disabled){ color:var(--text); background:var(--bg-soft); }
 .btn-ghost:active:not(:disabled){ transform:scale(.96); }
+.btn-ghost:focus-visible{ box-shadow:none !important; }
 .btn-danger{ background:var(--danger-bg); color:var(--danger-strong); box-shadow:0 4px 0 0 color-mix(in srgb, var(--danger) 30%, transparent); }
 .btn-danger:hover:not(:disabled){ background:color-mix(in srgb, var(--danger) 22%, transparent); }
 .btn-danger:active:not(:disabled){ box-shadow:0 1px 0 0 color-mix(in srgb, var(--danger) 30%, transparent); }
+.btn-danger{ --btn-depth:4px; --btn-depth-shadow:0 4px 0 0 color-mix(in srgb, var(--danger) 30%, transparent); }
+.btn-danger:active:not(:disabled){ --btn-depth:1px; --btn-depth-shadow:0 1px 0 0 color-mix(in srgb, var(--danger) 30%, transparent); }
+.btn:active:focus-visible:not(:disabled){
+  box-shadow:var(--btn-depth-shadow, none);
+}
 .btn-block{ width:100%; }
 .btn-lg{ padding:16px 28px; font-size:16px; }
 .kbd{
@@ -592,7 +614,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .inline-blank-choice.wrong{ color:var(--danger-strong); background:transparent; }
 .inline-blank-choice.wrong::after{ background:var(--danger); }
 .inline-blank-choice.active{ border:1.5px solid var(--accent); border-radius:12px; background:var(--surface-lift-1); box-shadow:0 0 0 3px var(--accent-glow); animation:blankFocus .22s var(--ease); }
-.inline-blank-choice.active::after{ left:10px; right:10px; bottom:3px; background:var(--accent); border-radius:var(--radius-pill); }
+.inline-blank-choice.active::after{ display:none; }
 @keyframes blankFocus{ from{ transform:translateX(-8px) scale(.96); } to{ transform:translateX(0) scale(1); } }
 @keyframes blankFill{ from{ transform:scale(.96); } to{ transform:scale(1); } }
 .per-blank-options{ margin-top:34px; }
@@ -681,6 +703,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 /* 卡片底部操作区 */
 .qcard-actions{ margin-top:24px; display:flex; gap:12px; justify-content:flex-end; flex-wrap:wrap; }
 .qcard-actions.center{ justify-content:center; }
+.qcard-actions .self-eval-btn{ margin-right:auto; }
 
 .rate-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:22px; }
 .rate-btn{
@@ -734,7 +757,8 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .sg-btn .pct{ font-size:11px; font-weight:600; opacity:.9; font-family:var(--font-num); font-style:italic; }
 .sg-0{ background:var(--danger); }
 .sg-50{ background:var(--gold); color:var(--gold-ink); }
-.sg-80{ background:var(--info); }
+.sg-50 .kbd{ background:rgba(0,0,0,.15); }
+.sg-80{ background:var(--info); color:#fff; }
 .sg-100{ background:var(--success); }
 
 /* ============================================================
@@ -762,6 +786,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .qa-head{ display:flex; align-items:center; gap:11px; padding:13px 16px; cursor:pointer; user-select:none; }
 .qa-head:focus-visible{ background:var(--bg-soft); outline:2px solid var(--accent); outline-offset:-2px; }
 .qa-status{ width:20px;height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; color:#fff; flex-shrink:0; }
+.qa-status svg{ width:12px; height:12px; display:block; stroke:currentColor; stroke-width:2.6; stroke-linecap:round; }
 .qa-status.ok{ background:var(--success); }
 .qa-status.no{ background:var(--danger); }
 .qa-status.mid{ background:var(--info); }
@@ -862,14 +887,16 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
    13b. 浏览整卷（原始顺序参考视图）
    ============================================================ */
 .browse-topbar{
-  display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+  display:grid; grid-template-columns:minmax(160px,1fr) auto minmax(160px,1fr); align-items:center; gap:14px;
   position:sticky; top:78px; z-index:32;
   background:color-mix(in srgb, var(--bg) 94%, transparent);
   backdrop-filter:blur(14px) saturate(1.15);
   padding:12px 0; margin-bottom:14px;
   border-bottom:none;
 }
-.browse-filter-pack{ display:flex; align-items:center; gap:10px; flex:1; min-width:260px; flex-wrap:wrap; }
+.browse-topbar .browse-answer-fixed{ justify-self:start; }
+.browse-topbar #browse-back-btn{ justify-self:end; }
+.browse-filter-pack{ display:flex; align-items:center; justify-content:center; gap:10px; min-width:0; flex-wrap:wrap; justify-self:center; }
 .browse-filter-line{ display:flex; align-items:center; gap:8px; flex-wrap:nowrap; }
 .browse-filter-line span{ color:var(--text-faint); font-size:12px; font-weight:700; }
 .chapter-dropdown{ position:relative; }
@@ -922,6 +949,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   width:230px; flex-shrink:0; position:sticky; top:156px; max-height:calc(100vh - 180px); overflow:auto;
   background:var(--bg-elevated); border:1px solid var(--border-soft); border-radius:var(--radius-lg); padding:16px;
 }
+.browse-shell > .browse-sidebar{ order:-1; }
 .mobile-nav-dropdown{ display:none; }
 .browse-sidebar h5{ font-size:11.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.05em; margin:16px 0 9px; font-weight:700; }
 .browse-sidebar h5:first-child{ margin-top:0; }
@@ -944,7 +972,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .nav-cell.active{ box-shadow:0 0 0 2px var(--accent); }
 .sidebar-legend i.status-ok,.nav-cell.status-ok{ background:var(--success); border-color:var(--success); color:#fff; }
 .sidebar-legend i.status-good,.nav-cell.status-good{ background:var(--info); border-color:var(--info); color:#fff; }
-.sidebar-legend i.status-mid,.nav-cell.status-mid{ background:var(--gold); border-color:var(--gold); color:var(--gold-ink); }
+.sidebar-legend i.status-mid,.nav-cell.status-mid{ background:var(--info); border-color:var(--info); color:#fff; }
 .sidebar-legend i.status-no,.nav-cell.status-no{ background:var(--danger); border-color:var(--danger); color:#fff; }
 .sidebar-legend i.status-empty,.nav-cell.status-empty{ background:var(--bg-soft); border-color:var(--border-soft); color:var(--text-faint); }
 .browse-section{ margin-bottom:32px; }
@@ -952,7 +980,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .browse-q{ margin-bottom:18px; padding-bottom:16px; border-bottom:1px solid var(--border-soft); scroll-margin-top:148px; }
 .browse-q.with-status{ border-left:4px solid var(--border-soft); padding-left:14px; }
 .browse-q.status-ok{ border-left-color:var(--success); }
-.browse-q.status-mid{ border-left-color:var(--gold); }
+.browse-q.status-mid{ border-left-color:var(--info); }
 .browse-q.status-no{ border-left-color:var(--danger); }
 .browse-q:last-child{ border-bottom:none; }
 .browse-q-num{ font-family:var(--font-num); font-style:italic; color:var(--accent); font-weight:600; margin-right:6px; }
@@ -963,12 +991,13 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   border:1px solid color-mix(in srgb, var(--danger) 35%, transparent); background:var(--danger-bg); color:var(--danger-strong);
   border-radius:var(--radius-pill); padding:6px 9px; font-size:11px; font-weight:800; cursor:pointer;
 }
-.preview-meta{ display:flex; flex-wrap:wrap; gap:7px; margin-top:7px; color:var(--text-faint); font-size:11.5px; }
+.preview-meta{ display:flex; align-items:center; flex-wrap:wrap; gap:7px; margin-top:7px; color:var(--text-faint); font-size:11.5px; }
 .chapter-pill,.preview-status{
   display:inline-flex; align-items:center; border-radius:var(--radius-pill); padding:3px 8px; background:var(--bg-soft); color:var(--text-faint); font-weight:700;
 }
+.preview-score{ display:inline-flex; align-items:center; min-height:calc(1em + 6px); }
 .preview-status.ok{ background:var(--success-bg); color:var(--success-strong); }
-.preview-status.mid{ background:var(--gold-bg); color:var(--gold); }
+.preview-status.mid{ background:var(--info-bg); color:var(--info); }
 .preview-status.no{ background:var(--danger-bg); color:var(--danger-strong); }
 .browse-q-opts{ margin-top:8px; padding-left:22px; font-size:13.5px; color:var(--text-soft); line-height:1.85; overflow-wrap:anywhere; word-break:break-word; }
 .browse-q-opts .opt-row{ border-radius:8px; padding:2px 6px; overflow-wrap:anywhere; word-break:break-word; }
@@ -987,14 +1016,17 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .tf-mini.is-wrong{ background:var(--danger-bg); color:var(--danger-strong); font-weight:800; }
 .preview-user-line{ margin-top:9px; padding:8px 12px; border-radius:var(--radius-sm); font-size:13px; overflow-wrap:anywhere; word-break:break-word; }
 .preview-user-line.ok{ background:var(--success-bg); color:var(--success-strong); }
+.preview-user-line.mid{ background:var(--info-bg); color:var(--info); }
 .preview-user-line.no{ background:var(--danger-bg); color:var(--danger-strong); }
 .record-topbar{
-  display:flex; align-items:center; gap:14px; position:sticky; top:78px; z-index:32;
+  display:grid; grid-template-columns:minmax(160px,1fr) auto minmax(160px,1fr); align-items:center; gap:14px; position:sticky; top:78px; z-index:32;
   background:color-mix(in srgb, var(--bg) 94%, transparent);
   backdrop-filter:blur(14px) saturate(1.15);
   padding:12px 0; border-bottom:none; margin-bottom:18px;
 }
-.record-title{ flex:1; min-width:0; }
+.record-topbar .browse-answer-fixed{ justify-self:start; }
+.record-topbar #record-back-btn{ justify-self:end; }
+.record-title{ min-width:0; max-width:min(560px,52vw); text-align:center; justify-self:center; }
 .record-title h2{ font-size:18px; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .record-title p{ margin:4px 0 0; color:var(--text-faint); font-size:12.5px; }
 .record-mobile-title{ display:none; }
@@ -1065,6 +1097,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   .mode-card .mode-icon{ font-size:20px; margin-bottom:6px; }
   .mode-card h4{ font-size:13px; margin-bottom:0; white-space:nowrap; }
   .mode-card p,.mode-card .mode-tag{ display:none; }
+  .sg-btn .kbd{ display:none; }
   .mobile-collapse-head{
     display:flex; align-items:center; justify-content:space-between; width:100%;
     border:none; background:transparent; color:var(--text); padding:0; font-size:14px; font-weight:800; cursor:pointer;
@@ -1102,6 +1135,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   .deck-info-card #browse-deck-btn,.deck-info-card .swap{ flex:1 1 calc(50% - 6px); margin-left:0; }
   .self-grade-grid{ grid-template-columns:repeat(2,1fr); }
   .browse-topbar{
+    display:flex;
     top:61px;
     align-items:center; justify-content:center;
     padding:10px 14px 12px; margin-bottom:14px; border-bottom:none;
@@ -1121,6 +1155,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
     flex:0 0 auto; padding:7px 12px; white-space:nowrap;
   }
   .record-topbar{
+    display:flex;
     top:61px; align-items:flex-start; flex-wrap:wrap;
     background:transparent; backdrop-filter:none;
   }
@@ -1237,6 +1272,7 @@ const QuestionTypes = {
 const TYPE_ORDER = ['fillInTheBlank','singleChoice','multipleChoice','trueFalse','shortAnswer','essay'];
 const SRS_INTERVAL_DAYS = [0,1,2,4,7,14,30,60]; // index = 记忆等级(level)
 const RATING_TO_PCT = { again:0, hard:50, good:80, easy:100 };
+const SELF_GRADE_FRACTION = { again:0, hard:1/3, good:2/3, easy:1 };
 const STORAGE_KEYS = { settings:'settings', progress:'progress', lastDeck:'lastDeck', deckRegistry:'deckRegistry', activeSession:'activeSession' };
 const LOCAL_DECK_FILES = ['XiThoughtQuiz.js','AutoMechanicsQuiz.js','PrintingQualityQuiz.js'];
 const LOCAL_DECK_GLOBALS = {
@@ -2603,9 +2639,16 @@ function gradeFillBlankInput(userInput, acceptedAnswers){
   if (Array.isArray(userInput)){
     const answers = acceptedAnswers || [];
     if (!userInput.length) return false;
-    return userInput.every((value,i)=>{
-      const accepted = answers[i]!=null ? [answers[i]] : answers;
-      return gradeFillInBlank(value, accepted);
+    if (!answers.length) return false;
+    if (userInput.length!==answers.length) return false;
+    const unused = answers.map((answer,i)=>({ answer, i }));
+    return userInput.every(value=>{
+      const userNorm = Utils.normalizeAnswerText(value);
+      if (!userNorm) return false;
+      const matchIdx = unused.findIndex(item=>String(item.answer).split('/').map(Utils.normalizeAnswerText).includes(userNorm));
+      if (matchIdx<0) return false;
+      unused.splice(matchIdx, 1);
+      return true;
     });
   }
   return gradeFillInBlank(userInput, acceptedAnswers);
@@ -2615,6 +2658,15 @@ function fillAnswerDisplay(input){
     return input.map(v=>(v&&String(v).trim()) ? String(v).trim() : '(未作答)').join(' / ');
   }
   return (input&&String(input).trim()) ? input : '(未作答)';
+}
+function manualInputForCard(sess, card){
+  if (card.type==='fillInTheBlank'){
+    return isManualMultiBlank(card) ? (sess.blankInputs||[]).slice() : (sess.userTextAnswer||'');
+  }
+  return sess.userTextAnswer || '';
+}
+function referenceForManualCard(card){
+  return card.type==='fillInTheBlank' ? (card.answers||[]).join(' / ') : card.reference;
 }
 function gradeObjective(card, userInput){
   const points = Number(App.settings.points[card.type])||0;
@@ -2656,8 +2708,8 @@ function gradeObjective(card, userInput){
 }
 function gradeSubjective(card, userText, ratingKey){
   const points = Number(App.settings.points[card.type])||0;
-  const pct = RATING_TO_PCT[ratingKey] ?? 0;
-  return { pct, scoreEarned: Math.round(points*pct)/100, maxScore:points,
+  const pct = selfGradePct(ratingKey);
+  return { pct, ratingKey, scoreEarned:selfGradeScore(points, ratingKey), maxScore:points,
     userAnswerDisplay:(userText&&userText.trim())?userText:'(未作答)', correctAnswerDisplay:card.reference };
 }
 function gradeFlashcardRating(card, ratingKey){
@@ -2674,6 +2726,11 @@ function gradeFlashcardRating(card, ratingKey){
 }
 function ratingLabel(key){ return {again:'完全不会',hard:'有点模糊',good:'基本记得',easy:'完全掌握'}[key] || key; }
 function resultStatus(r){
+  if (r && r.ratingKey){
+    if (r.ratingKey==='easy') return 'ok';
+    if (r.ratingKey==='hard' || r.ratingKey==='good') return 'mid';
+    if (r.ratingKey==='again') return 'no';
+  }
   if (typeof r.pct==='number') return r.pct>=80 ? 'ok' : (r.pct>=50 ? 'mid' : 'no');
   return r.isCorrect ? 'ok' : 'no';
 }
@@ -2681,7 +2738,7 @@ function recordResult(card, gradeInfo){
   const sess = App.session;
   const already = sess.results.find(r=>r.uid===card.uid);
   if (already){
-    if (sess && sess.mode==='learn'){
+    if (already.graded===false || (sess && sess.mode==='learn')){
       Object.assign(already, gradeInfo, { graded:true });
     }
     return already;
@@ -2691,16 +2748,18 @@ function recordResult(card, gradeInfo){
   return entry;
 }
 function recordPendingSubjective(card, userText){
+  const existing = App.session.results.find(r=>r.uid===card.uid);
+  if (existing && existing.graded!==false) return existing;
   App.session.results.push({
     uid:card.uid, type:card.type, chapter:card.chapter||'', question:card.question, reference:card.reference,
     maxScore:Number(App.settings.points[card.type])||0, pendingUserText:userText||'', graded:false
   });
 }
 function finalizeGradingEntry(entry, ratingKey){
-  const pct = RATING_TO_PCT[ratingKey] ?? 0;
+  const pct = selfGradePct(ratingKey);
   entry.pct = pct;
   entry.ratingKey = ratingKey;
-  entry.scoreEarned = Math.round(entry.maxScore*pct)/100;
+  entry.scoreEarned = selfGradeScore(entry.maxScore, ratingKey);
   entry.userAnswerDisplay = (entry.pendingUserText&&entry.pendingUserText.trim()) ? entry.pendingUserText : '(未作答)';
   entry.correctAnswerDisplay = entry.reference;
   entry.graded = true;
@@ -2799,7 +2858,7 @@ function startSession(){
     paperUids:queue.map(q=>q.uid),
     revealed:false, selectedOptionIdx:null, selectedOptionIdxs:[], selectedPerBlank:null, activeBlankIdx:0, selectedTF:null, userTextAnswer:'',
     feedbackFlash:null, lastUserInput:null, lastGradeCorrect:null,
-    requeueCounts:{}, results:[], gradingIndex:0, answeredStack:[],
+    requeueCounts:{}, results:[], gradingIndex:0, answeredStack:[], completedUids:[],
     startedAt:Date.now(), cardStartedAt:Date.now()
   };
   App.view = 'quiz';
@@ -2838,6 +2897,8 @@ function completeCurrentCard(opts){
   saveCurrentDraftAnswer(sess, currentCard);
   const card = sess.queue.shift();
   sess.pendingCompletion = null;
+  sess.completedUids = sess.completedUids || [];
+  if (card && !sess.completedUids.includes(card.uid)) sess.completedUids.push(card.uid);
   if (opts.requeue){
     const insertAt = Math.min(sess.queue.length, opts.requeueDelay==null?3:opts.requeueDelay);
     sess.queue.splice(insertAt, 0, card);
@@ -2848,6 +2909,7 @@ function completeCurrentCard(opts){
   if (!sess.queue.length){ finishQuizPhase(); return; }
   prepareCardState(sess, sess.queue[0]);
   sess.feedbackFlash=null; sess.lastUserInput=null; sess.lastGradeCorrect=null;
+  sess.manualSelfEval=false;
   sess.cardStartedAt = Date.now();
   persistActiveSession();
   transitionRender(render);
@@ -2858,6 +2920,7 @@ function goToPreviousQuestion(){
   saveCurrentDraftAnswer(sess, sess.queue[0]);
   const prevCard = sess.answeredStack.pop();
   sess.results = sess.results.filter(r=>r.uid!==prevCard.uid);
+  if (sess.completedUids) sess.completedUids = sess.completedUids.filter(uid=>uid!==prevCard.uid);
   sess.queue.unshift(prevCard);
   restoreAnswerForCard(sess, prevCard);
   sess.revealed=false;
@@ -2906,7 +2969,7 @@ function buildRecordFromSession(sess, opts={}){
     details: gradedResults.map(r=>({
       uid:r.uid, type:r.type, chapter:r.chapter||'', question:r.question,
       userAnswer:r.userAnswerDisplay, correctAnswer:r.correctAnswerDisplay,
-      status:resultStatus(r), pct:typeof r.pct==='number'?r.pct:undefined, scoreEarned:r.scoreEarned, maxScore:r.maxScore
+      status:resultStatus(r), pct:typeof r.pct==='number'?r.pct:undefined, ratingKey:r.ratingKey, scoreEarned:r.scoreEarned, maxScore:r.maxScore
     }))
   };
 }
@@ -2968,9 +3031,13 @@ async function finalizeSession(){
 function renderQuizView(container){
   const sess = App.session;
   if (!sess){ App.view='setup'; render(); return; }
+  if (!Array.isArray(sess.completedUids)){
+    const currentUid = sess.queue && sess.queue[0] && sess.queue[0].uid;
+    sess.completedUids = (sess.paperUids||[]).filter(uid=>uid!==currentUid && !(sess.queue||[]).some(q=>q.uid===uid));
+  }
   const card = sess.queue[0];
   if (!card){ finishQuizPhase(); return; }
-  const doneCount = sess.totalInitial - sess.queue.length;
+  const doneCount = Math.min((sess.completedUids || []).length, sess.totalInitial);
   const pct = Utils.clamp(Math.round((doneCount/sess.totalInitial)*100), 4, 100);
   const canGoBack = sess.mode==='test' && sess.answeredStack && sess.answeredStack.length>0;
 
@@ -3054,12 +3121,19 @@ function renderRateGrid(card){
     <button type="button" class="rate-btn rate-easy" data-rate="easy"><span>完全掌握</span><span class="kbd">4</span><span class="interval">${fmt(pEasy)}</span></button>
   </div>`;
 }
-function renderSelfGradeGrid(){
+function selfGradeScore(points, ratingKey){
+  return Math.round((points * (SELF_GRADE_FRACTION[ratingKey] ?? 0) + Number.EPSILON) * 100) / 100;
+}
+function selfGradePct(ratingKey){
+  return Math.round(((SELF_GRADE_FRACTION[ratingKey] ?? 0) * 100 + Number.EPSILON) * 100) / 100;
+}
+function renderSelfGradeGrid(points){
+  const max = Number(points)||0;
   return `<div class="self-grade-grid">
-    <button type="button" class="sg-btn sg-0" data-sg="again">不会<span class="pct">0%</span></button>
-    <button type="button" class="sg-btn sg-50" data-sg="hard">部分正确<span class="pct">50%</span></button>
-    <button type="button" class="sg-btn sg-80" data-sg="good">基本正确<span class="pct">80%</span></button>
-    <button type="button" class="sg-btn sg-100" data-sg="easy">完全正确<span class="pct">100%</span></button>
+    <button type="button" class="sg-btn sg-0" data-sg="again">错误<span class="kbd">1</span><span class="pct">${Utils.fmtScore(selfGradeScore(max,'again'))}分</span></button>
+    <button type="button" class="sg-btn sg-50" data-sg="hard">部分正确<span class="kbd">2</span><span class="pct">${Utils.fmtScore(selfGradeScore(max,'hard'))}分</span></button>
+    <button type="button" class="sg-btn sg-80" data-sg="good">基本正确<span class="kbd">3</span><span class="pct">${Utils.fmtScore(selfGradeScore(max,'good'))}分</span></button>
+    <button type="button" class="sg-btn sg-100" data-sg="easy">完全正确<span class="kbd">4</span><span class="pct">${Utils.fmtScore(max)}分</span></button>
   </div>`;
 }
 function renderCardHtml(sess, card){
@@ -3148,7 +3222,7 @@ function renderManualFillQuestionHtml(sess, card){
   const parts = Utils.escapeHtml(card.question).split(/_{2,}/);
   const inputAt = i=>{
     const value = values[i] || '';
-    const inputCls = sess.revealed ? (gradeFillInBlank(value, card.answers[i]!=null ? [card.answers[i]] : card.answers) ? 'correct' : 'wrong') : '';
+    const inputCls = sess.revealed ? (gradeFillInBlank(value, card.answers) ? 'correct' : 'wrong') : '';
     return `<span class="blank-wrap" style="--blank-chars:${blankInputChars(value)}"><input type="text" class="qcard-blank-input ${inputCls}" data-blank-input="${i}" value="${Utils.escapeHtml(value)}" ${sess.revealed?'disabled':''} autocomplete="off" autocapitalize="off" spellcheck="false"><span class="blank-underline"></span></span>`;
   };
   let html = parts[0] || '';
@@ -3214,7 +3288,7 @@ function renderInteractiveFace(sess, card){
       if (!sess.revealed){
         const tabIcon = '<span class="kbd" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7v10"></path><path d="M20 12H8"></path><path d="m12 8-4 4 4 4"></path></svg></span>';
         const tabBtn = isMobileViewport() ? '' : `<button type="button" class="btn btn-secondary" id="tab-blank-btn">切换 ${tabIcon}</button>`;
-        actions = `<div class="qcard-actions">${tabBtn}<button type="button" class="btn btn-primary" id="confirm-btn">确认 <span class="kbd">⏎</span></button></div>`;
+        actions = `<div class="qcard-actions"><button type="button" class="btn btn-secondary self-eval-btn" id="self-eval-btn">自评</button>${tabBtn}<button type="button" class="btn btn-primary" id="confirm-btn">确认 <span class="kbd">⏎</span></button></div>`;
       }
     } else {
       const parts = Utils.escapeHtml(card.question).split(/_{2,}/);
@@ -3222,21 +3296,22 @@ function renderInteractiveFace(sess, card){
       const inputHtml = `<span class="blank-wrap" style="--blank-chars:${blankInputChars(sess.userTextAnswer||'')}"><input type="text" class="qcard-blank-input ${inputCls}" id="blank-input" value="${Utils.escapeHtml(sess.userTextAnswer||'')}" ${sess.revealed?'disabled':''} placeholder="" autocomplete="off" autocapitalize="off" spellcheck="false"><span class="blank-underline"></span></span>`;
       body = `<div class="qcard-question">${parts.join(inputHtml)}</div>`;
       if (!sess.revealed){
-        actions = `<div class="qcard-actions"><button type="button" class="btn btn-primary" id="confirm-btn">确认 <span class="kbd">⏎</span></button></div>`;
+        actions = `<div class="qcard-actions"><button type="button" class="btn btn-secondary self-eval-btn" id="self-eval-btn">自评</button><button type="button" class="btn btn-primary" id="confirm-btn">确认 <span class="kbd">⏎</span></button></div>`;
       }
     }
     if (sess.revealed){
       body += `<div class="reveal-divider"></div><div class="reveal-label">正确答案</div><div class="reveal-answer">${Utils.escapeHtml(card.answers.join(' / '))}</div>`;
+      if (sess.manualSelfEval) actions = renderSelfGradeGrid(App.settings.points[card.type]);
     }
   } else { // shortAnswer / essay
     if (!sess.revealed){
       body = `<textarea class="essay-input" id="essay-input" placeholder="写下你的回答……（也可留空直接查看参考答案）">${Utils.escapeHtml(sess.userTextAnswer||'')}</textarea>`;
       const btnLabel = mode==='test' ? '下一题' : '提交并查看参考答案';
-      actions = `<div class="qcard-actions"><button type="button" class="btn btn-primary" id="confirm-btn">${btnLabel}</button></div>`;
+      actions = `<div class="qcard-actions"><button type="button" class="btn btn-secondary self-eval-btn" id="self-eval-btn">自评</button><button type="button" class="btn btn-primary" id="confirm-btn">${btnLabel}</button></div>`;
     } else {
       body = `<div class="reveal-label">你的回答</div><div class="your-answer-box">${(sess.userTextAnswer&&sess.userTextAnswer.trim())?Utils.escapeHtml(sess.userTextAnswer):'（未作答）'}</div>
         <div class="reveal-divider"></div><div class="reveal-label">参考答案</div><div class="reveal-answer">${Utils.escapeHtml(card.reference)}</div>`;
-      actions = renderSelfGradeGrid();
+      actions = renderSelfGradeGrid(App.settings.points[card.type]);
     }
   }
   const isChoiceStyled = card._dynamicChoice || card._perBlankChoice;
@@ -3412,6 +3487,8 @@ function bindCardEvents(sess, card){
       if (activeInput && !sess.revealed) activeInput.focus();
       const tabBlankBtn = document.getElementById('tab-blank-btn');
       if (tabBlankBtn) tabBlankBtn.onclick = ()=>focusBlank((sess.activeBlankIdx||0)+1);
+      const selfEvalBtn = document.getElementById('self-eval-btn');
+      if (selfEvalBtn) selfEvalBtn.onclick = beginManualSelfEval;
       const cb = document.getElementById('confirm-btn');
       if (cb) cb.onclick = ()=>submitObjectiveAnswer(values.slice());
     } else {
@@ -3422,8 +3499,13 @@ function bindCardEvents(sess, card){
         input.addEventListener('input', ()=>{ syncBlankInputWidth(input); sess.userTextAnswer = input.value; persistActiveSession(); });
         input.addEventListener('keydown', e=>{ if (e.key==='Enter'){ e.preventDefault(); submitObjectiveAnswer(sess.userTextAnswer); } });
       }
+      const selfEvalBtn = document.getElementById('self-eval-btn');
+      if (selfEvalBtn) selfEvalBtn.onclick = beginManualSelfEval;
       const cb = document.getElementById('confirm-btn');
       if (cb) cb.onclick = ()=>submitObjectiveAnswer(sess.userTextAnswer);
+    }
+    if (sess.revealed && sess.manualSelfEval){
+      document.querySelectorAll('[data-sg]').forEach(btn=>btn.addEventListener('click', ()=>submitManualSelfRating(btn.dataset.sg)));
     }
   } else { // shortAnswer / essay
     if (!sess.revealed){
@@ -3432,10 +3514,12 @@ function bindCardEvents(sess, card){
         ta.addEventListener('input', ()=>{ sess.userTextAnswer = ta.value; persistActiveSession(); });
         ta.addEventListener('keydown', e=>{ if ((e.metaKey||e.ctrlKey) && e.key==='Enter'){ e.preventDefault(); submitEssayAnswer(); } });
       }
+      const selfEvalBtn = document.getElementById('self-eval-btn');
+      if (selfEvalBtn) selfEvalBtn.onclick = beginManualSelfEval;
       const cb = document.getElementById('confirm-btn');
       if (cb) cb.onclick = submitEssayAnswer;
     } else {
-      document.querySelectorAll('[data-sg]').forEach(btn=>btn.addEventListener('click', ()=>submitLearnSubjective(btn.dataset.sg)));
+      document.querySelectorAll('[data-sg]').forEach(btn=>btn.addEventListener('click', ()=>sess.manualSelfEval ? submitManualSelfRating(btn.dataset.sg) : submitLearnSubjective(btn.dataset.sg)));
     }
   }
 }
@@ -3473,6 +3557,7 @@ function resetAnswerStateForCard(sess, card){
   sess.userTextAnswer='';
   sess.blankInputs = isManualMultiBlank(card) ? new Array(fillBlankCount(card)).fill('') : null;
   sess.activeBlankIdx=0;
+  sess.manualSelfEval=false;
   sess.selectedPerBlank = card && card._perBlankChoice ? new Array(card._blankOptions.length).fill(null) : null;
 }
 function currentDraftAnswer(sess, card){
@@ -3544,6 +3629,30 @@ function submitLearnSubjective(ratingKey){
   if (requeueNeeded) sess.requeueCounts[card.uid] = (sess.requeueCounts[card.uid]||0)+1;
   completeCurrentCard({ requeue:requeueNeeded, requeueDelay:3 });
 }
+function beginManualSelfEval(){
+  const sess = App.session, card = sess && sess.queue[0];
+  if (!sess || !card) return;
+  sess.manualSelfEval = true;
+  sess.revealed = true;
+  persistActiveSession();
+  render();
+}
+function submitManualSelfRating(ratingKey){
+  const sess = App.session, card = sess && sess.queue[0];
+  if (!sess || !card) return;
+  const points = Number(App.settings.points[card.type])||0;
+  const pct = selfGradePct(ratingKey);
+  const g = {
+    pct,
+    ratingKey,
+    scoreEarned:selfGradeScore(points, ratingKey),
+    maxScore:points,
+    userAnswerDisplay:fillAnswerDisplay(manualInputForCard(sess, card)),
+    correctAnswerDisplay:referenceForManualCard(card)
+  };
+  recordResult(card, g);
+  completeCurrentCard({ requeue:false });
+}
 function submitEssayAnswer(){
   const sess = App.session, card = sess.queue[0];
   if (sess.mode==='test'){
@@ -3592,7 +3701,7 @@ function renderGradingView(container){
   if (!sess){ App.view='setup'; render(); return; }
   const pending = sess.results.filter(r=>r.graded===false);
   if (sess.gradingIndex>=pending.length){ finalizeSession().then(()=>{ App.view='report'; render(); }); return; }
-  const entry = pending[sess.gradingIndex];
+  const entry = pending[Math.max(0, Math.min(sess.gradingIndex||0, pending.length-1))];
   container.className = 'quiz-shell fade-in';
   container.innerHTML = `
     <div class="quiz-topbar">
@@ -3611,7 +3720,7 @@ function renderGradingView(container){
             <div class="reveal-label">参考答案</div>
             <div class="reveal-answer">${Utils.escapeHtml(entry.reference)}</div>
           </div>
-          ${renderSelfGradeGrid()}
+          ${renderSelfGradeGrid(entry.maxScore)}
         </div>
       </div>
     </div>
@@ -3664,7 +3773,10 @@ function handleGlobalKeydown(e){
     return;
   }
   if (sess.revealed){
-    if ((card.type==='shortAnswer'||card.type==='essay') && ['1','2','3','4'].includes(e.key)){
+    if (sess.manualSelfEval && ['1','2','3','4'].includes(e.key)){
+      e.preventDefault();
+      submitManualSelfRating({'1':'again','2':'hard','3':'good','4':'easy'}[e.key]);
+    } else if ((card.type==='shortAnswer'||card.type==='essay') && ['1','2','3','4'].includes(e.key)){
       e.preventDefault();
       submitLearnSubjective({'1':'again','2':'hard','3':'good','4':'easy'}[e.key]);
     }
@@ -3750,17 +3862,17 @@ function renderBrowseView(container){
   container.innerHTML = `
     <div class="container" style="max-width:1120px;">
       <div class="browse-topbar">
-        <button class="btn btn-secondary" id="browse-back-btn" type="button">← 返回设置</button>
+        <div class="browse-answer-fixed">
+          <div class="label" style="font-size:13px;">显示答案</div>
+          <button type="button" class="switch ${showAns?'on':''}" id="browse-answer-switch" aria-label="显示答案" aria-pressed="${showAns?'true':'false'}"><span class="knob"></span></button>
+        </div>
         <div class="browse-filter-pack">
           <div class="seg">${scopeButtons}</div>
           ${chapterFilterHtml}
           <button class="btn btn-secondary browse-nav-toggle" type="button">题目导航</button>
         </div>
+        <button class="btn btn-secondary" id="browse-back-btn" type="button">← 返回学习</button>
         <div class="browse-sidebar mobile-nav-dropdown show-chapters mobile-collapsed">${mobileSidebarHtml}</div>
-        <div class="browse-answer-fixed">
-          <div class="label" style="font-size:13px;">显示答案</div>
-          <button type="button" class="switch ${showAns?'on':''}" id="browse-answer-switch" aria-label="显示答案" aria-pressed="${showAns?'true':'false'}"><span class="knob"></span></button>
-        </div>
       </div>
       ${wrongTestStrip}
       <div class="browse-shell">
@@ -3824,9 +3936,27 @@ function renderBrowseView(container){
 }
 function renderPreviewSidebar(grouped, idPrefix, opts={}){
   const detailMap = opts.detailMap || null;
-  const statusLegend = detailMap ? (opts.mode==='flashcard'
-    ? `<div class="sidebar-legend"><span><i class="status-no"></i>未掌握</span><span><i class="status-mid"></i>复习中</span><span><i class="status-good"></i>基本掌握</span><span><i class="status-ok"></i>已掌握</span></div>`
-    : `<div class="sidebar-legend"><span><i class="status-ok"></i>正确</span><span><i class="status-no"></i>错误</span></div>`) : '';
+  const statusLegend = detailMap ? (()=>{
+    const present = new Set();
+    grouped.forEach(g=>{
+      const entries = g.questions ? g.questions.map(q=>({question:q})) : g.items;
+      entries.forEach(entry=>{
+        const q = entry.question;
+        const d = q ? detailMap.get(q.uid) : null;
+        if (!d){
+          present.add('empty');
+          return;
+        }
+        if (opts.mode==='flashcard') present.add(flashcardHeatStatus(d));
+        else present.add(['ok','mid'].includes(d.status) ? d.status : 'no');
+      });
+    });
+    const items = opts.mode==='flashcard'
+      ? [['empty','未作答'],['no','未掌握'],['mid','复习中'],['good','基本掌握'],['ok','已掌握']]
+      : [['ok','正确'],['mid','部分正确'],['no','错误'],['empty','未作答']];
+    const html = items.filter(([key])=>present.has(key)).map(([key,label])=>`<span><i class="status-${key}"></i>${label}</span>`).join('');
+    return html ? `<div class="sidebar-legend">${html}</div>` : '';
+  })() : '';
   const body = grouped.map(g=>{
     const entries = g.questions ? g.questions.map(q=>({question:q})) : g.items;
     let lastChapter = null;
@@ -3837,7 +3967,7 @@ function renderPreviewSidebar(grouped, idPrefix, opts={}){
       if (detailMap){
         let heatStatus = d ? d.status : 'empty';
         if (opts.mode==='flashcard') heatStatus = flashcardHeatStatus(d);
-        else heatStatus = heatStatus==='ok' ? 'ok' : (heatStatus==='empty' ? 'empty' : 'no');
+        else heatStatus = ['ok','mid','empty'].includes(heatStatus) ? heatStatus : 'no';
         statusClass = ` status-${['ok','good','mid','no','empty'].includes(heatStatus)?heatStatus:'no'}`;
       }
       const chapter = opts.showChapters ? (q.chapter || (entry.detail && entry.detail.chapter) || (d && d.chapter) || '') : '';
@@ -3878,7 +4008,7 @@ function renderPreviewQuestion(q, num, opts={}){
   const detail = opts.detail || null;
   const idPrefix = opts.idPrefix || 'bq';
   const rawStatus = detail ? detail.status : '';
-  const status = (opts.mode && opts.mode!=='flashcard' && rawStatus==='mid') ? 'no' : rawStatus;
+  const status = rawStatus;
   const starred = App.deck && isInNotebook('review', q.uid, App.deck.id);
   const wrong = App.deck && isInNotebook('wrong', q.uid, App.deck.id);
   const actions = opts.actions ? `<div class="preview-actions">
@@ -3901,7 +4031,7 @@ function renderPreviewQuestion(q, num, opts={}){
     }).join('');
     bodyHtml = `<div class="tf-mini-row">${choices}</div>`;
   } else if (q.type==='fillInTheBlank'){
-    if (detail) bodyHtml = `<div class="preview-user-line ${detail.status==='ok'?'ok':'no'}">你的答案：${Utils.escapeHtml(detail.userAnswer||'（未作答）')}</div>`;
+    if (detail) bodyHtml = `<div class="preview-user-line ${detail.status==='ok'?'ok':(detail.status==='mid'?'mid':'no')}">你的答案：${Utils.escapeHtml(detail.userAnswer||'（未作答）')}</div>`;
   } else if (showAns){
     bodyHtml = `<div class="browse-answer">${Utils.escapeHtml(q.reference || (detail&&detail.correctAnswer) || '')}</div>`;
   }
@@ -3910,7 +4040,7 @@ function renderPreviewQuestion(q, num, opts={}){
   }
   const qText = q.type==='fillInTheBlank' ? renderInlineFillQuestion(q, showAns) : Utils.escapeHtml(q.question);
   const statusBadge = detail ? `<span class="preview-status ${status}">${status==='ok'?'正确':(status==='mid'?'复习中':'错误')}</span>` : '';
-  return `<div class="browse-q ${detail?'with-status status-'+status:''}" id="${idPrefix}-${q.uid}">
+  return `<div class="browse-q ${detail?'with-status status-'+status:''}" id="${idPrefix}-${q.uid}" data-title="${Utils.escapeHtml(q.question)}">
     <div class="preview-q-head">
       <div class="browse-q-text"><span class="browse-q-num">${num}.</span>${qText}</div>
       ${actions}
@@ -3918,7 +4048,7 @@ function renderPreviewQuestion(q, num, opts={}){
     <div class="preview-meta">
       ${q.chapter ? `<span class="chapter-pill">${Utils.escapeHtml(q.chapter)}</span>` : ''}
       ${statusBadge}
-      ${detail ? `<span>${Utils.fmtScore(detail.scoreEarned)}/${Utils.fmtScore(detail.maxScore)} 分</span>` : ''}
+      ${detail ? `<span class="preview-score">${Utils.fmtScore(detail.scoreEarned)}/${Utils.fmtScore(detail.maxScore)} 分</span>` : ''}
     </div>
     ${bodyHtml}
   </div>`;
@@ -3954,7 +4084,7 @@ function renderReportView(container){
   );
 
   const qaListHtml = r.details.map((d,i)=>{
-    const statusIcon = {ok:'✓',mid:'~',no:'✗'}[d.status];
+    const statusIcon = d.status==='mid' ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"></path></svg>' : {ok:'✓',no:'✗'}[d.status];
     return `<div class="qa-item" data-qa="${i}">
       <div class="qa-head" tabindex="0" role="button" aria-expanded="false">
         <div class="qa-status ${d.status}">${statusIcon}</div>
@@ -3968,6 +4098,7 @@ function renderReportView(container){
       </div></div>
     </div>`;
   }).join('');
+  const correctQuestions = (r.details || []).filter(d=>d.status==='ok' || ['hard','good'].includes(d.ratingKey)).length;
   const reportActionsHtml = r.partial
     ? `<button class="btn btn-secondary" id="report-study-btn" type="button">返回学习</button>
         <button class="btn btn-primary" id="report-restart-btn" type="button">再来一轮</button>`
@@ -3984,7 +4115,7 @@ function renderReportView(container){
       </div>
       <div class="report-stat-grid">
         <div class="stat-card"><div class="v">${r.percentage}%</div><div class="l">正确率</div></div>
-        <div class="stat-card"><div class="v">${r.totalQuestions}</div><div class="l">题数</div></div>
+        <div class="stat-card"><div class="v">${correctQuestions}/${r.totalQuestions}</div><div class="l">题数</div></div>
         <div class="stat-card"><div class="v">${Utils.fmtClock(r.durationMs)}</div><div class="l">用时</div></div>
         <div class="stat-card"><div class="v">${Utils.fmtDateShort(r.endedAt)}</div><div class="l">完成日期</div></div>
       </div>
@@ -4116,15 +4247,15 @@ function renderRecordDetailView(container){
   container.innerHTML = `
     <div class="container" style="max-width:1120px;">
       <div class="record-topbar">
-        <button class="btn btn-secondary" id="record-back-btn" type="button">← 返回统计</button>
-        <div class="record-title">
-          <h2>${Utils.escapeHtml(contextLabel)}</h2>
-          <p>${Utils.fmtDateTime(record.startedAt)} · ${Utils.fmtScore(record.score)}/${Utils.fmtScore(record.maxScore)} 分 · ${record.percentage}%</p>
-        </div>
         <div class="browse-answer-fixed">
           <div class="label" style="font-size:13px;">显示答案</div>
           <button type="button" class="switch ${showAns?'on':''}" id="record-answer-switch" aria-label="显示答案" aria-pressed="${showAns?'true':'false'}"><span class="knob"></span></button>
         </div>
+        <div class="record-title">
+          <h2>${Utils.escapeHtml(contextLabel)}</h2>
+          <p>${Utils.fmtDateTime(record.startedAt)} · ${Utils.fmtScore(record.score)}/${Utils.fmtScore(record.maxScore)} 分 · ${record.percentage}%</p>
+        </div>
+        <button class="btn btn-secondary" id="record-back-btn" type="button">← 返回统计</button>
         <button class="btn btn-secondary browse-nav-toggle" type="button">题目导航</button>
         <div class="browse-sidebar mobile-nav-dropdown mobile-collapsed">${sidebarHtml}</div>
       </div>
@@ -4161,7 +4292,9 @@ function renderRecordDetailView(container){
     a.addEventListener('click', e=>{
       e.preventDefault();
       const target = document.getElementById('rq-'+a.dataset.jump);
-      if (target) target.scrollIntoView({block:'start'});
+      if (target){
+        target.scrollIntoView({block:'start'});
+      }
       if (window.matchMedia && window.matchMedia('(max-width:640px)').matches){
         const sidebar = container.querySelector('.browse-sidebar');
         const toggle = container.querySelector('.browse-nav-toggle');
