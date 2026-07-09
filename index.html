@@ -551,6 +551,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   animation:cardIn .4s var(--ease);
 }
 @keyframes cardIn{ from{ opacity:0; transform:translateY(5px) scale(.994); } to{ opacity:1; transform:none; } }
+.qcard.no-enter{ animation:none; }
 .qcard.leaving{ animation:cardOut .12s ease forwards !important; }
 @keyframes cardOut{ from{ opacity:1; } to{ opacity:0; } }
 .qcard.flipping{ animation:cardFlip .38s var(--ease); }
@@ -2959,6 +2960,10 @@ function schedulePendingCompletion(sess){
 }
 function cardClasses(sess){
   let cls = 'qcard';
+  if (sess.suppressCardEnterOnce){
+    cls += ' no-enter';
+    sess.suppressCardEnterOnce = false;
+  }
   if (sess.mode==='flashcard' && sess.revealed) cls += ' flipping';
   if (sess.feedbackFlash==='good') cls += ' pulse-good';
   if (sess.feedbackFlash==='bad') cls += ' pulse-bad shake';
@@ -3213,6 +3218,7 @@ function choosePerBlankOption(oi){
   if (active < card._blankOptions.length-1){
     sess.activeBlankIdx = active+1;
   }
+  sess.suppressCardEnterOnce = true;
   persistActiveSession();
   render();
 }
@@ -3235,6 +3241,7 @@ function bindCardEvents(sess, card){
       sess.selectedPerBlank = sess.selectedPerBlank || new Array(card._blankOptions.length).fill(null);
       document.querySelectorAll('[data-blank-nav]').forEach(btn=>btn.addEventListener('click', ()=>{
         sess.activeBlankIdx = +btn.dataset.blankNav;
+        sess.suppressCardEnterOnce = true;
         persistActiveSession();
         render();
       }));
@@ -3242,12 +3249,14 @@ function bindCardEvents(sess, card){
       const prevBlankBtn = document.getElementById('prev-blank-btn');
       if (prevBlankBtn) prevBlankBtn.onclick = ()=>{
         sess.activeBlankIdx = Math.max(0, (sess.activeBlankIdx||0)-1);
+        sess.suppressCardEnterOnce = true;
         persistActiveSession();
         render();
       };
       const nextBlankBtn = document.getElementById('next-blank-btn');
       if (nextBlankBtn) nextBlankBtn.onclick = ()=>{
         sess.activeBlankIdx = Math.min(card._blankOptions.length-1, (sess.activeBlankIdx||0)+1);
+        sess.suppressCardEnterOnce = true;
         persistActiveSession();
         render();
       };
