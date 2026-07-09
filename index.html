@@ -699,6 +699,8 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .essay-input:focus{ border-color:var(--accent); background:var(--surface-lift-2); }
 .essay-input::placeholder{ color:var(--ink-faint); }
 .your-answer-box{ background:var(--surface-lift-1); border:1px solid var(--paper-line); border-radius:var(--radius-md); padding:14px 16px; font-size:14px; line-height:1.75; color:var(--ink-soft); white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
+.your-answer-box.correct{ background:var(--success-bg); border-color:color-mix(in srgb, var(--success) 42%, transparent); color:var(--success-strong); font-weight:700; }
+.your-answer-box.wrong{ background:var(--danger-bg); border-color:color-mix(in srgb, var(--danger) 32%, transparent); color:var(--danger-strong); }
 
 /* 卡片底部操作区 */
 .qcard-actions{ margin-top:24px; display:flex; gap:12px; justify-content:flex-end; flex-wrap:wrap; }
@@ -747,6 +749,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
    9. 主观题自评 (打分阶段)
    ============================================================ */
 .grade-progress{ text-align:center; font-size:12.5px; color:var(--text-faint); margin-bottom:8px; }
+.grading-note{ margin-top:14px; color:var(--ink-faint); font-size:11.5px; line-height:1.6; text-align:center; }
 .self-grade-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:20px; }
 .sg-btn{
   border:none; border-radius:var(--radius-md); padding:14px 8px; cursor:pointer;
@@ -754,6 +757,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   transition:transform var(--dur-fast) var(--ease), filter var(--dur-fast) var(--ease);
 }
 .sg-btn:hover{ transform:translateY(-2px); filter:brightness(1.08); }
+.sg-btn.selected{ box-shadow:0 0 0 3px var(--paper), 0 0 0 7px color-mix(in srgb, var(--accent) 42%, transparent); transform:translateY(-2px); }
 .sg-btn .pct{ font-size:11px; font-weight:600; opacity:.9; font-family:var(--font-num); font-style:italic; }
 .sg-0{ background:var(--danger); }
 .sg-50{ background:var(--gold); color:var(--gold-ink); }
@@ -789,7 +793,8 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .qa-status svg{ width:12px; height:12px; display:block; stroke:currentColor; stroke-width:2.6; stroke-linecap:round; }
 .qa-status.ok{ background:var(--success); }
 .qa-status.no{ background:var(--danger); }
-.qa-status.mid{ background:var(--info); }
+.qa-status.mid{ background:var(--gold); color:var(--gold-ink); }
+.qa-status.good{ background:var(--info); }
 .qa-head .qa-q{ flex:1; font-size:13.5px; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .qa-head .qa-score{ font-size:12px; color:var(--text-faint); font-family:var(--font-num); font-style:italic; flex-shrink:0; }
 .qa-head .chev{ font-size:10px; color:var(--text-faint); transition:transform var(--dur) var(--ease); flex-shrink:0; }
@@ -803,6 +808,11 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .qa-detail-inner .v{ color:var(--text-soft); white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
 .qa-detail-inner .v.ok{ color:var(--success-strong); }
 .qa-detail-inner .v.no{ color:var(--danger-strong); }
+.answer-fragments{ display:inline; }
+.answer-part{ font-weight:800; }
+.answer-part.ok{ color:var(--success-strong); }
+.answer-part.no{ color:var(--danger-strong); }
+.answer-sep{ color:var(--text-faint); font-weight:700; margin:0 .2em; }
 
 .report-actions{ display:flex; gap:12px; margin-top:30px; flex-wrap:wrap; }
 .report-actions .btn{ flex:1; min-width:140px; }
@@ -972,15 +982,18 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .nav-cell.active{ box-shadow:0 0 0 2px var(--accent); }
 .sidebar-legend i.status-ok,.nav-cell.status-ok{ background:var(--success); border-color:var(--success); color:#fff; }
 .sidebar-legend i.status-good,.nav-cell.status-good{ background:var(--info); border-color:var(--info); color:#fff; }
-.sidebar-legend i.status-mid,.nav-cell.status-mid{ background:var(--info); border-color:var(--info); color:#fff; }
+.sidebar-legend i.status-mid,.nav-cell.status-mid{ background:var(--gold); border-color:var(--gold); color:var(--gold-ink); }
 .sidebar-legend i.status-no,.nav-cell.status-no{ background:var(--danger); border-color:var(--danger); color:#fff; }
 .sidebar-legend i.status-empty,.nav-cell.status-empty{ background:var(--bg-soft); border-color:var(--border-soft); color:var(--text-faint); }
+.sidebar-legend i.status-unanswered,.nav-cell.status-unanswered{ background:var(--success-bg); border-color:color-mix(in srgb, var(--success) 30%, transparent); color:var(--success-strong); }
 .browse-section{ margin-bottom:32px; }
 .browse-section h3{ font-size:15.5px; color:var(--text); margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border-soft); font-family:inherit; font-weight:700; }
 .browse-q{ margin-bottom:18px; padding-bottom:16px; border-bottom:1px solid var(--border-soft); scroll-margin-top:148px; }
 .browse-q.with-status{ border-left:4px solid var(--border-soft); padding-left:14px; }
 .browse-q.status-ok{ border-left-color:var(--success); }
-.browse-q.status-mid{ border-left-color:var(--info); }
+.browse-q.status-mid{ border-left-color:var(--gold); }
+.browse-q.status-good{ border-left-color:var(--info); }
+.browse-q.status-unanswered{ border-left-color:color-mix(in srgb, var(--success) 30%, transparent); }
 .browse-q.status-no{ border-left-color:var(--danger); }
 .browse-q:last-child{ border-bottom:none; }
 .browse-q-num{ font-family:var(--font-num); font-style:italic; color:var(--accent); font-weight:600; margin-right:6px; }
@@ -997,7 +1010,9 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 }
 .preview-score{ display:inline-flex; align-items:center; min-height:calc(1em + 6px); }
 .preview-status.ok{ background:var(--success-bg); color:var(--success-strong); }
-.preview-status.mid{ background:var(--info-bg); color:var(--info); }
+.preview-status.mid{ background:var(--gold-bg); color:var(--gold); }
+.preview-status.good{ background:var(--info-bg); color:var(--info); }
+.preview-status.unanswered{ background:var(--success-bg); color:var(--success-strong); }
 .preview-status.no{ background:var(--danger-bg); color:var(--danger-strong); }
 .browse-q-opts{ margin-top:8px; padding-left:22px; font-size:13.5px; color:var(--text-soft); line-height:1.85; overflow-wrap:anywhere; word-break:break-word; }
 .browse-q-opts .opt-row{ border-radius:8px; padding:2px 6px; overflow-wrap:anywhere; word-break:break-word; }
@@ -1016,7 +1031,9 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .tf-mini.is-wrong{ background:var(--danger-bg); color:var(--danger-strong); font-weight:800; }
 .preview-user-line{ margin-top:9px; padding:8px 12px; border-radius:var(--radius-sm); font-size:13px; overflow-wrap:anywhere; word-break:break-word; }
 .preview-user-line.ok{ background:var(--success-bg); color:var(--success-strong); }
-.preview-user-line.mid{ background:var(--info-bg); color:var(--info); }
+.preview-user-line.mid{ background:var(--gold-bg); color:var(--gold); }
+.preview-user-line.good{ background:var(--info-bg); color:var(--info); }
+.preview-user-line.unanswered{ background:var(--success-bg); color:var(--success-strong); }
 .preview-user-line.no{ background:var(--danger-bg); color:var(--danger-strong); }
 .record-topbar{
   display:grid; grid-template-columns:minmax(160px,1fr) auto minmax(160px,1fr); align-items:center; gap:14px; position:sticky; top:78px; z-index:32;
@@ -2668,6 +2685,34 @@ function manualInputForCard(sess, card){
 function referenceForManualCard(card){
   return card.type==='fillInTheBlank' ? (card.answers||[]).join(' / ') : card.reference;
 }
+function splitAnswerDisplayParts(value){
+  const text = String(value || '').trim();
+  if (!text) return ['(未作答)'];
+  return text.split(/\s+\/\s+/).map(s=>s.trim() || '(未作答)');
+}
+function fillAnswerPartStates(userAnswer, acceptedAnswers){
+  const parts = splitAnswerDisplayParts(userAnswer);
+  const unused = (acceptedAnswers || []).map(answer=>String(answer));
+  return parts.map(part=>{
+    const userNorm = Utils.normalizeAnswerText(part);
+    let ok = false;
+    if (userNorm){
+      const idx = unused.findIndex(answer=>answer.split('/').map(Utils.normalizeAnswerText).includes(userNorm));
+      if (idx>=0){
+        ok = true;
+        unused.splice(idx, 1);
+      }
+    }
+    return { text:part, ok };
+  });
+}
+function renderFillAnswerPartsHtml(userAnswer, acceptedAnswers){
+  if (!Array.isArray(acceptedAnswers) || !acceptedAnswers.length) return Utils.escapeHtml(userAnswer || '（未作答）');
+  return `<span class="answer-fragments">${fillAnswerPartStates(userAnswer, acceptedAnswers).map((part,i)=>{
+    const sep = i ? '<span class="answer-sep">/</span>' : '';
+    return `${sep}<span class="answer-part ${part.ok?'ok':'no'}">${Utils.escapeHtml(part.text)}</span>`;
+  }).join('')}</span>`;
+}
 function gradeObjective(card, userInput){
   const points = Number(App.settings.points[card.type])||0;
   if (card._perBlankChoice){
@@ -2712,6 +2757,30 @@ function gradeSubjective(card, userText, ratingKey){
   return { pct, ratingKey, scoreEarned:selfGradeScore(points, ratingKey), maxScore:points,
     userAnswerDisplay:(userText&&userText.trim())?userText:'(未作答)', correctAnswerDisplay:card.reference };
 }
+function manualTextMatchesReference(userText, reference){
+  const userNorm = Utils.normalizeAnswerText(userText);
+  if (!userNorm) return false;
+  return String(reference || '').split('/').map(Utils.normalizeAnswerText).some(ans=>ans && ans===userNorm);
+}
+function manualAnswerMatchesReference(card, input){
+  if (!card) return false;
+  if (card.type==='fillInTheBlank') return gradeFillBlankInput(input, card.answers);
+  if (card.type==='shortAnswer' || card.type==='essay') return manualTextMatchesReference(input, card.reference);
+  return false;
+}
+function manualBlankValueMatchesReference(card, value){
+  return gradeFillInBlank(value, card.answers || []);
+}
+function gradeSubjectiveExact(card, userText){
+  const points = Number(App.settings.points[card.type])||0;
+  return {
+    isCorrect:true,
+    scoreEarned:points,
+    maxScore:points,
+    userAnswerDisplay:(userText&&userText.trim())?userText:'(未作答)',
+    correctAnswerDisplay:card.reference
+  };
+}
 function gradeFlashcardRating(card, ratingKey){
   const points = Number(App.settings.points[card.type])||0;
   const pct = RATING_TO_PCT[ratingKey] ?? 0;
@@ -2728,7 +2797,8 @@ function ratingLabel(key){ return {again:'完全不会',hard:'有点模糊',good
 function resultStatus(r){
   if (r && r.ratingKey){
     if (r.ratingKey==='easy') return 'ok';
-    if (r.ratingKey==='hard' || r.ratingKey==='good') return 'mid';
+    if (r.ratingKey==='hard') return 'mid';
+    if (r.ratingKey==='good') return 'good';
     if (r.ratingKey==='again') return 'no';
   }
   if (typeof r.pct==='number') return r.pct>=80 ? 'ok' : (r.pct>=50 ? 'mid' : 'no');
@@ -2738,9 +2808,7 @@ function recordResult(card, gradeInfo){
   const sess = App.session;
   const already = sess.results.find(r=>r.uid===card.uid);
   if (already){
-    if (already.graded===false || (sess && sess.mode==='learn')){
-      Object.assign(already, gradeInfo, { graded:true });
-    }
+    Object.assign(already, gradeInfo, { graded:true });
     return already;
   }
   const entry = Object.assign({ uid:card.uid, type:card.type, chapter:card.chapter||'', question:card.question, graded:true }, gradeInfo);
@@ -2750,10 +2818,15 @@ function recordResult(card, gradeInfo){
 function recordPendingSubjective(card, userText){
   const existing = App.session.results.find(r=>r.uid===card.uid);
   if (existing && existing.graded!==false) return existing;
-  App.session.results.push({
+  const pendingEntry = {
     uid:card.uid, type:card.type, chapter:card.chapter||'', question:card.question, reference:card.reference,
     maxScore:Number(App.settings.points[card.type])||0, pendingUserText:userText||'', graded:false
-  });
+  };
+  if (existing){
+    Object.assign(existing, pendingEntry);
+    return existing;
+  }
+  App.session.results.push(pendingEntry);
 }
 function finalizeGradingEntry(entry, ratingKey){
   const pct = selfGradePct(ratingKey);
@@ -2763,6 +2836,9 @@ function finalizeGradingEntry(entry, ratingKey){
   entry.userAnswerDisplay = (entry.pendingUserText&&entry.pendingUserText.trim()) ? entry.pendingUserText : '(未作答)';
   entry.correctAnswerDisplay = entry.reference;
   entry.graded = true;
+}
+function isUnansweredDisplay(value){
+  return String(value || '').split('/').map(s=>s.trim()).every(s=>!s || s==='(未作答)');
 }
 
 /* ============================================================
@@ -2919,11 +2995,15 @@ function goToPreviousQuestion(){
   if (!sess || !sess.answeredStack || !sess.answeredStack.length) return;
   saveCurrentDraftAnswer(sess, sess.queue[0]);
   const prevCard = sess.answeredStack.pop();
-  sess.results = sess.results.filter(r=>r.uid!==prevCard.uid);
+  const prevResult = sess.results.find(r=>r.uid===prevCard.uid);
+  const keepSelfEvalResult = !!(prevResult && prevResult.ratingKey && ['fillInTheBlank','shortAnswer','essay'].includes(prevCard.type));
   if (sess.completedUids) sess.completedUids = sess.completedUids.filter(uid=>uid!==prevCard.uid);
   sess.queue.unshift(prevCard);
   restoreAnswerForCard(sess, prevCard);
-  sess.revealed=false;
+  sess.revealed=keepSelfEvalResult;
+  sess.manualSelfEval=keepSelfEvalResult;
+  sess.selfGradeSelection=keepSelfEvalResult ? prevResult.ratingKey : null;
+  sess.selfGradeReviewing=keepSelfEvalResult;
   sess.feedbackFlash=null; sess.lastUserInput=null; sess.lastGradeCorrect=null;
   sess.cardStartedAt = Date.now();
   sess.pendingCompletion = null;
@@ -2933,7 +3013,10 @@ function goToPreviousQuestion(){
 function finishQuizPhase(){
   const sess = App.session;
   const hasPending = sess.results.some(r=>r.graded===false);
-  if (hasPending){ sess.phase='grading'; sess.gradingIndex=0; App.view='grading'; }
+  if (hasPending){
+    const pendingCount = sess.results.filter(r=>r.graded===false).length;
+    sess.phase='grading'; sess.gradingIndex=0; sess.gradingTotal=pendingCount; App.view='grading';
+  }
   else {
     finalizeSession().then(()=>{ App.view='report'; render(); });
     return;
@@ -2952,7 +3035,7 @@ function buildRecordFromSession(sess, opts={}){
     const b = byType[r.type];
     b.total++; b.score += r.scoreEarned||0; b.maxScore += r.maxScore||0;
     const status = resultStatus(r);
-    if (status==='ok') b.correct++; else if (status==='mid') b.mid++;
+    if (status==='ok') b.correct++; else if (status==='mid' || status==='good') b.mid++;
   });
   return {
     id: opts.id || Utils.uid('sess'), deckId:App.deck.id, deckTitle:App.deck.meta.title, mode:sess.mode,
@@ -2969,7 +3052,8 @@ function buildRecordFromSession(sess, opts={}){
     details: gradedResults.map(r=>({
       uid:r.uid, type:r.type, chapter:r.chapter||'', question:r.question,
       userAnswer:r.userAnswerDisplay, correctAnswer:r.correctAnswerDisplay,
-      status:resultStatus(r), pct:typeof r.pct==='number'?r.pct:undefined, ratingKey:r.ratingKey, scoreEarned:r.scoreEarned, maxScore:r.maxScore
+      status:resultStatus(r), pct:typeof r.pct==='number'?r.pct:undefined, ratingKey:r.ratingKey,
+      unanswered:isUnansweredDisplay(r.userAnswerDisplay), scoreEarned:r.scoreEarned, maxScore:r.maxScore
     }))
   };
 }
@@ -2985,7 +3069,7 @@ function updateQuestionStatsFromRecord(record){
     const cur = stats[d.uid] || {attempts:0, correct:0, wrong:0, mid:0};
     cur.attempts++;
     if (d.status==='ok') cur.correct++;
-    else if (d.status==='mid') cur.mid++;
+    else if (d.status==='mid' || d.status==='good') cur.mid++;
     else cur.wrong++;
     cur.lastStatus = d.status;
     cur.lastAt = record.endedAt;
@@ -3127,14 +3211,15 @@ function selfGradeScore(points, ratingKey){
 function selfGradePct(ratingKey){
   return Math.round(((SELF_GRADE_FRACTION[ratingKey] ?? 0) * 100 + Number.EPSILON) * 100) / 100;
 }
-function renderSelfGradeGrid(points){
+function renderSelfGradeGrid(points, selectedKey, confirmMode){
   const max = Number(points)||0;
+  const btn = (key, cls, label, kbd, score)=>`<button type="button" class="sg-btn ${cls} ${selectedKey===key?'selected':''}" data-sg="${key}" aria-pressed="${selectedKey===key?'true':'false'}">${label}<span class="kbd">${kbd}</span><span class="pct">${score}</span></button>`;
   return `<div class="self-grade-grid">
-    <button type="button" class="sg-btn sg-0" data-sg="again">错误<span class="kbd">1</span><span class="pct">${Utils.fmtScore(selfGradeScore(max,'again'))}分</span></button>
-    <button type="button" class="sg-btn sg-50" data-sg="hard">部分正确<span class="kbd">2</span><span class="pct">${Utils.fmtScore(selfGradeScore(max,'hard'))}分</span></button>
-    <button type="button" class="sg-btn sg-80" data-sg="good">基本正确<span class="kbd">3</span><span class="pct">${Utils.fmtScore(selfGradeScore(max,'good'))}分</span></button>
-    <button type="button" class="sg-btn sg-100" data-sg="easy">完全正确<span class="kbd">4</span><span class="pct">${Utils.fmtScore(max)}分</span></button>
-  </div>`;
+    ${btn('again','sg-0','错误','1',`${Utils.fmtScore(selfGradeScore(max,'again'))}分`)}
+    ${btn('hard','sg-50','部分正确','2',`${Utils.fmtScore(selfGradeScore(max,'hard'))}分`)}
+    ${btn('good','sg-80','基本正确','3',`${Utils.fmtScore(selfGradeScore(max,'good'))}分`)}
+    ${btn('easy','sg-100','完全正确','4',`${Utils.fmtScore(max)}分`)}
+  </div>${confirmMode ? `<div class="qcard-actions"><button type="button" class="btn btn-primary" id="self-grade-confirm-btn" ${selectedKey?'':'disabled'}>确认 <span class="kbd">⏎</span></button></div>` : ''}`;
 }
 function renderCardHtml(sess, card){
   return sess.mode==='flashcard' ? renderFlashcardFace(sess, card) : renderInteractiveFace(sess, card);
@@ -3222,7 +3307,7 @@ function renderManualFillQuestionHtml(sess, card){
   const parts = Utils.escapeHtml(card.question).split(/_{2,}/);
   const inputAt = i=>{
     const value = values[i] || '';
-    const inputCls = sess.revealed ? (gradeFillInBlank(value, card.answers) ? 'correct' : 'wrong') : '';
+    const inputCls = sess.revealed ? (manualBlankValueMatchesReference(card, value) ? 'correct' : 'wrong') : '';
     return `<span class="blank-wrap" style="--blank-chars:${blankInputChars(value)}"><input type="text" class="qcard-blank-input ${inputCls}" data-blank-input="${i}" value="${Utils.escapeHtml(value)}" ${sess.revealed?'disabled':''} autocomplete="off" autocapitalize="off" spellcheck="false"><span class="blank-underline"></span></span>`;
   };
   let html = parts[0] || '';
@@ -3292,7 +3377,7 @@ function renderInteractiveFace(sess, card){
       }
     } else {
       const parts = Utils.escapeHtml(card.question).split(/_{2,}/);
-      const inputCls = sess.revealed ? (sess.lastGradeCorrect?'correct':'wrong') : '';
+      const inputCls = sess.revealed ? (manualAnswerMatchesReference(card, sess.userTextAnswer) ? 'correct' : 'wrong') : '';
       const inputHtml = `<span class="blank-wrap" style="--blank-chars:${blankInputChars(sess.userTextAnswer||'')}"><input type="text" class="qcard-blank-input ${inputCls}" id="blank-input" value="${Utils.escapeHtml(sess.userTextAnswer||'')}" ${sess.revealed?'disabled':''} placeholder="" autocomplete="off" autocapitalize="off" spellcheck="false"><span class="blank-underline"></span></span>`;
       body = `<div class="qcard-question">${parts.join(inputHtml)}</div>`;
       if (!sess.revealed){
@@ -3301,17 +3386,19 @@ function renderInteractiveFace(sess, card){
     }
     if (sess.revealed){
       body += `<div class="reveal-divider"></div><div class="reveal-label">正确答案</div><div class="reveal-answer">${Utils.escapeHtml(card.answers.join(' / '))}</div>`;
-      if (sess.manualSelfEval) actions = renderSelfGradeGrid(App.settings.points[card.type]);
+      if (sess.manualSelfEval) actions = renderSelfGradeGrid(App.settings.points[card.type], sess.selfGradeSelection, sess.selfGradeReviewing);
     }
   } else { // shortAnswer / essay
     if (!sess.revealed){
       body = `<textarea class="essay-input" id="essay-input" placeholder="写下你的回答……（也可留空直接查看参考答案）">${Utils.escapeHtml(sess.userTextAnswer||'')}</textarea>`;
-      const btnLabel = mode==='test' ? '下一题' : '提交并查看参考答案';
-      actions = `<div class="qcard-actions"><button type="button" class="btn btn-secondary self-eval-btn" id="self-eval-btn">自评</button><button type="button" class="btn btn-primary" id="confirm-btn">${btnLabel}</button></div>`;
+      const btnLabel = mode==='test' ? '确认' : '提交并查看参考答案';
+      const confirmKbd = isMobileViewport() ? '⏎' : 'Ctrl/Cmd + ⏎';
+      actions = `<div class="qcard-actions"><button type="button" class="btn btn-secondary self-eval-btn" id="self-eval-btn">自评</button><button type="button" class="btn btn-primary" id="confirm-btn">${btnLabel} <span class="kbd">${confirmKbd}</span></button></div>`;
     } else {
-      body = `<div class="reveal-label">你的回答</div><div class="your-answer-box">${(sess.userTextAnswer&&sess.userTextAnswer.trim())?Utils.escapeHtml(sess.userTextAnswer):'（未作答）'}</div>
+      const answerCls = manualAnswerMatchesReference(card, sess.userTextAnswer) ? ' correct' : ((sess.userTextAnswer&&sess.userTextAnswer.trim()) ? ' wrong' : '');
+      body = `<div class="reveal-label">你的回答</div><div class="your-answer-box${answerCls}">${(sess.userTextAnswer&&sess.userTextAnswer.trim())?Utils.escapeHtml(sess.userTextAnswer):'（未作答）'}</div>
         <div class="reveal-divider"></div><div class="reveal-label">参考答案</div><div class="reveal-answer">${Utils.escapeHtml(card.reference)}</div>`;
-      actions = renderSelfGradeGrid(App.settings.points[card.type]);
+      actions = renderSelfGradeGrid(App.settings.points[card.type], sess.selfGradeSelection, sess.selfGradeReviewing);
     }
   }
   const isChoiceStyled = card._dynamicChoice || card._perBlankChoice;
@@ -3505,7 +3592,9 @@ function bindCardEvents(sess, card){
       if (cb) cb.onclick = ()=>submitObjectiveAnswer(sess.userTextAnswer);
     }
     if (sess.revealed && sess.manualSelfEval){
-      document.querySelectorAll('[data-sg]').forEach(btn=>btn.addEventListener('click', ()=>submitManualSelfRating(btn.dataset.sg)));
+      document.querySelectorAll('[data-sg]').forEach(btn=>btn.addEventListener('click', ()=>chooseManualSelfRating(btn.dataset.sg)));
+      const sgConfirm = document.getElementById('self-grade-confirm-btn');
+      if (sgConfirm) sgConfirm.onclick = ()=>submitManualSelfRating(sess.selfGradeSelection);
     }
   } else { // shortAnswer / essay
     if (!sess.revealed){
@@ -3519,7 +3608,9 @@ function bindCardEvents(sess, card){
       const cb = document.getElementById('confirm-btn');
       if (cb) cb.onclick = submitEssayAnswer;
     } else {
-      document.querySelectorAll('[data-sg]').forEach(btn=>btn.addEventListener('click', ()=>sess.manualSelfEval ? submitManualSelfRating(btn.dataset.sg) : submitLearnSubjective(btn.dataset.sg)));
+      document.querySelectorAll('[data-sg]').forEach(btn=>btn.addEventListener('click', ()=>sess.manualSelfEval ? chooseManualSelfRating(btn.dataset.sg) : submitLearnSubjective(btn.dataset.sg)));
+      const sgConfirm = document.getElementById('self-grade-confirm-btn');
+      if (sgConfirm) sgConfirm.onclick = ()=>submitManualSelfRating(sess.selfGradeSelection);
     }
   }
 }
@@ -3558,6 +3649,8 @@ function resetAnswerStateForCard(sess, card){
   sess.blankInputs = isManualMultiBlank(card) ? new Array(fillBlankCount(card)).fill('') : null;
   sess.activeBlankIdx=0;
   sess.manualSelfEval=false;
+  sess.selfGradeSelection=null;
+  sess.selfGradeReviewing=false;
   sess.selectedPerBlank = card && card._perBlankChoice ? new Array(card._blankOptions.length).fill(null) : null;
 }
 function currentDraftAnswer(sess, card){
@@ -3634,12 +3727,27 @@ function beginManualSelfEval(){
   if (!sess || !card) return;
   sess.manualSelfEval = true;
   sess.revealed = true;
+  sess.selfGradeSelection = null;
+  sess.selfGradeReviewing = false;
   persistActiveSession();
   render();
+}
+function chooseManualSelfRating(ratingKey){
+  const sess = App.session;
+  if (!sess) return;
+  if (sess.selfGradeReviewing){
+    sess.selfGradeSelection = ratingKey;
+    persistActiveSession();
+    render();
+    return;
+  }
+  submitManualSelfRating(ratingKey);
 }
 function submitManualSelfRating(ratingKey){
   const sess = App.session, card = sess && sess.queue[0];
   if (!sess || !card) return;
+  ratingKey = ratingKey || sess.selfGradeSelection;
+  if (!ratingKey) return;
   const points = Number(App.settings.points[card.type])||0;
   const pct = selfGradePct(ratingKey);
   const g = {
@@ -3657,7 +3765,8 @@ function submitEssayAnswer(){
   const sess = App.session, card = sess.queue[0];
   if (sess.mode==='test'){
     stashAnswerForCard(sess, card, sess.userTextAnswer);
-    recordPendingSubjective(card, sess.userTextAnswer);
+    if (manualTextMatchesReference(sess.userTextAnswer, card.reference)) recordResult(card, gradeSubjectiveExact(card, sess.userTextAnswer));
+    else recordPendingSubjective(card, sess.userTextAnswer);
     completeCurrentCard({ requeue:false });
   } else {
     sess.revealed = true;
@@ -3700,13 +3809,16 @@ function renderGradingView(container){
   const sess = App.session;
   if (!sess){ App.view='setup'; render(); return; }
   const pending = sess.results.filter(r=>r.graded===false);
-  if (sess.gradingIndex>=pending.length){ finalizeSession().then(()=>{ App.view='report'; render(); }); return; }
-  const entry = pending[Math.max(0, Math.min(sess.gradingIndex||0, pending.length-1))];
+  if (!pending.length){ finalizeSession().then(()=>{ App.view='report'; render(); }); return; }
+  if (!sess.gradingTotal || sess.gradingTotal<pending.length) sess.gradingTotal = pending.length;
+  const gradedCount = Math.max(0, sess.gradingTotal - pending.length);
+  sess.gradingIndex = gradedCount;
+  const entry = pending[0];
   container.className = 'quiz-shell fade-in';
   container.innerHTML = `
     <div class="quiz-topbar">
-      <div class="progress-track"><div class="progress-fill" style="width:${Math.round((sess.gradingIndex/pending.length)*100)}%"></div></div>
-      <div class="progress-label">自评判分 ${sess.gradingIndex+1} / ${pending.length}</div>
+      <div class="progress-track"><div class="progress-fill" style="width:${Math.round((gradedCount/sess.gradingTotal)*100)}%"></div></div>
+      <div class="progress-label">自评判分 ${gradedCount+1} / ${sess.gradingTotal}</div>
     </div>
     <div class="card-stage">
       <div class="card-stack">
@@ -3721,6 +3833,7 @@ function renderGradingView(container){
             <div class="reveal-answer">${Utils.escapeHtml(entry.reference)}</div>
           </div>
           ${renderSelfGradeGrid(entry.maxScore)}
+          <div class="grading-note">测试模式中，填空题手动输入留空并确认会直接自动结算；简答题或论述题留空并确认，会在这里对照参考答案自评。</div>
         </div>
       </div>
     </div>
@@ -3728,7 +3841,7 @@ function renderGradingView(container){
   document.querySelectorAll('[data-sg]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       finalizeGradingEntry(entry, btn.dataset.sg);
-      sess.gradingIndex++;
+      sess.gradingIndex = gradedCount + 1;
       persistActiveSession();
       transitionRender(render);
     });
@@ -3775,7 +3888,10 @@ function handleGlobalKeydown(e){
   if (sess.revealed){
     if (sess.manualSelfEval && ['1','2','3','4'].includes(e.key)){
       e.preventDefault();
-      submitManualSelfRating({'1':'again','2':'hard','3':'good','4':'easy'}[e.key]);
+      chooseManualSelfRating({'1':'again','2':'hard','3':'good','4':'easy'}[e.key]);
+    } else if (sess.manualSelfEval && e.key==='Enter' && sess.selfGradeReviewing && sess.selfGradeSelection){
+      e.preventDefault();
+      submitManualSelfRating(sess.selfGradeSelection);
     } else if ((card.type==='shortAnswer'||card.type==='essay') && ['1','2','3','4'].includes(e.key)){
       e.preventDefault();
       submitLearnSubjective({'1':'again','2':'hard','3':'good','4':'easy'}[e.key]);
@@ -3948,12 +4064,13 @@ function renderPreviewSidebar(grouped, idPrefix, opts={}){
           return;
         }
         if (opts.mode==='flashcard') present.add(flashcardHeatStatus(d));
-        else present.add(['ok','mid'].includes(d.status) ? d.status : 'no');
+        else if (d.unanswered) present.add('unanswered');
+        else present.add(['ok','mid','good'].includes(d.status) ? d.status : 'no');
       });
     });
     const items = opts.mode==='flashcard'
-      ? [['empty','未作答'],['no','未掌握'],['mid','复习中'],['good','基本掌握'],['ok','已掌握']]
-      : [['ok','正确'],['mid','部分正确'],['no','错误'],['empty','未作答']];
+      ? [['no','未掌握'],['mid','部分掌握'],['good','基本掌握'],['ok','完全掌握']]
+      : [['ok','正确'],['mid','部分正确'],['good','基本正确'],['no','错误'],['unanswered','未作答']];
     const html = items.filter(([key])=>present.has(key)).map(([key,label])=>`<span><i class="status-${key}"></i>${label}</span>`).join('');
     return html ? `<div class="sidebar-legend">${html}</div>` : '';
   })() : '';
@@ -3967,8 +4084,9 @@ function renderPreviewSidebar(grouped, idPrefix, opts={}){
       if (detailMap){
         let heatStatus = d ? d.status : 'empty';
         if (opts.mode==='flashcard') heatStatus = flashcardHeatStatus(d);
-        else heatStatus = ['ok','mid','empty'].includes(heatStatus) ? heatStatus : 'no';
-        statusClass = ` status-${['ok','good','mid','no','empty'].includes(heatStatus)?heatStatus:'no'}`;
+        else if (d && d.unanswered) heatStatus = 'unanswered';
+        else heatStatus = ['ok','mid','good','empty'].includes(heatStatus) ? heatStatus : 'no';
+        statusClass = ` status-${['ok','good','mid','no','empty','unanswered'].includes(heatStatus)?heatStatus:'no'}`;
       }
       const chapter = opts.showChapters ? (q.chapter || (entry.detail && entry.detail.chapter) || (d && d.chapter) || '') : '';
       const chapterLabel = chapter && chapter!==lastChapter ? `<div class="nav-chapter-label">${Utils.escapeHtml(chapter)}</div>` : '';
@@ -4008,7 +4126,7 @@ function renderPreviewQuestion(q, num, opts={}){
   const detail = opts.detail || null;
   const idPrefix = opts.idPrefix || 'bq';
   const rawStatus = detail ? detail.status : '';
-  const status = rawStatus;
+  const status = detail && detail.unanswered ? 'unanswered' : rawStatus;
   const starred = App.deck && isInNotebook('review', q.uid, App.deck.id);
   const wrong = App.deck && isInNotebook('wrong', q.uid, App.deck.id);
   const actions = opts.actions ? `<div class="preview-actions">
@@ -4031,7 +4149,7 @@ function renderPreviewQuestion(q, num, opts={}){
     }).join('');
     bodyHtml = `<div class="tf-mini-row">${choices}</div>`;
   } else if (q.type==='fillInTheBlank'){
-    if (detail) bodyHtml = `<div class="preview-user-line ${detail.status==='ok'?'ok':(detail.status==='mid'?'mid':'no')}">你的答案：${Utils.escapeHtml(detail.userAnswer||'（未作答）')}</div>`;
+    if (detail) bodyHtml = `<div class="preview-user-line ${status==='ok'?'ok':(status==='mid'?'mid':(status==='good'?'good':(status==='unanswered'?'unanswered':'no')))}">你的答案：${renderFillAnswerPartsHtml(detail.userAnswer||'（未作答）', q.answers)}</div>`;
   } else if (showAns){
     bodyHtml = `<div class="browse-answer">${Utils.escapeHtml(q.reference || (detail&&detail.correctAnswer) || '')}</div>`;
   }
@@ -4039,8 +4157,11 @@ function renderPreviewQuestion(q, num, opts={}){
     bodyHtml = `<div class="browse-answer">${Utils.escapeHtml(detail.correctAnswer)}</div>`;
   }
   const qText = q.type==='fillInTheBlank' ? renderInlineFillQuestion(q, showAns) : Utils.escapeHtml(q.question);
-  const statusBadge = detail ? `<span class="preview-status ${status}">${status==='ok'?'正确':(status==='mid'?'复习中':'错误')}</span>` : '';
-  return `<div class="browse-q ${detail?'with-status status-'+status:''}" id="${idPrefix}-${q.uid}" data-title="${Utils.escapeHtml(q.question)}">
+  const statusLabel = opts.mode==='flashcard'
+    ? ({ok:'完全掌握', good:'基本掌握', mid:'部分掌握', no:'未掌握', unanswered:'未作答'}[status] || '未掌握')
+    : ({ok:'正确', good:'基本正确', mid:'部分正确', no:'错误', unanswered:'未作答'}[status] || '错误');
+  const statusBadge = detail ? `<span class="preview-status ${status}">${statusLabel}</span>` : '';
+  return `<div class="browse-q ${detail?'with-status status-'+status:''}" id="${idPrefix}-${q.uid}">
     <div class="preview-q-head">
       <div class="browse-q-text"><span class="browse-q-num">${num}.</span>${qText}</div>
       ${actions}
@@ -4083,8 +4204,13 @@ function renderReportView(container){
       .map(t=>({ type:t, pct: r.byType[t].maxScore>0 ? Math.round((r.byType[t].score/r.byType[t].maxScore)*100) : 0, sub:`${Utils.fmtScore(r.byType[t].score)}/${Utils.fmtScore(r.byType[t].maxScore)}分` }))
   );
 
+  const snapshotMap = new Map((r.questionSnapshots || []).map(q=>[q.uid, q]));
   const qaListHtml = r.details.map((d,i)=>{
-    const statusIcon = d.status==='mid' ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"></path></svg>' : {ok:'✓',no:'✗'}[d.status];
+    const snapshot = snapshotMap.get(d.uid);
+    const userAnswerHtml = d.type==='fillInTheBlank'
+      ? renderFillAnswerPartsHtml(d.userAnswer, snapshot && snapshot.answers)
+      : Utils.escapeHtml(d.userAnswer);
+    const statusIcon = (d.status==='mid' || d.status==='good') ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"></path></svg>' : {ok:'✓',no:'✗'}[d.status];
     return `<div class="qa-item" data-qa="${i}">
       <div class="qa-head" tabindex="0" role="button" aria-expanded="false">
         <div class="qa-status ${d.status}">${statusIcon}</div>
@@ -4093,12 +4219,12 @@ function renderReportView(container){
         <div class="chev">▸</div>
       </div>
       <div class="qa-detail"><div class="qa-detail-inner">
-        <div class="row"><div class="k">你的答案</div><div class="v ${d.status==='ok'?'ok':(d.status==='no'?'no':'')}">${Utils.escapeHtml(d.userAnswer)}</div></div>
+        <div class="row"><div class="k">你的答案</div><div class="v ${d.status==='ok'?'ok':(d.status==='no'?'no':'')}">${userAnswerHtml}</div></div>
         <div class="row"><div class="k">正确 / 参考答案</div><div class="v ok">${Utils.escapeHtml(d.correctAnswer)}</div></div>
       </div></div>
     </div>`;
   }).join('');
-  const correctQuestions = (r.details || []).filter(d=>d.status==='ok' || ['hard','good'].includes(d.ratingKey)).length;
+  const correctQuestions = (r.details || []).filter(d=>d.status==='ok').length;
   const reportActionsHtml = r.partial
     ? `<button class="btn btn-secondary" id="report-study-btn" type="button">返回学习</button>
         <button class="btn btn-primary" id="report-restart-btn" type="button">再来一轮</button>`
@@ -4115,7 +4241,7 @@ function renderReportView(container){
       </div>
       <div class="report-stat-grid">
         <div class="stat-card"><div class="v">${r.percentage}%</div><div class="l">正确率</div></div>
-        <div class="stat-card"><div class="v">${correctQuestions}/${r.totalQuestions}</div><div class="l">题数</div></div>
+        <div class="stat-card"><div class="v">${correctQuestions}/${r.totalQuestions}</div><div class="l">正确/题目总数</div></div>
         <div class="stat-card"><div class="v">${Utils.fmtClock(r.durationMs)}</div><div class="l">用时</div></div>
         <div class="stat-card"><div class="v">${Utils.fmtDateShort(r.endedAt)}</div><div class="l">完成日期</div></div>
       </div>
@@ -4419,7 +4545,7 @@ function sanitizeProgressForExport(progress){
       const cur = deckStats[d.uid] || (deckStats[d.uid] = {attempts:0, correct:0, wrong:0, mid:0});
       cur.attempts++;
       if (d.status==='ok') cur.correct++;
-      else if (d.status==='mid') cur.mid++;
+      else if (d.status==='mid' || d.status==='good') cur.mid++;
       else cur.wrong++;
       cur.lastStatus = d.status;
       cur.lastAt = Math.max(cur.lastAt||0, s.endedAt||s.startedAt||0);
@@ -4474,7 +4600,7 @@ function rebuildProgressDerivedState(){
       const cur = deckStats[d.uid] || (deckStats[d.uid] = {attempts:0, correct:0, wrong:0, mid:0});
       cur.attempts++;
       if (d.status==='ok') cur.correct++;
-      else if (d.status==='mid') cur.mid++;
+      else if (d.status==='mid' || d.status==='good') cur.mid++;
       else cur.wrong++;
       cur.lastStatus = d.status;
       cur.lastAt = Math.max(cur.lastAt||0, s.endedAt||s.startedAt||0);
