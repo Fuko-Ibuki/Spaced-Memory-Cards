@@ -2835,13 +2835,14 @@ function renderBrowseView(container){
       <button class="btn btn-primary" id="wrong-test-btn" type="button">从错题本开始测试</button>
     </div>` : '';
 
-  const sidebarHtml = renderPreviewSidebar(grouped, 'bq');
-  const mobileSidebarHtml = renderPreviewSidebar(grouped, 'bq', {showChapters:true});
+  const hasNav = grouped.length > 0;
+  const sidebarHtml = hasNav ? renderPreviewSidebar(grouped, 'bq') : '';
+  const mobileSidebarHtml = hasNav ? renderPreviewSidebar(grouped, 'bq', {showChapters:true}) : '';
 
   const mainHtml = grouped.length ? grouped.map(g=>{
     const items = g.questions.map((q,i)=>renderPreviewQuestion(q, i+1, {showAns, idPrefix:'bq', actions:true})).join('');
     return `<div class="browse-section"><h3>${QuestionTypes[g.type].label}（${g.questions.length} 题）</h3>${items}</div>`;
-  }).join('') : `<div class="empty-state"><span class="e-icon">□</span><p>当前筛选下没有题目</p></div>`;
+  }).join('') : `<div class="empty-state browse-empty-state"><span class="e-icon">□</span><p>当前筛选下没有题目</p></div>`;
 
   container.className = 'view-pad has-fixed-previewbar fade-in';
   container.innerHTML = `
@@ -2854,15 +2855,15 @@ function renderBrowseView(container){
         <div class="browse-filter-pack">
           <div class="seg">${scopeButtons}</div>
           ${chapterFilterHtml}
-          <button class="btn btn-secondary browse-nav-toggle" type="button">题目导航</button>
+          ${hasNav ? '<button class="btn btn-secondary browse-nav-toggle" type="button">题目导航</button>' : ''}
         </div>
         <button class="btn btn-secondary" id="browse-back-btn" type="button">← 返回学习</button>
-        <div class="browse-sidebar mobile-nav-dropdown show-chapters mobile-collapsed">${mobileSidebarHtml}</div>
+        ${hasNav ? `<div class="browse-sidebar mobile-nav-dropdown show-chapters mobile-collapsed">${mobileSidebarHtml}</div>` : ''}
       </div>
       ${wrongTestStrip}
-      <div class="browse-shell">
-        <div class="browse-main">${mainHtml}</div>
-        <div class="browse-sidebar mobile-collapsed">${sidebarHtml}</div>
+      <div class="browse-shell ${hasNav?'':'is-empty'}">
+        <div class="browse-main ${hasNav?'':'is-empty'}">${mainHtml}</div>
+        ${hasNav ? `<div class="browse-sidebar mobile-collapsed">${sidebarHtml}</div>` : ''}
       </div>
     </div>
   `;
@@ -2879,7 +2880,7 @@ function renderBrowseView(container){
   if (wrongTestBtn) wrongTestBtn.onclick = startWrongBookTest;
   const browseNavToggle = container.querySelector('.browse-nav-toggle');
   if (browseNavToggle) browseNavToggle.onclick = ()=>{
-    const sidebar = container.querySelector('.browse-sidebar');
+    const sidebar = container.querySelector('.mobile-nav-dropdown');
     if (sidebar){
       const collapsed = sidebar.classList.toggle('mobile-collapsed');
       browseNavToggle.textContent = collapsed ? '题目导航' : '收起导航';
@@ -2910,7 +2911,7 @@ function renderBrowseView(container){
       const target = document.getElementById('bq-'+a.dataset.jump);
       if (target) target.scrollIntoView({block:'start'});
       if (window.matchMedia && window.matchMedia('(max-width:640px)').matches){
-        const sidebar = container.querySelector('.browse-sidebar');
+        const sidebar = container.querySelector('.mobile-nav-dropdown');
         const toggle = container.querySelector('.browse-nav-toggle');
         if (sidebar) sidebar.classList.add('mobile-collapsed');
         if (toggle) toggle.textContent = '题目导航';

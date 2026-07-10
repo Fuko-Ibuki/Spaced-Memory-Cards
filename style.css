@@ -978,6 +978,17 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .wrong-test-strip .btn{ flex-shrink:0; }
 .browse-shell{ display:flex; gap:24px; align-items:flex-start; }
 .browse-main{ flex:1; min-width:0; }
+.browse-shell.is-empty{ display:block; }
+.browse-main.is-empty{ width:100%; max-width:100%; }
+.browse-empty-state{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  min-height:42vh;
+  margin:0 auto;
+}
 .browse-nav-toggle{ display:none; }
 .browse-sidebar{
   width:230px; flex-shrink:0; position:sticky; top:156px; max-height:calc(100vh - 180px); overflow:auto;
@@ -1259,7 +1270,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   .browse-blank-line{ width:76px; }
   .browse-inline-answer{ min-width:76px; }
   .browse-sidebar.mobile-collapsed{ display:none; }
-  .browse-main .empty-state{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; min-height:46vh; margin:0 auto; }
+  .browse-empty-state{ min-height:46vh; }
   .chart-panel{ padding:16px 14px; min-height:0; overflow:visible; }
   .chart-panel h4{ margin-bottom:10px; }
   .trend-chart-panel{ --sparkline-h:168px; padding:16px 14px 12px; }
