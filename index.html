@@ -1137,7 +1137,11 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   .deck-switcher button{ flex:0 0 calc((100% - 16px)/3); max-width:none; justify-content:center; scroll-snap-align:start; }
   .deck-switcher.too-many{ display:none; }
   .deck-switch-select.too-many{ display:block; margin:-10px 0 18px; }
+  .quiz-shell{ min-height:calc(100dvh - 62px); padding-bottom:env(safe-area-inset-bottom, 0px); }
+  .card-stage{ padding-bottom:calc(92px + env(safe-area-inset-bottom, 0px)); }
   .qcard{ padding:26px 20px 24px; min-height:260px; }
+  .qcard-actions{ padding-bottom:env(safe-area-inset-bottom, 0px); }
+  .essay-input,.qcard-blank-input{ scroll-margin-bottom:calc(140px + env(safe-area-inset-bottom, 0px)); }
   .qcard-question{ font-size:18px; }
   .qcard-question .blank{ width:76px; }
   .blank-line-only{ width:74px; }
@@ -1383,9 +1387,24 @@ const Utils = {
 const Store = {
   memory:{},
   backendName:null,
+  lastQuotaToastAt:0,
   hasCloud(){
     return typeof window.storage !== 'undefined' && window.storage &&
       typeof window.storage.get === 'function' && typeof window.storage.set === 'function';
+  },
+  isQuotaError(e){
+    return !!e && (
+      e.name==='QuotaExceededError' ||
+      e.name==='NS_ERROR_DOM_QUOTA_REACHED' ||
+      e.code===22 ||
+      e.code===1014
+    );
+  },
+  notifyQuotaExceeded(){
+    const now = Date.now();
+    if (now - this.lastQuotaToastAt < 6000) return;
+    this.lastQuotaToastAt = now;
+    toast('存储空间已满，请导出数据后清理历史记录或清空旧数据', {icon:'⚠️'});
   },
   backend(){
     if (this.backendName) return this.backendName;
@@ -1409,7 +1428,10 @@ const Store = {
       catch(e){ return false; }
     }
     try{ localStorage.setItem(key, value); return true; }
-    catch(e){ return false; }
+    catch(e){
+      if (this.isQuotaError(e)) this.notifyQuotaExceeded();
+      return false;
+    }
   },
   async getJSON(key, fallback){
     const raw = await this.get(key, null);
@@ -2175,7 +2197,7 @@ function renderLoadView(container){
       <div class="dropzone" id="dropzone" tabindex="0">
         <div class="dz-icon">🗂️</div>
         <h3>拖拽题库文件到这里</h3>
-        <p>支持 .js（UMD / CommonJS 模块）与 .json 格式<br>题型字段至少包含 fillInTheBlank / singleChoice / multipleChoice / trueFalse / shortAnswer / essay 中的一种或多种</p>
+        <p>支持 .js（UMD / CommonJS 模块）与 .json 格式<br>题型字段至少包含 fillInTheBlank / singleChoice / multipleChoice / trueFalse / shortAnswer / essay 中的一种或多种<br>分享题库建议使用 .json；.js 题库仅导入可信来源</p>
         <button class="btn btn-primary" id="pick-file-btn" type="button">选择文件</button>
         <input type="file" id="file-input" class="hidden-input" accept=".js,.json,application/json,text/javascript">
         <div class="dz-hint">或直接将文件拖入此区域</div>
@@ -2184,7 +2206,7 @@ function renderLoadView(container){
       <details class="format-guide" ${App.formatGuideOpen?'open':''}>
         <summary><h4>题库数据格式</h4></summary>
         <div class="format-guide-body">
-          <p>文件导出一个对象即可，可直接写 JSON，也可在 JS 中使用 <code>module.exports = {...}</code>。<code>meta</code> 为可选信息；题型字段至少包含 <code>fillInTheBlank</code> / <code>singleChoice</code> / <code>multipleChoice</code> / <code>trueFalse</code> / <code>shortAnswer</code> / <code>essay</code> 中的一种或多种。</p>
+          <p>文件导出一个对象即可，推荐直接使用 JSON；JS 文件可使用 <code>module.exports = {...}</code>，但会执行文件代码，请只导入可信来源。<code>meta</code> 为可选信息；题型字段至少包含 <code>fillInTheBlank</code> / <code>singleChoice</code> / <code>multipleChoice</code> / <code>trueFalse</code> / <code>shortAnswer</code> / <code>essay</code> 中的一种或多种。</p>
           <div class="format-guide-grid">
             <div class="format-item"><b>fillInTheBlank</b><span><code>question</code> 中用 <code>___</code> 表示空；答案写 <code>answers:["答案"]</code>。可选 <code>chapter</code>。</span></div>
             <div class="format-item"><b>singleChoice</b><span><code>options:["A项","B项"]</code>，<code>answer:"A"</code> 或答案序号。</span></div>
@@ -2220,6 +2242,9 @@ async function handleFile(file){
   if (!/\.(js|json)$/i.test(name)){
     showLoadError(`不支持的文件类型："${name}"。请上传 .js 或 .json 文件。`);
     return;
+  }
+  if (/\.js$/i.test(name)){
+    toast('JS 题库会执行文件代码，请仅导入可信来源；分享题库建议使用 JSON', {icon:'⚠️'});
   }
   try{
     const text = await Utils.readFileAsText(file);
