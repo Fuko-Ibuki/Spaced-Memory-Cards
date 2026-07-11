@@ -929,6 +929,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   border-bottom:none;
 }
 .browse-topbar .browse-answer-fixed{ justify-self:start; }
+.browse-answer-placeholder{ justify-self:start; width:126px; height:1px; pointer-events:none; }
 .browse-topbar #browse-back-btn{ justify-self:end; }
 .browse-filter-pack{ display:flex; align-items:center; justify-content:center; gap:10px; min-width:0; flex-wrap:wrap; justify-self:center; }
 .browse-filter-line{ display:flex; align-items:center; gap:8px; flex-wrap:nowrap; }
@@ -1010,8 +1011,8 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .nav-cell-num{ display:block; line-height:1; transform:translateY(.5px); }
 .nav-chapter-label{ display:none; }
 .nav-cell:hover{ transform:scale(1.15); filter:brightness(1.08); }
-.nav-cell:not(.status-ok):not(.status-good):not(.status-mid):not(.status-no):not(.status-empty):hover,
-.nav-cell:not(.status-ok):not(.status-good):not(.status-mid):not(.status-no):not(.status-empty).active{
+.nav-cell:not(.status-ok):not(.status-good):not(.status-mid):not(.status-no):not(.status-empty):not(.status-unanswered):hover,
+.nav-cell:not(.status-ok):not(.status-good):not(.status-mid):not(.status-no):not(.status-empty):not(.status-unanswered).active{
   background:var(--accent); color:var(--accent-ink); border-color:var(--accent);
 }
 .nav-cell.active{ box-shadow:0 0 0 2px var(--accent); }
@@ -1024,12 +1025,16 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .browse-section{ margin-bottom:32px; }
 .browse-section h3{ font-size:15.5px; color:var(--text); margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border-soft); font-family:inherit; font-weight:700; }
 .browse-q{ margin-bottom:18px; padding-bottom:16px; border-bottom:1px solid var(--border-soft); scroll-margin-top:148px; }
-.browse-q.with-status{ border-left:4px solid var(--border-soft); padding-left:14px; }
-.browse-q.status-ok{ border-left-color:var(--success); }
-.browse-q.status-mid{ border-left-color:var(--gold); }
-.browse-q.status-good{ border-left-color:var(--info); }
-.browse-q.status-unanswered{ border-left-color:color-mix(in srgb, var(--success) 30%, transparent); }
-.browse-q.status-no{ border-left-color:var(--danger); }
+.browse-q.with-status{
+  --preview-status-bar:var(--border-soft);
+  padding-left:14px;
+  box-shadow:inset 4px 0 0 var(--preview-status-bar);
+}
+.browse-q.status-ok{ --preview-status-bar:var(--success); }
+.browse-q.status-mid{ --preview-status-bar:var(--gold); }
+.browse-q.status-good{ --preview-status-bar:var(--info); }
+.browse-q.status-unanswered{ --preview-status-bar:color-mix(in srgb, var(--success) 30%, transparent); }
+.browse-q.status-no{ --preview-status-bar:var(--danger); }
 .browse-q:last-child{ border-bottom:none; }
 .browse-q-num{ font-family:var(--font-num); font-style:italic; color:var(--accent); font-weight:600; margin-right:6px; }
 .browse-q-text{ min-width:0; font-size:15px; color:var(--text); line-height:1.7; overflow-wrap:anywhere; word-break:break-word; }
@@ -1237,6 +1242,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
     z-index:170; margin:0; padding:8px 10px 8px 12px;
     box-shadow:var(--shadow-pop);
   }
+  .browse-answer-placeholder{ display:none; }
   .wrong-test-strip{ justify-content:center; text-align:center; }
   .wrong-test-strip > div{ flex:1 1 100%; }
   .wrong-test-strip .btn{ margin:0 auto; }

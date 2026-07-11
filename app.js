@@ -1474,22 +1474,28 @@ function isManualMultiBlank(card){
   return card && card.type==='fillInTheBlank' && !card._dynamicChoice && !card._perBlankChoice && fillBlankCount(card)>1;
 }
 function gradeFillBlankInput(userInput, acceptedAnswers){
+  return gradeFillBlankParts(userInput, acceptedAnswers).isCorrect;
+}
+function gradeFillBlankParts(userInput, acceptedAnswers, blankTotal){
+  const answers = acceptedAnswers || [];
   if (Array.isArray(userInput)){
-    const answers = acceptedAnswers || [];
-    if (!userInput.length) return false;
-    if (!answers.length) return false;
-    if (userInput.length!==answers.length) return false;
+    const total = Math.max(1, blankTotal || answers.length || userInput.length);
+    if (!answers.length) return { correct:0, total, pct:0, isCorrect:false };
     const unused = answers.map((answer,i)=>({ answer, i }));
-    return userInput.every(value=>{
+    let correct = 0;
+    userInput.slice(0, total).forEach(value=>{
       const userNorm = Utils.normalizeAnswerText(value);
-      if (!userNorm) return false;
+      if (!userNorm) return;
       const matchIdx = unused.findIndex(item=>String(item.answer).split('/').map(Utils.normalizeAnswerText).includes(userNorm));
-      if (matchIdx<0) return false;
-      unused.splice(matchIdx, 1);
-      return true;
+      if (matchIdx>=0){
+        correct++;
+        unused.splice(matchIdx, 1);
+      }
     });
+    return { correct, total, pct:Math.round((correct / total) * 10000) / 100, isCorrect:correct===total };
   }
-  return gradeFillInBlank(userInput, acceptedAnswers);
+  const ok = gradeFillInBlank(userInput, answers);
+  return { correct:ok?1:0, total:1, pct:ok?100:0, isCorrect:ok };
 }
 function fillAnswerDisplay(input){
   if (Array.isArray(input)){
@@ -1567,8 +1573,10 @@ function gradeObjective(card, userInput){
       userAnswerDisplay: userInput==null?'(未作答)':(userInput?'对':'错'), correctAnswerDisplay: card.answer?'对':'错' };
   }
   // fillInTheBlank
-  const isCorrect = gradeFillBlankInput(userInput, card.answers);
-  return { isCorrect, scoreEarned:isCorrect?points:0, maxScore:points,
+  const blankGrade = gradeFillBlankParts(userInput, card.answers, Array.isArray(userInput) ? fillBlankCount(card) : 1);
+  const scoreEarned = Math.round((points * blankGrade.correct / blankGrade.total + Number.EPSILON) * 100) / 100;
+  return { isCorrect:blankGrade.isCorrect, pct:blankGrade.pct, blankCorrectCount:blankGrade.correct, blankTotal:blankGrade.total,
+    scoreEarned, maxScore:points,
     userAnswerDisplay: fillAnswerDisplay(userInput),
     correctAnswerDisplay: card.answers.join(' / ') };
 }
@@ -1621,6 +1629,11 @@ function resultStatus(r){
     if (r.ratingKey==='hard') return 'mid';
     if (r.ratingKey==='good') return 'good';
     if (r.ratingKey==='again') return 'no';
+  }
+  if (r && typeof r.blankCorrectCount==='number' && typeof r.blankTotal==='number'){
+    if (r.blankCorrectCount>=r.blankTotal) return 'ok';
+    if (r.blankCorrectCount>0) return 'mid';
+    return 'no';
   }
   if (typeof r.pct==='number') return r.pct>=80 ? 'ok' : (r.pct>=50 ? 'mid' : 'no');
   return r.isCorrect ? 'ok' : 'no';
@@ -1910,7 +1923,9 @@ function buildRecordFromSession(sess, opts={}){
       uid:r.uid, type:r.type, chapter:r.chapter||'', question:r.question,
       userAnswer:r.userAnswerDisplay, correctAnswer:r.correctAnswerDisplay,
       status:resultStatus(r), pct:typeof r.pct==='number'?r.pct:undefined, ratingKey:r.ratingKey,
-      unanswered:isUnansweredDisplay(r.userAnswerDisplay), scoreEarned:r.scoreEarned, maxScore:r.maxScore
+      unanswered:isUnansweredDisplay(r.userAnswerDisplay), scoreEarned:r.scoreEarned, maxScore:r.maxScore,
+      blankCorrectCount:typeof r.blankCorrectCount==='number'?r.blankCorrectCount:undefined,
+      blankTotal:typeof r.blankTotal==='number'?r.blankTotal:undefined
     }))
   };
 }
@@ -2836,6 +2851,7 @@ function renderBrowseView(container){
     </div>` : '';
 
   const hasNav = grouped.length > 0;
+  const showAnswerControl = grouped.length > 0;
   const sidebarHtml = hasNav ? renderPreviewSidebar(grouped, 'bq') : '';
   const mobileSidebarHtml = hasNav ? renderPreviewSidebar(grouped, 'bq', {showChapters:true}) : '';
 
@@ -2848,10 +2864,10 @@ function renderBrowseView(container){
   container.innerHTML = `
     <div class="container" style="max-width:1120px;">
       <div class="browse-topbar">
-        <div class="browse-answer-fixed">
+        ${showAnswerControl ? `<div class="browse-answer-fixed">
           <div class="label" style="font-size:13px;">显示答案</div>
           <button type="button" class="switch ${showAns?'on':''}" id="browse-answer-switch" aria-label="显示答案" aria-pressed="${showAns?'true':'false'}"><span class="knob"></span></button>
-        </div>
+        </div>` : '<div class="browse-answer-placeholder" aria-hidden="true"></div>'}
         <div class="browse-filter-pack">
           <div class="seg">${scopeButtons}</div>
           ${chapterFilterHtml}
@@ -2868,7 +2884,8 @@ function renderBrowseView(container){
     </div>
   `;
   document.getElementById('browse-back-btn').onclick = ()=>{ App.view=App.browseBackView||'setup'; render(); };
-  document.getElementById('browse-answer-switch').onclick = ()=>{
+  const answerSwitch = document.getElementById('browse-answer-switch');
+  if (answerSwitch) answerSwitch.onclick = ()=>{
     const anchor = capturePreviewAnchor(container);
     const navState = captureDesktopPreviewNav(container);
     App._browseShowAnswers = !showAns;
@@ -2933,9 +2950,7 @@ function renderPreviewSidebar(grouped, idPrefix, opts={}){
           present.add('empty');
           return;
         }
-        if (opts.mode==='flashcard') present.add(flashcardHeatStatus(d));
-        else if (d.unanswered) present.add('unanswered');
-        else present.add(['ok','mid','good'].includes(d.status) ? d.status : 'no');
+        present.add(previewDetailState(d, opts.mode).navStatus);
       });
     });
     const items = opts.mode==='flashcard'
@@ -2952,10 +2967,7 @@ function renderPreviewSidebar(grouped, idPrefix, opts={}){
       const d = detailMap ? detailMap.get(q.uid) : null;
       let statusClass = '';
       if (detailMap){
-        let heatStatus = d ? d.status : 'empty';
-        if (opts.mode==='flashcard') heatStatus = flashcardHeatStatus(d);
-        else if (d && d.unanswered) heatStatus = 'unanswered';
-        else heatStatus = ['ok','mid','good','empty'].includes(heatStatus) ? heatStatus : 'no';
+        const heatStatus = d ? previewDetailState(d, opts.mode).navStatus : 'empty';
         statusClass = ` status-${['ok','good','mid','no','empty','unanswered'].includes(heatStatus)?heatStatus:'no'}`;
       }
       const chapter = opts.showChapters ? (q.chapter || (entry.detail && entry.detail.chapter) || (d && d.chapter) || '') : '';
@@ -2977,6 +2989,38 @@ function flashcardHeatStatus(detail){
   if (pct>=50) return 'mid';
   return 'no';
 }
+function normalizedPreviewStatus(status){
+  return ['ok','good','mid','no','unanswered','empty'].includes(status) ? status : 'no';
+}
+function previewDetailState(detail, mode){
+  if (!detail) return { cardStatus:'empty', navStatus:'empty', badges:['empty'] };
+  const gradedStatus = normalizedPreviewStatus(mode==='flashcard' ? flashcardHeatStatus(detail) : detail.status);
+  const unanswered = !!detail.unanswered;
+  if (unanswered && detail.ratingKey){
+    return { cardStatus:gradedStatus, navStatus:gradedStatus, badges:['unanswered', gradedStatus] };
+  }
+  if (unanswered){
+    return { cardStatus:'no', navStatus:'unanswered', badges:['unanswered', 'no'] };
+  }
+  return { cardStatus:gradedStatus, navStatus:gradedStatus, badges:[gradedStatus] };
+}
+function previewStatusLabel(status, mode){
+  if (mode==='flashcard'){
+    return ({ok:'完全掌握', good:'基本掌握', mid:'部分掌握', no:'未掌握', unanswered:'未作答', empty:'未学习'}[status] || '未掌握');
+  }
+  return ({ok:'正确', good:'基本正确', mid:'部分正确', no:'错误', unanswered:'未作答', empty:'未作答'}[status] || '错误');
+}
+function fmtFixed2(n){
+  const num = Number(n);
+  if (!Number.isFinite(num)) return '0.00';
+  return (Math.round((num + Number.EPSILON)*100)/100).toFixed(2);
+}
+function detailScoreText(detail){
+  if (!detail) return '';
+  const forceFixed = detail.blankTotal>1 && detail.blankCorrectCount>0 && detail.blankCorrectCount<detail.blankTotal;
+  const earned = forceFixed ? fmtFixed2(detail.scoreEarned) : Utils.fmtScore(detail.scoreEarned);
+  return `${earned}/${Utils.fmtScore(detail.maxScore)}`;
+}
 function renderInlineFillQuestion(q, showAns){
   let i = 0;
   const answers = q.answers || [];
@@ -2995,8 +3039,8 @@ function renderPreviewQuestion(q, num, opts={}){
   const showAns = !!opts.showAns;
   const detail = opts.detail || null;
   const idPrefix = opts.idPrefix || 'bq';
-  const rawStatus = detail ? detail.status : '';
-  const status = detail && detail.unanswered ? 'unanswered' : rawStatus;
+  const detailState = previewDetailState(detail, opts.mode);
+  const status = detail ? detailState.cardStatus : '';
   const starred = App.deck && isInNotebook('review', q.uid, App.deck.id);
   const wrong = App.deck && isInNotebook('wrong', q.uid, App.deck.id);
   const actions = opts.actions ? `<div class="preview-actions">
@@ -3027,10 +3071,7 @@ function renderPreviewQuestion(q, num, opts={}){
     bodyHtml = `<div class="browse-answer">${Utils.escapeHtml(detail.correctAnswer)}</div>`;
   }
   const qText = q.type==='fillInTheBlank' ? renderInlineFillQuestion(q, showAns) : Utils.escapeHtml(q.question);
-  const statusLabel = opts.mode==='flashcard'
-    ? ({ok:'完全掌握', good:'基本掌握', mid:'部分掌握', no:'未掌握', unanswered:'未作答'}[status] || '未掌握')
-    : ({ok:'正确', good:'基本正确', mid:'部分正确', no:'错误', unanswered:'未作答'}[status] || '错误');
-  const statusBadge = detail ? `<span class="preview-status ${status}">${statusLabel}</span>` : '';
+  const statusBadge = detail ? detailState.badges.map(s=>`<span class="preview-status ${s}">${previewStatusLabel(s, opts.mode)}</span>`).join('') : '';
   return `<div class="browse-q ${detail?'with-status status-'+status:''}" id="${idPrefix}-${q.uid}">
     <div class="preview-q-head">
       <div class="browse-q-text"><span class="browse-q-num">${num}.</span>${qText}</div>
@@ -3039,7 +3080,7 @@ function renderPreviewQuestion(q, num, opts={}){
     <div class="preview-meta">
       ${q.chapter ? `<span class="chapter-pill">${Utils.escapeHtml(q.chapter)}</span>` : ''}
       ${statusBadge}
-      ${detail ? `<span class="preview-score">${Utils.fmtScore(detail.scoreEarned)}/${Utils.fmtScore(detail.maxScore)} 分</span>` : ''}
+      ${detail ? `<span class="preview-score">${detailScoreText(detail)} 分</span>` : ''}
     </div>
     ${bodyHtml}
   </div>`;
@@ -3085,7 +3126,7 @@ function renderReportView(container){
       <div class="qa-head" tabindex="0" role="button" aria-expanded="false">
         <div class="qa-status ${d.status}">${statusIcon}</div>
         <div class="qa-q">${Utils.escapeHtml(d.question)}</div>
-        <div class="qa-score">${Utils.fmtScore(d.scoreEarned)}/${Utils.fmtScore(d.maxScore)}</div>
+        <div class="qa-score">${detailScoreText(d)}</div>
         <div class="chev">▸</div>
       </div>
       <div class="qa-detail"><div class="qa-detail-inner">
@@ -3424,6 +3465,8 @@ function sanitizeProgressForExport(progress){
   out.totals = totals;
   out.streak = recomputeStreakFromSessions(out.sessions);
   out.questionStats = questionStats;
+  out.reviewBook = normalizeNotebookMap(out.reviewBook);
+  out.wrongBook = deriveWrongBookFromSessions(out.sessions, out.wrongBook);
   return out;
 }
 async function exportAllData(){
@@ -3435,6 +3478,7 @@ async function exportAllData(){
     exportedAt:Date.now(),
     settings:App.settings,
     progress,
+    notebooks:{ reviewBook:progress.reviewBook, wrongBook:progress.wrongBook },
     deckRegistry:Array.isArray(deckRegistry) ? deckRegistry : [],
     deck:App.deck ? {id:App.deck.id, title:App.deck.meta.title} : null,
     srs:await exportAllSrs()
@@ -3482,6 +3526,33 @@ function rebuildProgressDerivedState(){
   App.progress.streak = recomputeStreakFromSessions(sessions);
   App.progress.questionStats = questionStats;
 }
+function normalizeNotebookMap(book){
+  const out = {};
+  if (!book || typeof book!=='object') return out;
+  Object.keys(book).forEach(deckId=>{
+    out[deckId] = normalizeUidList(book[deckId]);
+  });
+  return out;
+}
+function deriveWrongBookFromSessions(sessions, baseBook={}){
+  const out = normalizeNotebookMap(baseBook);
+  const ordered = (Array.isArray(sessions) ? sessions : [])
+    .filter(s=>s && s.deckId)
+    .slice()
+    .sort((a,b)=>(a.startedAt||a.endedAt||0) - (b.startedAt||b.endedAt||0));
+  ordered.forEach(s=>{
+    const list = out[s.deckId] || (out[s.deckId] = []);
+    (s.details || []).forEach(d=>{
+      if (!d || !d.uid) return;
+      if (d.status==='no' && !list.includes(d.uid)) list.push(d.uid);
+      if (s.sourceScope==='wrong' && d.status==='ok'){
+        const idx = list.indexOf(d.uid);
+        if (idx>=0) list.splice(idx, 1);
+      }
+    });
+  });
+  return out;
+}
 async function deleteSessionRecord(id){
   App.progress.deletedSessionIds = Array.from(new Set([...(App.progress.deletedSessionIds||[]), id]));
   App.progress.sessions = (App.progress.sessions||[]).filter(s=>s.id!==id);
@@ -3514,9 +3585,16 @@ async function importHistoryObj(progressObj, opts={}){
     .sort((a,b)=>b.startedAt-a.startedAt)
     .slice(0,300);
   App.progress.sessions = merged;
+  const notebookFallback = progressObj.notebooks || {};
+  const reviewSource = Object.assign({}, notebookFallback.reviewBook || {}, progressObj.reviewBook || {});
+  const wrongSource = Object.assign({}, notebookFallback.wrongBook || {}, progressObj.wrongBook || {});
+  const incomingBooks = {
+    reviewBook:normalizeNotebookMap(reviewSource),
+    wrongBook:deriveWrongBookFromSessions(progressObj.sessions, wrongSource)
+  };
   ['reviewBook','wrongBook'].forEach(k=>{
     App.progress[k] = App.progress[k] || {};
-    const incoming = progressObj[k] || {};
+    const incoming = incomingBooks[k] || {};
     Object.keys(incoming).forEach(deckId=>{
       const set = new Set(normalizeUidList(App.progress[k][deckId]).concat(normalizeUidList(incoming[deckId])));
       App.progress[k][deckId] = [...set];
@@ -3544,7 +3622,7 @@ async function importDeckRegistry(registry){
 }
 async function importAllDataObj(obj){
   if (obj.settings) await importConfigObj(obj.settings, {silent:true});
-  if (obj.progress) await importHistoryObj(obj.progress, {silent:true});
+  if (obj.progress) await importHistoryObj(Object.assign({}, obj.progress, {notebooks:obj.notebooks || obj.progress.notebooks}), {silent:true});
   if (obj.deckRegistry) await importDeckRegistry(obj.deckRegistry);
   if (obj.srs) await importAllSrs(obj.srs);
   toast('数据导入完成', {icon:'✅'});
