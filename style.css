@@ -572,7 +572,30 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .progress-track{ flex:1; height:6px; border-radius:var(--radius-pill); background:var(--bg-soft); overflow:hidden; }
 .progress-fill{ height:100%; border-radius:var(--radius-pill); background:linear-gradient(90deg,var(--accent),var(--gold)); transition:width var(--dur-slow) var(--ease); }
 .progress-label{ font-size:12.5px; color:var(--text-faint); white-space:nowrap; font-family:var(--font-num); font-style:italic; }
+.quiz-timer{ min-width:52px; text-align:center; color:var(--text-soft); font-family:var(--font-num); font-size:14px; font-variant-numeric:tabular-nums; }
+.quiz-pause,.quiz-exit{ font-size:12.5px; }
 .quiz-exit{ font-size:12.5px; }
+
+.pause-overlay{
+  position:fixed; inset:0; z-index:100;
+  display:flex; align-items:center; justify-content:center;
+  padding:24px;
+  background:rgba(10,14,18,.38);
+  backdrop-filter:blur(10px) saturate(.72);
+  -webkit-backdrop-filter:blur(10px) saturate(.72);
+  cursor:default;
+}
+.pause-panel{
+  width:min(360px,100%); padding:34px 28px 30px; text-align:center;
+  border:1px solid var(--border); border-radius:var(--radius-lg);
+  background:color-mix(in srgb,var(--bg-elevated) 94%,transparent);
+  box-shadow:var(--shadow-card); color:var(--text);
+}
+.pause-icon{ display:flex; justify-content:center; color:var(--accent); margin-bottom:12px; }
+.pause-icon svg{ width:28px; height:28px; fill:currentColor; }
+.pause-panel h2{ font-size:24px; }
+.pause-panel p{ margin:10px 0 24px; color:var(--text-soft); font-size:13px; }
+.pause-continue{ min-width:132px; }
 
 .card-stage{
   flex:1; display:flex; align-items:center; justify-content:center;

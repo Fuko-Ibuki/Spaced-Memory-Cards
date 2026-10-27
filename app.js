@@ -1769,7 +1769,7 @@ function startSession(){
     revealed:false, selectedOptionIdx:null, selectedOptionIdxs:[], selectedPerBlank:null, activeBlankIdx:0, selectedTF:null, userTextAnswer:'',
     feedbackFlash:null, lastUserInput:null, lastGradeCorrect:null,
     requeueCounts:{}, results:[], gradingIndex:0, answeredStack:[], completedUids:[],
-    startedAt:Date.now(), cardStartedAt:Date.now()
+    startedAt:Date.now(), cardStartedAt:Date.now(), paused:false, pausedAt:null, pausedMs:0
   };
   App.view = 'quiz';
   persistActiveSession();
@@ -1834,7 +1834,7 @@ function completeCurrentCard(opts){
   transitionRender(render);
 }
 function cardInteractionLocked(sess){
-  return !!(sess && sess.transitionLocked);
+  return !!(sess && (sess.transitionLocked || sess.paused));
 }
 function selfGradeReviewResultForCard(sess, card){
   if (!sess || sess.mode!=='test' || !card) return null;
@@ -2003,18 +2003,50 @@ function renderQuizView(container){
       ${canGoBack ? `<button class="btn btn-ghost quiz-prev" id="quiz-prev-btn" type="button">← 上一题</button>` : ''}
       <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
       <div class="progress-label">${Math.min(doneCount+1,sess.totalInitial)} / ${sess.totalInitial}</div>
+      <div class="quiz-timer" id="quiz-timer" aria-label="答题计时">${formatSessionElapsed(sess)}</div>
+      <button class="btn btn-ghost quiz-pause" id="quiz-pause-btn" type="button">${sess.paused ? '继续' : '暂停'}</button>
       <button class="btn btn-ghost quiz-exit" id="quiz-exit-btn" type="button">退出</button>
     </div>
     <div class="card-stage">
       <div class="card-stack">${renderCardHtml(sess, card)}</div>
     </div>
+    ${sess.paused ? `<div class="pause-overlay" role="dialog" aria-modal="true" aria-label="已暂停"><div class="pause-panel"><div class="pause-icon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img"><rect x="4.5" y="3" width="5.5" height="18" rx="2.75"></rect><rect x="14" y="3" width="5.5" height="18" rx="2.75"></rect></svg></div><h2>已暂停</h2><p>计时已暂停，页面暂不可操作</p><button class="btn btn-primary pause-continue" id="pause-continue-btn" type="button">继续</button></div></div>` : ''}
   `;
+  const pauseBtn = document.getElementById('quiz-pause-btn');
+  if (pauseBtn) pauseBtn.onclick = toggleSessionPause;
+  const continueBtn = document.getElementById('pause-continue-btn');
+  if (continueBtn) continueBtn.onclick = toggleSessionPause;
   document.getElementById('quiz-exit-btn').onclick = confirmExitSession;
   const prevBtn = document.getElementById('quiz-prev-btn');
   if (prevBtn) prevBtn.onclick = goToPreviousQuestion;
   bindCardEvents(sess, card);
   schedulePendingCompletion(sess);
   sess.transitionLocked = false;
+  updateQuizTimer();
+}
+function formatSessionElapsed(sess, now=Date.now()){
+  const pausedMs = (sess.pausedMs||0) + (sess.paused && sess.pausedAt ? now-sess.pausedAt : 0);
+  return Utils.fmtClock(Math.max(0, now-(sess.startedAt||now)-pausedMs));
+}
+function updateQuizTimer(){
+  const el = document.getElementById('quiz-timer');
+  if (!el || !App.session || App.session.phase!=='quiz') return;
+  el.textContent = formatSessionElapsed(App.session);
+  if (!App.session.paused) requestAnimationFrame(()=>setTimeout(updateQuizTimer, 1000));
+}
+function toggleSessionPause(){
+  const sess = App.session;
+  if (!sess || sess.phase!=='quiz') return;
+  if (sess.paused){
+    sess.pausedMs = (sess.pausedMs||0) + Math.max(0, Date.now()-(sess.pausedAt||Date.now()));
+    sess.pausedAt = null;
+    sess.paused = false;
+  } else {
+    sess.paused = true;
+    sess.pausedAt = Date.now();
+  }
+  persistActiveSession();
+  render();
 }
 function schedulePendingCompletion(sess){
   if (!sess || !sess.pendingCompletion) return;
@@ -3064,6 +3096,9 @@ function renderPreviewQuestion(q, num, opts={}){
     bodyHtml = `<div class="tf-mini-row">${choices}</div>`;
   } else if (q.type==='fillInTheBlank'){
     if (detail) bodyHtml = `<div class="preview-user-line ${status==='ok'?'ok':(status==='mid'?'mid':(status==='good'?'good':(status==='unanswered'?'unanswered':'no')))}">你的答案：${renderFillAnswerPartsHtml(detail.userAnswer||'（未作答）', q.answers)}</div>`;
+  } else if (q.type==='shortAnswer' || q.type==='essay'){
+    if (detail) bodyHtml = `<div class="preview-user-line ${status==='ok'?'ok':(status==='mid'?'mid':(status==='good'?'good':'no'))}">你的答案：${Utils.escapeHtml(detail.userAnswer || '（未作答）')}</div>`;
+    if (showAns) bodyHtml += `<div class="browse-answer">${Utils.escapeHtml(q.reference || (detail&&detail.correctAnswer) || '')}</div>`;
   } else if (showAns){
     bodyHtml = `<div class="browse-answer">${Utils.escapeHtml(q.reference || (detail&&detail.correctAnswer) || '')}</div>`;
   }
@@ -3120,7 +3155,7 @@ function renderReportView(container){
     const snapshot = snapshotMap.get(d.uid);
     const userAnswerHtml = d.type==='fillInTheBlank'
       ? renderFillAnswerPartsHtml(d.userAnswer, snapshot && snapshot.answers)
-      : Utils.escapeHtml(d.userAnswer);
+      : Utils.escapeHtml(d.userAnswer || '（未作答）');
     const statusIcon = (d.status==='mid' || d.status==='good') ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"></path></svg>' : {ok:'✓',no:'✗'}[d.status];
     return `<div class="qa-item" data-qa="${i}">
       <div class="qa-head" tabindex="0" role="button" aria-expanded="false">
