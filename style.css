@@ -1326,6 +1326,17 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   .topnav .nav-standalone-left{ margin-left:0; flex:0 0 auto; }
   .topnav .nav-standalone-settings{ flex:0 0 auto; }
   .topnav .nav-standalone-right{ margin-left:auto; flex:0 0 auto; }
+  /* Reserve space for the streak before the primary group; never overlay it. */
+  .topnav .nav-primary-group,
+  .topnav.has-streak .nav-primary-group{
+    position:static;
+    left:auto; top:auto; transform:none;
+    flex:1 1 auto; min-width:0; width:auto; max-width:none;
+    gap:12px;
+  }
+  .topnav .nav-tabs{ min-width:0; }
+  .topnav .nav-tab{ padding-left:10px; padding-right:10px; }
+  .topnav .nav-standalone-right{ margin-left:0; }
   .topnav.preview-fixed{
     position:fixed; left:0; right:0; top:0; z-index:90;
   }
