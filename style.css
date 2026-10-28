@@ -256,7 +256,7 @@ button:focus-visible{ outline-offset:2px; }
 }
 .brand{
   display:flex; align-items:center; gap:10px;
-  font-family:var(--font-display); font-weight:700; font-size:16.5px;
+  font-family:var(--font-content); font-weight:700; font-size:16.5px;
   letter-spacing:.01em;
   color:var(--text);
   white-space:nowrap;
