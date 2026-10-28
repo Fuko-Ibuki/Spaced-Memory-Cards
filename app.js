@@ -14,6 +14,8 @@ const TYPE_ORDER = ['fillInTheBlank','singleChoice','multipleChoice','trueFalse'
 const SRS_INTERVAL_DAYS = [0,1,2,4,7,14,30,60]; // index = 记忆等级(level)
 const RATING_TO_PCT = { again:0, hard:50, good:80, easy:100 };
 const SELF_GRADE_FRACTION = { again:0, hard:1/3, good:2/3, easy:1 };
+const TIME_LIMIT_MAX_MINUTES = 240;
+const LEARNING_MODE_KEYS = ['flashcard','learn','test'];
 const STORAGE_KEYS = { settings:'settings', progress:'progress', lastDeck:'lastDeck', deckRegistry:'deckRegistry', activeSession:'activeSession' };
 const LOCAL_DECK_FILES = [
   'XiThoughtQuiz.js',
@@ -188,7 +190,7 @@ const DEMO_DECK_RAW = {
     { id:1, question:'页面顶部用 🔥 图标显示的连续学习天数激励机制，设计上参照了___。', answers:['Duolingo/多邻国'] },
     { id:2, question:'在闪卡模式中，翻面查看答案要按下___键。', answers:['空格'] },
     { id:3, question:'本应用支持闪卡模式、学习模式和___模式，共三种学习模式。', answers:['测试'] },
-    { id:4, chapter:'题库格式', question:'填空题题干建议使用三个下划线（___）表示需要填写的位置。', content:[{type:'text',text:'填空题题干建议使用三个下划线（___）表示需要填写的位置。复杂公式测试：'},{type:'math',latex:String.raw`\int_{0}^{\infty} e^{-x^2} \, dx = \frac{\sqrt{\pi}}{2}`,display:true},{type:'math',latex:String.raw`\begin{bmatrix} a & b \\ c & d \end{bmatrix}\begin{bmatrix} x \\ y \end{bmatrix}=\begin{bmatrix} 1 \\ 0 \end{bmatrix}`,display:true}], answers:['___/三个下划线'] }
+    { id:4, chapter:'题库格式', question:'填空题题干建议使用三个下划线（___）表示需要填写的位置。', content:[{type:'text',text:'填空题题干建议使用三个下划线（___）表示需要填写的位置。复杂公式测试：'},{type:'math',latex:String.raw`\int_{0}^{\infty} e^{-x^2} \, dx = \frac{\sqrt{\pi}}{2}`,display:true},{type:'math',latex:String.raw`\sqrt{\frac{a^2+b^2}{c^2}}+\left(\int_{0}^{\infty}e^{-x^2}\,dx\right)\left[\sum_{n=1}^{\infty}\frac{1}{n^2}\right]`,display:true},{type:'math',latex:String.raw`\left\lVert\begin{bmatrix} a & b \\ c & d \end{bmatrix}\begin{bmatrix} x \\ y \end{bmatrix}\right\rVert_2=\sqrt{\left\lvert x\right\rvert^2+\left\lvert y\right\rvert^2}`,display:true}], answers:['___/三个下划线'] }
   ],
   singleChoice:[
     { id:1, question:'以下哪种题型的得分方式是“用户看到参考答案后自行估分”？', content:[{type:'text',text:'以下哪种题型的得分方式是“用户看到参考答案后自行估分”？'}], options:['单选题','判断题','简答题 / 综合分析题','填空题'], answer:'C' },
@@ -198,7 +200,7 @@ const DEMO_DECK_RAW = {
   ],
   multipleChoice:[
     { id:1, chapter:'题库格式', question:'一个题库对象可以包含哪些题型数组字段？', options:['fillInTheBlank','singleChoice','trueFalse','shortAnswer / essay'], answer:['A','B','C','D'] },
-    { id:2, chapter:'题库格式', question:'关于 multipleChoice 多选题格式，哪些说法是正确的？', content:[{type:'text',text:'关于 multipleChoice 多选题格式，哪些说法是正确的？复杂公式字段示例：'},{type:'math',latex:String.raw`\sum_{n=1}^{\infty} \frac{1}{n^2}=\frac{\pi^2}{6}`,display:true},{type:'math',latex:String.raw`f(x)=\begin{cases} x^2, & x\ge 0 \\ -x, & x<0 \end{cases}`,display:true}], options:[{text:'options 是选项文本数组'},{text:'answer 可以写成 [“A”,“C”]'},{content:[{type:'math',latex:String.raw`chapter\_key`}]},{text:'answer 必须只能是一个字符串'}], answer:['A','B','C'] }
+    { id:2, chapter:'题库格式', question:'关于 multipleChoice 多选题格式，哪些说法是正确的？', content:[{type:'text',text:'关于 multipleChoice 多选题格式，哪些说法是正确的？复杂公式字段示例：'},{type:'math',latex:String.raw`\sum_{n=1}^{\infty} \frac{1}{n^2}=\frac{\pi^2}{6}`,display:true},{type:'math',latex:String.raw`f(x)=\begin{cases} x^2, & x\ge 0 \\ -x, & x<0 \end{cases}`,display:true},{type:'math',latex:String.raw`\sqrt{1+\frac{1}{x^2}}\;\left(\frac{\alpha+\beta}{\gamma}\right)`,display:true}], options:[{text:'options 是选项文本数组'},{text:'answer 可以写成 [“A”,“C”]'},{content:[{type:'math',latex:String.raw`\left(\sqrt{n}+1\right)^2`}]},{text:'answer 必须只能是一个字符串'}], answer:['A','B','C'] }
   ],
   trueFalse:[
     { id:1, question:'测试模式会在你每答完一题后立刻告诉你这题对不对。', answer:false },
@@ -442,23 +444,80 @@ const App = {
   setupCollapse:{ range:false, answer:false, advanced:false }
 };
 
-function defaultSettings(){
+function defaultModeSettings(){
   const includeTypes={}; TYPE_ORDER.forEach(t=>includeTypes[t]=true);
   const points={}; TYPE_ORDER.forEach(t=>points[t]=QuestionTypes[t].defaultPoints);
-  return { shuffleQuestions:false, shuffleOptions:false, includeTypes, mode:'test',
-           questionLimit:'all', points, flashcardScope:'due', theme:'light', themeMode:'auto',
-           mockExam:false, selectionMode:false, sourceScope:'all', chapterFilter:'all', tfFilter:'all' };
+  return { shuffleQuestions:false, shuffleOptions:false, includeTypes,
+           questionLimit:'all', points, flashcardScope:'due',
+           mockExam:false, selectionMode:false, timeLimitEnabled:false, timeLimitMinutes:15,
+           sourceScope:'all', chapterFilter:'all', tfFilter:'all' };
 }
-async function loadSettings(){
-  const saved = await Store.getJSON(STORAGE_KEYS.settings, null);
+function cloneModeSettings(state){
+  const source = state || {};
+  return {
+    shuffleQuestions:!!source.shuffleQuestions,
+    shuffleOptions:!!source.shuffleOptions,
+    includeTypes:Object.assign({}, source.includeTypes||{}),
+    questionLimit:source.questionLimit ?? 'all',
+    points:Object.assign({}, source.points||{}),
+    flashcardScope:source.flashcardScope || 'due',
+    mockExam:!!source.mockExam,
+    selectionMode:!!source.selectionMode,
+    timeLimitEnabled:!!source.timeLimitEnabled,
+    timeLimitMinutes:Utils.clamp(parseInt(source.timeLimitMinutes,10)||15, 1, TIME_LIMIT_MAX_MINUTES),
+    sourceScope:source.sourceScope || 'all',
+    chapterFilter:source.chapterFilter || 'all',
+    tfFilter:source.tfFilter || 'all'
+  };
+}
+function normalizeModeSettings(raw, fallback){
+  const base = fallback || defaultModeSettings();
+  const source = raw && typeof raw==='object' ? raw : {};
+  const merged = Object.assign({}, base, source, {
+    includeTypes:Object.assign({}, base.includeTypes, source.includeTypes||{}),
+    points:Object.assign({}, base.points, source.points||{})
+  });
+  return cloneModeSettings(merged);
+}
+function defaultSettings(){
+  const modeDefaults = defaultModeSettings();
+  const modeSettings={};
+  LEARNING_MODE_KEYS.forEach(mode=>{ modeSettings[mode]=cloneModeSettings(modeDefaults); });
+  return Object.assign({}, modeDefaults, { mode:'test', modeSettings,
+    theme:'light', themeMode:'auto', uiFontSize:'default', uiFontFamily:'default' });
+}
+function normalizeSettings(saved){
   const base = defaultSettings();
-  if (!saved) return base;
-  return Object.assign({}, base, saved, {
+  if (!saved || typeof saved!=='object') return base;
+  const merged = Object.assign({}, base, saved, {
     includeTypes:Object.assign({}, base.includeTypes, saved.includeTypes||{}),
     points:Object.assign({}, base.points, saved.points||{})
   });
+  const legacyProfile = normalizeModeSettings(merged, defaultModeSettings());
+  const storedProfiles = saved.modeSettings && typeof saved.modeSettings==='object' ? saved.modeSettings : {};
+  const modeSettings={};
+  LEARNING_MODE_KEYS.forEach(mode=>{
+    modeSettings[mode] = normalizeModeSettings(storedProfiles[mode] || legacyProfile, defaultModeSettings());
+  });
+  const activeMode = LEARNING_MODE_KEYS.includes(merged.mode) ? merged.mode : 'test';
+  Object.assign(merged, cloneModeSettings(modeSettings[activeMode]));
+  merged.mode = activeMode;
+  merged.modeSettings = modeSettings;
+  merged.uiFontSize = ['small','default','large'].includes(saved.uiFontSize) ? saved.uiFontSize : 'default';
+  merged.uiFontFamily = ['default','serif','sans'].includes(saved.uiFontFamily) ? saved.uiFontFamily : 'default';
+  return merged;
 }
-async function saveSettings(){ await Store.setJSON(STORAGE_KEYS.settings, App.settings); }
+async function loadSettings(){
+  const saved = await Store.getJSON(STORAGE_KEYS.settings, null);
+  return normalizeSettings(saved);
+}
+async function saveSettings(){
+  if (App.settings){
+    App.settings.modeSettings = App.settings.modeSettings || {};
+    App.settings.modeSettings[App.settings.mode] = cloneModeSettings(App.settings);
+  }
+  await Store.setJSON(STORAGE_KEYS.settings, App.settings);
+}
 
 function defaultProgress(){
   return { streak:{current:0,longest:0,lastDate:null}, sessions:[],
@@ -814,13 +873,21 @@ function renderNav(){
     <div class="brand"><span class="brand-mark">🗂️</span><span class="brand-text">Spaced Memory Cards</span></div>
     <div class="nav-spacer"></div>
     <div class="streak-pill ${streak>0?'':'streak-placeholder'}" id="streak-pill" aria-hidden="${streak>0?'false':'true'}"><span class="flame">🔥</span><span class="streak-num">${Math.max(1, streak)}</span><span class="streak-unit">天</span></div>
-    <div class="nav-tabs">
-      <button type="button" class="nav-tab ${App.view==='notes'?'active':''}" data-nav="notes">笔记</button>
-      <button type="button" class="nav-tab ${studyActive?'active':''}" data-nav="study">学习</button>
-      <button type="button" class="nav-tab ${['stats','record'].includes(App.view)?'active':''}" data-nav="stats">统计</button>
-      <button type="button" class="nav-tab ${App.view==='settings'?'active':''}" data-nav="settings">设置</button>
+    <div class="nav-primary-group">
+      <div class="nav-standalone nav-standalone-left">
+        <button type="button" class="nav-tab nav-standalone-btn ${App.view==='notes'?'active':''}" data-nav="notes">笔记</button>
+      </div>
+      <div class="nav-tabs">
+        <button type="button" class="nav-tab ${studyActive?'active':''}" data-nav="study">学习</button>
+        <button type="button" class="nav-tab ${['stats','record'].includes(App.view)?'active':''}" data-nav="stats">统计</button>
+      </div>
+      <div class="nav-standalone nav-standalone-settings">
+        <button type="button" class="nav-tab nav-standalone-btn ${App.view==='settings'?'active':''}" data-nav="settings">设置</button>
+      </div>
     </div>
-    <button class="icon-btn" id="theme-toggle" type="button" title="${themeTitle()}">${themeIcon()}</button>
+    <div class="nav-standalone nav-standalone-right">
+      <button class="icon-btn" id="theme-toggle" type="button" title="${themeTitle()}">${themeIcon()}</button>
+    </div>
   `;
   nav.querySelector('[data-nav="notes"]').onclick = ()=>{ App.view='notes'; render(); };
   nav.querySelector('[data-nav="study"]').onclick = goStudyHome;
@@ -995,7 +1062,13 @@ function currentTheme(){
 function applyTheme(){
   const theme = currentTheme();
   document.documentElement.setAttribute('data-theme', theme);
+  applyTypography();
   return theme;
+}
+function applyTypography(){
+  const root = document.documentElement;
+  root.setAttribute('data-font-size', ['small','default','large'].includes(App.settings?.uiFontSize) ? App.settings.uiFontSize : 'default');
+  root.setAttribute('data-font-family', ['default','serif','sans'].includes(App.settings?.uiFontFamily) ? App.settings.uiFontFamily : 'default');
 }
 function themeIcon(){
   const mode = App.settings.themeMode||'auto';
@@ -1308,6 +1381,23 @@ function planMockExam(deck, s, targetScore){
   const totalCount = types.reduce((sum,t)=>sum+counts[t],0);
   return { counts, achievedTotal, totalCount };
 }
+function activateLearningMode(nextMode){
+  const s = App.settings;
+  if (!s || !LEARNING_MODE_KEYS.includes(nextMode)) return false;
+  if (s.mode===nextMode) return true;
+  s.modeSettings = s.modeSettings || {};
+  s.modeSettings[s.mode] = cloneModeSettings(s);
+  const nextProfile = normalizeModeSettings(s.modeSettings[nextMode], defaultModeSettings());
+  Object.assign(s, nextProfile);
+  s.mode = nextMode;
+  s.modeSettings[nextMode] = cloneModeSettings(nextProfile);
+  return true;
+}
+function switchLearningMode(nextMode){
+  if (!activateLearningMode(nextMode)) return;
+  saveSettings();
+  render();
+}
 function renderSetupView(container){
   const deck = App.deck, s = App.settings;
   const modeCards = ['flashcard','learn','test'].map(key=>{
@@ -1344,6 +1434,9 @@ function renderSetupView(container){
   const qtyHtml = quickNums.map(n=>`<button type="button" data-qty="${n}" class="${s.questionLimit===n?'active':''}">${n}题</button>`).join('')
     + `<button type="button" data-qty="all" class="${s.questionLimit==='all'?'active':''}">全部</button>`;
   const customQtyVal = (typeof s.questionLimit==='number' && !quickNums.includes(s.questionLimit)) ? s.questionLimit : '';
+  const timeLimitPresets = [15,30,45,60];
+  const timeLimitMinutes = Math.max(1, Math.min(TIME_LIMIT_MAX_MINUTES, parseInt(s.timeLimitMinutes,10) || 15));
+  const timeLimitCustomActive = !timeLimitPresets.includes(timeLimitMinutes);
   const mockPreviewLine = mockPlan ? TYPE_ORDER.filter(t=>mockPlan.counts[t]>0).map(t=>`${QuestionTypes[t].label} ${mockPlan.counts[t]} 道`).join('、') : '';
   const tfPol = tfPolarityCountsFromQuestions(scopedQs);
   const showTfFilter = s.mode!=='test' && s.includeTypes.trueFalse && tfPol.trueCount>0 && tfPol.falseCount>0;
@@ -1467,6 +1560,21 @@ function renderSetupView(container){
             <div><div class="label">选择模式</div><div class="desc">简答题变单选、填空题按空逐项选择，混淆项随机取自题库其余题目</div></div>
             <button type="button" class="switch ${s.selectionMode?'on':''}" data-switch="selectionMode" aria-label="选择模式" aria-pressed="${s.selectionMode?'true':'false'}"><span class="knob"></span></button>
           </div>
+          <div class="toggle-row">
+            <div><div class="label">限时模式</div><div class="desc">倒计时结束后自动结束本轮答题</div></div>
+            <button type="button" class="switch ${s.timeLimitEnabled?'on':''}" data-switch="timeLimitEnabled" aria-label="限时模式" aria-pressed="${s.timeLimitEnabled?'true':'false'}"><span class="knob"></span></button>
+          </div>
+          ${s.timeLimitEnabled ? `
+            <div class="time-limit-options">
+              <div class="time-limit-choice-row">
+                <div class="seg time-limit-presets">
+                ${timeLimitPresets.map(m=>`<button type="button" data-time-limit="${m}" class="${timeLimitMinutes===m?'active':''}">${m}</button>`).join('')}
+                </div>
+                <input type="number" class="num-input time-limit-custom-input" id="time-limit-custom" min="1" max="${TIME_LIMIT_MAX_MINUTES}" placeholder="自定义" value="${timeLimitCustomActive ? timeLimitMinutes : ''}" aria-label="自定义分钟数">
+                <span class="time-limit-unit">分钟</span>
+              </div>
+              <div class="time-limit-range-note">可自定义 1～240 分钟</div>
+            </div>` : ''}
           </div>
         </div>
       </div>
@@ -1521,7 +1629,7 @@ function renderSetupView(container){
       }
     }
   });
-  container.querySelectorAll('[data-mode]').forEach(btn=>btn.onclick=()=>{ s.mode=btn.dataset.mode; saveSettings(); render(); });
+  container.querySelectorAll('[data-mode]').forEach(btn=>btn.onclick=()=>switchLearningMode(btn.dataset.mode));
   container.querySelectorAll('[data-type]').forEach(btn=>btn.onclick=()=>{ const t=btn.dataset.type; s.includeTypes[t]=!s.includeTypes[t]; saveSettings(); render(); });
   container.querySelectorAll('[data-source-scope]').forEach(btn=>btn.onclick=()=>{ s.sourceScope=btn.dataset.sourceScope; saveSettings(); render(); });
   container.querySelectorAll('[data-chapter-filter]').forEach(btn=>btn.onclick=()=>{ s.chapterFilter=btn.dataset.chapterFilter; saveSettings(); render(); });
@@ -1548,6 +1656,23 @@ function renderSetupView(container){
     };
     qtyCustom.onchange = applyCustomQty;
     qtyCustom.onkeydown = e=>{ if (e.key==='Enter'){ e.preventDefault(); applyCustomQty(); } };
+  }
+  container.querySelectorAll('[data-time-limit]').forEach(btn=>btn.onclick=()=>{
+    s.timeLimitMinutes = Utils.clamp(parseInt(btn.dataset.timeLimit,10)||15, 1, TIME_LIMIT_MAX_MINUTES);
+    saveSettings(); render();
+  });
+  const customTimeLimit = document.getElementById('time-limit-custom');
+  if (customTimeLimit){
+    customTimeLimit.oninput = ()=>{
+      const v = parseInt(customTimeLimit.value,10);
+      if (Number.isFinite(v) && v > TIME_LIMIT_MAX_MINUTES) customTimeLimit.value = String(TIME_LIMIT_MAX_MINUTES);
+    };
+    const applyCustomTimeLimit = ()=>{
+      const v = parseInt(customTimeLimit.value,10);
+      if (v>0){ s.timeLimitMinutes = Utils.clamp(v,1,TIME_LIMIT_MAX_MINUTES); saveSettings(); render(); }
+    };
+    customTimeLimit.onchange = applyCustomTimeLimit;
+    customTimeLimit.onkeydown = e=>{ if (e.key==='Enter'){ e.preventDefault(); applyCustomTimeLimit(); } };
   }
   const advHead=document.getElementById('adv-head'), advBody=document.getElementById('adv-body');
   advHead.onclick = ()=>{
@@ -1886,7 +2011,10 @@ function startSession(){
     revealed:false, selectedOptionIdx:null, selectedOptionIdxs:[], selectedPerBlank:null, activeBlankIdx:0, selectedTF:null, userTextAnswer:'',
     feedbackFlash:null, lastUserInput:null, lastGradeCorrect:null,
     requeueCounts:{}, results:[], gradingIndex:0, answeredStack:[], completedUids:[],
-    startedAt:Date.now(), cardStartedAt:Date.now(), paused:false, pausedAt:null, pausedMs:0
+    startedAt:Date.now(), cardStartedAt:Date.now(), paused:false, pausedAt:null, pausedMs:0,
+    timeLimitEnabled:!!s.timeLimitEnabled,
+    timeLimitMs:s.timeLimitEnabled ? Utils.clamp(Number(s.timeLimitMinutes)||15, 1, TIME_LIMIT_MAX_MINUTES)*60000 : 0,
+    timeExpired:false
   };
   App.view = 'quiz';
   persistActiveSession();
@@ -1899,8 +2027,8 @@ function startWrongBookTest(){
   if (!wrongUids.length){ toast('错题本没有可测试的题目', {icon:'□'}); return; }
   const wrongSet = new Set(wrongUids);
   const presentTypes = TYPE_ORDER.filter(t=>(deck.byType[t]||[]).some(q=>wrongSet.has(q.uid)));
+  activateLearningMode('test');
   TYPE_ORDER.forEach(t=>{ s.includeTypes[t] = presentTypes.includes(t); });
-  s.mode = 'test';
   s.sourceScope = 'wrong';
   s.mockExam = false;
   s.questionLimit = 'all';
@@ -2120,14 +2248,14 @@ function renderQuizView(container){
       ${canGoBack ? `<button class="btn btn-ghost quiz-prev" id="quiz-prev-btn" type="button"><span class="arrow-symbol" aria-hidden="true">←</span> 上一题</button>` : ''}
       <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
       <div class="progress-label">${Math.min(doneCount+1,sess.totalInitial)} / ${sess.totalInitial}</div>
-      <div class="quiz-timer" id="quiz-timer" aria-label="答题计时">${formatSessionElapsed(sess)}</div>
+      ${sess.timeLimitEnabled ? `<div class="quiz-timer ${sess.paused?'is-hidden':''}" id="quiz-timer" aria-label="剩余时间">${sess.paused?'':formatSessionClockHtml(sess)}</div>` : ''}
       <button class="btn btn-ghost quiz-pause" id="quiz-pause-btn" type="button">${sess.paused ? '继续' : '暂停'}</button>
       <button class="btn btn-ghost quiz-exit" id="quiz-exit-btn" type="button">退出</button>
     </div>
     <div class="card-stage">
       <div class="card-stack">${renderCardHtml(sess, card)}</div>
     </div>
-    ${sess.paused ? `<div class="pause-overlay" role="dialog" aria-modal="true" aria-label="已暂停"><div class="pause-panel"><div class="pause-icon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img"><rect x="4.5" y="3" width="5.5" height="18" rx="2.75"></rect><rect x="14" y="3" width="5.5" height="18" rx="2.75"></rect></svg></div><h2>已暂停</h2><p>计时已暂停，页面暂不可操作</p><button class="btn btn-primary pause-continue" id="pause-continue-btn" type="button">继续</button></div></div>` : ''}
+    ${sess.paused ? `<div class="pause-overlay" role="dialog" aria-modal="true" aria-label="已暂停"><div class="pause-panel"><div class="pause-icon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img"><rect x="4.5" y="3" width="5.5" height="18" rx="2.75"></rect><rect x="14" y="3" width="5.5" height="18" rx="2.75"></rect></svg></div><h2>已暂停</h2><p>${sess.timeLimitEnabled?'计时已暂停，页面暂不可操作':'已暂停，页面暂不可操作'}</p><button class="btn btn-primary pause-continue" id="pause-continue-btn" type="button">继续</button></div></div>` : ''}
   `;
   const pauseBtn = document.getElementById('quiz-pause-btn');
   if (pauseBtn) pauseBtn.onclick = toggleSessionPause;
@@ -2141,15 +2269,75 @@ function renderQuizView(container){
   sess.transitionLocked = false;
   updateQuizTimer();
 }
-function formatSessionElapsed(sess, now=Date.now()){
+function sessionActiveElapsedMs(sess, now=Date.now()){
   const pausedMs = (sess.pausedMs||0) + (sess.paused && sess.pausedAt ? now-sess.pausedAt : 0);
-  return Utils.fmtClock(Math.max(0, now-(sess.startedAt||now)-pausedMs));
+  return Math.max(0, now-(sess.startedAt||now)-pausedMs);
+}
+function formatSessionElapsed(sess, now=Date.now()){
+  return Utils.fmtClock(sessionActiveElapsedMs(sess, now));
+}
+function sessionTimeRemainingMs(sess, now=Date.now()){
+  if (!sess || !sess.timeLimitEnabled || !(sess.timeLimitMs>0)) return null;
+  return Math.max(0, sess.timeLimitMs-sessionActiveElapsedMs(sess, now));
+}
+function formatSessionClock(sess, now=Date.now()){
+  const remaining = sessionTimeRemainingMs(sess, now);
+  return remaining==null ? formatSessionElapsed(sess, now) : Utils.fmtClock(remaining);
+}
+function formatSessionClockHtml(sess, now=Date.now()){
+  const remaining = sessionTimeRemainingMs(sess, now);
+  if (remaining==null) return '';
+  const totalSec = Math.max(0, Math.ceil(remaining/1000));
+  const minutes = Math.floor(totalSec/60);
+  const seconds = totalSec%60;
+  const colonHidden = totalSec%2===0;
+  return `<span class="timer-minutes">${minutes}</span><span class="timer-colon ${colonHidden?'is-hidden':''}" aria-hidden="true">:</span><span class="timer-seconds">${String(seconds).padStart(2,'0')}</span>`;
+}
+function timeoutGradeForCard(card){
+  const maxScore = Number(App.settings.points[card.type])||0;
+  try{
+    if (QuestionTypes[card.type] && QuestionTypes[card.type].objective){
+      const grade = gradeObjective(card, undefined);
+      grade.isCorrect = false;
+      grade.scoreEarned = 0;
+      grade.pct = 0;
+      if (typeof grade.blankCorrectCount==='number') grade.blankCorrectCount = 0;
+      grade.userAnswerDisplay = '(未作答)';
+      return grade;
+    }
+  }catch(e){}
+  return { pct:0, scoreEarned:0, maxScore, userAnswerDisplay:'(未作答)', correctAnswerDisplay:card.reference||'' };
+}
+function finishTimedOutSession(){
+  const sess = App.session;
+  if (!sess || sess.timeExpired || sess.phase!=='quiz') return;
+  sess.timeExpired = true;
+  sess.paused = false;
+  sess.pausedAt = null;
+  clearPendingCompletion(sess);
+  (sess.results||[]).filter(r=>r.graded===false).forEach(entry=>{
+    entry.pct = 0;
+    entry.scoreEarned = 0;
+    entry.userAnswerDisplay = entry.pendingUserText && entry.pendingUserText.trim() ? entry.pendingUserText : '(未作答)';
+    entry.correctAnswerDisplay = entry.reference || '';
+    entry.graded = true;
+  });
+  (sess.queue||[]).forEach(card=>{
+    if (!sess.results.some(r=>r.uid===card.uid)) recordResult(card, timeoutGradeForCard(card));
+  });
+  sess.queue = [];
+  sess.completedUids = (sess.paperUids||[]).slice();
+  toast('时间到，本轮答题已结束',{icon:'⏱️'});
+  finishQuizPhase();
 }
 function updateQuizTimer(){
   const el = document.getElementById('quiz-timer');
-  if (!el || !App.session || App.session.phase!=='quiz') return;
-  el.textContent = formatSessionElapsed(App.session);
-  if (!App.session.paused) requestAnimationFrame(()=>setTimeout(updateQuizTimer, 1000));
+  if (!el || !App.session || App.session.phase!=='quiz' || !App.session.timeLimitEnabled) return;
+  if (App.session.paused){ el.textContent=''; return; }
+  const remaining = sessionTimeRemainingMs(App.session);
+  if (remaining===0){ el.textContent='0:00'; finishTimedOutSession(); return; }
+  el.innerHTML = formatSessionClockHtml(App.session);
+  requestAnimationFrame(()=>setTimeout(updateQuizTimer, 1000));
 }
 function toggleSessionPause(){
   const sess = App.session;
@@ -3173,12 +3361,19 @@ function detailScoreText(detail){
 function renderInlineFillQuestion(q, showAns){
   let i = 0;
   const answers = q.answers || [];
-  return Utils.escapeHtml(q.question).replace(/_{2,}/g, ()=>{
+  const renderText = text=>Utils.escapeHtml(text||'').replace(/_{2,}/g, ()=>{
     const ans = answers[i] != null ? answers[i] : answers[answers.length-1];
     i++;
     if (!showAns) return '<span class="browse-blank-line" aria-hidden="true"></span>';
     return `<span class="browse-inline-answer">${Utils.escapeHtml(String(ans||'').split('/')[0])}</span>`;
   });
+  if (Array.isArray(q.content) && q.content.length){
+    return normalizeContent(q.content).map(block=>{
+      if (block.type==='text') return renderText(block.text);
+      return renderRichContent([block], App.deck&&App.deck.assets);
+    }).join('');
+  }
+  return renderText(q.question);
 }
 function userAnswerParts(detail){
   if (!detail || !detail.userAnswer) return [];
@@ -3526,7 +3721,7 @@ function bindDataManagement(container){
 function cacheManagementHtml(){
   return `<div class="section-title" style="margin-top:26px;">缓存管理<span class="line"></span></div>
     <div class="panel">
-      <p class="muted" style="font-size:12.5px;margin:0 0 12px;">清空上次打开的题库与未完成答题草稿，不影响学习记录、复习本、错题本和应用设置。</p>
+      <p class="muted" style="font-size:12.5px;margin:0 0 12px;">清空上次打开的题库与未完成答题草稿，并恢复应用设置默认值；不影响学习记录、复习本和错题本。</p>
       <div class="settings-actions">
         <button class="btn btn-danger" id="clear-cache-btn" type="button">清空缓存</button>
       </div>
@@ -3535,28 +3730,47 @@ function cacheManagementHtml(){
 function bindCacheManagement(container){
   const clearBtn=container.querySelector('#clear-cache-btn');
   if (clearBtn) clearBtn.onclick = ()=>{
-    confirmModal('清空缓存？', '此操作会删除上次打开的题库与未完成答题草稿，不会影响学习记录、复习本、错题本或应用设置。', async ()=>{
+    confirmModal('清空缓存？', '此操作会删除上次打开的题库与未完成答题草稿，并恢复应用设置默认值；不会影响学习记录、复习本或错题本。', async ()=>{
       await Store.remove(STORAGE_KEYS.lastDeck);
       await clearActiveSessionDraft();
+      App.settings = defaultSettings();
+      await saveSettings();
       App.session = null;
       App.recordDetailId = null;
-      toast('已清空缓存', {icon:'🧹'}); render();
+      applyTheme();
+      toast('已清空缓存并恢复默认设置', {icon:'🧹'}); render();
     }, { danger:true, confirmLabel:'清空' });
   };
 }
+function typographySettingsHtml(){
+  const size = App.settings.uiFontSize || 'default';
+  const family = App.settings.uiFontFamily || 'default';
+  const slider = (name, options, value)=>`<div class="setting-slider" data-setting-slider="${name}" role="group" aria-label="${name==='fontSize'?'全局字号':'全局字体'}">
+    ${options.map(([key,label])=>`<button type="button" class="setting-slider-option ${value===key?'active':''}" data-setting="${name}" data-value="${key}" aria-pressed="${value===key?'true':'false'}">${label}</button>`).join('')}
+  </div>`;
+  return `<div class="panel typography-panel">
+    <div class="settings-panel-heading"><div><h3>全局字体</h3><p class="muted">调整整个应用的显示大小和字体风格，题目内容与设置页同步变化。</p></div><span class="settings-panel-symbol" aria-hidden="true">Aa</span></div>
+    <div class="typography-setting"><div class="typography-setting-label"><b>字体大小</b><span class="muted">小 · 默认 · 大</span></div>${slider('fontSize',[['small','小'],['default','默认'],['large','大']],size)}</div>
+    <div class="typography-setting"><div class="typography-setting-label"><b>字体样式</b><span class="muted">默认 · 衬线 · 无衬线</span></div>${slider('fontFamily',[['default','默认'],['serif','衬线'],['sans','无衬线']],family)}</div>
+  </div>`;
+}
+function bindTypographySettings(container){
+  container.querySelectorAll('[data-setting][data-value]').forEach(btn=>btn.addEventListener('click', async ()=>{
+    const key = btn.dataset.setting==='fontSize' ? 'uiFontSize' : 'uiFontFamily';
+    App.settings[key] = btn.dataset.value;
+    applyTypography();
+    await saveSettings();
+    renderSettingsView(container);
+  }));
+}
 function renderNotesView(container){
-  const deck=App.deck, review=deck?getDeckUidList('review',deck.id):[], wrong=deck?getDeckUidList('wrong',deck.id):[];
-  const questionMap=new Map((deck?.questions||[]).map(q=>[q.uid,q]));
-  const section=(kind,title,desc,uids)=>{
-    const items=uids.map(uid=>{ const q=questionMap.get(uid); if(!q) return ''; return `<div class="note-item"><div class="note-type">${Utils.escapeHtml(QuestionTypes[q.type]?.label||'题目')}</div><div class="note-question">${Utils.escapeHtml(q.question)}</div></div>`; }).join('');
-    return `<div class="panel notes-panel"><div class="notes-panel-head"><div><h3>${title}</h3><p>${desc}</p></div><b>${uids.length}</b></div>${items||`<div class="empty-state"><span class="e-icon">${kind==='wrong'?'✓':'☆'}</span><p>${kind==='wrong'?'还没有错题记录':'还没有加入复习本的题目'}</p></div>`}</div>`;
-  };
   container.className='view-pad fade-in';
-  container.innerHTML=`<div class="container"><div class="section-title">笔记<span class="line"></span></div><p class="muted notes-intro">${deck?`当前题库：${Utils.escapeHtml(deck.meta.title)}`:'加载题库后可查看错题本与复习本'}</p>${section('review','复习本','需要再次巩固的题目',review)}${section('wrong','错题本','答题过程中出现过错误的题目',wrong)}</div>`;
+  container.innerHTML='';
 }
 function renderSettingsView(container){
   container.className='view-pad fade-in';
-  container.innerHTML=`<div class="container"><div class="section-title">设置<span class="line"></span></div><div class="panel settings-summary"><h3>应用设置</h3><p class="muted">主题可通过顶部右侧按钮切换；学习参数在学习页面中调整。</p></div>${cacheManagementHtml()}</div>`;
+  container.innerHTML=`<div class="container"><div class="section-title">设置<span class="line"></span></div><div class="panel settings-summary"><h3>应用设置</h3><p class="muted">主题可通过顶部右侧按钮切换；学习参数在学习页面中调整。</p></div>${typographySettingsHtml()}${cacheManagementHtml()}</div>`;
+  bindTypographySettings(container);
   bindCacheManagement(container);
 }
 
@@ -3752,11 +3966,7 @@ async function deleteSessionRecord(id){
 }
 async function importConfigObj(incoming, opts={}){
   if (!incoming || typeof incoming!=='object') throw new Error('文件内容不是合法的配置对象');
-  const base = defaultSettings();
-  App.settings = Object.assign({}, base, incoming, {
-    includeTypes: Object.assign({}, base.includeTypes, incoming.includeTypes||{}),
-    points: Object.assign({}, base.points, incoming.points||{})
-  });
+  App.settings = normalizeSettings(incoming);
   await saveSettings();
   applyTheme();
   if (!opts.silent) toast('配置已导入', {icon:'✅'});
