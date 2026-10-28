@@ -181,24 +181,24 @@ const DEMO_DECK_RAW = {
   meta:{
     title:'示例教程：使用方式与题库格式',
     subject:'应用使用指南',
-    description:'一份关于本应用操作方式与题库数据格式的示例题库，用来快速体验三种学习模式。',
-    version:'1.1'
+    description:'演示题库格式、公式渲染与三种学习模式的完整示例。',
+    version:'1.2'
   },
   fillInTheBlank:[
     { id:1, question:'页面顶部用 🔥 图标显示的连续学习天数激励机制，设计上参照了___。', answers:['Duolingo/多邻国'] },
     { id:2, question:'在闪卡模式中，翻面查看答案要按下___键。', answers:['空格'] },
     { id:3, question:'本应用支持闪卡模式、学习模式和___模式，共三种学习模式。', answers:['测试'] },
-    { id:4, chapter:'题库格式', question:'填空题题干中建议用___表示需要填写的位置。', answers:['___/三个下划线'] }
+    { id:4, chapter:'题库格式', question:'填空题题干建议使用三个下划线（___）表示需要填写的位置。', content:[{type:'text',text:'填空题题干建议使用三个下划线（___）表示需要填写的位置。复杂公式测试：'},{type:'math',latex:String.raw`\int_{0}^{\infty} e^{-x^2} \, dx = \frac{\sqrt{\pi}}{2}`,display:true},{type:'math',latex:String.raw`\begin{bmatrix} a & b \\ c & d \end{bmatrix}\begin{bmatrix} x \\ y \end{bmatrix}=\begin{bmatrix} 1 \\ 0 \end{bmatrix}`,display:true}], answers:['___/三个下划线'] }
   ],
   singleChoice:[
-    { id:1, question:'以下哪种题型的得分方式是"用户看到参考答案后自行估分"？', options:['单选题','判断题','简答题 / 综合分析题','填空题'], answer:'C' },
-    { id:2, question:'"学习模式"在你答错一道客观题之后，通常会怎么处理这道题？', options:['直接跳过不再出现','立刻结束本轮学习','重新排入本轮队列稍后再考一次','自动帮你标记为正确'], answer:'C' },
-    { id:3, question:'闪卡模式里，如果你把刚复习的卡片评为"Again(完全不会)"，系统会怎么安排？', options:['很久之后才会再看到它','本轮结束前会再考你一次，且记忆等级清零','从题库中彻底删除','自动改成简单模式'], answer:'B' },
-    { id:4, chapter:'题库格式', question:'单选题的正确答案字段可以怎样写？', options:['answer: "A"','answer: ["A","C"]','answer: true','answers: ["参考答案"]'], answer:'A' }
+    { id:1, question:'以下哪种题型的得分方式是“用户看到参考答案后自行估分”？', content:[{type:'text',text:'以下哪种题型的得分方式是“用户看到参考答案后自行估分”？'}], options:['单选题','判断题','简答题 / 综合分析题','填空题'], answer:'C' },
+    { id:2, question:'“学习模式”在你答错一道客观题之后，通常会怎么处理这道题？', content:[{type:'text',text:'“学习模式”在你答错一道客观题之后，通常会怎么处理这道题？其中记忆等级示例：'},{type:'math',latex:String.raw`I_{n+1}=I_n+1`}], options:['直接跳过不再出现','立刻结束本轮学习','重新排入本轮队列稍后再考一次','自动帮你标记为正确'], answer:'C' },
+    { id:3, question:'闪卡模式里，如果你把刚复习的卡片评为“Again（完全不会）”，系统会怎么安排？', options:['很久之后才会再看到它','本轮结束前会再考你一次，且记忆等级清零','从题库中彻底删除','自动改成简单模式'], answer:'B' },
+    { id:4, chapter:'题库格式', question:'单选题的正确答案字段可以怎样写？', options:['answer: “A”','answer: [“A”,“C”]','answer: true','answers: ["参考答案"]'], answer:'A' }
   ],
   multipleChoice:[
     { id:1, chapter:'题库格式', question:'一个题库对象可以包含哪些题型数组字段？', options:['fillInTheBlank','singleChoice','trueFalse','shortAnswer / essay'], answer:['A','B','C','D'] },
-    { id:2, chapter:'题库格式', question:'关于 multipleChoice 多选题格式，哪些说法是正确的？', options:['options 是选项文本数组','answer 可以写成 ["A","C"]','chapter 是可选字段','answer 必须只能是一个字符串'], answer:['A','B','C'] }
+    { id:2, chapter:'题库格式', question:'关于 multipleChoice 多选题格式，哪些说法是正确的？', content:[{type:'text',text:'关于 multipleChoice 多选题格式，哪些说法是正确的？复杂公式字段示例：'},{type:'math',latex:String.raw`\sum_{n=1}^{\infty} \frac{1}{n^2}=\frac{\pi^2}{6}`,display:true},{type:'math',latex:String.raw`f(x)=\begin{cases} x^2, & x\ge 0 \\ -x, & x<0 \end{cases}`,display:true}], options:[{text:'options 是选项文本数组'},{text:'answer 可以写成 [“A”,“C”]'},{content:[{type:'math',latex:String.raw`chapter\_key`}]},{text:'answer 必须只能是一个字符串'}], answer:['A','B','C'] }
   ],
   trueFalse:[
     { id:1, question:'测试模式会在你每答完一题后立刻告诉你这题对不对。', answer:false },
@@ -207,7 +207,7 @@ const DEMO_DECK_RAW = {
     { id:4, chapter:'题库格式', question:'题库文件可以只包含一种题型数组，不必六种题型全部写满。', answer:true }
   ],
   shortAnswer:[
-    { id:1, question:'简述"学习模式"与"测试模式"在反馈时机上的核心区别。', answer:'学习模式：每答完一题立即给出对错反馈，答错的题会重新排入本轮队列，直到练熟为止，重在即时反馈和重复巩固。\n测试模式：模拟真实考试，一次性做完所有题目，中途不提示对错，最后统一进入判分环节，重在真实评估。' },
+    { id:1, question:'简述“学习模式”与“测试模式”在反馈时机上的核心区别。', answer:'学习模式：每答完一题立即给出对错反馈，答错的题会重新排入本轮队列，直到练熟为止，重在即时反馈和重复巩固。\n测试模式：模拟真实考试，一次性做完所有题目，中途不提示对错，最后统一进入判分环节，重在真实评估。' },
     { id:2, question:'简述客观题与主观题在判分方式上的区别，以及总分是如何得出的。', answer:'客观题（单选、判断、填空）有唯一标准答案，由系统自动比对判分；主观题（简答、综合分析）没有唯一表述，因此在你看到参考答案后，由你自己估算掌握程度（0%/50%/80%/100%），两部分得分按各题设定的分值加权后相加，得到最终总分。' },
     { id:3, chapter:'题库格式', question:'简述一个最小可用题库文件需要包含什么。', answer:'最小题库只需要导出一个对象，并至少包含一个题型数组，例如 singleChoice、fillInTheBlank、trueFalse、shortAnswer 或 essay。每道题通常包含 id、question 和该题型所需的 answer / answers / options 字段；chapter 是可选字段，用于筛选和整卷预览。' }
   ],
@@ -220,6 +220,81 @@ const DEMO_DECK_RAW = {
    §4. 数据解析：三层兜底策略
    1) 标准 JSON  2) UMD/CommonJS 模块 (module.exports)  3) 裸对象/数组表达式
    ============================================================ */
+const V2_TYPE_MAP = { single_choice:'singleChoice', multiple_choice:'multipleChoice', true_false:'trueFalse', fill_blank:'fillInTheBlank', short_answer:'shortAnswer', essay:'essay' };
+function cleanDeckText(value){
+  let text = String(value ?? '');
+  let doubleOpen = true, singleOpen = true;
+  text = text.replace(/"/g, ()=>{ const out=doubleOpen?'“':'”'; doubleOpen=!doubleOpen; return out; });
+  text = text.replace(/'/g, ()=>{ const out=singleOpen?'‘':'’'; singleOpen=!singleOpen; return out; });
+  return text;
+}
+
+function plainContent(blocks){
+  if (!Array.isArray(blocks)) return String(blocks||'');
+  return blocks.map(b=>{
+    if (!b || typeof b!=='object') return '';
+    if (b.type==='text') return cleanDeckText(b.text||'');
+    if (b.type==='math') return String(b.latex||'');
+    if (b.type==='blank') return '___';
+    return '';
+  }).join('');
+}
+function safeMediaUrl(src, kind){
+  const value=String(src||'').trim();
+  const dataPrefix=kind==='image' ? /^data:image\/(png|jpe?g|webp|gif|svg\+xml);base64,/i : /^data:audio\/(mpeg|mp4|ogg|wav|webm);base64,/i;
+  if (dataPrefix.test(value) || /^(https?:\/\/|\.\/|\.\.\/|\/|[^:/?#]+(?:\/[^?#]*)?(?:[?#].*)?$)/.test(value)) return value;
+  return '';
+}
+function normalizeContent(value){
+  if (Array.isArray(value)) return value.filter(b=>b&&typeof b==='object');
+  return [{type:'text', text:cleanDeckText(value||'')}];
+}
+function richText(blocks){ return plainContent(blocks); }
+function renderRichContent(blocks, assets){
+  return normalizeContent(blocks).map(block=>{
+    if (block.type==='text') return Utils.escapeHtml(cleanDeckText(block.text||''));
+    if (block.type==='lineBreak') return '<br>';
+    if (block.type==='math'){
+      const latex=String(block.latex||'');
+      if (!latex) return '';
+      try{ const katex=(window.katex&&typeof window.katex.renderToString==='function') ? window.katex : (window.katex&&window.katex.default); return katex&&typeof katex.renderToString==='function' ? katex.renderToString(latex,{throwOnError:true,displayMode:!!block.display}) : `<code class="math-fallback">${Utils.escapeHtml(latex)}</code>`; }
+      catch(e){ return `<code class="math-fallback math-error" title="公式语法错误">${Utils.escapeHtml(latex)}</code>`; }
+    }
+    const asset=(assets&&block.asset&&assets[block.asset]) || block;
+    if (block.type==='image' || asset.type==='image'){
+      const src=safeMediaUrl(asset.src,'image'); if (!src) return '<span class="media-error">图片资源不可用</span>';
+      return `<figure class="question-media question-image"><img src="${Utils.escapeHtml(src)}" alt="${Utils.escapeHtml(asset.alt||'题目图片')}" loading="lazy">${asset.caption?`<figcaption>${Utils.escapeHtml(asset.caption)}</figcaption>`:''}</figure>`;
+    }
+    if (block.type==='audio' || asset.type==='audio'){
+      const src=safeMediaUrl(asset.src,'audio'); if (!src) return '<span class="media-error">音频资源不可用</span>';
+      return `<span class="question-media question-audio"><audio controls preload="metadata" src="${Utils.escapeHtml(src)}">此浏览器不支持音频播放。</audio>${asset.transcript?`<span class="audio-transcript">${Utils.escapeHtml(asset.transcript)}</span>`:''}</span>`;
+    }
+    return '';
+  }).join('');
+}
+function renderOptionContent(option){ return option.content ? renderRichContent(option.content, App.deck&&App.deck.assets) : Utils.escapeHtml(option.text||''); }
+function adaptDeckV2(raw){
+  if (!raw || !Array.isArray(raw.questions)) return raw;
+  const schemaMajor=raw.schemaVersion==null ? '2' : String(raw.schemaVersion).split('.')[0];
+  if (schemaMajor!=='2') return raw;
+  const out={ meta:Object.assign({},raw.deck||{}), assets:raw.assets||{} };
+  raw.questions.forEach(q=>{
+    const type=V2_TYPE_MAP[q.type]; if (!type) return;
+    (out[type]||(out[type]=[]));
+    const item={id:q.id, chapter:q.chapter, question:plainContent(q.content||q.stem||''), content:normalizeContent(q.content||q.stem||''), explanation:q.explanation, answer:q.referenceAnswer||q.answer};
+    if (type==='singleChoice'||type==='multipleChoice'){
+      item.options=(q.options||[]).map(o=>({text:plainContent(o.content||o.text||''), content:normalizeContent(o.content||o.text||'')}));
+      const keys=(q.answer&&q.answer.keys)||[];
+      item.answer=keys.map(key=>(q.options||[]).findIndex(o=>o.key===key));
+      if(type==='singleChoice') item.answer=item.answer[0];
+    } else if(type==='trueFalse') item.answer=!!(q.answer&&q.answer.value);
+    else if(type==='fillInTheBlank') item.answers=(q.blanks||[]).map(b=>(b.answers||[]).join('/'));
+    else item.answer=q.referenceAnswer||q.answer||'';
+    out[type].push(item);
+  });
+  return out;
+}
+
 function parseDeckFile(text, filename){
   const trimmed = String(text||'').trim();
   const errors = [];
@@ -247,14 +322,17 @@ function parseDeckFile(text, filename){
   throw new Error('无法识别该文件的数据格式，已尝试 JSON / UMD模块 / 裸对象三种方式均失败。\n\n'+errors.join('\n')+'\n\n请确认文件至少包含 fillInTheBlank / singleChoice / trueFalse / shortAnswer / essay 中的一种或多种；多选题可使用 multipleChoice。');
 }
 
+function choiceOptionText(opt){
+  return opt && typeof opt==='object' ? plainContent(opt.content || opt.text || '') : String(opt ?? '');
+}
 function resolveChoiceAnswerIndex(options, answer){
   if (typeof answer==='number') return answer;
   const answerText = String(answer ?? '').trim();
   if (!answerText) return -1;
-  const exactIdx = options.findIndex(opt=>String(opt).trim()===answerText);
+  const exactIdx = options.findIndex(opt=>choiceOptionText(opt).trim()===answerText);
   if (exactIdx>=0) return exactIdx;
   const answerNorm = Utils.normalizeAnswerText(answerText);
-  const normalizedIdx = options.findIndex(opt=>Utils.normalizeAnswerText(opt)===answerNorm);
+  const normalizedIdx = options.findIndex(opt=>Utils.normalizeAnswerText(choiceOptionText(opt))===answerNorm);
   if (normalizedIdx>=0) return normalizedIdx;
   return Utils.letterToIndex(answerText);
 }
@@ -277,7 +355,8 @@ function deckFingerprint(meta, questions){
 }
 
 function normalizeDeck(raw, sourceName){
-  const src = raw && raw.data && typeof raw.data==='object' ? raw.data : raw;
+  const srcRaw = raw && raw.data && typeof raw.data==='object' ? raw.data : raw;
+  const src = adaptDeckV2(srcRaw);
   if (!src || typeof src!=='object') throw new Error('数据格式无法识别：既不是题库对象，也不是标准模块导出。');
 
   const hasAny = TYPE_ORDER.some(t => Array.isArray(src[t]) && src[t].length);
@@ -297,7 +376,9 @@ function normalizeDeck(raw, sourceName){
         rawId:q.id!=null ? q.id : idx,
         type,
         chapter:String(q.chapter||'').trim(),
-        question:String(q.question||'').trim(),
+        question:cleanDeckText(q.question||'').trim(),
+        content:Array.isArray(q.content) ? q.content : null,
+        explanation:q.explanation ? normalizeContent(q.explanation) : null,
         objective:QuestionTypes[type].objective
       };
       if (!base.question){ skipped.push(uid+':题目为空'); return; }
@@ -305,14 +386,14 @@ function normalizeDeck(raw, sourceName){
       if (type==='singleChoice'){
         if (!Array.isArray(q.options) || !q.options.length){ skipped.push(uid+':缺少选项'); return; }
         const correctIdx = resolveChoiceAnswerIndex(q.options, q.answer);
-        base.options = q.options.map((text,i)=>({ text:String(text), correct:i===correctIdx }));
+        base.options = q.options.map((opt,i)=>({ text:cleanDeckText(opt&&typeof opt==='object' ? opt.text : opt), content:opt&&typeof opt==='object'&&Array.isArray(opt.content)?opt.content:null, correct:i===correctIdx }));
         if (!base.options.some(o=>o.correct)){ skipped.push(uid+':未找到匹配的正确选项(answer='+q.answer+')'); return; }
       } else if (type==='multipleChoice'){
         if (!Array.isArray(q.options) || !q.options.length){ skipped.push(uid+':缺少选项'); return; }
         const answerArr = choiceAnswerList(q.options, q.answer);
         const correctIdxs = answerArr.map(a=>resolveChoiceAnswerIndex(q.options, a)).filter(i=>i>=0);
         const correctSet = new Set(correctIdxs);
-        base.options = q.options.map((text,i)=>({ text:String(text), correct:correctSet.has(i) }));
+        base.options = q.options.map((opt,i)=>({ text:cleanDeckText(opt&&typeof opt==='object' ? opt.text : opt), content:opt&&typeof opt==='object'&&Array.isArray(opt.content)?opt.content:null, correct:correctSet.has(i) }));
         if (!base.options.some(o=>o.correct)){ skipped.push(uid+':未找到匹配的正确选项(answer='+JSON.stringify(q.answer)+')'); return; }
       } else if (type==='trueFalse'){
         if (typeof q.answer!=='boolean'){ skipped.push(uid+':answer 不是布尔值'); return; }
@@ -336,7 +417,7 @@ function normalizeDeck(raw, sourceName){
   const meta = Object.assign({ title:sourceName||'未命名题库', subject:'', description:'', version:'' }, metaSrc);
   if (!metaSrc.title) meta.title = (sourceName||'未命名题库').replace(/\.(js|json)$/i,'');
   const deckId = Utils.hashStr(deckFingerprint(meta, questions));
-  return { id:deckId, meta, questions, byType, totalQuestions:questions.length, skipped, loadedAt:Date.now() };
+  return { id:deckId, meta, assets:(src.assets&&typeof src.assets==='object'?src.assets:{}), questions, byType, totalQuestions:questions.length, skipped, loadedAt:Date.now() };
 }
 
 /* ============================================================
@@ -364,9 +445,9 @@ const App = {
 function defaultSettings(){
   const includeTypes={}; TYPE_ORDER.forEach(t=>includeTypes[t]=true);
   const points={}; TYPE_ORDER.forEach(t=>points[t]=QuestionTypes[t].defaultPoints);
-  return { shuffleQuestions:true, shuffleOptions:true, includeTypes, mode:'flashcard',
+  return { shuffleQuestions:false, shuffleOptions:false, includeTypes, mode:'test',
            questionLimit:'all', points, flashcardScope:'due', theme:'light', themeMode:'auto',
-           mockExam:false, selectionMode:false, sourceScope:'all', chapterFilter:'all' };
+           mockExam:false, selectionMode:false, sourceScope:'all', chapterFilter:'all', tfFilter:'all' };
 }
 async function loadSettings(){
   const saved = await Store.getJSON(STORAGE_KEYS.settings, null);
@@ -972,8 +1053,15 @@ function renderLoadView(container){
         <summary><h4>题库数据格式</h4></summary>
         <div class="format-guide-body">
           <p>文件导出一个对象即可，推荐直接使用 JSON；JS 文件可使用 <code>module.exports = {...}</code>，但会执行文件代码，请只导入可信来源。<code>meta</code> 为可选信息；题型字段至少包含 <code>fillInTheBlank</code> / <code>singleChoice</code> / <code>multipleChoice</code> / <code>trueFalse</code> / <code>shortAnswer</code> / <code>essay</code> 中的一种或多种。</p>
+          <div class="format-json-demo"><b>v2.1 JSON 富媒体示例</b><pre>{
+  "questions": [{
+    "type": "single_choice",
+    "content": [{ "type": "math", "latex": "E=mc^2" }],
+    "answer": { "keys": ["a"] }
+  }]
+}</pre></div>
           <div class="format-guide-grid">
-            <div class="format-item"><b>fillInTheBlank</b><span><code>question</code> 中用 <code>___</code> 表示空；答案写 <code>answers:["答案"]</code>。可选 <code>chapter</code>。</span></div>
+            <div class="format-item"><b>fillInTheBlank</b><span><code>question</code> 中使用三个下划线（<code>___</code>）表示空；答案写 <code>answers:["答案"]</code>。可选 <code>chapter</code>。</span></div>
             <div class="format-item"><b>singleChoice</b><span><code>options:["A项","B项"]</code>，<code>answer:"A"</code> 或答案序号。</span></div>
             <div class="format-item"><b>multipleChoice</b><span><code>answer:["A","C"]</code> 表示多选正确项；其它字段同单选。</span></div>
             <div class="format-item"><b>trueFalse</b><span><code>answer:true</code> 表示“对”，<code>false</code> 表示“错”。</span></div>
@@ -982,7 +1070,7 @@ function renderLoadView(container){
           </div>
         </div>
       </details>
-      <div class="demo-link">还没有题库？<button id="load-demo-btn" type="button">先用示例教程试一试 →</button></div>
+      <div class="demo-link">还没有题库？<button id="load-demo-btn" type="button">先用示例教程试一试 <span class="arrow-symbol" aria-hidden="true">→</span></button></div>
       <div id="load-error-slot" style="width:100%;display:flex;justify-content:center;"></div>
     </div>
   `;
@@ -1098,8 +1186,7 @@ async function finishDeckLoad(deck, opts={}){
   TYPE_ORDER.forEach(t=>{
     if (deck.byType[t] && deck.byType[t].length && !(t in App.settings.includeTypes)) App.settings.includeTypes[t]=true;
   });
-  const pol = tfPolarityCounts(deck);
-  App.settings.tfFilter = (pol.trueCount>0 && pol.falseCount>0) ? (pol.trueCount<=pol.falseCount?'true':'false') : 'all';
+  App.settings.tfFilter = 'all';
   App.session = null;
   App.view = 'setup';
   toast(opts.switching ? '已切换' : `已加载「${deck.meta.title}」，共 ${deck.totalQuestions} 题`, {icon:'📚'});
@@ -1226,7 +1313,7 @@ function renderSetupView(container){
   const typeChips = presentTypes.map(t=>{
     const on = !!s.includeTypes[t];
     return `<button type="button" class="type-chip ${on?'on':''}" data-type="${t}">
-      <span class="chip-check">${on?'✓':'○'}</span>${QuestionTypes[t].label}<span class="cnt">${scopedByType[t].length}</span>
+      <span class="chip-check icon-symbol">${on?'✓':'○'}</span>${QuestionTypes[t].label}<span class="cnt">${scopedByType[t].length}</span>
     </button>`;
   }).join('');
   if (typeof s.questionLimit==='number'){
@@ -1278,12 +1365,12 @@ function renderSetupView(container){
       </select>
     </div>` : '';
   const mockRuleText = '抽题规则：优先抽取未完成的题目；题库全部完成一遍后，将提高错题本与复习本的抽取权重。';
-  const startButtonText = previewCount>0 ? `开始学习 (${previewCount}题) →` : '没有可学习题目';
+  const startButtonText = previewCount>0 ? `开始学习 (${previewCount}题) <span class="arrow-symbol" aria-hidden="true">→</span>` : '没有可学习题目';
   const mobileLayout = window.matchMedia && window.matchMedia('(max-width:640px)').matches;
   const collapseState = ensureSetupCollapse();
   const activeMobileCollapse = mobileLayout ? ['range','answer','advanced'].find(key=>collapseState[key]) : null;
-  const rangeOpen = !mobileLayout || activeMobileCollapse==='range';
-  const answerOpen = !mobileLayout || activeMobileCollapse==='answer';
+  const rangeOpen = !!collapseState.range;
+  const answerOpen = !!collapseState.answer;
   const advancedVisible = mobileLayout ? activeMobileCollapse==='advanced' : advancedOpen;
 
   container.className = 'view-pad fade-in';
@@ -1322,8 +1409,8 @@ function renderSetupView(container){
             <span class="tf-filter-label">判断题范围（便于集中记忆）</span>
             <div class="seg">
               <button type="button" data-tffilter="all" class="${(s.tfFilter||'all')==='all'?'active':''}">全部 ${tfPol.total}</button>
-              <button type="button" data-tffilter="true" class="${s.tfFilter==='true'?'active':''}">仅"对" ${tfPol.trueCount}</button>
-              <button type="button" data-tffilter="false" class="${s.tfFilter==='false'?'active':''}">仅"错" ${tfPol.falseCount}</button>
+              <button type="button" data-tffilter="true" class="${s.tfFilter==='true'?'active':''}">仅“对” ${tfPol.trueCount}</button>
+              <button type="button" data-tffilter="false" class="${s.tfFilter==='false'?'active':''}">仅“错” ${tfPol.falseCount}</button>
             </div>
           </div>` : ''}
           ${s.mode==='flashcard' ? `
@@ -1393,6 +1480,7 @@ function renderSetupView(container){
     if (panel){
       const open = !panel.classList.contains('open');
       panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
       const key = panel.dataset.collapseKey;
       if (key){
         if (mobileLayout){
@@ -2000,7 +2088,7 @@ function renderQuizView(container){
   container.className = 'quiz-shell fade-in';
   container.innerHTML = `
     <div class="quiz-topbar">
-      ${canGoBack ? `<button class="btn btn-ghost quiz-prev" id="quiz-prev-btn" type="button">← 上一题</button>` : ''}
+      ${canGoBack ? `<button class="btn btn-ghost quiz-prev" id="quiz-prev-btn" type="button"><span class="arrow-symbol" aria-hidden="true">←</span> 上一题</button>` : ''}
       <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
       <div class="progress-label">${Math.min(doneCount+1,sess.totalInitial)} / ${sess.totalInitial}</div>
       <div class="quiz-timer" id="quiz-timer" aria-label="答题计时">${formatSessionElapsed(sess)}</div>
@@ -2074,7 +2162,7 @@ function typeLabelHtml(card, extra){
   return `<div class="qcard-type"><span class="dot"></span>${QuestionTypes[card.type].label}${extra?(' · '+extra):''}</div>`;
 }
 function renderQuestionText(card){
-  let text = Utils.escapeHtml(card.question);
+  let text = card.content ? renderRichContent(card.content, App.deck&&App.deck.assets) : Utils.escapeHtml(card.question);
   if (card.type==='fillInTheBlank') text = text.replace(/_{2,}/g, '<span class="blank" aria-hidden="true"></span>');
   return text;
 }
@@ -2135,7 +2223,7 @@ function renderQuestionTools(card){
   const wrong = isInNotebook('wrong', card.uid, App.deck.id);
   return `<div class="qcard-tools">
     ${wrong ? `<span class="wrong-chip">错题本</span>` : ''}
-    <button type="button" class="bookmark-btn ${starred?'on':''}" data-bookmark="${card.uid}" title="${starred?'移出复习本':'加入复习本'}" aria-label="${starred?'移出复习本':'加入复习本'}" aria-pressed="${starred?'true':'false'}">${starred?'★':'☆'}</button>
+    <button type="button" class="bookmark-btn ${starred?'on':''}" data-bookmark="${card.uid}" title="${starred?'移出复习本':'加入复习本'}" aria-label="${starred?'移出复习本':'加入复习本'}" aria-pressed="${starred?'true':'false'}"><span class="icon-symbol">${starred?'★':'☆'}</span></button>
   </div>`;
 }
 function renderFlashcardFace(sess, card){
@@ -2151,7 +2239,7 @@ function renderFlashcardFace(sess, card){
     bodyHtml = `<div class="${listClass}">` + card.options.map((o,i)=>{
       const cls = (revealed && o.correct) ? 'correct' : '';
       return `<div class="opt-btn ${cls}" style="cursor:default;">
-        <span class="opt-key">${String.fromCharCode(65+i)}</span><span class="opt-text">${Utils.escapeHtml(o.text)}</span></div>`;
+        <span class="opt-key">${String.fromCharCode(65+i)}</span><span class="opt-text">${renderOptionContent(o)}</span></div>`;
     }).join('') + `</div>`;
   } else if (card.type==='trueFalse'){
     bodyHtml = `<div class="tf-row">
@@ -2159,7 +2247,7 @@ function renderFlashcardFace(sess, card){
       <div class="tf-btn ${revealed&&card.answer===false?'correct':''}" style="cursor:default;">错</div>
     </div>`;
   } else if ((card.type==='shortAnswer'||card.type==='essay') && revealed){
-    bodyHtml = `<div class="reveal-divider"></div><div class="reveal-label">参考答案</div><div class="reveal-answer">${Utils.escapeHtml(card.reference)}</div>`;
+    bodyHtml = `<div class="reveal-divider"></div><div class="reveal-label">参考答案</div><div class="reveal-answer">${card.explanation ? renderRichContent(card.explanation, App.deck&&App.deck.assets) : Utils.escapeHtml(card.reference)}</div>`;
   }
   const bottomHtml = revealed ? renderRateGrid(card) : `<div class="flip-hint"><span class="kbd">SPACE</span>翻面查看答案</div>`;
   return `<div class="${cardClasses(sess)}" id="qcard-el">
@@ -2231,7 +2319,7 @@ function renderInteractiveFace(sess, card){
     const optsHtml = activeOpts.map((o,oi)=>{
       let cls = sel[active]===oi ? 'selected' : '';
       return `<button type="button" class="opt-btn ${cls}" data-blank-option="${oi}" ${sess.revealed?'disabled':''}>
-        <span class="opt-key">${String.fromCharCode(65+oi)}</span><span class="opt-text">${Utils.escapeHtml(o.text)}</span></button>`;
+        <span class="opt-key">${String.fromCharCode(65+oi)}</span><span class="opt-text">${renderOptionContent(o)}</span></button>`;
     }).join('');
     if (!sess.revealed){
       body += `<div class="opt-list opt-list-free per-blank-options">${optsHtml}</div>`;
@@ -2251,7 +2339,7 @@ function renderInteractiveFace(sess, card){
       let cls = isSel ? 'selected' : '';
       if (sess.revealed){ if (o.correct) cls='correct'; else if (isSel) cls='wrong'; }
       return `<button type="button" class="opt-btn ${cls}" data-opt="${i}" ${sess.revealed?'disabled':''}>
-        <span class="opt-key">${isSel?'✓':String.fromCharCode(65+i)}</span><span class="opt-text">${Utils.escapeHtml(o.text)}</span></button>`;
+        <span class="opt-key"><span class="icon-symbol">${isSel?'✓':String.fromCharCode(65+i)}</span></span><span class="opt-text">${renderOptionContent(o)}</span></button>`;
     }).join('') + `</div>`;
     if (!sess.revealed) actions = `<div class="qcard-actions"><button type="button" class="btn btn-primary" id="confirm-btn" ${selIdxs.length===0?'disabled':''}>确认 <span class="kbd">⏎</span></button></div>`;
   } else if (card.type==='singleChoice' || card._dynamicChoice){
@@ -2260,7 +2348,7 @@ function renderInteractiveFace(sess, card){
       let cls = sess.selectedOptionIdx===i ? 'selected' : '';
       if (sess.revealed){ if (o.correct) cls='correct'; else if (sess.selectedOptionIdx===i) cls='wrong'; }
       return `<button type="button" class="opt-btn ${cls}" data-opt="${i}" ${sess.revealed?'disabled':''}>
-        <span class="opt-key">${String.fromCharCode(65+i)}</span><span class="opt-text">${Utils.escapeHtml(o.text)}</span></button>`;
+        <span class="opt-key">${String.fromCharCode(65+i)}</span><span class="opt-text">${renderOptionContent(o)}</span></button>`;
     }).join('') + `</div>`;
     if (!sess.revealed) actions = `<div class="qcard-actions"><button type="button" class="btn btn-primary" id="confirm-btn" ${sess.selectedOptionIdx==null?'disabled':''}>确认 <span class="kbd">⏎</span></button></div>`;
   } else if (card.type==='trueFalse'){
@@ -2303,7 +2391,7 @@ function renderInteractiveFace(sess, card){
     } else {
       const answerCls = manualAnswerMatchesReference(card, sess.userTextAnswer) ? ' correct' : ((sess.userTextAnswer&&sess.userTextAnswer.trim()) ? ' wrong' : '');
       body = `<div class="reveal-label">你的回答</div><div class="your-answer-box${answerCls}">${(sess.userTextAnswer&&sess.userTextAnswer.trim())?Utils.escapeHtml(sess.userTextAnswer):'（未作答）'}</div>
-        <div class="reveal-divider"></div><div class="reveal-label">参考答案</div><div class="reveal-answer">${Utils.escapeHtml(card.reference)}</div>`;
+        <div class="reveal-divider"></div><div class="reveal-label">参考答案</div><div class="reveal-answer">${card.explanation ? renderRichContent(card.explanation, App.deck&&App.deck.assets) : Utils.escapeHtml(card.reference)}</div>`;
       actions = renderSelfGradeGrid(App.settings.points[card.type], sess.selfGradeSelection, sess.selfGradeReviewing);
     }
   }
@@ -2523,7 +2611,7 @@ function bindCardEvents(sess, card){
 function flashFeedback(kind){
   const el = document.createElement('div');
   el.className = `feedback-flash show ${kind}`;
-  el.textContent = kind==='good' ? '✓ 答对了' : '✗ 答错了';
+  el.innerHTML = kind==='good' ? '<span class="icon-symbol">✓</span> 答对了' : '<span class="icon-symbol">✗</span> 答错了';
   document.body.appendChild(el);
   setTimeout(()=>el.remove(), 850);
 }
@@ -2905,7 +2993,7 @@ function renderBrowseView(container){
           ${chapterFilterHtml}
           ${hasNav ? '<button class="btn btn-secondary browse-nav-toggle" type="button">题目导航</button>' : ''}
         </div>
-        <button class="btn btn-secondary" id="browse-back-btn" type="button">← 返回学习</button>
+        <button class="btn btn-secondary" id="browse-back-btn" type="button"><span class="arrow-symbol" aria-hidden="true">←</span> 返回学习</button>
         ${hasNav ? `<div class="browse-sidebar mobile-nav-dropdown show-chapters mobile-collapsed">${mobileSidebarHtml}</div>` : ''}
       </div>
       ${wrongTestStrip}
@@ -3077,7 +3165,7 @@ function renderPreviewQuestion(q, num, opts={}){
   const wrong = App.deck && isInNotebook('wrong', q.uid, App.deck.id);
   const actions = opts.actions ? `<div class="preview-actions">
     ${wrong ? `<button type="button" class="mini-remove-btn" data-wrong-remove="${q.uid}">移出错题本</button>` : ''}
-    <button type="button" class="bookmark-btn ${starred?'on':''}" data-review-toggle="${q.uid}" title="${starred?'移出复习本':'加入复习本'}" aria-label="${starred?'移出复习本':'加入复习本'}" aria-pressed="${starred?'true':'false'}">${starred?'★':'☆'}</button>
+    <button type="button" class="bookmark-btn ${starred?'on':''}" data-review-toggle="${q.uid}" title="${starred?'移出复习本':'加入复习本'}" aria-label="${starred?'移出复习本':'加入复习本'}" aria-pressed="${starred?'true':'false'}"><span class="icon-symbol">${starred?'★':'☆'}</span></button>
   </div>` : '';
   let bodyHtml = '';
   if ((q.type==='singleChoice' || q.type==='multipleChoice') && Array.isArray(q.options)){
@@ -3085,13 +3173,13 @@ function renderPreviewQuestion(q, num, opts={}){
     bodyHtml = `<div class="browse-q-opts">` + q.options.map((o,i)=>{
       const userPicked = parts.includes(o.text);
       const cls = `${showAns && o.correct?'is-correct':''} ${detail && userPicked && !o.correct?'is-wrong':''} ${detail && userPicked?'is-picked':''}`;
-      return `<div class="opt-row ${cls}"><span>${String.fromCharCode(65+i)}.</span> ${Utils.escapeHtml(o.text)}${showAns && o.correct?' ✓':''}${detail && userPicked?' · 你的选择':''}</div>`;
+      return `<div class="opt-row ${cls}"><span>${String.fromCharCode(65+i)}.</span> ${renderOptionContent(o)}${showAns && o.correct?' <span class="icon-symbol">✓</span>':''}${detail && userPicked?' · 你的选择':''}</div>`;
     }).join('') + `</div>`;
   } else if (q.type==='trueFalse'){
     const choices = [true,false].map(v=>{
       const correct = showAns && q.answer===v;
       const picked = detail && detail.userAnswer===(v?'对':'错');
-      return `<div class="tf-mini ${correct?'is-correct':''} ${picked&&!correct?'is-wrong':''} ${picked?'is-picked':''}">${v?'对':'错'}${correct?' ✓':''}${picked?' · 你的选择':''}</div>`;
+      return `<div class="tf-mini ${correct?'is-correct':''} ${picked&&!correct?'is-wrong':''} ${picked?'is-picked':''}">${v?'对':'错'}${correct?' <span class="icon-symbol">✓</span>':''}${picked?' · 你的选择':''}</div>`;
     }).join('');
     bodyHtml = `<div class="tf-mini-row">${choices}</div>`;
   } else if (q.type==='fillInTheBlank'){
@@ -3105,7 +3193,7 @@ function renderPreviewQuestion(q, num, opts={}){
   if (!bodyHtml && showAns && detail && detail.correctAnswer){
     bodyHtml = `<div class="browse-answer">${Utils.escapeHtml(detail.correctAnswer)}</div>`;
   }
-  const qText = q.type==='fillInTheBlank' ? renderInlineFillQuestion(q, showAns) : Utils.escapeHtml(q.question);
+  const qText = q.type==='fillInTheBlank' ? renderInlineFillQuestion(q, showAns) : (q.content ? renderRichContent(q.content, App.deck&&App.deck.assets) : Utils.escapeHtml(q.question));
   const statusBadge = detail ? detailState.badges.map(s=>`<span class="preview-status ${s}">${previewStatusLabel(s, opts.mode)}</span>`).join('') : '';
   return `<div class="browse-q ${detail?'with-status status-'+status:''}" id="${idPrefix}-${q.uid}">
     <div class="preview-q-head">
@@ -3156,7 +3244,7 @@ function renderReportView(container){
     const userAnswerHtml = d.type==='fillInTheBlank'
       ? renderFillAnswerPartsHtml(d.userAnswer, snapshot && snapshot.answers)
       : Utils.escapeHtml(d.userAnswer || '（未作答）');
-    const statusIcon = (d.status==='mid' || d.status==='good') ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"></path></svg>' : {ok:'✓',no:'✗'}[d.status];
+    const statusIcon = (d.status==='mid' || d.status==='good') ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"></path></svg>' : {ok:'<span class="icon-symbol">✓</span>',no:'<span class="icon-symbol">✗</span>'}[d.status];
     return `<div class="qa-item" data-qa="${i}">
       <div class="qa-head" tabindex="0" role="button" aria-expanded="false">
         <div class="qa-status ${d.status}">${statusIcon}</div>
@@ -3327,7 +3415,7 @@ function renderRecordDetailView(container){
           <h2>${Utils.escapeHtml(contextLabel)}</h2>
           <p>${Utils.fmtDateTime(record.startedAt)} · ${Utils.fmtScore(record.score)}/${Utils.fmtScore(record.maxScore)} 分 · ${record.percentage}%</p>
         </div>
-        <button class="btn btn-secondary" id="record-back-btn" type="button">← 返回统计</button>
+        <button class="btn btn-secondary" id="record-back-btn" type="button"><span class="arrow-symbol" aria-hidden="true">←</span> 返回统计</button>
         <button class="btn btn-secondary browse-nav-toggle" type="button">题目导航</button>
         <div class="browse-sidebar mobile-nav-dropdown mobile-collapsed">${sidebarHtml}</div>
       </div>
@@ -3713,10 +3801,7 @@ async function initApp(){
       TYPE_ORDER.forEach(t=>{
         if (App.deck.byType[t] && App.deck.byType[t].length && !(t in App.settings.includeTypes)) App.settings.includeTypes[t]=true;
       });
-      if (!App.settings.tfFilter){
-        const pol = tfPolarityCounts(App.deck);
-        App.settings.tfFilter = (pol.trueCount>0 && pol.falseCount>0) ? (pol.trueCount<=pol.falseCount?'true':'false') : 'all';
-      }
+      App.settings.tfFilter = 'all';
       await registerDeck(App.deck);
       await Store.setJSON(STORAGE_KEYS.lastDeck, App.deck);
       if (activeDraft && activeDraft.deckId===App.deck.id && activeDraft.session && activeDraft.session.status==='active'){

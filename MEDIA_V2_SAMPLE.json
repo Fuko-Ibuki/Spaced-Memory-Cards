@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "2.1",
+  "deck": { "id": "rich-content-demo", "title": "富媒体题库示例", "language": "zh-CN", "version": "2.1" },
+  "assets": {
+    "atom": { "type": "image", "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMjAiIGhlaWdodD0iMTIwIiB2aWV3Qm94PSIwIDAgMzIwIDEyMCI+PHJlY3Qgd2lkdGg9IjMyMCIgaGVpZ2h0PSIxMjAiIGZpbGw9IiNmNmYzZWYiLz48Y2lyY2xlIGN4PSIxNjAiIGN5PSI2MCIgcj0iMTYiIGZpbGw9IiM5YzY2MzAiLz48ZWxsaXBzZSBjeD0iMTYwIiBjeT0iNjAiIHJ4PSIxMDAiIHJ5PSIzMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNDY3ZTc5IiBzdHJva2Utd2lkdGg9IjMiLz48dGV4dCB4PSIxMiIgeT0iMjQiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiMzOTNkM2YiPuWOn+WtkOe7k+aehDwvdGV4dD48L3N2Zz4=", "alt": "原子结构示意图", "caption": "内嵌 SVG 示例" }
+  },
+  "questions": [
+    {
+      "id": "physics-001",
+      "type": "single_choice",
+      "chapter": "公式与图片",
+      "content": [
+        { "type": "text", "text": "根据牛顿第二定律：" },
+        { "type": "math", "latex": "F=m a", "display": true },
+        { "type": "image", "asset": "atom" },
+        { "type": "text", "text": "若 F=6 N、m=2 kg，则加速度是？" }
+      ],
+      "options": [
+        { "key": "a", "content": [{ "type": "math", "latex": "2\\,\\mathrm{m/s^2}" }] },
+        { "key": "b", "content": [{ "type": "math", "latex": "3\\,\\mathrm{m/s^2}" }] }
+      ],
+      "answer": { "keys": ["b"] },
+      "explanation": [{ "type": "math", "latex": "a=F/m=3\\,\\mathrm{m/s^2}", "display": true }]
+    }
+  ]
+}
