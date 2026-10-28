@@ -589,7 +589,7 @@ function chapterDropdownHtml(chapters, selected){
   if (!chapters.length) return '';
   const label = selected.length ? `已筛选${selected.length}个章节` : '全部章节';
   return `<details class="chapter-dropdown">
-    <summary><span>${Utils.escapeHtml(label)}</span><span class="chev">▾</span></summary>
+    <summary><span class="chev">▾</span><span class="chapter-label">${Utils.escapeHtml(label)}</span></summary>
     <div class="chapter-menu">
       <button type="button" class="chapter-menu-action" data-browse-chapter-all="1">全部章节</button>
       ${chapters.map(ch=>`<label class="chapter-check">
