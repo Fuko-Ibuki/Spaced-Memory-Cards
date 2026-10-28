@@ -188,7 +188,7 @@ LICENSE                    MIT 许可证
 
 ## 本地字体与公式排版
 
-仓库只发布必要的字体资源：`fonts/minion3/` 提供 Minion 3 的 8 个常用字重与斜体文件；`fonts/minion-math/` 提供 Minion Math 的常规、中等、半粗和粗体文件；`fonts/punctuation/` 是从方正 FW 筑紫 A 老明朝整理出的中文标点子集，提供 300/400/500/600/700/800 六个字重（覆盖通用标点、CJK 标点、竖排标点、兼容标点及全角标点）。完整字体包仍放在本机 `font/` 目录，并由 `.gitignore` 排除，不参与提交。
+仓库只发布必要的字体资源：`fonts/minion3/` 提供 Minion 3 的 8 个常用字重与斜体文件；`fonts/minion-math/` 提供 Minion Math 的常规、中等、半粗和粗体文件；`fonts/sf-pro/`、`fonts/fz-new-book/`、`fonts/hy-qihei/` 分别提供 SF Pro、方正新书宋和汉仪旗黑在本应用实际用到字符的子集；`fonts/punctuation/` 是从方正 FW 筑紫 A 老明朝整理出的中文标点子集，提供 300/400/500/600/700/800 六个字重（覆盖通用标点、CJK 标点、竖排标点、兼容标点及全角标点）。完整字体包仍放在本机 `font/` 目录，并由 `.gitignore` 排除，不参与提交。
 
 
 完整字体包仅用于本地开发，不纳入 Git 跟踪或发布包；仓库只保留上述必要的 Minion 3 与中文标点子集，以控制授权与资源体积。保留本地字体文件时，UI 使用本地 SF Pro 与汉仪旗黑，正文使用 Minion 3 与方正新书宋，符号使用 SF Pro Symbol；Emoji 使用内嵌的 Apple Color Emoji WOFF。
