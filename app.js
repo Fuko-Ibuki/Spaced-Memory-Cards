@@ -1404,7 +1404,7 @@ function renderSetupView(container){
 
       <div class="setup-grid">
         <div class="panel setup-panel ${rangeOpen?'open':''}" data-collapse-key="range">
-          <button type="button" class="mobile-collapse-head" aria-expanded="${rangeOpen?'true':'false'}"><span>题目范围</span><span class="chev">▸</span></button>
+          <button type="button" class="mobile-collapse-head" aria-expanded="${rangeOpen?'true':'false'}"><span>题目范围</span><span class="chev">􀆍</span></button>
           <div class="mobile-collapse-body">
           <div class="section-title">题目范围<span class="line"></span></div>
           <div class="source-scope-row">
@@ -1446,7 +1446,7 @@ function renderSetupView(container){
         </div>
 
         <div class="panel setup-panel ${answerOpen?'open':''}" data-collapse-key="answer">
-          <button type="button" class="mobile-collapse-head" aria-expanded="${answerOpen?'true':'false'}"><span>答题设置</span><span class="chev">▸</span></button>
+          <button type="button" class="mobile-collapse-head" aria-expanded="${answerOpen?'true':'false'}"><span>答题设置</span><span class="chev">􀆍</span></button>
           <div class="mobile-collapse-body">
           <div class="section-title">答题设置<span class="line"></span></div>
           <div class="toggle-row">
@@ -1466,7 +1466,7 @@ function renderSetupView(container){
       </div>
 
       <div class="panel adv-panel">
-        <button type="button" class="collapsible-head ${advancedVisible?'open':''}" id="adv-head" aria-expanded="${advancedVisible?'true':'false'}"><span class="chev">▸</span><span>高级设置 · 各题型分值</span><span class="line"></span></button>
+        <button type="button" class="collapsible-head ${advancedVisible?'open':''}" id="adv-head" aria-expanded="${advancedVisible?'true':'false'}"><span class="chev">􀆍</span><span>高级设置 · 各题型分值</span><span class="line"></span></button>
         <div class="collapsible-body ${advancedVisible?'open':''}" id="adv-body">
           <div class="points-grid">
             ${presentTypes.map(t=>`<div class="points-item"><span>${QuestionTypes[t].label}</span><input type="number" class="num-input" min="0" step="0.5" data-points="${t}" value="${s.points[t]}"></div>`).join('')}
@@ -3273,7 +3273,7 @@ function renderReportView(container){
         <div class="qa-status ${d.status}">${statusIcon}</div>
         <div class="qa-q">${Utils.escapeHtml(d.question)}</div>
         <div class="qa-score">${detailScoreText(d)}</div>
-        <div class="chev">▸</div>
+        <div class="chev">􀆍</div>
       </div>
       <div class="qa-detail"><div class="qa-detail-inner">
         <div class="row"><div class="k">你的答案</div><div class="v ${d.status==='ok'?'ok':(d.status==='no'?'no':'')}">${userAnswerHtml}</div></div>
