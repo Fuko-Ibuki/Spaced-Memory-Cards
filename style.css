@@ -564,7 +564,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .mode-card .mode-tag{ display:inline-block; margin-top:10px; font-size:10.5px; padding:3px 8px; border-radius:var(--radius-pill); background:var(--bg-soft); color:var(--text-faint); font-weight:600; }
 .mode-card.selected .mode-tag{ background:var(--accent); color:var(--accent-ink); }
 
-.setup-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.setup-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start; }
 @media (max-width:720px){ .setup-grid{ grid-template-columns:1fr; } .mode-grid{ grid-template-columns:1fr; } }
 
 .type-chip{
