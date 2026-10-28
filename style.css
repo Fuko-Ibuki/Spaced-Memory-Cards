@@ -1053,9 +1053,9 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   border-radius:var(--radius-pill); padding:8px 12px; font-size:12.5px; font-weight:800; cursor:pointer;
 }
 .chapter-dropdown summary::-webkit-details-marker{ display:none; }
-.chapter-dropdown summary .chapter-label{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.chapter-dropdown summary span:first-child{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .chapter-dropdown[open] summary{ border-color:var(--accent); color:var(--text); background:var(--accent-glow); }
-.chapter-dropdown .chev{ margin-left:0; margin-right:8px; font-size:14px; color:var(--text-faint); transform:rotate(90deg); }
+.chapter-dropdown .chev{ margin-left:auto; margin-right:0; font-size:14px; color:var(--text-faint); transform:rotate(90deg); }
 .chapter-dropdown[open] .chev{ transform:none; }
 .chapter-clear-btn{
   border:1px solid var(--border); background:var(--bg-soft); color:var(--text-soft);
