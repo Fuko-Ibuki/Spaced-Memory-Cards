@@ -3505,7 +3505,7 @@ function dataManagementHtml(){
         <button class="btn btn-danger" id="clear-history-btn" type="button">清空数据</button>
         <input type="file" id="import-data-input" class="hidden-input" accept="application/json,.json">
       </div>
-      <p class="muted" style="font-size:11.5px;margin:10px 0 0;">导入/导出包含学习设置、错题本、复习本、学习记录、逐题统计与复习进度；导入时自动合并已有数据。清空数据会删除应用缓存、导入题库登记并恢复默认设置。</p>
+      <p class="muted" style="font-size:11.5px;margin:10px 0 0;">导入/导出包含学习设置、错题本、复习本、学习记录、逐题统计与复习进度；导入时自动合并已有数据。清空数据只删除学习数据，不影响应用设置、当前题库与缓存。</p>
     </div>`;
 }
 function bindDataManagement(container){
@@ -3514,12 +3514,34 @@ function bindDataManagement(container){
   if (importBtn && input) importBtn.onclick = ()=>input.click();
   if (input) input.onchange = (e)=>{ if (e.target.files[0]) importData(e.target.files[0]); e.target.value=''; };
   if (clearBtn) clearBtn.onclick = ()=>{
-    confirmModal('清空全部数据？', '此操作会删除设置、导入题库记录、连续学习天数、历史轮次、复习本、错题本、逐题统计与复习进度，并恢复默认设置；且无法恢复。', async ()=>{
+    confirmModal('清空数据？', '此操作会删除连续学习天数、历史轮次、复习本、错题本、逐题统计与复习进度，不影响应用设置、当前题库与缓存；且无法恢复。', async ()=>{
       await clearKnownSrs();
-      App.settings = defaultSettings(); App.progress = defaultProgress(); App.srs = {}; App.session = null;
-      await saveSettings(); await saveProgress(); await clearActiveSessionDraft();
-      await Store.remove(STORAGE_KEYS.lastDeck); await Store.remove(STORAGE_KEYS.deckRegistry);
-      App.localDecks = []; App.deck = null; App.recordDetailId = null; applyTheme(); toast('已清空数据', {icon:'🗑️'}); render();
+      App.progress = defaultProgress(); App.srs = {}; App.session = null;
+      await saveProgress();
+      await clearActiveSessionDraft();
+      App.recordDetailId = null;
+      toast('已清空数据', {icon:'🗑️'}); render();
+    }, { danger:true, confirmLabel:'清空' });
+  };
+}
+function cacheManagementHtml(){
+  return `<div class="section-title" style="margin-top:26px;">缓存管理<span class="line"></span></div>
+    <div class="panel">
+      <p class="muted" style="font-size:12.5px;margin:0 0 12px;">清空上次打开的题库与未完成答题草稿，不影响学习记录、复习本、错题本和应用设置。</p>
+      <div class="settings-actions">
+        <button class="btn btn-danger" id="clear-cache-btn" type="button">清空缓存</button>
+      </div>
+    </div>`;
+}
+function bindCacheManagement(container){
+  const clearBtn=container.querySelector('#clear-cache-btn');
+  if (clearBtn) clearBtn.onclick = ()=>{
+    confirmModal('清空缓存？', '此操作会删除上次打开的题库与未完成答题草稿，不会影响学习记录、复习本、错题本或应用设置。', async ()=>{
+      await Store.remove(STORAGE_KEYS.lastDeck);
+      await clearActiveSessionDraft();
+      App.session = null;
+      App.recordDetailId = null;
+      toast('已清空缓存', {icon:'🧹'}); render();
     }, { danger:true, confirmLabel:'清空' });
   };
 }
@@ -3535,8 +3557,8 @@ function renderNotesView(container){
 }
 function renderSettingsView(container){
   container.className='view-pad fade-in';
-  container.innerHTML=`<div class="container"><div class="section-title">设置<span class="line"></span></div><div class="panel settings-summary"><h3>应用设置</h3><p class="muted">主题可通过顶部右侧按钮切换；学习参数在学习页面中调整。</p></div>${dataManagementHtml()}</div>`;
-  bindDataManagement(container);
+  container.innerHTML=`<div class="container"><div class="section-title">设置<span class="line"></span></div><div class="panel settings-summary"><h3>应用设置</h3><p class="muted">主题可通过顶部右侧按钮切换；学习参数在学习页面中调整。</p></div>${cacheManagementHtml()}</div>`;
+  bindCacheManagement(container);
 }
 
 /* ============================================================
@@ -3583,6 +3605,7 @@ function renderStatsView(container){
         <thead><tr><th>时间</th><th>学习内容</th><th>得分</th><th>正确率</th><th>用时</th><th>操作</th></tr></thead>
         <tbody>${historyRows}</tbody></table></div>`
         : `<div class="empty-state"><span class="e-icon">📭</span><p>还没有任何学习记录，快去开始第一轮学习吧！</p></div>`}
+      ${dataManagementHtml()}
     </div>
   `;
   container.querySelectorAll('[data-session-id]').forEach(row=>{
@@ -3604,6 +3627,7 @@ function renderStatsView(container){
     const id = btn.dataset.deleteSession;
     confirmModal('删除这条学习记录？', '此操作会从统计中移除该轮学习记录，并重新计算总览数据。', ()=>deleteSessionRecord(id), { danger:true, confirmLabel:'删除' });
   }));
+  bindDataManagement(container);
 }
 function sanitizeProgressForExport(progress){
   const out = Utils.deepClone(progress || defaultProgress());
