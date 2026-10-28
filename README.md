@@ -188,6 +188,9 @@ LICENSE                    MIT 许可证
 
 ## 本地字体与公式排版
 
-字体文件仅用于本地开发，不纳入 Git 跟踪或发布包；`font/` 已加入 `.gitignore`，以避免授权风险并减小 Cloudflare 静态资源加载体积。保留字体文件时，UI 使用本地 SF Pro 与汉仪旗黑，正文使用 Minion 3 与方正新书宋，符号使用 SF Pro Symbol；Emoji 使用内嵌的 Apple Color Emoji WOFF。
+仓库只发布必要的字体资源：`fonts/minion3/` 提供 Minion 3 的 8 个常用字重与斜体文件；`fonts/punctuation/` 是从方正 FW 筑紫 A 老明朝整理出的中文标点子集（覆盖通用标点、CJK 标点、竖排标点、兼容标点及全角标点）。完整字体包仍放在本机 `font/` 目录，并由 `.gitignore` 排除，不参与提交。
+
+
+完整字体包仅用于本地开发，不纳入 Git 跟踪或发布包；仓库只保留上述必要的 Minion 3 与中文标点子集，以控制授权与资源体积。保留本地字体文件时，UI 使用本地 SF Pro 与汉仪旗黑，正文使用 Minion 3 与方正新书宋，符号使用 SF Pro Symbol；Emoji 使用内嵌的 Apple Color Emoji WOFF。
 
 公式继续由本地 KaTeX 渲染，以保证浏览器中的数学字形度量、上下标和伸缩符号正确；当公式渲染器不可用时，回退为 Minion Math。仓库中的 MathTime Professional 2 为 TeX Type-1 资源包，不能直接作为浏览器 Web Font 使用，因此不会覆盖 KaTeX 的度量字体。
