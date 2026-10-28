@@ -3518,7 +3518,6 @@ function bindDataManagement(container){
       await clearKnownSrs();
       App.progress = defaultProgress(); App.srs = {}; App.session = null;
       await saveProgress();
-      await clearActiveSessionDraft();
       App.recordDetailId = null;
       toast('已清空数据', {icon:'🗑️'}); render();
     }, { danger:true, confirmLabel:'清空' });
