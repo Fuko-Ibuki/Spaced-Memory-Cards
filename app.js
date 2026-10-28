@@ -1219,6 +1219,13 @@ function ensureSetupCollapse(){
 }
 function setMobileSetupCollapse(openKey){
   const state = ensureSetupCollapse();
+  if (openKey==='range' || openKey==='answer'){
+    const open = !!openKey;
+    state.range = open;
+    state.answer = open;
+    state.advanced = false;
+    return;
+  }
   ['range','answer','advanced'].forEach(key=>{ state[key] = key===openKey; });
 }
 function getEffectiveByType(deck, s){
@@ -1368,6 +1375,11 @@ function renderSetupView(container){
   const startButtonText = previewCount>0 ? `开始学习 (${previewCount}题) <span class="arrow-symbol" aria-hidden="true">→</span>` : '没有可学习题目';
   const mobileLayout = window.matchMedia && window.matchMedia('(max-width:640px)').matches;
   const collapseState = ensureSetupCollapse();
+  if (collapseState.range !== collapseState.answer){
+    const pairOpen = !!(collapseState.range || collapseState.answer);
+    collapseState.range = pairOpen;
+    collapseState.answer = pairOpen;
+  }
   const activeMobileCollapse = mobileLayout ? ['range','answer','advanced'].find(key=>collapseState[key]) : null;
   const rangeOpen = !!collapseState.range;
   const answerOpen = !!collapseState.answer;
@@ -1483,9 +1495,20 @@ function renderSetupView(container){
       btn.setAttribute('aria-expanded', open ? 'true' : 'false');
       const key = panel.dataset.collapseKey;
       if (key){
-        if (mobileLayout){
-          setMobileSetupCollapse(open ? key : null);
-          render();
+        if (key==='range' || key==='answer'){
+          if (mobileLayout){
+            setMobileSetupCollapse(open ? key : null);
+            render();
+            return;
+          }
+          const state = ensureSetupCollapse();
+          state.range = open;
+          state.answer = open;
+          container.querySelectorAll('.setup-panel[data-collapse-key="range"], .setup-panel[data-collapse-key="answer"]').forEach(pairPanel=>{
+            pairPanel.classList.toggle('open', open);
+            const pairHead = pairPanel.querySelector('.mobile-collapse-head');
+            if (pairHead) pairHead.setAttribute('aria-expanded', open ? 'true' : 'false');
+          });
           return;
         }
         ensureSetupCollapse()[key] = open;
