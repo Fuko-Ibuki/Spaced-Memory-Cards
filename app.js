@@ -795,6 +795,8 @@ function renderViewContent(viewName, view){
   else if (viewName==='grading') renderGradingView(view);
   else if (viewName==='report') renderReportView(view);
   else if (viewName==='stats') renderStatsView(view);
+  else if (viewName==='notes') renderNotesView(view);
+  else if (viewName==='settings') renderSettingsView(view);
   else if (viewName==='record') renderRecordDetailView(view);
   else if (viewName==='browse') renderBrowseView(view);
   else renderLoadView(view);
@@ -813,13 +815,17 @@ function renderNav(){
     <div class="nav-spacer"></div>
     <div class="streak-pill ${streak>0?'':'streak-placeholder'}" id="streak-pill" aria-hidden="${streak>0?'false':'true'}"><span class="flame">🔥</span><span class="streak-num">${Math.max(1, streak)}</span><span class="streak-unit">天</span></div>
     <div class="nav-tabs">
+      <button type="button" class="nav-tab ${App.view==='notes'?'active':''}" data-nav="notes">笔记</button>
       <button type="button" class="nav-tab ${studyActive?'active':''}" data-nav="study">学习</button>
       <button type="button" class="nav-tab ${['stats','record'].includes(App.view)?'active':''}" data-nav="stats">统计</button>
+      <button type="button" class="nav-tab ${App.view==='settings'?'active':''}" data-nav="settings">设置</button>
     </div>
     <button class="icon-btn" id="theme-toggle" type="button" title="${themeTitle()}">${themeIcon()}</button>
   `;
+  nav.querySelector('[data-nav="notes"]').onclick = ()=>{ App.view='notes'; render(); };
   nav.querySelector('[data-nav="study"]').onclick = goStudyHome;
   nav.querySelector('[data-nav="stats"]').onclick = ()=>{ App.view='stats'; render(); };
+  nav.querySelector('[data-nav="settings"]').onclick = ()=>{ App.view='settings'; render(); };
   document.getElementById('theme-toggle').onclick = toggleTheme;
 }
 function goStudyHome(){
@@ -3489,6 +3495,50 @@ function renderRecordDetailView(container){
   setupBrowseScrollSpy(container, 'rq');
 }
 
+function dataManagementHtml(){
+  return `<div class="section-title" style="margin-top:26px;">数据管理<span class="line"></span></div>
+    <div class="panel">
+      <p class="muted" style="font-size:12.5px;margin:0 0 12px;">当前存储方式：${Store.backend()==='cloud'?'Claude 云端会话存储（随本次对话保存）':'本机浏览器本地存储（保存在这台设备上，下次打开同一文件仍可读取）'}</p>
+      <div class="settings-actions">
+        <button class="btn btn-secondary" id="import-data-btn" type="button">导入数据</button>
+        <button class="btn btn-secondary" id="export-data-btn" type="button">导出数据</button>
+        <button class="btn btn-danger" id="clear-history-btn" type="button">清空数据</button>
+        <input type="file" id="import-data-input" class="hidden-input" accept="application/json,.json">
+      </div>
+      <p class="muted" style="font-size:11.5px;margin:10px 0 0;">导入/导出包含学习设置、错题本、复习本、学习记录、逐题统计与复习进度；导入时自动合并已有数据。清空数据会删除应用缓存、导入题库登记并恢复默认设置。</p>
+    </div>`;
+}
+function bindDataManagement(container){
+  const exportBtn=container.querySelector('#export-data-btn'), importBtn=container.querySelector('#import-data-btn'), input=container.querySelector('#import-data-input'), clearBtn=container.querySelector('#clear-history-btn');
+  if (exportBtn) exportBtn.onclick = exportAllData;
+  if (importBtn && input) importBtn.onclick = ()=>input.click();
+  if (input) input.onchange = (e)=>{ if (e.target.files[0]) importData(e.target.files[0]); e.target.value=''; };
+  if (clearBtn) clearBtn.onclick = ()=>{
+    confirmModal('清空全部数据？', '此操作会删除设置、导入题库记录、连续学习天数、历史轮次、复习本、错题本、逐题统计与复习进度，并恢复默认设置；且无法恢复。', async ()=>{
+      await clearKnownSrs();
+      App.settings = defaultSettings(); App.progress = defaultProgress(); App.srs = {}; App.session = null;
+      await saveSettings(); await saveProgress(); await clearActiveSessionDraft();
+      await Store.remove(STORAGE_KEYS.lastDeck); await Store.remove(STORAGE_KEYS.deckRegistry);
+      App.localDecks = []; App.deck = null; App.recordDetailId = null; applyTheme(); toast('已清空数据', {icon:'🗑️'}); render();
+    }, { danger:true, confirmLabel:'清空' });
+  };
+}
+function renderNotesView(container){
+  const deck=App.deck, review=deck?getDeckUidList('review',deck.id):[], wrong=deck?getDeckUidList('wrong',deck.id):[];
+  const questionMap=new Map((deck?.questions||[]).map(q=>[q.uid,q]));
+  const section=(kind,title,desc,uids)=>{
+    const items=uids.map(uid=>{ const q=questionMap.get(uid); if(!q) return ''; return `<div class="note-item"><div class="note-type">${Utils.escapeHtml(QuestionTypes[q.type]?.label||'题目')}</div><div class="note-question">${Utils.escapeHtml(q.question)}</div></div>`; }).join('');
+    return `<div class="panel notes-panel"><div class="notes-panel-head"><div><h3>${title}</h3><p>${desc}</p></div><b>${uids.length}</b></div>${items||`<div class="empty-state"><span class="e-icon">${kind==='wrong'?'✓':'☆'}</span><p>${kind==='wrong'?'还没有错题记录':'还没有加入复习本的题目'}</p></div>`}</div>`;
+  };
+  container.className='view-pad fade-in';
+  container.innerHTML=`<div class="container"><div class="section-title">笔记<span class="line"></span></div><p class="muted notes-intro">${deck?`当前题库：${Utils.escapeHtml(deck.meta.title)}`:'加载题库后可查看错题本与复习本'}</p>${section('review','复习本','需要再次巩固的题目',review)}${section('wrong','错题本','答题过程中出现过错误的题目',wrong)}</div>`;
+}
+function renderSettingsView(container){
+  container.className='view-pad fade-in';
+  container.innerHTML=`<div class="container"><div class="section-title">设置<span class="line"></span></div><div class="panel settings-summary"><h3>应用设置</h3><p class="muted">主题可通过顶部右侧按钮切换；学习参数在学习页面中调整。</p></div>${dataManagementHtml()}</div>`;
+  bindDataManagement(container);
+}
+
 /* ============================================================
    §17. 视图：统计仪表盘
    ============================================================ */
@@ -3533,17 +3583,6 @@ function renderStatsView(container){
         <thead><tr><th>时间</th><th>学习内容</th><th>得分</th><th>正确率</th><th>用时</th><th>操作</th></tr></thead>
         <tbody>${historyRows}</tbody></table></div>`
         : `<div class="empty-state"><span class="e-icon">📭</span><p>还没有任何学习记录，快去开始第一轮学习吧！</p></div>`}
-      <div class="section-title" style="margin-top:26px;">数据管理<span class="line"></span></div>
-      <div class="panel">
-        <p class="muted" style="font-size:12.5px;margin:0 0 12px;">当前存储方式：${Store.backend()==='cloud'?'Claude 云端会话存储（随本次对话保存）':'本机浏览器本地存储（保存在这台设备上，下次打开同一文件仍可读取）'}</p>
-        <div class="settings-actions">
-          <button class="btn btn-secondary" id="import-data-btn" type="button">导入数据</button>
-          <button class="btn btn-secondary" id="export-data-btn" type="button">导出数据</button>
-          <button class="btn btn-danger" id="clear-history-btn" type="button">清空数据</button>
-          <input type="file" id="import-data-input" class="hidden-input" accept="application/json,.json">
-        </div>
-        <p class="muted" style="font-size:11.5px;margin:10px 0 0;">导入/导出包含学习设置、错题本、复习本、学习记录、逐题统计与复习进度；导入时自动合并已有数据。清空数据会删除应用缓存、导入题库登记并恢复默认设置。</p>
-      </div>
     </div>
   `;
   container.querySelectorAll('[data-session-id]').forEach(row=>{
@@ -3565,29 +3604,6 @@ function renderStatsView(container){
     const id = btn.dataset.deleteSession;
     confirmModal('删除这条学习记录？', '此操作会从统计中移除该轮学习记录，并重新计算总览数据。', ()=>deleteSessionRecord(id), { danger:true, confirmLabel:'删除' });
   }));
-  document.getElementById('export-data-btn').onclick = exportAllData;
-  document.getElementById('import-data-btn').onclick = ()=>document.getElementById('import-data-input').click();
-  document.getElementById('import-data-input').onchange = (e)=>{ if (e.target.files[0]) importData(e.target.files[0]); e.target.value=''; };
-  document.getElementById('clear-history-btn').onclick = ()=>{
-    confirmModal('清空全部数据？', '此操作会删除设置、导入题库记录、连续学习天数、历史轮次、复习本、错题本、逐题统计与复习进度，并恢复默认设置；且无法恢复。', async ()=>{
-      await clearKnownSrs();
-      App.settings = defaultSettings();
-      App.progress = defaultProgress();
-      App.srs = {};
-      App.session = null;
-      await saveSettings();
-      await saveProgress();
-      await clearActiveSessionDraft();
-      await Store.remove(STORAGE_KEYS.lastDeck);
-      await Store.remove(STORAGE_KEYS.deckRegistry);
-      App.localDecks = [];
-      App.deck = null;
-      App.recordDetailId = null;
-      applyTheme();
-      toast('已清空数据', {icon:'🗑️'});
-      render();
-    }, { danger:true, confirmLabel:'清空' });
-  };
 }
 function sanitizeProgressForExport(progress){
   const out = Utils.deepClone(progress || defaultProgress());
