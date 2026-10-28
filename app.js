@@ -3519,7 +3519,7 @@ function renderStatsView(container){
           <button class="btn btn-danger" id="clear-history-btn" type="button">清空数据</button>
           <input type="file" id="import-data-input" class="hidden-input" accept="application/json,.json">
         </div>
-        <p class="muted" style="font-size:11.5px;margin:10px 0 0;">导入/导出包含学习设置、错题本、复习本、学习记录、逐题统计与复习进度；导入时自动合并已有数据。</p>
+        <p class="muted" style="font-size:11.5px;margin:10px 0 0;">导入/导出包含学习设置、错题本、复习本、学习记录、逐题统计与复习进度；导入时自动合并已有数据。清空数据会删除应用缓存、导入题库登记并恢复默认设置。</p>
       </div>
     </div>
   `;
@@ -3546,7 +3546,7 @@ function renderStatsView(container){
   document.getElementById('import-data-btn').onclick = ()=>document.getElementById('import-data-input').click();
   document.getElementById('import-data-input').onchange = (e)=>{ if (e.target.files[0]) importData(e.target.files[0]); e.target.value=''; };
   document.getElementById('clear-history-btn').onclick = ()=>{
-    confirmModal('清空全部数据？', '此操作会删除设置、连续学习天数、历史轮次、复习本、错题本、逐题统计与复习进度，且无法恢复。', async ()=>{
+    confirmModal('清空全部数据？', '此操作会删除设置、导入题库记录、连续学习天数、历史轮次、复习本、错题本、逐题统计与复习进度，并恢复默认设置；且无法恢复。', async ()=>{
       await clearKnownSrs();
       App.settings = defaultSettings();
       App.progress = defaultProgress();
@@ -3556,6 +3556,10 @@ function renderStatsView(container){
       await saveProgress();
       await clearActiveSessionDraft();
       await Store.remove(STORAGE_KEYS.lastDeck);
+      await Store.remove(STORAGE_KEYS.deckRegistry);
+      App.localDecks = [];
+      App.deck = null;
+      App.recordDetailId = null;
       applyTheme();
       toast('已清空数据', {icon:'🗑️'});
       render();
