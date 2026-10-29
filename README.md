@@ -215,6 +215,54 @@ module.exports = {
 - 不要在块内滥用加粗或 Emoji，避免整段强调，保持内容易读。
 - 不要写脚本、样式依赖或重复复制同一知识点；重复导入时应用会自动跳过相同内容。
 
+## UI 设计与组件规范
+
+### SVG 配图
+
+笔记可以使用 SVG 配图，推荐使用外部或相对路径资源：
+
+```html
+<img src="assets/diagram.svg" alt="函数变化示意图">
+```
+
+SVG 应提供清晰的 `alt` 文本；导入器保留安全图片资源，禁止脚本化 SVG、事件处理器和不安全 URL。复杂交互图建议导出为静态 SVG，并将交互说明写在旁边的正文中。
+
+### 可交互组件
+
+交互组件应使用明确的语义 HTML 和按钮状态：
+
+```html
+<div class="ui-component" data-component="toggle" data-label="显示推导">
+  <button type="button" aria-expanded="false">显示推导</button>
+  <div hidden>这里是可展开的推导内容。</div>
+</div>
+```
+
+组件设计要求：
+
+- 使用 `button`、`details/summary`、`input` 等语义控件，不用普通文本模拟按钮。
+- 为按钮提供 `aria-label` 或可见文本，为展开控件同步 `aria-expanded` 和 `hidden`。
+- 状态使用 `data-*` 属性表达，避免把状态写死在颜色或图标中。
+- 交互区域应保留键盘焦点样式，并支持 Enter、Space 操作。
+- 导入笔记中的脚本、内联事件和危险属性会被过滤；需要交互时应由本地应用组件绑定行为。
+
+### UI Token
+
+组件应优先使用现有 CSS token，不直接写死颜色、圆角和动画时长：
+
+| 类别 | Token | 用途 |
+| --- | --- | --- |
+| 背景 | `--bg`、`--bg-elevated`、`--bg-soft`、`--bg-hover` | 页面、卡片、次级背景和悬停状态 |
+| 文字 | `--text`、`--text-soft`、`--text-faint` | 主文本、次级文本和辅助文本 |
+| 强调色 | `--accent`、`--accent-strong`、`--accent-shade`、`--accent-glow` | 主按钮、链接、焦点和高亮 |
+| 边框 | `--border`、`--border-soft` | 容器边框和分隔线 |
+| 圆角 | `--radius-sm`、`--radius-md`、`--radius-lg`、`--radius-pill` | 控件、卡片和胶囊标签 |
+| 阴影 | `--shadow-card`、`--shadow-pop`、`--shadow-glow` | 卡片、弹出层和强调状态 |
+| 动画 | `--dur-fast`、`--dur`、`--dur-slow`、`--ease` | 状态切换、展开和页面过渡 |
+| 字体 | `--font-ui`、`--font-content`、`--font-body`、`--font-symbol`、`--font-math` | UI、正文、输入、图标和公式 |
+
+深色和浅色主题会提供同名 token 的不同值，组件不要绕过 token 单独指定主题颜色。
+
 ## 内置题库
 
 内置题库应逐步迁移为 `.json` 并采用 v2.1。缺失的可选同目录题库不会影响应用启动。

@@ -1,2 +1,2 @@
-Changed branch: README refresh.
-Result: documented imported-note LaTeX delimiters, local KaTeX rendering with inherited block typography, drag-over presentation, duplicate skipping, and merge behavior.
+Changed branch: UI design documentation.
+Result: README now documents SVG image guidance, semantic interactive component conventions, accessibility state attributes, and the existing visual design token system.
