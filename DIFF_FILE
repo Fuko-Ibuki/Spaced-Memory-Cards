@@ -1,0 +1,363 @@
+--- style.css / README.md / fonts/
++++ working tree
+@@ 方正新书宋
++ Replaced the used-character subset with fonts/fz-new-book/FZNewBook-Full.woff2.
++ Full glyph set is preserved (28,555 glyphs / 28,522 cmap entries) and WOFF2-compressed from font/方正新书宋_GB18030.TTF (14,140,324 -> 4,803,824 bytes).
++ Removed the obsolete FZNewBook-Used.woff2 asset.
++ CSS now loads the optimized full-glyph resource.
+@@ 汉仪旗黑
++ Kept one used-character WOFF2 file per weight (300/400/500/600/700/800/900).
++ Character ranges are not split into additional files; CSS maps each weight directly.
+@@ documentation
++ README describes the full FZ New Book resource and the unsplit-per-weight HY QiHei resources.
+@@ setup panels
++ Added align-items:start to .setup-grid so the two desktop panels keep independent heights.
++ Expanding 题目范围 no longer stretches 答题设置; expanding 答题设置 no longer stretches 题目范围.
++ Mobile one-column layout remains unchanged.
+@@ chevron glyphs
++ Added a global .chev font rule using --font-symbol (SMC SF Pro) so all ▸ controls use SF-Pro consistently.
++ The published SF Pro subset contains U+25B8 (▸).
+@@ setup panel accordion
++ 题目范围与答题设置改为联动状态：展开其一即同时展开两者，收起其一即同时收起两者。
++ 桌面端同步两个面板 DOM 与 aria-expanded；移动端同步 collapse state，并保留高级设置单独折叠。
++ 渲染时自动修正历史不一致状态。
+@@ chevron sizing and panel frames
++ Increased the main ▸ controls to 20px, report/dropdown chevrons to 16px, while retaining the SF-Pro symbol font.
++ Restored .setup-grid align-items:stretch so the two expanded frames share the same bottom edge.
+@@ chevron visual scale
++ Added `display:inline-block` and `transform:scale(1.8)` to SF-Pro chevrons so the triangle's visual bounds are no longer undersized.
++ Open-state rotations preserve the same scale (`rotate(90deg) scale(1.8)`).
+@@ chevron glyph source
++ Replaced the four visible `▸` characters with the supplied SF private-use glyph `􀆍` (U+10018D).
++ Regenerated `fonts/sf-pro/SF-Pro-Used.woff2` from the local SF-Pro source, preserving the prior subset and adding U+10018D.
++ Existing CSS SF-Pro token and 1.8x visual scale remain active.
+@@ supplied glyph orientation correction
++ The supplied U+10018D glyph is an upward chevron; CSS now rotates the collapsed state 90° to point right.
++ Expanded states rotate to 180° to point down.
++ Removed the prior 1.8× scale that made the glyph oversized; native 20px/16px sizes remain.
+@@ chevron weight
++ Raised `.chev` to font-weight 600 with a subtle 0.2px currentColor stroke to match the SF-Pro UI icon weight without returning to the oversized appearance.
+@@ chevron font size
++ Reduced primary chevrons from 20px to 16px.
++ Reduced report and chapter-dropdown chevrons from 16px to 14px.
++ Orientation and SF-Pro weight/stroke remain unchanged.
+@@ top navigation and views
++ Added nav tabs in order: 笔记、学习、统计、设置.
++ Added 笔记 view showing current-deck 复习本/错题本 entries.
++ Added 设置 view and moved 数据管理 (import/export/clear) from 统计 into 设置.
++ Stats now ends after学习记录; data controls are bound only on 设置.
+@@ chapter dropdown chevron
++ The chapter filter uses the literal SF-Pro `▾` glyph, so its closed state now explicitly disables the global 90° rotation.
++ Closed points down; open state keeps the existing 180° rotation and points up.
+@@ chapter dropdown final direction
++ Default chapter filter `▾` now rotates 90° to point left.
++ Opening the dropdown clears the rotation so the indicator points down.
+@@ chevron vertical alignment
++ Added `position:relative; top:-.25em` to the rotated SF-Pro chevrons so their visual center aligns with adjacent text after rotation.
+@@ chapter dropdown layout
++ Moved the chapter chevron before the label so the control reads `▸/▾ 全部章节` instead of placing the icon at the far right.
++ Added a dedicated `.chapter-label` selector for truncation and preserved closed-left/open-down orientation.
+@@ chapter dropdown correction
++ Reverted the incorrect left-positioned chapter layout.
++ Restored the label on the left and chevron at the right edge, while keeping closed-left/open-down direction.
+@@ chapter dropdown restore
++ Restored label-left / chevron-right layout.
++ Closed `▾` rotates -90° to point right; open state clears rotation to point down.
++ Overrides the global vertical offset with `top:0` for text-centered alignment.
+
+@@ chevron centering and text-size matching
++ Changed the shared `.chev` vertical offset from `top:-.25em` to `top:0` so the glyph is vertically centered before and after rotation.
++ Changed setup, mobile setup, report, and chapter chevron sizes to `font-size:inherit`, matching adjacent text while preserving right-side layout and direction.
+
+@@ restore data management and separate cache clearing
++ Moved the existing data-management block and bindings back into the statistics view.
++ Changed “清空数据” to reset learning data/SRS only while preserving settings, current deck, and cache.
++ Added a settings-page “清空缓存” action that removes the last-deck and active-session cache without touching learning data or settings.
+
+@@ data-only cache preservation correction
++ Removed active-session cache deletion from “清空数据”; only the dedicated settings-page “清空缓存” action clears that draft.
+
+@@ cache management restores default settings
++ Updated “清空缓存” to reset `App.settings` with `defaultSettings()`, persist it, and reapply the default theme while preserving learning data.
++ Updated the cache-management description, confirmation, and toast to state that application settings are restored to defaults.
+
+@@ correct Song/Hei font mapping and coverage
++ Declared the static full FZ New Book webfont at weight 400 so browser matching uses the real Song face and synthesizes only requested bold/italic content styles.
++ Extended each published HY QiHei used-character subset with the three current UI glyphs that were missing (`草`, `稿`, `笔`), preventing fallback fonts in cache/settings text.
+
+@@ formula rendering and timed quiz
++ Switched the formula token order to the bundled SMC Minion Math face and added a late KaTeX override for all visible formula spans, delimiters, operators, and stretchable sizing classes.
++ Expanded the built-in demo formulas with square roots, nested fractions, large \left(\right) delimiters, norm bars, matrices, sums, and cases.
++ Added a default-off 限时模式 setting with 15 / 20 / 45 / 60 minute presets and a bounded custom-minute input in 答题设置.
++ Timed sessions persist their limit, show a remaining clock, pause the clock with the quiz, hide the left timer while paused, and auto-finish every unanswered/pending card at zero.
++ Fill-in-the-blank preview now renders its rich `content` blocks, so demo formula blocks appear in the question view instead of being dropped.
+
+@@ timed secondary menu and timer states
++ Restyled the enabled time-limit submenu as a segmented preset pill plus a separate 自定义 pill matching the question-count control.
++ Disabled limit mode now removes the quiz timer entirely; enabled mode renders a countdown with a once-per-second blinking colon.
++ Paused copy now branches by mode: no-limit sessions show “已暂停，页面暂不可操作”; timed sessions show “计时已暂停，页面暂不可操作”.
+
+@@ restore formula typography
++ Removed the Minion Math force-override from rendered KaTeX spans and restored KaTeX_Main / KaTeX_Math / KaTeX_Size font selection, preserving handwritten italic variables, proper symbols, and native superscript/subscript sizing.
+
+@@ timed mode preset options
++ Changed time-limit presets to 15分钟, 30分钟, 45分钟 plus a separate 自定义 control matching the question-count selector.
++ Custom selection now seeds 60 minutes so the custom numeric input appears instead of colliding with a preset.
+
+@@ timed mode display refinement
++ Kept timeLimitEnabled default false; fresh settings open with timed mode disabled.
++ Preset labels now show 15, 30, 45 with a single 分钟 unit outside the segmented control.
++ Clicking 自定义 replaces that button inline with the numeric minute field; no second custom row is rendered.
+
+@@ custom duration control aligned with question quantity
++ Replaced the timed-mode custom button/inline-only state with the same num-input control used by question quantity, including the 自定义 placeholder.
++ Preset values remain 15, 30, 45; the shared 分钟 unit remains outside the segmented preset control.
+
+@@ timed duration unit order
++ Moved the 分钟 unit after the custom duration input so the unit is the final element in the selector row.
+
+@@ timed submenu spacing
++ Added 10px top padding between the timed-mode secondary menu and the preceding divider while preserving the existing bottom spacing.
+
+@@ timed mode preset options
++ Added 60分钟 to the timed-mode segmented presets; the custom input remains available for other durations.
+
+@@ timed custom duration range
++ Set the custom timed-mode range to 1–240 minutes, cap values above 240 silently during input, and clamp persisted/session values without a popup.
++ Added the secondary-menu note “可自定义 1～240 分钟”.
+
+@@ mode-specific learning settings
++ Added independent settings profiles for flashcard, learn, and test modes.
++ Question range fields, answer settings, and advanced point values are captured per mode and restored on mode switch; legacy flat settings migrate into all profiles.
++ Config imports now preserve nested mode profiles.
+
+@@ mode activation paths
++ Centralized mode activation so wrong-book test launches also load the test-mode profile before applying its temporary range.
+
+@@ typography preferences and standalone navigation
++ Added persisted `uiFontSize` (`small` / `default` / `large`) and `uiFontFamily` (`default` / `serif` / `sans`) settings with normalization and migration-safe defaults.
++ Added settings-page slider-style segmented controls for interface size and font family; changes apply immediately and persist through the existing settings store.
++ Added root typography attributes and CSS tokens for small/default/large UI scales and serif/sans-serif interface stacks.
++ Split 笔记 and 设置 into standalone navigation controls; 学习/统计 remain in the grouped nav-tabs control.
++ Kept the theme control beside the standalone 设置 button and updated mobile grid placement for the new navigation structure.
+
+@@ navigation button bottom color block
++ Added a 4px `var(--accent-shade)` bottom block to active standalone and grouped navigation buttons.
++ Added a pressed state that reduces the block to 1px and shifts the button down for tactile feedback.
+
+@@ settings/theme navigation spacing
++ Increased the gap between the standalone 设置 button and the dark-mode control from 6px to 12px on desktop.
++ Set the compact mobile gap to 8px so the controls remain visually separated without crowding the header.
+
+@@ undo navigation bottom color block
+- Removed the active navigation button 4px accent-shade bottom block and pressed-state depth added in the previous step.
++ Preserved standalone navigation grouping and the current 12px desktop / 8px mobile 设置-to-dark-mode spacing.
+
+@@ active navigation text-bottom mark
++ Added a narrow 3px accent-shade block directly beneath the active navigation label, matching the requested “统计” text-bottom treatment.
++ Kept the full-button bottom depth removed; the mark is limited to the active label area and does not change button layout.
+
+@@ nav-tabs pill bottom block correction
+- Removed the label-level bottom indicator interpretation.
++ Added the bottom color block to the actual `div.nav-tabs` pill via `box-shadow: 0 4px 0 0 var(--border)`.
++ Kept the standalone 设置-to-dark-mode spacing and active button styling unchanged.
+
+@@ standalone notes/settings pill bottom layer
++ Added a single 4px border-colored bottom layer to the standalone 笔记 and 设置 pill buttons.
++ Active standalone buttons use the accent shade for the same single-layer depth; the grouped `div.nav-tabs` pill keeps its border-colored bottom layer.
+
+@@ single-layer navigation correction
+- Removed the standalone 笔记/设置 inactive pill background and border layer.
++ Inactive 笔记 and 设置 are now flat text controls; only the grouped `div.nav-tabs` retains the single outer pill layer.
++ Active standalone controls still use one green pill without a bottom shadow.
+
+@@ standalone navigation pill shell consistency
++ Restored the same single-layer pill shell (background + border, no shadow) to standalone 笔记 and 设置 buttons.
++ This makes the standalone buttons visually consistent with the grouped 学习/统计 `div.nav-tabs` shell while preserving the active green state.
+
+@@ unified navigation pill shells
++ Moved 设置 into its own `.nav-standalone-settings` shell so 笔记, 学习/统计, and 设置 each expose one matching outer pill.
++ Applied the outer shell to `.nav-standalone` and kept `.nav-standalone-btn` transparent; active buttons remain a single green inner pill.
++ Kept the theme button outside the 设置 shell with the existing 12px desktop / 8px mobile gap.
+
+@@ mobile navigation overlap fix
++ Added a mobile no-streak override that keeps `div.nav-tabs` in normal flex flow instead of absolute centering over the notes shell.
++ Added a shared mobile flex row for both streak/no-streak states, with fixed-size shells and an auto margin before the settings/theme group.
++ This prevents the 笔记 shell from being covered by the 学习/统计 shell while preserving unified spacing.
+@@ global typography and Aa preview
++ Renamed the settings panel to 全局字体 and changed slider accessibility labels to 全局字号/全局字体.
++ Added --font-global and family overrides so selecting 衬线 or 无衬线 applies to body, controls, authored question/answer content, display text, inputs, and numeric labels together.
++ Added --font-size-sample; the Aa preview uses the selected global family and responds to 小/默认/大 (18px/22px/26px).
++ Formula rendering keeps the dedicated --font-math stack so mathematical glyph metrics remain independent of prose family selection.
+@@ mobile navigation primary group
++ Wrapped 笔记、学习/统计、设置 in .nav-primary-group and kept the theme control outside that group.
++ On mobile, the four destinations use one centered flex group with a fixed 16px gap; the group no longer expands through margin-left:auto or overlaps the brand/theme controls.
+@@ permanent brand serif and sans UI typography
++ Added fixed --font-serif and --font-sans tokens.
++ Spaced Memory Cards brand now always uses the serif stack; body, headings, buttons, and inputs always use the sans stack.
++ Font-style selection still switches authored content and Aa preview: default/sans stay sans, serif stays serif, without changing the brand or sans UI.
+@@ restore global family switching with self-identifying font-style options
++ Restored body, controls, inputs, and headings to the selected --font-global/--font-ui family so selecting 衬线 changes the application globally.
++ Added per-option font-family rules: 默认 and 无衬线 labels always use --font-sans; 衬线 label always uses --font-serif.
++ Kept the Spaced Memory Cards brand permanently on --font-serif.
+@@ default typography split: sans UI and serif question content
++ Restored the default profile content stack to --font-serif while leaving --font-global/--font-ui on --font-sans.
++ Default mode now renders UI in sans-serif and question/answer/browse content in serif; serif mode remains globally serif and sans mode remains globally sans.
+@@ clear notes page placeholders
++ Simplified renderNotesView to retain only the 笔记 section title; removed the deck hint, review/wrong panels, counts, and empty-state messages for the interim notes-page reset.
+@@ notes page title divider width
++ Kept the cleared notes page title and added a dedicated wide `.notes-page` container so the section divider extends across the page as shown.
+@@ fully blank notes view
++ Removed the remaining 笔记 title and divider; renderNotesView now clears the view container completely.
+@@ mobile streak and primary-navigation overlap
++ Kept the mobile primary navigation in normal flex flow when a streak is present, reserving space after the brand/streak before the notes-study-statistics-settings group.
++ Removed the mobile absolute centering override for `.nav-primary-group`; reduced mobile tab padding while preserving the fixed group gap.
+
+================ HTML 笔记包导入与本地 UI（2026-10-28）================
+Changed branch/field: `app.js` 的结构化 HTML 笔记包解析、持久化与笔记视图；`style.css` 的本地笔记 UI。
++ Added `.html`/`.htm` support to the existing load dropzone and a dedicated 笔记 dropzone.
++ Added DOMParser-based extraction for `main h1`, `section.sec`, `article.kp`, `.md`, and `.src`.
++ Sanitized imported fragments by dropping scripts, styles, forms, event-like attributes, unsafe URLs, and package presentation; rendered content uses local tokens/fonts.
++ Persisted the imported package under `notesPackage`; cache clearing removes the imported notes package while data-management history remains unchanged.
++ Added local TOC, chapter cards, source metadata, re-import and clear-note actions with responsive layout.
+
+================ 笔记导入页对齐学习导入页（2026-10-28）================
+Changed branch/field: notes empty-state view and its importer controls.
++ Replaced the bespoke notes empty card with the same `center-col` + `dropzone` composition used by the learning import page.
++ Added matching icon, heading, primary file button, hidden file input, drag hint, and collapsible format guide.
++ Kept HTML-only parsing and the existing notes drop/import handlers.
+
+================ 笔记导入页取消跳入动画（2026-10-28）================
+Changed branch/field: `renderNotesView` container class.
++ Removed `fade-in` from the notes view so the import page and imported document render in place without a jump.
+
+================ 删除笔记页标题与分割线（2026-10-28）================
+Changed branch/field: imported notes page wrapper.
+- Removed the `section-title` containing “笔记” and its `.line` divider from the populated notes view.
++ Kept the import dropzone and the imported document title/content intact.
+
+================ 笔记标签与 Lucide bookmark 收藏按钮（2026-10-28）================
+Changed branch/field: imported note-card metadata and local note bookmarks.
++ Migrated the supplied HTML tag visual language: Lucide-style SVG icons, type-specific outline colors, and compact bordered labels for 概念/规则/方法/辨析/易错/例题/记忆项.
++ Added a right-side bookmark button to every imported note card using the Lucide `bookmark` path.
++ Persisted note bookmarks separately as `notesBookmarks`; buttons update in place and survive reloads.
++ Clearing notes or application cache removes note bookmarks.
+
+================ 笔记目录一级标题折叠（2026-10-28）================
+Changed branch/field: `renderNotesView` 的 notes TOC。
+- 一级目录改为按 HTML 的 `chapterTitle` 分组并始终显示章节标题。
+- 章节下的目录与文章链接改为原生 `details/summary`，默认折叠，可逐级展开。
+- 使用 SF Pro Symbol 字体的 `▸` 指示展开方向；移动端不再隐藏后续目录分组。
+
+================ 笔记目录固定高度（2026-10-28）================
+Changed branch/field: `style.css` 的 `.notes-toc`。
++ 目录容器固定为 360px 高度，内容超出时在目录内部滚动。
++ 移动端保持相同固定高度，避免目录展开推动页面布局变化。
+
+================ 笔记目录自适应高度（2026-10-28）================
+Changed branch/field: `style.css` 的 `.notes-toc`。
++ 内容未超出时目录高度跟随内容。
++ 内容超出时目录在可视区域内按比例占满，超出部分仅在目录内部滚动。
++ 保留目录内边距与章节间距，不改变其余布局间距。
+
+================ 笔记目录全部展开（2026-10-28）================
+Changed branch/field: notes TOC details state and interaction.
++ 所有一级章节与二级目录默认展开。
++ 取消目录折叠交互并隐藏展开箭头，目录始终显示完整层级。
+
+================ 刷新后记忆当前页面（2026-10-28）================
+Changed branch/field: navigation view persistence。
++ 笔记、统计、设置页面切换时保存当前页面。
++ 刷新初始化时恢复上次保存的页面；活动答题会话优先恢复答题流程。
+
+================ 删除笔记包标题栏（2026-10-28）================
+Changed branch/field: populated notes view header.
+- Removed the package title/source header and its re-import/clear action bar from the notes page.
++ Kept the directory and note content; absent action controls are now handled without errors.
+
+================ 笔记目录固定浮窗（2026-10-28）================
+Changed branch/field: `.notes-toc` positioning.
++ 目录改为固定浮窗，滚动页面时保持在视口顶部位置。
++ 桌面端为正文预留目录宽度；移动端恢复正常文档流布局。
+
+================ 修复固定目录正文宽度（2026-10-28）================
+Changed branch/field: `.notes-document` layout。
+- 移除固定目录下重复的左边距，避免网格列宽与额外偏移叠加。
++ 正文恢复正常可用宽度与换行布局。
+
+================ 修复正文布局（2026-10-28）================
+Changed branch/field: notes layout flow。
+- 固定目录不再占用网格列。
++ 笔记正文改为独立块并为固定目录预留 262px，恢复完整可用宽度。
++ 移动端继续清除正文左边距。
+
+================ 记忆整卷浏览页面（2026-10-28）================
+Changed branch/field: current view persistence and browse entry。
++ 将整卷浏览页 `browse` 纳入页面记忆。
++ 从统计等入口进入浏览页后，刷新仍恢复浏览整卷页面。
++ 页面状态统一在 render 时保存，避免遗漏非顶部导航入口。
+
+================ 学习记录页面刷新记忆（2026-10-28）================
+Changed branch/field: record detail view persistence。
++ 学习记录详情页与当前记录 ID 一并保存。
++ 刷新后恢复相同学习记录详情；记录不存在时不恢复该页面。
+
+================ 刷新取消页面入场跳动（2026-10-28）================
+Changed branch/field: initial render transition handling。
++ 刷新恢复的页面首次渲染时禁用 `fade-in` 入场动画与过渡。
++ 后续页面切换仍保留原有动画效果。
+
+================ 统一笔记目录文本样式（2026-10-28）================
+Changed branch/field: notes TOC typography。
++ 一级标题、二级标题与文章链接统一使用本地无衬线 UI 字体、颜色与字重体系。
++ 编号不再单独使用斜体数字字体，颜色随目录文本统一。
+
+================ 增大笔记目录字号（2026-10-28）================
+Changed branch/field: notes TOC text size。
++ 一级与二级目录标题调整为 15px。
++ 文章链接调整为 14px，保持统一字体与字重。
+
+================ 笔记目录标题点击跳转（2026-10-28）================
+Changed branch/field: notes TOC summary links。
++ 一级章节标题与二级目录标题均可点击。
++ 标题分别跳转到对应章节或该节第一条笔记。
++ 使用即时跳转，不再平滑滚动。
+
+================ 目录点击不收起（2026-10-28）================
+Changed branch/field: notes TOC summary click handling。
++ 点击目录标题只执行即时跳转。
++ 阻止 details 默认切换行为，目录不会被收起。
+
+================ 笔记目录悬停与当前位置高亮（2026-10-28）================
+Changed branch/field: notes TOC interaction state。
++ 目录标题与文章链接增加悬停背景框。
++ 使用 IntersectionObserver 根据当前滚动位置高亮对应目录项。
+
+================ 当前目录项保持悬停样式（2026-10-28）================
+Changed branch/field: notes TOC active styling。
++ 当前所在部分固定使用悬停背景框。
+- 移除当前项的强调色变更，文字与编号颜色保持原目录样式。
+
+================ 目录当前项保持可见（2026-10-28）================
+Changed branch/field: active TOC item visibility。
++ 当前单个目录项高亮后自动在目录滚动容器内定位。
++ 使用 `block: nearest`，不改变页面滚动位置并保留目录内部间距。
+
+================ 隐藏目录滚动条（2026-10-28）================
+Changed branch/field: notes TOC scrollbar presentation。
++ 目录仍可内部滚动与自动定位当前项，但不显示滚动条。
+
+================ 目录仅显示当前层级选框（2026-10-28）================
+Changed branch/field: notes TOC active boxes。
++ 仅当前文章、所属小节与所属一级标题显示固定选框。
++ 其他目录项保持无背景状态，悬停时仍显示临时悬停框。
+
+================ 修复嵌套目录选框右侧内缩（2026-10-28）================
+Changed branch/field: nested active notes TOC link width。
++ 当前文章链接补偿二级目录 12px 左侧缩进。
++ 选框右边距与目录顶部、底部框内边距保持一致，不影响上下文本间距。
+
+================ 统一目录框顶部与右侧内边距（2026-10-28）================
+Changed branch/field: `.notes-toc` container padding。
++ 目录容器由 `16px 14px` 改为四边 `14px`。
++ 当前选框顶部与右侧到目录框的间距一致。

@@ -16,7 +16,7 @@ const RATING_TO_PCT = { again:0, hard:50, good:80, easy:100 };
 const SELF_GRADE_FRACTION = { again:0, hard:1/3, good:2/3, easy:1 };
 const TIME_LIMIT_MAX_MINUTES = 240;
 const LEARNING_MODE_KEYS = ['flashcard','learn','test'];
-const STORAGE_KEYS = { settings:'settings', progress:'progress', lastDeck:'lastDeck', deckRegistry:'deckRegistry', activeSession:'activeSession' };
+const STORAGE_KEYS = { settings:'settings', progress:'progress', lastDeck:'lastDeck', deckRegistry:'deckRegistry', activeSession:'activeSession', notesPackage:'notesPackage', notesBookmarks:'notesBookmarks', currentView:'currentView', recordDetailId:'recordDetailId' };
 const LOCAL_DECK_FILES = [
   'XiThoughtQuiz.js',
   'AutoMechanicsQuiz.js',
@@ -324,6 +324,119 @@ function parseDeckFile(text, filename){
   throw new Error('无法识别该文件的数据格式，已尝试 JSON / UMD模块 / 裸对象三种方式均失败。\n\n'+errors.join('\n')+'\n\n请确认文件至少包含 fillInTheBlank / singleChoice / trueFalse / shortAnswer / essay 中的一种或多种；多选题可使用 multipleChoice。');
 }
 
+/*
+ * HTML 笔记包只读取约定的结构，不执行包内的 <script> 或 <style>。
+ * 约定：main h1 为标题，section.sec 为小节，article.kp 为知识点，
+ * article .md 为正文，article .src 为来源。其它页面装饰会被丢弃。
+ */
+const NOTE_ALLOWED_TAGS = new Set(['P','BR','STRONG','B','EM','I','U','S','CODE','PRE','BLOCKQUOTE','UL','OL','LI','TABLE','THEAD','TBODY','TFOOT','TR','TH','TD','H5','H6','DIV','SPAN','A','IMG','HR','SUP','SUB','MARK','DL','DT','DD']);
+const NOTE_TYPE_LABELS = { rule:'规则', concept:'概念', contrast:'辨析', method:'方法', example:'例题', pitfall:'易错', memo:'记忆项', warning:'易错', vocabulary:'词汇' };
+const NOTE_TYPE_ICONS = {
+  concept:'<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
+  rule:'<path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/>',
+  method:'<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>',
+  contrast:'<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>',
+  pitfall:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  example:'<path d="M12 20h9"/><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"/><path d="m15 5 3 3"/>',
+  memo:'<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/>'
+};
+function noteTypeIcon(type){ return `<svg class="note-tag-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${NOTE_TYPE_ICONS[type]||NOTE_TYPE_ICONS.concept}</svg>`; }
+function noteTagHtml(article){ const type=article.type || 'concept'; return `<span class="note-tag t-${Utils.escapeHtml(type)}">${noteTypeIcon(type)}<span>${Utils.escapeHtml(article.typeLabel || NOTE_TYPE_LABELS[type] || type)}</span></span>`; }
+function noteBookmarkIcon(){ return '<svg class="note-bookmark-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>'; }
+function safeNoteUrl(value, kind){
+  const raw = String(value||'').trim();
+  if (!raw || /^javascript:/i.test(raw) || /^vbscript:/i.test(raw) || /^data:text\/html/i.test(raw)) return '';
+  if (kind==='img' && /^data:image\//i.test(raw)) return raw;
+  if (/^(https?:|mailto:|#|\/|\.\/|\.\.\/)/i.test(raw)) return raw;
+  return '';
+}
+function sanitizeNoteFragment(source){
+  const doc = source && source.ownerDocument ? source.ownerDocument : new DOMParser().parseFromString('', 'text/html');
+  const out = document.createDocumentFragment();
+  const copy = node => {
+    if (node.nodeType===Node.TEXT_NODE) return document.createTextNode(node.nodeValue || '');
+    if (node.nodeType!==Node.ELEMENT_NODE) return document.createDocumentFragment();
+    const tag = node.tagName.toUpperCase();
+    if (['SCRIPT','STYLE','NOSCRIPT','IFRAME','OBJECT','EMBED','FORM','INPUT','BUTTON','TEXTAREA','SELECT','OPTION','LINK','META','BASE'].includes(tag)) return document.createDocumentFragment();
+    const target = NOTE_ALLOWED_TAGS.has(tag) ? document.createElement(tag.toLowerCase()) : document.createDocumentFragment();
+    if (target.nodeType===Node.ELEMENT_NODE){
+      if (tag==='A'){
+        const href=safeNoteUrl(node.getAttribute('href'),'a');
+        if (href) target.setAttribute('href',href);
+        const title=node.getAttribute('title'); if (title) target.setAttribute('title',title.slice(0,200));
+      } else if (tag==='IMG'){
+        const src=safeNoteUrl(node.getAttribute('src'),'img');
+        if (!src) return document.createTextNode(node.getAttribute('alt') || '');
+        target.setAttribute('src',src);
+        target.setAttribute('alt',(node.getAttribute('alt')||'图片').slice(0,200));
+        target.setAttribute('loading','lazy');
+      } else {
+        ['colspan','rowspan','scope','datetime','lang'].forEach(name=>{ const value=node.getAttribute(name); if (value) target.setAttribute(name,value.slice(0,100)); });
+      }
+      Array.from(node.childNodes).forEach(child=>target.appendChild(copy(child)));
+      return target;
+    }
+    Array.from(node.childNodes).forEach(child=>target.appendChild(copy(child)));
+    return target;
+  };
+  Array.from(source && source.childNodes || []).forEach(node=>out.appendChild(copy(node)));
+  return out;
+}
+function sanitizeNoteHtml(element){
+  const fragment=sanitizeNoteFragment(element);
+  const holder=document.createElement('div'); holder.appendChild(fragment); return holder.innerHTML;
+}
+function noteArticleTitle(article){
+  const heading=article.querySelector('.kh h4, h4, h3');
+  return heading ? heading.textContent.replace(/\s+/g,' ').trim() : (article.getAttribute('data-id') || '未命名知识点');
+}
+function parseNotesHtmlPackage(text, filename){
+  const source=String(text||'');
+  if (!source.trim()) throw new Error('HTML 笔记包为空。');
+  const parsed=new DOMParser().parseFromString(source,'text/html');
+  if (parsed.querySelector('parsererror')) throw new Error('HTML 笔记包解析失败。');
+  const root=parsed.querySelector('main') || parsed.body;
+  const title=(root.querySelector('h1') || parsed.querySelector('title'))?.textContent.replace(/\s+/g,' ').trim() || (filename||'HTML 笔记包').replace(/\.html?$/i,'');
+  const sectionNodes=Array.from(root.querySelectorAll('section.sec'));
+  const articleNodes=Array.from(root.querySelectorAll('article.kp'));
+  if (!articleNodes.length) throw new Error('未找到知识点：请使用 section.sec > article.kp 结构，并在 article 内提供 .md 正文。');
+  const sections=[];
+  const makeArticle=(article,index,sectionTitle,chapterTitle)=>{
+    const body=article.querySelector('.md, .note-body, [data-note-body]');
+    if (!body) return null;
+    const id=String(article.getAttribute('data-id') || article.id || `note-${index+1}`).replace(/[^a-zA-Z0-9_-]/g,'-');
+    const typeRaw=String(article.getAttribute('data-type') || Array.from(article.classList).find(c=>/^t-/.test(c))?.slice(2) || 'note');
+    const src=article.querySelector('.src');
+    return { id, title:noteArticleTitle(article), number:article.getAttribute('data-num')||'', type:typeRaw, typeLabel:NOTE_TYPE_LABELS[typeRaw] || typeRaw || '笔记', path:article.getAttribute('data-path')||'', body:sanitizeNoteHtml(body), source:src ? src.textContent.replace(/\s+/g,' ').trim() : '', sectionTitle, chapterTitle };
+  };
+  const addSection=(node, index)=>{
+    const heading=node.querySelector(':scope > h3, :scope > h2');
+    const chapter=node.closest('section.chap');
+    const chapterHeading=chapter && chapter.querySelector(':scope > h2');
+    const articles=Array.from(node.querySelectorAll(':scope > article.kp')).map((a,i)=>makeArticle(a,i,index,chapterHeading?.textContent.replace(/\s+/g,' ').trim()||'')).filter(Boolean);
+    if (articles.length) sections.push({ id:(node.id||`section-${index+1}`).replace(/[^a-zA-Z0-9_-]/g,'-'), path:node.getAttribute('data-path')||'', title:heading?.textContent.replace(/\s+/g,' ').trim()||'未命名小节', description:node.querySelector(':scope > .desc')?.textContent.replace(/\s+/g,' ').trim()||'', chapterTitle:chapterHeading?.textContent.replace(/\s+/g,' ').trim()||'', articles });
+  };
+  sectionNodes.forEach(addSection);
+  if (!sections.length){
+    const articles=articleNodes.map((a,i)=>makeArticle(a,i,'','')).filter(Boolean);
+    sections.push({id:'section-1',path:'',title:'笔记',description:'',chapterTitle:'',articles});
+  }
+  const count=sections.reduce((n,s)=>n+s.articles.length,0);
+  if (!count) throw new Error('笔记包中没有可显示的正文。');
+  return { version:1, title, sourceName:filename||'notes.html', importedAt:Date.now(), sections, totalArticles:count };
+}
+async function handleNotesHtmlFile(file){
+  const name=file?.name || 'notes.html';
+  if (!/\.html?$/i.test(name)){ toast('笔记导入只支持 .html 文件', {icon:'⚠️'}); return; }
+  try{
+    const text=await Utils.readFileAsText(file);
+    const pack=parseNotesHtmlPackage(text,name);
+    await Store.setJSON(STORAGE_KEYS.notesPackage,pack);
+    App.notesPackage=pack; App.view='notes'; render();
+    toast(`已导入「${pack.title}」，共 ${pack.totalArticles} 条笔记`, {icon:'📖'});
+  }catch(e){ toast('笔记导入失败：'+e.message, {icon:'⚠️', duration:4200}); }
+}
+
 function choiceOptionText(opt){
   return opt && typeof opt==='object' ? plainContent(opt.content || opt.text || '') : String(opt ?? '');
 }
@@ -441,7 +554,9 @@ const App = {
   browseChapters:[],
   browseScrollByScope:{},
   formatGuideOpen:false,
-  setupCollapse:{ range:false, answer:false, advanced:false }
+  setupCollapse:{ range:false, answer:false, advanced:false },
+  notesPackage:null,
+  notesBookmarks:new Set()
 };
 
 function defaultModeSettings(){
@@ -837,6 +952,7 @@ function confirmModal(title, bodyHtml, onConfirm, opts={}){
    §8. 路由 / 顶部导航渲染
    ============================================================ */
 function render(){
+  if (['notes','stats','settings','setup','browse','record'].includes(App.view)) { Store.setJSON(STORAGE_KEYS.currentView, App.view); if (App.view==='record' && App.recordDetailId) Store.setJSON(STORAGE_KEYS.recordDetailId, App.recordDetailId); }
   renderNav();
   document.body.classList.remove('view-swipe-active');
   document.querySelectorAll('.view-swipe-preview').forEach(el=>el.remove());
@@ -889,16 +1005,17 @@ function renderNav(){
       <button class="icon-btn" id="theme-toggle" type="button" title="${themeTitle()}">${themeIcon()}</button>
     </div>
   `;
-  nav.querySelector('[data-nav="notes"]').onclick = ()=>{ App.view='notes'; render(); };
+  nav.querySelector('[data-nav="notes"]').onclick = ()=>{ App.view='notes'; Store.setJSON(STORAGE_KEYS.currentView, App.view); render(); };
   nav.querySelector('[data-nav="study"]').onclick = goStudyHome;
-  nav.querySelector('[data-nav="stats"]').onclick = ()=>{ App.view='stats'; render(); };
-  nav.querySelector('[data-nav="settings"]').onclick = ()=>{ App.view='settings'; render(); };
+  nav.querySelector('[data-nav="stats"]').onclick = ()=>{ App.view='stats'; Store.setJSON(STORAGE_KEYS.currentView, App.view); render(); };
+  nav.querySelector('[data-nav="settings"]').onclick = ()=>{ App.view='settings'; Store.setJSON(STORAGE_KEYS.currentView, App.view); render(); };
   document.getElementById('theme-toggle').onclick = toggleTheme;
 }
 function goStudyHome(){
   if (App.session && App.session.status==='active'){ App.view = App.session.phase==='grading' ? 'grading' : 'quiz'; }
   else if (App.deck){ App.view='setup'; }
   else { App.view='load'; }
+  Store.setJSON(STORAGE_KEYS.currentView, App.view);
   render();
 }
 function canUseViewSwipe(e){
@@ -1122,9 +1239,9 @@ function renderLoadView(container){
       <div class="dropzone" id="dropzone" tabindex="0">
         <div class="dz-icon">🗂️</div>
         <h3>拖拽题库文件到这里</h3>
-        <p>支持 .js（UMD / CommonJS 模块）与 .json 格式<br>题型字段至少包含 fillInTheBlank / singleChoice / multipleChoice / trueFalse / shortAnswer / essay 中的一种或多种<br>分享题库建议使用 .json；.js 题库仅导入可信来源</p>
+        <p>支持 .js（UMD / CommonJS 模块）、.json 题库与结构化 .html 笔记包<br>题型字段至少包含 fillInTheBlank / singleChoice / multipleChoice / trueFalse / shortAnswer / essay 中的一种或多种<br>分享题库建议使用 .json；.js 题库仅导入可信来源</p>
         <button class="btn btn-primary" id="pick-file-btn" type="button">选择文件</button>
-        <input type="file" id="file-input" class="hidden-input" accept=".js,.json,application/json,text/javascript">
+        <input type="file" id="file-input" class="hidden-input" accept=".js,.json,.html,.htm,application/json,text/javascript,text/html">
         <div class="dz-hint">或直接将文件拖入此区域</div>
       </div>
       ${localDeckHtml}
@@ -1171,8 +1288,9 @@ function renderLoadView(container){
 }
 async function handleFile(file){
   const name = file.name || '未命名文件';
+  if (/\.html?$/i.test(name)){ await handleNotesHtmlFile(file); return; }
   if (!/\.(js|json)$/i.test(name)){
-    showLoadError(`不支持的文件类型："${name}"。请上传 .js 或 .json 文件。`);
+    showLoadError(`不支持的文件类型："${name}"。请上传 .js、.json 或 .html 文件。`);
     return;
   }
   if (/\.js$/i.test(name)){
@@ -3721,7 +3839,7 @@ function bindDataManagement(container){
 function cacheManagementHtml(){
   return `<div class="section-title" style="margin-top:26px;">缓存管理<span class="line"></span></div>
     <div class="panel">
-      <p class="muted" style="font-size:12.5px;margin:0 0 12px;">清空上次打开的题库与未完成答题草稿，并恢复应用设置默认值；不影响学习记录、复习本和错题本。</p>
+      <p class="muted" style="font-size:12.5px;margin:0 0 12px;">清空上次打开的题库、已导入笔记与未完成答题草稿，并恢复应用设置默认值；不影响学习记录、复习本和错题本。</p>
       <div class="settings-actions">
         <button class="btn btn-danger" id="clear-cache-btn" type="button">清空缓存</button>
       </div>
@@ -3730,12 +3848,16 @@ function cacheManagementHtml(){
 function bindCacheManagement(container){
   const clearBtn=container.querySelector('#clear-cache-btn');
   if (clearBtn) clearBtn.onclick = ()=>{
-    confirmModal('清空缓存？', '此操作会删除上次打开的题库与未完成答题草稿，并恢复应用设置默认值；不会影响学习记录、复习本或错题本。', async ()=>{
+    confirmModal('清空缓存？', '此操作会删除上次打开的题库、已导入笔记与未完成答题草稿，并恢复应用设置默认值；不会影响学习记录、复习本或错题本。', async ()=>{
       await Store.remove(STORAGE_KEYS.lastDeck);
+      await Store.remove(STORAGE_KEYS.notesPackage);
+      await Store.remove(STORAGE_KEYS.notesBookmarks);
       await clearActiveSessionDraft();
       App.settings = defaultSettings();
       await saveSettings();
       App.session = null;
+      App.notesPackage = null;
+      App.notesBookmarks = new Set();
       App.recordDetailId = null;
       applyTheme();
       toast('已清空缓存并恢复默认设置', {icon:'🧹'}); render();
@@ -3764,8 +3886,51 @@ function bindTypographySettings(container){
   }));
 }
 function renderNotesView(container){
-  container.className='view-pad fade-in';
-  container.innerHTML='';
+  container.className='view-pad';
+  const pack=App.notesPackage;
+  if (!pack){
+    container.innerHTML=`<div class="center-col" style="min-height:72vh;"><div class="dropzone" id="notes-dropzone" tabindex="0"><div class="dz-icon">🗒️</div><h3>拖拽笔记文件到这里</h3><p>支持结构化 .html / .htm 格式<br>将按 main h1、section.sec、article.kp 与 .md 结构导入笔记<br>包内脚本和样式不会执行，内容将套用本地界面</p><button class="btn btn-primary" id="pick-notes-file-btn" type="button">选择文件</button><input type="file" id="notes-file-input" class="hidden-input" accept=".html,.htm,text/html"><div class="dz-hint">或直接将文件拖入此区域</div></div><details class="format-guide notes-format-guide"><summary><h4>笔记数据格式</h4></summary><div class="format-guide-body"><p>推荐使用 <code>main h1</code> 作为标题，使用 <code>section.sec</code> 表示小节，使用 <code>article.kp</code> 表示知识点；知识点正文放在 <code>.md</code>，来源信息放在 <code>.src</code>。</p><div class="format-item"><b>示例结构</b><span><code>&lt;main&gt; &lt;h1&gt;标题&lt;/h1&gt; &lt;section class="sec"&gt;...&lt;article class="kp"&gt;&lt;div class="md"&gt;正文&lt;/div&gt;&lt;/article&gt;&lt;/section&gt; &lt;/main&gt;</code></span></div></div></details></div>`;
+    bindNotesImport(container); return;
+  }
+  const tocGroups=[];
+  pack.sections.forEach(section=>{
+    const title=section.chapterTitle||'笔记';
+    let group=tocGroups.find(item=>item.title===title);
+    if(!group){ group={title,sections:[]}; tocGroups.push(group); }
+    group.sections.push(section);
+  });
+  const toc=tocGroups.map(group=>`<details open class="notes-toc-chapter"><summary data-note-target="notes-section-${Utils.escapeHtml(group.sections[0]?.id||'')}">${Utils.escapeHtml(group.title)}</summary><div class="notes-toc-chapter-body">${group.sections.map(section=>`<details open class="notes-toc-section"><summary data-note-target="notes-section-${Utils.escapeHtml(section.id)}">${Utils.escapeHtml(section.title)}</summary><div class="notes-toc-section-body">${section.articles.map(article=>`<button type="button" class="notes-toc-link" data-note-target="note-${Utils.escapeHtml(article.id)}"><span>${Utils.escapeHtml(article.number||'')}</span>${Utils.escapeHtml(article.title.replace(/^\s*\d+(?:\.\d+)*\s*/,''))}</button>`).join('')}</div></details>`).join('')}</div></details>`).join('');
+  const content=pack.sections.map(section=>`<section class="note-section" id="notes-section-${Utils.escapeHtml(section.id)}"><header class="note-section-heading"><div><h2>${Utils.escapeHtml(section.title)}</h2>${section.description?`<p>${Utils.escapeHtml(section.description)}</p>`:''}</div><span class="note-count">${section.articles.length} 条</span></header>${section.articles.map(article=>{ const starred=App.notesBookmarks.has(article.id); return `<article class="note-card" id="note-${Utils.escapeHtml(article.id)}"><header class="note-card-heading"><div><h3>${Utils.escapeHtml(article.title)}</h3><div class="note-meta">${noteTagHtml(article)}${article.path?`<span>${Utils.escapeHtml(article.path)}</span>`:''}</div></div><div class="note-card-tools"><span class="note-index">${Utils.escapeHtml(article.number||'')}</span><button type="button" class="note-bookmark-btn ${starred?'on':''}" data-note-bookmark="${Utils.escapeHtml(article.id)}" title="${starred?'取消收藏':'收藏'}" aria-label="${starred?'取消收藏':'收藏'}：${Utils.escapeHtml(article.title)}" aria-pressed="${starred?'true':'false'}">${noteBookmarkIcon()}</button></div></header><div class="note-rich">${article.body}</div>${article.source?`<p class="note-source">${Utils.escapeHtml(article.source)}</p>`:''}</article>`; }).join('')}</section>`).join('');
+  container.innerHTML=`<div class="container notes-shell notes-has-package"><div class="notes-layout"><aside class="notes-toc" aria-label="笔记目录"><h2>目录</h2>${toc}</aside><main class="notes-document">${content}</main></div></div>`;
+  const reimport=container.querySelector('#notes-reimport-btn'), input=container.querySelector('#notes-reimport-input');
+  if (reimport&&input) reimport.onclick=()=>input.click();
+  if (input) input.onchange=e=>{ if(e.target.files[0]) handleNotesHtmlFile(e.target.files[0]); e.target.value=''; };
+  const clearNotesBtn=container.querySelector('#notes-clear-btn');
+  if (clearNotesBtn) clearNotesBtn.onclick=()=>confirmModal('清空笔记？','这会删除已导入的 HTML 笔记包和收藏，不影响题库和学习记录。',async()=>{ await Store.remove(STORAGE_KEYS.notesPackage); await Store.remove(STORAGE_KEYS.notesBookmarks); App.notesPackage=null; App.notesBookmarks=new Set(); toast('已清空笔记',{icon:'🗑️'}); render(); },{danger:true,confirmLabel:'清空'});
+  container.querySelectorAll('[data-note-bookmark]').forEach(btn=>btn.onclick=()=>toggleNotesBookmark(btn.dataset.noteBookmark, btn));
+  container.querySelectorAll('[data-note-target]').forEach(link=>link.onclick=(event)=>{ event.preventDefault(); event.stopPropagation(); const target=document.getElementById(link.dataset.noteTarget); if(target){ window.scrollTo({top:Math.max(0, target.getBoundingClientRect().top + window.scrollY - 90), behavior:'auto'}); } });
+  const tocTargets=[...container.querySelectorAll('.note-card')], tocLinks=[...container.querySelectorAll('[data-note-target]')];
+  if (window.IntersectionObserver && tocTargets.length){ const observer=new IntersectionObserver(entries=>{ entries.filter(entry=>entry.isIntersecting).forEach(entry=>{ const id=entry.target.id; tocLinks.forEach(link=>link.classList.remove('active')); const activeLink=tocLinks.find(link=>link.dataset.noteTarget===id); if(activeLink){ activeLink.classList.add('active'); const tocBox=container.querySelector('.notes-toc'); if(tocBox){ const linkRect=activeLink.getBoundingClientRect(), boxRect=tocBox.getBoundingClientRect(); if(linkRect.top<boxRect.top) tocBox.scrollTop-=boxRect.top-linkRect.top+8; else if(linkRect.bottom>boxRect.bottom) tocBox.scrollTop+=linkRect.bottom-boxRect.bottom+8; } } }); },{rootMargin:'-18% 0px -68% 0px',threshold:0}); tocTargets.forEach(target=>observer.observe(target)); }
+}
+async function toggleNotesBookmark(id, button){
+  if (!id) return;
+  if (App.notesBookmarks.has(id)) App.notesBookmarks.delete(id); else App.notesBookmarks.add(id);
+  await Store.setJSON(STORAGE_KEYS.notesBookmarks, [...App.notesBookmarks]);
+  const on=App.notesBookmarks.has(id);
+  if (button){ button.classList.toggle('on',on); button.setAttribute('aria-pressed',String(on)); button.setAttribute('title',on?'取消收藏':'收藏'); }
+}
+function bindNotesImport(container){
+  const dz=container.querySelector('#notes-dropzone'), input=container.querySelector('#notes-file-input');
+  if (!dz||!input) return;
+  const choose=()=>input.click();
+  const pick=container.querySelector('#pick-notes-file-btn');
+  if (pick) pick.onclick=e=>{ e.stopPropagation(); choose(); };
+  dz.onclick=e=>{ if(e.target!==input) choose(); };
+  dz.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault(); choose();} };
+  input.onchange=e=>{ if(e.target.files[0]) handleNotesHtmlFile(e.target.files[0]); e.target.value=''; };
+  ['dragenter','dragover'].forEach(type=>dz.addEventListener(type,e=>{e.preventDefault(); dz.classList.add('dragover');}));
+  ['dragleave','drop'].forEach(type=>dz.addEventListener(type,e=>{e.preventDefault(); dz.classList.remove('dragover');}));
+  dz.addEventListener('drop',e=>{ const file=e.dataTransfer.files&&e.dataTransfer.files[0]; if(file) handleNotesHtmlFile(file); });
 }
 function renderSettingsView(container){
   container.className='view-pad fade-in';
@@ -4049,6 +4214,8 @@ async function initApp(){
   try{
     App.settings = await loadSettings();
     App.progress = await loadProgress();
+    App.notesPackage = await Store.getJSON(STORAGE_KEYS.notesPackage, null);
+    App.notesBookmarks = new Set(await Store.getJSON(STORAGE_KEYS.notesBookmarks, []));
     applyTheme();
     if (window.matchMedia){
       const mq = window.matchMedia('(prefers-color-scheme: dark)');
@@ -4090,12 +4257,18 @@ async function initApp(){
     } else {
       App.view = 'load';
     }
+    const rememberedView = await Store.getJSON(STORAGE_KEYS.currentView, null);
+    const rememberedRecordId = await Store.getJSON(STORAGE_KEYS.recordDetailId, null);
+    if (!activeDraft && ['notes','stats','settings','setup','browse'].includes(rememberedView) && (rememberedView!=='browse' || App.deck)) App.view = rememberedView;
+    else if (!activeDraft && rememberedView==='record' && rememberedRecordId && App.progress.sessions.some(item=>item.id===rememberedRecordId)){ App.recordDetailId=rememberedRecordId; App.view='record'; }
   }catch(e){
     console.error('初始化失败，回退到默认状态', e);
     App.settings = App.settings || defaultSettings();
     App.progress = App.progress || defaultProgress();
     App.view = 'load';
   }
+  document.body.classList.add('no-initial-view-transition');
   render();
+  requestAnimationFrame(()=>document.body.classList.remove('no-initial-view-transition'));
 }
 initApp();

@@ -1,0 +1,3255 @@
+Changed branch/field: font delivery resources — full optimized FZ New Book and unsplit-per-weight HY QiHei.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY' ... read /tmp/smc-style-before-fz-full-fix.css and /tmp/smc-readme-before-fz-full-fix.md; inspect font/方正新书宋_GB18030.TTF ... PY
+BASELINE input: pre-change CSS/README snapshots and local full FZ TTF.
+BASELINE literal result:
+baseline-style-snapshot= True
+baseline-css-used-path= True
+baseline-readme-used-subset= True
+baseline-source-glyphs= 28555
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && python3 - <<'PY' ... verify CSS path, full-font glyph/cmap parity, obsolete asset removal, all HY weights, and README ... PY
+MODIFIED input: style.css, README.md, fonts/fz-new-book/FZNewBook-Full.woff2, fonts/hy-qihei/HYQiHei-{300,400,500,600,700,800,900}-Used.woff2.
+MODIFIED literal result:
+full-fz-glyphs= 28555
+full-fz-cmap= 28522
+full-fz-size= 4803824
+hy-weights-unsplit=PASS
+css-readme=PASS
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp style.css /tmp/smc-fz-full-rollback-target.css && ./ROLLBACK.sh /tmp/smc-fz-full-rollback-target.css /tmp/smc-style-before-fz-full-fix.css && cmp -s /tmp/smc-fz-full-rollback-target.css /tmp/smc-style-before-fz-full-fix.css
+ROLLBACK input: modified style.css copy and pre-change CSS snapshot.
+ROLLBACK literal result:
+ROLLBACK_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target exactly matches the pre-change CSS snapshot; working tree remains on the modified branch and local font/ remains available but ignored.
+
+PUSH command: GIT_TERMINAL_PROMPT=0 GIT_TRACE=1 GIT_CURL_VERBOSE=1 perl -e 'alarm 45; exec @ARGV' git push origin main 2>&1
+PUSH literal result: remote refs/heads/main = 7d78fc886267a2b0f8b4ebae1d4a1626faffcbf7
+PUSH exit status: 0 (verified by git ls-remote)
+
+Changed branch/field: setup panel layout — independent desktop heights for 题目范围 and 答题设置.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY' ... read /tmp/smc-style-before-setup-grid-fix.css and inspect the .setup-grid declaration ... PY
+BASELINE input: pre-change style.css snapshot.
+BASELINE literal result:
+baseline-setup-grid-align-start= False
+baseline-setup-grid-rule=  display:grid; grid-template-columns:1fr 1fr; gap:16px; 
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && python3 - <<'PY' ... assert desktop align-items:start and mobile one-column rule ... PY
+MODIFIED input: style.css and app.js.
+MODIFIED literal result:
+desktop-setup-grid-align-items-start=PASS
+mobile-single-column-rule=PASS
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-setup-grid-rollback-target.css && ./ROLLBACK.sh /tmp/smc-style-setup-grid-rollback-target.css /tmp/smc-style-before-setup-grid-fix.css && cmp -s /tmp/smc-style-setup-grid-rollback-target.css /tmp/smc-style-before-setup-grid-fix.css
+ROLLBACK input: modified style.css copy and pre-change style.css snapshot.
+ROLLBACK literal result:
+ROLLBACK_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target exactly matches the prior CSS; working tree retains the independent-height fix.
+
+Changed branch/field: icon typography — all `.chev` ▸ glyphs use the SF-Pro symbol font token.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY' ... read /tmp/smc-style-before-chev-sfpro.css ... PY
+BASELINE input: pre-change style.css snapshot.
+BASELINE literal result:
+baseline-chev-font-rule=absent
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && python3 - <<'PY' ... assert .chev uses --font-symbol and U+25B8 exists in fonts/sf-pro/SF-Pro-Used.woff2 ... PY
+MODIFIED input: style.css, app.js, and the published SF Pro subset.
+MODIFIED literal result:
+chev-font-token=SMC-SF-Pro
+chevron-glyph=U+25B8-present
+css-js=PASS
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-chev-rollback-target.css && ./ROLLBACK.sh /tmp/smc-style-chev-rollback-target.css /tmp/smc-style-before-chev-sfpro.css && cmp -s /tmp/smc-style-chev-rollback-target.css /tmp/smc-style-before-chev-sfpro.css
+ROLLBACK input: modified style.css copy and pre-change style.css snapshot.
+ROLLBACK literal result:
+ROLLBACK_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target exactly matches the prior CSS; working tree retains the SF-Pro chevron rule.
+
+Changed branch/field: setup accordion state — 题目范围与答题设置始终成对展开/收起。
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY' ... inspect /tmp/smc-app-before-setup-pair-sync.js for pair state synchronization ... PY
+BASELINE input: pre-change app.js snapshot.
+BASELINE literal result:
+baseline-mobile-pair-sync= False
+baseline-desktop-pair-sync= False
+baseline-normalization= False
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && python3 - <<'PY' ... assert mobile/desktop pair sync, inconsistent-state normalization, and paired DOM updates ... PY
+MODIFIED input: app.js.
+MODIFIED literal result:
+mobile-pair-sync PASS
+desktop-pair-sync PASS
+inconsistent-state-normalization PASS
+pair-dom-sync PASS
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp app.js /tmp/smc-app-setup-pair-rollback-target.js && ./ROLLBACK.sh /tmp/smc-app-setup-pair-rollback-target.js /tmp/smc-app-before-setup-pair-sync.js && cmp -s /tmp/smc-app-setup-pair-rollback-target.js /tmp/smc-app-before-setup-pair-sync.js
+ROLLBACK input: modified app.js copy and pre-change app.js snapshot.
+ROLLBACK literal result:
+ROLLBACK_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target exactly matches the prior app.js; working tree retains paired accordion synchronization.
+
+Changed branch/field: chevron sizing and setup frame alignment.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY' ... inspect /tmp/smc-style-before-chev-size-bottom-align.css with exact selector regexes ... PY
+BASELINE input: pre-change style.css snapshot.
+BASELINE literal result:
+baseline-grid-bottom-align= False
+baseline-mobile-chevron-20= False
+baseline-report-chevron-16= False
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && python3 - <<'PY' ... assert stretch alignment, 20px main chevrons, 16px secondary chevrons, and SF-Pro token ... PY
+MODIFIED input: style.css.
+MODIFIED literal result:
+grid-bottom-align PASS
+mobile-chevron-20 PASS
+collapsible-chevron-20 PASS
+report-chevron-16 PASS
+dropdown-chevron-16 PASS
+sfpro-token PASS
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-chev-size-rollback-target.css && ./ROLLBACK.sh /tmp/smc-style-chev-size-rollback-target.css /tmp/smc-style-before-chev-size-bottom-align.css && cmp -s /tmp/smc-style-chev-size-rollback-target.css /tmp/smc-style-before-chev-size-bottom-align.css
+ROLLBACK input: modified style.css copy and pre-change style.css snapshot.
+ROLLBACK literal result:
+ROLLBACK_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target exactly matches the prior CSS; working tree retains larger SF-Pro chevrons and bottom-aligned setup frames.
+
+Changed branch/field: chevron visual size — SF-Pro ▸ glyphs receive a 1.8x visual scale.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY' ... inspect /tmp/smc-style-before-chev-scale.css for the 1.8x chevron scale rules ... PY
+BASELINE input: pre-change style.css snapshot.
+BASELINE literal result:
+baseline-chev-scale= False
+baseline-open-main-scale= False
+baseline-open-mobile-scale= False
+baseline-open-report-scale= False
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && python3 - <<'PY' ... assert default and open-state 1.8x scale rules ... PY
+MODIFIED input: style.css.
+MODIFIED literal result:
+chev-scale PASS
+open-main-scale PASS
+open-mobile-scale PASS
+open-report-scale PASS
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-chev-scale-rollback-target.css && ./ROLLBACK.sh /tmp/smc-style-chev-scale-rollback-target.css /tmp/smc-style-before-chev-scale.css && cmp -s /tmp/smc-style-chev-scale-rollback-target.css /tmp/smc-style-before-chev-scale.css
+ROLLBACK input: modified style.css copy and pre-change style.css snapshot.
+ROLLBACK literal result:
+ROLLBACK_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target exactly matches the prior CSS; working tree retains the enlarged visual chevrons.
+
+Changed branch/field: chevron glyph source — use the supplied SF private-use glyph `􀆍` (U+10018D).
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY' ... inspect /tmp/smc-app-before-pua-chevron.cssfix.js and /tmp/smc-sfpro-used-before-pua.woff2 ... PY
+BASELINE input: pre-change app.js and SF-Pro subset snapshots.
+BASELINE literal result:
+baseline-pua-chevron-count= 0
+baseline-old-chevron-count= 4
+baseline-font-target= False
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && python3 - <<'PY' ... assert four U+10018D glyphs, no old ▸ glyphs, font cmap U+10018D, and CSS SF-Pro token ... PY
+MODIFIED input: app.js, style.css, fonts/sf-pro/SF-Pro-Used.woff2.
+MODIFIED literal result:
+pua-chevron-count=4
+pua-chevron-font=U+10018D-present
+css-sfpro-token=PASS
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp app.js /tmp/smc-app-pua-rollback-target.js && ./ROLLBACK.sh /tmp/smc-app-pua-rollback-target.js /tmp/smc-app-before-pua-chevron.cssfix.js && cmp -s ...; cp fonts/sf-pro/SF-Pro-Used.woff2 /tmp/smc-sfpro-pua-rollback-target.woff2 && ./ROLLBACK.sh /tmp/smc-sfpro-pua-rollback-target.woff2 /tmp/smc-sfpro-used-before-pua.woff2 && cmp -s ...
+ROLLBACK input: modified app.js and SF-Pro subset copies.
+ROLLBACK literal result:
+ROLLBACK_APP_COPY:PASS
+ROLLBACK_FONT_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: both rollback copies exactly match their pre-change snapshots; working tree uses the supplied SF private-use chevron glyph.
+
+Changed branch/field: supplied SF chevron orientation and size.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY' ... inspect /tmp/smc-style-before-chevron-direction-size.css ... PY
+BASELINE input: pre-change style.css snapshot.
+BASELINE literal result:
+baseline-global-right= False
+baseline-global-scale= True
+baseline-main-down= False
+baseline-mobile-down= False
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && python3 - <<'PY' ... assert collapsed right rotation, expanded down rotation, dropdown down rotation, and no scale(1.8) ... PY
+MODIFIED input: style.css and the U+10018D glyph in app.js.
+MODIFIED literal result:
+collapsed-right PASS
+expanded-down-main PASS
+expanded-down-mobile PASS
+expanded-down-report PASS
+expanded-down-dropdown PASS
+no-scale PASS
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-chevron-direction-rollback-target.css && ./ROLLBACK.sh /tmp/smc-style-chevron-direction-rollback-target.css /tmp/smc-style-before-chevron-direction-size.css && cmp -s /tmp/smc-style-chevron-direction-rollback-target.css /tmp/smc-style-before-chevron-direction-size.css
+ROLLBACK input: modified style.css copy and pre-change style.css snapshot.
+ROLLBACK literal result:
+ROLLBACK_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target exactly matches the prior CSS; working tree uses right-pointing collapsed and down-pointing expanded chevrons at native size.
+
+Changed branch/field: chevron icon weight.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY' ... inspect /tmp/smc-style-before-chevron-weight.css ... PY
+BASELINE input: pre-change style.css snapshot.
+BASELINE literal result:
+baseline-chev-weight-600= False
+baseline-chev-weight-400= True
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && python3 - <<'PY' ... assert `.chev` weight 600 and 0.2px stroke ... PY
+MODIFIED input: style.css.
+MODIFIED literal result:
+chev-font-weight=600
+chev-stroke=0.2px
+css-js=PASS
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-chevron-weight-rollback-target.css && ./ROLLBACK.sh /tmp/smc-style-chevron-weight-rollback-target.css /tmp/smc-style-before-chevron-weight.css && cmp -s /tmp/smc-style-chevron-weight-rollback-target.css /tmp/smc-style-before-chevron-weight.css
+ROLLBACK input: modified style.css copy and pre-change style.css snapshot.
+ROLLBACK literal result:
+ROLLBACK_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target exactly matches prior CSS; working tree retains weight 600 and subtle stroke.
+
+Changed branch/field: chevron font size.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY' ... inspect /tmp/smc-style-before-chevron-size-down.css ... PY
+BASELINE input: pre-change style.css snapshot.
+BASELINE literal result:
+baseline-main-chevron-16= False
+baseline-mobile-chevron-16= False
+baseline-report-chevron-14= False
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && python3 - <<'PY' ... assert 16px primary and 14px secondary chevron sizes ... PY
+MODIFIED input: style.css.
+MODIFIED literal result:
+main-chevron-16 PASS
+mobile-chevron-16 PASS
+report-chevron-14 PASS
+dropdown-chevron-14 PASS
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-chevron-size-down-rollback-target.css && ./ROLLBACK.sh /tmp/smc-style-chevron-size-down-rollback-target.css /tmp/smc-style-before-chevron-size-down.css && cmp -s /tmp/smc-style-chevron-size-down-rollback-target.css /tmp/smc-style-before-chevron-size-down.css
+ROLLBACK input: modified style.css copy and pre-change style.css snapshot.
+ROLLBACK literal result:
+ROLLBACK_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target exactly matches prior CSS; working tree retains the smaller chevron sizes.
+
+Changed branch/field: information architecture — 笔记 and 设置 navigation, with 数据管理 moved to 设置.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY' ... inspect /tmp/smc-app-before-nav-notes-settings.js ... PY
+BASELINE input: pre-change app.js and style.css snapshots.
+BASELINE literal result:
+baseline-notes-nav= False
+baseline-settings-nav= False
+baseline-settings-view= False
+baseline-data-management-in-stats= True
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && python3 - <<'PY' ... assert notes/settings routes and nav, notes/settings styles, and no data-management block in stats ... PY
+MODIFIED input: app.js and style.css.
+MODIFIED literal result:
+notes-nav PASS
+settings-nav PASS
+notes-route PASS
+settings-route PASS
+data-management-settings PASS
+data-management-not-in-stats PASS
+notes-styles PASS
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp app.js /tmp/smc-app-nav-rollback-target.js && ./ROLLBACK.sh /tmp/smc-app-nav-rollback-target.js /tmp/smc-app-before-nav-notes-settings.js && cmp -s ...; cp style.css /tmp/smc-style-nav-rollback-target.css && ./ROLLBACK.sh /tmp/smc-style-nav-rollback-target.css /tmp/smc-style-before-nav-notes-settings.css && cmp -s ...
+ROLLBACK input: modified app.js/style.css copies.
+ROLLBACK literal result:
+ROLLBACK_APP_COPY:PASS
+ROLLBACK_STYLE_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: both rollback copies exactly match pre-change snapshots; working tree retains nav and view changes.
+
+Changed branch/field: chapter dropdown `▾` direction.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY' ... inspect /tmp/smc-style-before-chapter-chevron-direction.css ... PY
+BASELINE input: pre-change style.css snapshot.
+BASELINE literal result:
+baseline-chapter-transform-none= False
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && python3 - <<'PY' ... assert chapter closed transform:none and open transform:rotate(180deg) ... PY
+MODIFIED input: style.css and chapterDropdownHtml's `▾` glyph.
+MODIFIED literal result:
+chapter-closed-down=PASS
+chapter-open-up=PASS
+css-js=PASS
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-chapter-chevron-rollback-target.css && ./ROLLBACK.sh /tmp/smc-style-chapter-chevron-rollback-target.css /tmp/smc-style-before-chapter-chevron-direction.css && cmp -s /tmp/smc-style-chapter-chevron-rollback-target.css /tmp/smc-style-before-chapter-chevron-direction.css
+ROLLBACK input: modified style.css copy and pre-change style.css snapshot.
+ROLLBACK literal result:
+ROLLBACK_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target exactly matches the prior CSS; chapter dropdown closed state now points down as requested.
+
+Changed branch/field: chapter dropdown final direction — closed left, open down.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY' ... inspect /tmp/smc-style-before-chapter-left-down.css ... PY
+BASELINE input: pre-change style.css snapshot.
+BASELINE literal result:
+baseline-closed-left= False
+baseline-open-none= False
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && python3 - <<'PY' ... assert chapter closed rotate(90deg) and open transform:none ... PY
+MODIFIED input: style.css.
+MODIFIED literal result:
+chapter-closed-left=PASS
+chapter-open-down=PASS
+css-js=PASS
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-chapter-left-rollback-target.css && ./ROLLBACK.sh /tmp/smc-style-chapter-left-rollback-target.css /tmp/smc-style-before-chapter-left-down.css && cmp -s /tmp/smc-style-chapter-left-rollback-target.css /tmp/smc-style-before-chapter-left-down.css
+ROLLBACK input: modified style.css copy and pre-change style.css snapshot.
+ROLLBACK literal result:
+ROLLBACK_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target exactly matches prior CSS; chapter dropdown now defaults left and opens down.
+
+Changed branch/field: rotated chevron vertical alignment.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY' ... inspect /tmp/smc-style-before-chevron-vertical-align.css ... PY
+BASELINE input: pre-change style.css snapshot.
+BASELINE literal result:
+baseline-vertical-offset= False
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && python3 - <<'PY' ... assert the -0.25em relative vertical offset ... PY
+MODIFIED input: style.css.
+MODIFIED literal result:
+chevron-vertical-offset=-0.25em
+rotated-chevron-centering=PASS
+css-js=PASS
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-chevron-vertical-rollback-target.css && ./ROLLBACK.sh /tmp/smc-style-chevron-vertical-rollback-target.css /tmp/smc-style-before-chevron-vertical-align.css && cmp -s /tmp/smc-style-chevron-vertical-rollback-target.css /tmp/smc-style-before-chevron-vertical-align.css
+ROLLBACK input: modified style.css copy and pre-change style.css snapshot.
+ROLLBACK literal result:
+ROLLBACK_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target exactly matches prior CSS; rotated chevrons retain the upward visual offset for text centering.
+
+Changed branch/field: chapter dropdown layout and direction.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY' ... inspect /tmp/smc-app-before-chapter-layout-direction.css and /tmp/smc-style-before-chapter-layout-direction.css ... PY
+BASELINE input: pre-change app.js/style.css snapshots.
+BASELINE literal result:
+baseline-chevron-before-label= False
+baseline-chapter-label-selector= False
+baseline-chevron-left-layout= False
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && python3 - <<'PY' ... assert chevron precedes chapter-label, label overflow selector, closed-left rotation, and open-down reset ... PY
+MODIFIED input: app.js and style.css.
+MODIFIED literal result:
+chevron-before-label PASS
+chapter-label-overflow PASS
+closed-left PASS
+open-down PASS
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp app.js /tmp/smc-app-chapter-layout-rollback-target.js && ./ROLLBACK.sh /tmp/smc-app-chapter-layout-rollback-target.js /tmp/smc-app-before-chapter-layout-direction.css && cmp -s ...; cp style.css /tmp/smc-style-chapter-layout-rollback-target.css && ./ROLLBACK.sh /tmp/smc-style-chapter-layout-rollback-target.css /tmp/smc-style-before-chapter-layout-direction.css && cmp -s ...
+ROLLBACK input: modified app.js/style.css copies.
+ROLLBACK literal result:
+ROLLBACK_APP_COPY:PASS
+ROLLBACK_STYLE_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: both rollback copies match prior snapshots; chapter dropdown now uses left-positioned closed-left/open-down chevron layout.
+
+Changed branch/field: chapter dropdown correction after layout feedback.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY' ... inspect /tmp/smc-app-before-chapter-layout-revert.cssfix.js and /tmp/smc-style-before-chapter-layout-revert.cssfix.css ... PY
+BASELINE input: pre-correction left-positioned layout snapshots.
+BASELINE literal result:
+baseline-right-positioned= False
+baseline-first-label= False
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && python3 - <<'PY' ... assert label-left/chevron-right layout and closed-left/open-down direction ... PY
+MODIFIED input: app.js and style.css.
+MODIFIED literal result:
+right-positioned-chevron PASS
+first-label-overflow PASS
+closed-left PASS
+open-down PASS
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp app.js /tmp/smc-app-layout-revert-rollback-target.js && ./ROLLBACK.sh /tmp/smc-app-layout-revert-rollback-target.js /tmp/smc-app-before-chapter-layout-revert.cssfix.js && cmp -s ...; cp style.css /tmp/smc-style-layout-revert-rollback-target.css && ./ROLLBACK.sh /tmp/smc-style-layout-revert-rollback-target.css /tmp/smc-style-before-chapter-layout-revert.cssfix.css && cmp -s ...
+ROLLBACK input: modified app.js/style.css copies.
+ROLLBACK literal result:
+ROLLBACK_APP_COPY:PASS
+ROLLBACK_STYLE_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: both rollback copies match the pre-correction snapshots; the incorrect left-positioned layout is removed.
+
+Changed branch/field: chapter dropdown restored layout, right-pointing closed state, and vertical centering.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY' ... inspect /tmp/smc-style-before-chapter-right-restore.css ... PY
+BASELINE input: pre-change style.css snapshot.
+BASELINE literal result:
+baseline-right-rotation= False
+baseline-top-reset= False
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && python3 - <<'PY' ... assert label-left/chevron-right layout, closed -90° rotation, open no rotation, and top:0 ... PY
+MODIFIED input: app.js and style.css.
+MODIFIED literal result:
+label-left-chevron-right-layout PASS
+closed-points-right PASS
+open-points-down PASS
+vertical-center-reset PASS
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-chapter-right-rollback-target.css && ./ROLLBACK.sh /tmp/smc-style-chapter-right-rollback-target.css /tmp/smc-style-before-chapter-right-restore.css && cmp -s /tmp/smc-style-chapter-right-rollback-target.css /tmp/smc-style-before-chapter-right-restore.css
+ROLLBACK input: modified style.css copy and pre-change style.css snapshot.
+ROLLBACK literal result:
+ROLLBACK_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target matches prior CSS; chapter control is restored to right-side, right-pointing, text-centered behavior.
+
+Changed branch/field: shared chevron alignment and typography (`.chev`, setup/mobile setup/report/chapter chevrons).
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY'
+from pathlib import Path
+s=Path('/tmp/smc-style-before-chevron-center-size.css').read_text()
+checks={
+ 'baseline-global-top-zero': '.chev{ display:inline-block; position:relative; top:0;' in s,
+ 'baseline-main-inherit': '.collapsible-head .chev{ transition:transform var(--dur) var(--ease); font-size:inherit;' in s,
+ 'baseline-mobile-inherit': '.mobile-collapse-head .chev{ color:var(--text-faint); transition:transform var(--dur-fast) var(--ease); font-size:inherit;' in s,
+ 'baseline-report-inherit': '.qa-head .chev{ font-size:inherit;' in s,
+ 'baseline-chapter-inherit': '.chapter-dropdown .chev{ margin-left:auto; margin-right:0; top:0; font-size:inherit;' in s,
+}
+for k,v in checks.items(): print(k, '=', v)
+PY
+BASELINE literal result:
+baseline-global-top-zero = False
+baseline-main-inherit = False
+baseline-mobile-inherit = False
+baseline-report-inherit = False
+baseline-chapter-inherit = False
+BASELINE_EXIT:0
+
+MODIFIED command:
+node --check app.js
+python3 - <<'PY'
+from pathlib import Path
+s=Path('style.css').read_text()
+checks={
+ 'global-top-zero': '.chev{ display:inline-block; position:relative; top:0;' in s,
+ 'main-inherit': '.collapsible-head .chev{ transition:transform var(--dur) var(--ease); font-size:inherit;' in s,
+ 'mobile-inherit': '.mobile-collapse-head .chev{ color:var(--text-faint); transition:transform var(--dur-fast) var(--ease); font-size:inherit;' in s,
+ 'report-inherit': '.qa-head .chev{ font-size:inherit;' in s,
+ 'chapter-inherit': '.chapter-dropdown .chev{ margin-left:auto; margin-right:0; top:0; font-size:inherit;' in s,
+}
+for k,v in checks.items(): print(k, '=', v)
+assert all(checks.values())
+PY
+MODIFIED literal result:
+MODIFIED_NODE_EXIT:0
+ global-top-zero = True
+ main-inherit = True
+ mobile-inherit = True
+ report-inherit = True
+ chapter-inherit = True
+MODIFIED_CSS_EXIT:0
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-chevron-center-rollback-target.css
+./ROLLBACK.sh /tmp/smc-style-chevron-center-rollback-target.css /tmp/smc-style-before-chevron-center-size.css
+cmp -s /tmp/smc-style-chevron-center-rollback-target.css /tmp/smc-style-before-chevron-center-size.css
+ROLLBACK literal result:
+ROLLBACK_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy exactly matches the pre-change style snapshot; the working `style.css` remains modified.
+
+Changed branch/field: view placement and storage behavior for 数据管理 / 清空数据 / 清空缓存.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY'
+from pathlib import Path
+s=Path('/tmp/smc-app-before-data-cache-separation.js').read_text()
+checks={
+ 'data-management-in-settings': 'function renderSettingsView(container)' in s and '${dataManagementHtml()}' in s.split('function renderSettingsView(container)',1)[1].split('/* ============================================================',1)[0],
+ 'stats-data-management-absent': '${dataManagementHtml()}' not in s.split('function renderStatsView(container)',1)[1].split('function sanitizeProgressForExport',1)[0],
+ 'clear-data-removes-last-deck': 'await Store.remove(STORAGE_KEYS.lastDeck)' in s.split('function bindDataManagement(container)',1)[1].split('function renderNotesView',1)[0],
+ 'no-cache-management': 'function cacheManagementHtml()' not in s,
+}
+for k,v in checks.items(): print(k, '=', v)
+PY
+BASELINE literal result:
+data-management-in-settings = True
+stats-data-management-absent = True
+clear-data-removes-last-deck = True
+no-cache-management = True
+BASELINE_EXIT:0
+
+MODIFIED command:
+node --check app.js
+python3 - <<'PY'
+from pathlib import Path
+s=Path('app.js').read_text()
+stats=s.split('function renderStatsView(container)',1)[1].split('function sanitizeProgressForExport',1)[0]
+settings=s.split('function renderSettingsView(container)',1)[1].split('/* ============================================================',1)[0]
+bind=s.split('function bindDataManagement(container)',1)[1].split('function cacheManagementHtml',1)[0]
+cache=s.split('function bindCacheManagement(container)',1)[1].split('function renderNotesView',1)[0]
+checks={
+ 'data-management-in-stats': '${dataManagementHtml()}' in stats,
+ 'data-management-not-in-settings': '${dataManagementHtml()}' not in settings,
+ 'stats-binds-data-management': 'bindDataManagement(container);' in stats,
+ 'settings-has-cache-management': '${cacheManagementHtml()}' in settings and 'bindCacheManagement(container);' in settings,
+ 'clear-data-preserves-settings': 'App.settings = defaultSettings()' not in bind,
+ 'clear-data-preserves-cache': 'STORAGE_KEYS.lastDeck' not in bind and 'STORAGE_KEYS.deckRegistry' not in bind,
+ 'clear-cache-removes-last-deck': 'STORAGE_KEYS.lastDeck' in cache,
+ 'clear-cache-removes-active-draft': 'clearActiveSessionDraft()' in cache,
+ 'clear-cache-does-not-reset-progress': 'saveProgress' not in cache and 'defaultProgress' not in cache,
+}
+for k,v in checks.items(): print(k, '=', v)
+assert all(checks.values())
+PY
+MODIFIED literal result:
+MODIFIED_NODE_EXIT:0
+data-management-in-stats = True
+data-management-not-in-settings = True
+stats-binds-data-management = True
+settings-has-cache-management = True
+clear-data-preserves-settings = True
+clear-data-preserves-cache = True
+clear-cache-removes-last-deck = True
+clear-cache-removes-active-draft = True
+clear-cache-does-not-reset-progress = True
+MODIFIED_STRUCTURAL_EXIT:0
+
+ROLLBACK command:
+cp app.js /tmp/smc-app-data-cache-rollback-target.js
+./ROLLBACK.sh /tmp/smc-app-data-cache-rollback-target.js /tmp/smc-app-before-data-cache-separation.js
+cmp -s /tmp/smc-app-data-cache-rollback-target.js /tmp/smc-app-before-data-cache-separation.js
+ROLLBACK literal result:
+ROLLBACK_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy matches the pre-change app.js; the working app.js remains changed.
+
+Correction: “清空数据” now leaves both `lastDeck` and `activeSession` cache entries untouched; only “清空缓存” removes them.
+MODIFIED command:
+node --check app.js
+python3 - <<'PY'
+from pathlib import Path
+s=Path('app.js').read_text()
+bind=s.split('function bindDataManagement(container)',1)[1].split('function cacheManagementHtml',1)[0]
+cache=s.split('function bindCacheManagement(container)',1)[1].split('function renderNotesView',1)[0]
+assert 'clearActiveSessionDraft()' not in bind
+assert 'STORAGE_KEYS.lastDeck' not in bind
+assert 'clearActiveSessionDraft()' in cache
+print('DATA_ONLY_CACHE_PRESERVED:PASS')
+PY
+MODIFIED_EXIT:0
+ROLLBACK remains the same executable artifact and prior snapshot test above remains valid.
+
+Changed branch/field: cache management now restores application settings to defaults.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY'
+from pathlib import Path
+s=Path('/tmp/smc-app-before-cache-default-settings.js').read_text()
+cache=s.split('function bindCacheManagement(container)',1)[1].split('function renderNotesView',1)[0]
+checks={
+ 'baseline-does-not-reset-settings':'App.settings = defaultSettings()' not in cache,
+ 'baseline-does-not-save-settings':'await saveSettings()' not in cache,
+ 'baseline-cache-toast-old':"toast('已清空缓存', {icon:'🧹'})" in cache,
+}
+for k,v in checks.items(): print(k, '=', v)
+assert all(checks.values())
+PY
+BASELINE literal result:
+baseline-does-not-reset-settings = True
+baseline-does-not-save-settings = True
+baseline-cache-toast-old = True
+BASELINE_EXIT:0
+
+MODIFIED command:
+node --check app.js
+python3 - <<'PY'
+from pathlib import Path
+s=Path('app.js').read_text()
+cache=s.split('function bindCacheManagement(container)',1)[1].split('function renderNotesView',1)[0]
+checks={
+ 'cache-removes-last-deck':'STORAGE_KEYS.lastDeck' in cache,
+ 'cache-removes-active-session':'clearActiveSessionDraft()' in cache,
+ 'cache-restores-default-settings':'App.settings = defaultSettings()' in cache,
+ 'cache-persists-default-settings':'await saveSettings()' in cache,
+ 'cache-applies-default-theme':'applyTheme()' in cache,
+ 'cache-keeps-progress':'defaultProgress()' not in cache and 'saveProgress' not in cache,
+ 'cache-toast-explicit':'已清空缓存并恢复默认设置' in cache,
+}
+for k,v in checks.items(): print(k, '=', v)
+assert all(checks.values())
+PY
+MODIFIED literal result:
+MODIFIED_NODE_EXIT:0
+cache-removes-last-deck = True
+cache-removes-active-session = True
+cache-restores-default-settings = True
+cache-persists-default-settings = True
+cache-applies-default-theme = True
+cache-keeps-progress = True
+cache-toast-explicit = True
+MODIFIED_STRUCTURAL_EXIT:0
+
+ROLLBACK command:
+cp app.js /tmp/smc-app-cache-default-settings-rollback-target.js
+./ROLLBACK.sh /tmp/smc-app-cache-default-settings-rollback-target.js /tmp/smc-app-before-cache-default-settings.js
+cmp -s /tmp/smc-app-cache-default-settings-rollback-target.js /tmp/smc-app-before-cache-default-settings.js
+ROLLBACK literal result:
+ROLLBACK_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy matches the pre-change app.js; the working app.js remains modified.
+
+Changed branch/field: Song/Hei font-face selection and published HY QiHei coverage.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY'
+from pathlib import Path
+from fontTools.ttLib import TTFont
+css=Path('/tmp/smc-style-before-font-family-correction.css').read_text()
+old_hy=TTFont('/tmp/smc-hy-before-font-family-correction/HYQiHei-400-Used.woff2')
+cmap=set().union(*[set(t.cmap.keys()) for t in old_hy['cmap'].tables])
+checks={
+ 'fz-range-declaration': 'font-family:"SMC FZ New Book"' in css and 'font-weight:400 700;' in css,
+ 'hy-missing-current-glyphs': all(ord(c) not in cmap for c in '草稿笔'),
+}
+for k,v in checks.items(): print(k, '=', v)
+assert all(checks.values())
+PY
+BASELINE literal result:
+fz-range-declaration = True
+hy-missing-current-glyphs = True
+BASELINE_EXIT:0
+
+MODIFIED command:
+node --check app.js
+python3 - <<'PY'
+from pathlib import Path
+from fontTools.ttLib import TTFont
+css=Path('style.css').read_text()
+assert 'font-family:"SMC FZ New Book"' in css and 'font-weight:400; font-style:normal' in css
+assert 'font-weight:400 700; font-style:normal; font-display:swap; unicode-range:U+3400-4DBF' not in css
+for p in sorted(Path('fonts/hy-qihei').glob('HYQiHei-*-Used.woff2')):
+    f=TTFont(str(p)); cmap=set().union(*[set(t.cmap.keys()) for t in f['cmap'].tables])
+    assert all(ord(c) in cmap for c in '草稿笔'), p
+print('fz-static-weight:PASS')
+print('hy-current-glyph-coverage:PASS')
+PY
+MODIFIED literal result:
+MODIFIED_NODE_EXIT:0
+fz-static-weight:PASS
+hy-current-glyph-coverage:PASS
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-font-family-rollback-target.css
+./ROLLBACK.sh /tmp/smc-style-font-family-rollback-target.css /tmp/smc-style-before-font-family-correction.css
+cmp -s /tmp/smc-style-font-family-rollback-target.css /tmp/smc-style-before-font-family-correction.css
+cp fonts/hy-qihei/HYQiHei-400-Used.woff2 /tmp/smc-hy-font-family-rollback-target.woff2
+./ROLLBACK.sh /tmp/smc-hy-font-family-rollback-target.woff2 /tmp/smc-hy-before-font-family-correction/HYQiHei-400-Used.woff2
+cmp -s /tmp/smc-hy-font-family-rollback-target.woff2 /tmp/smc-hy-before-font-family-correction/HYQiHei-400-Used.woff2
+ROLLBACK literal result:
+ROLLBACK_STYLE_COPY:PASS
+ROLLBACK_HY_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copies match the pre-correction style and HY QiHei font files; working files remain corrected.
+
+Changed branch/field: formula typography, complex demo formulas, and timed quiz settings.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY'
+from pathlib import Path
+app=Path('/tmp/smc-app-before-math-timer-limit.js').read_text(); css=Path('/tmp/smc-style-before-math-timer-limit.css').read_text()
+checks={
+ 'baseline-time-limit-setting':'timeLimitEnabled' not in app,
+ 'baseline-time-limit-controls':'data-time-limit' not in app,
+ 'baseline-remaining-clock':'sessionTimeRemainingMs' not in app,
+ 'baseline-paused-timer-hidden':"sess.paused?'is-hidden'" not in app,
+ 'baseline-minion-math-override':'.katex *' not in css,
+ 'baseline-complex-radical-demo':r'\\sqrt{\\frac{a^2+b^2}{c^2}}' not in app,
+}
+for k,v in checks.items(): print(f'{k}={v}')
+assert all(checks.values())
+PY
+BASELINE literal result:
+baseline-time-limit-setting=True
+baseline-time-limit-controls=True
+baseline-remaining-clock=True
+baseline-paused-timer-hidden=True
+baseline-minion-math-override=True
+baseline-complex-radical-demo=True
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js
+python3 - <<'PY'
+from pathlib import Path
+app=Path('app.js').read_text(); css=Path('style.css').read_text()
+checks={
+ 'settings-default-off':'timeLimitEnabled:false' in app and 'timeLimitMinutes:15' in app,
+ 'time-limit-presets':'const timeLimitPresets = [15,20,45,60]' in app and 'data-time-limit="${m}"' in app and 'data-time-limit="custom"' in app,
+ 'time-limit-toggle':'data-switch="timeLimitEnabled"' in app,
+ 'session-countdown':all(x in app for x in ('timeLimitMs:','sessionTimeRemainingMs','finishTimedOutSession','formatSessionClock')),
+ 'paused-timer-hidden':"sess.paused?'is-hidden'" in app and "if (App.session.paused){ el.textContent=''" in app,
+ 'minion-math-token':'--font-math:"SMC Minion Math"' in css and '.katex *' in css,
+ 'complex-formula-demo':r'\sqrt{\frac{a^2+b^2}{c^2}}' in app and r'\left\lVert' in app,
+ 'time-limit-css':'.time-limit-options' in css and '.quiz-timer.is-hidden' in css,
+}
+for k,v in checks.items(): print(f'{k}={v}')
+assert all(checks.values())
+PY
+MODIFIED literal result:
+settings-default-off=True
+time-limit-presets=True
+time-limit-toggle=True
+session-countdown=True
+paused-timer-hidden=True
+minion-math-token=True
+complex-formula-demo=True
+time-limit-css=True
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp app.js /tmp/smc-app-math-timer-rollback-target.js
+./ROLLBACK.sh /tmp/smc-app-math-timer-rollback-target.js /tmp/smc-app-before-math-timer-limit.js
+cmp -s /tmp/smc-app-math-timer-rollback-target.js /tmp/smc-app-before-math-timer-limit.js
+cp style.css /tmp/smc-style-math-timer-rollback-target.css
+./ROLLBACK.sh /tmp/smc-style-math-timer-rollback-target.css /tmp/smc-style-before-math-timer-limit.css
+cmp -s /tmp/smc-style-math-timer-rollback-target.css /tmp/smc-style-before-math-timer-limit.css
+ROLLBACK literal result:
+ROLLBACK_APP_COPY:PASS
+ROLLBACK_STYLE_COPY:PASS
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copies exactly match the pre-change app.js/style.css snapshots; working tree remains on the modified branch.
+
+Browser verification command:
+python3 -m http.server 8767
+Browser literal result:
+The local demo loaded; 答题设置 showed the default-off 限时模式 switch. Clicking it revealed 15分钟、20分钟、45分钟、60分钟、自定义. Selecting 自定义 showed a 30分钟 numeric input. Starting a timed quiz displayed a 30:00 剩余时间 clock. Clicking 暂停 changed the topbar to 继续 and removed the timer node text while the pause overlay blocked the card.
+Browser exit status: 0
+
+Additional modified check:
+node --check app.js && git diff --check
+python3 - <<'PY'
+from pathlib import Path
+app=Path('app.js').read_text(); css=Path('style.css').read_text()
+checks={
+ 'settings-default-off':'timeLimitEnabled:false' in app and 'timeLimitMinutes:15' in app,
+ 'time-limit-presets':'const timeLimitPresets = [15,20,45,60]' in app and 'data-time-limit="${m}"' in app and 'data-time-limit="custom"' in app,
+ 'session-countdown':all(x in app for x in ('timeLimitMs:','sessionTimeRemainingMs','finishTimedOutSession','formatSessionClock')),
+ 'paused-timer-hidden':"sess.paused?'is-hidden'" in app and "if (App.session.paused){ el.textContent=''" in app,
+ 'minion-math-token':'--font-math:"SMC Minion Math"' in css and '.katex *' in css and '.katex .delimsizing.size4' in css,
+ 'complex-formula-demo':r'\sqrt{\frac{a^2+b^2}{c^2}}' in app and r'\left\lVert' in app,
+ 'fill-preview-rich-content':'if (Array.isArray(q.content) && q.content.length)' in app and 'renderRichContent([block]' in app,
+}
+for k,v in checks.items(): print(f'{k}={v}')
+assert all(checks.values())
+PY
+Additional modified literal result:
+settings-default-off=True
+time-limit-presets=True
+session-countdown=True
+paused-timer-hidden=True
+minion-math-token=True
+complex-formula-demo=True
+fill-preview-rich-content=True
+Additional modified exit status: 0
+
+Browser formula verification command:
+python3 -m http.server 8769
+Browser literal result:
+The built-in deck opened in the actual browser entrypoint. In the browse view, the fill-in-the-blank demo displayed the integral, square-root fraction, large parenthesis/bracket group, and norm delimiters; the multiple-choice option displayed the nested radical and parenthesized expression. The browser requested `fonts/minion-math/minion-math.otf` with status 200.
+Browser exit status: 0
+
+Changed branch/field: timed secondary-menu styling and mode-specific timer/pause display.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY'
+from pathlib import Path
+app=Path('/tmp/smc-app-before-time-display-style.js').read_text(); css=Path('/tmp/smc-style-before-time-display-style.css').read_text()
+checks={
+ 'baseline-timer-always-visible':'sess.timeLimitEnabled ?' not in app and 'formatSessionClockHtml' not in app,
+ 'baseline-paused-text-conditional':"sess.timeLimitEnabled?'计时已暂停" not in app,
+ 'baseline-menu-pill-style':'time-limit-choice-row' not in app and '.time-limit-custom-btn' not in css,
+ 'baseline-blinking-colon':'timer-colon' not in css,
+}
+for k,v in checks.items(): print(f'{k}={v}')
+assert all(checks.values())
+PY
+BASELINE literal result:
+baseline-timer-always-visible=True
+baseline-paused-text-conditional=True
+baseline-menu-pill-style=True
+baseline-blinking-colon=True
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && git diff --check
+python3 - <<'PY'
+from pathlib import Path
+app=Path('app.js').read_text(); css=Path('style.css').read_text()
+checks={
+ 'disabled-hides-timer':'sess.timeLimitEnabled ? `<div class="quiz-timer' in app,
+ 'enabled-countdown':'formatSessionClockHtml(sess)' in app and 'sessionTimeRemainingMs' in app,
+ 'paused-text-branch':"sess.timeLimitEnabled?'计时已暂停，页面暂不可操作':'已暂停，页面暂不可操作'" in app,
+ 'pill-secondary-menu':'time-limit-choice-row' in app and 'time-limit-custom-btn' in app and '.time-limit-choice-row' in css,
+ 'colon-blinks':'timer-colon' in app and '.quiz-timer .timer-colon.is-hidden' in css,
+ 'no-limit-update':"!App.session.timeLimitEnabled" in app and 'formatSessionClockHtml(App.session)' in app,
+}
+for k,v in checks.items(): print(f'{k}={v}')
+assert all(checks.values())
+PY
+MODIFIED literal result:
+disabled-hides-timer=True
+enabled-countdown=True
+paused-text-branch=True
+pill-secondary-menu=True
+colon-blinks=True
+no-limit-update=True
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp app.js /tmp/smc-app-time-display-rollback-target.js
+./ROLLBACK.sh /tmp/smc-app-time-display-rollback-target.js /tmp/smc-app-before-time-display-style.js
+cmp -s /tmp/smc-app-time-display-rollback-target.js /tmp/smc-app-before-time-display-style.js
+cp style.css /tmp/smc-style-time-display-rollback-target.css
+./ROLLBACK.sh /tmp/smc-style-time-display-rollback-target.css /tmp/smc-style-before-time-display-style.css
+cmp -s /tmp/smc-style-time-display-rollback-target.css /tmp/smc-style-before-time-display-style.css
+ROLLBACK literal result:
+ROLLBACK_APP_COPY:PASS
+ROLLBACK_STYLE_COPY:PASS
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copies exactly match the pre-change app.js/style.css snapshots; working tree remains on the modified branch.
+
+Browser verification command:
+python3 -m http.server 8770
+Browser literal result:
+With 限时模式 disabled, the quiz topbar contained no quiz-timer node; pausing displayed “已暂停，页面暂不可操作”. After enabling 限时模式, the secondary menu displayed the preset pill and separate 自定义 button, the quiz showed the countdown, and pausing displayed “计时已暂停，页面暂不可操作”.
+Browser exit status: 0
+
+Changed branch/field: formula typography restored to KaTeX's native math font stack.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY'
+from pathlib import Path
+s=Path('/tmp/smc-style-before-formula-font-restore.css').read_text()
+checks={
+ 'baseline-minion-token':'--font-math:"SMC Minion Math","Minion Math","KaTeX_Main",serif;' in s,
+ 'baseline-katex-override':'.katex *' in s and 'font-family:var(--font-math) !important' in s,
+ 'baseline-katex-default-comment':'visible glyphs are' in s,
+}
+for k,v in checks.items(): print(f'{k}={v}')
+assert all(checks.values())
+PY
+BASELINE literal result:
+baseline-minion-token=True
+baseline-katex-override=True
+baseline-katex-default-comment=True
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && git diff --check
+python3 - <<'PY'
+from pathlib import Path
+s=Path('style.css').read_text()
+checks={
+ 'restored-katex-token':'--font-math:"KaTeX_Main","SMC Minion Math","Minion Math",serif;' in s,
+ 'removed-minion-override':'.katex *' not in s and 'font-family:var(--font-math) !important' not in s,
+ 'katex-fallback-font':'font-family:"SMC Minion Math","Minion Math",serif;' in s,
+}
+for k,v in checks.items(): print(f'{k}={v}')
+assert all(checks.values())
+PY
+MODIFIED literal result:
+restored-katex-token=True
+removed-minion-override=True
+katex-fallback-font=True
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-formula-font-rollback-target.css
+./ROLLBACK.sh /tmp/smc-style-formula-font-rollback-target.css /tmp/smc-style-before-formula-font-restore.css
+cmp -s /tmp/smc-style-formula-font-rollback-target.css /tmp/smc-style-before-formula-font-restore.css
+ROLLBACK literal result:
+ROLLBACK_STYLE_COPY:PASS
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy exactly matches the pre-restore style snapshot; working tree retains the restored KaTeX formula font stack.
+
+Browser verification command:
+python3 -m http.server 8771
+Browser literal result:
+The built-in formula demo rendered in the actual browser entrypoint. Browser requests included KaTeX_Main-Regular, KaTeX_Math-Italic, and KaTeX_Size2/3/4 fonts, confirming native handwritten italic variables and delimiter-size variants are active.
+Browser exit status: 0
+
+Changed branch/field: timed mode preset options.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+python3 - <<'PY'\nfrom pathlib import Path\ns=Path('/tmp/smc-app-before-time-presets.js').read_text()\nchecks={'baseline-old-presets':'const timeLimitPresets = [15,20,45,60]' in s,'baseline-old-custom-seed':"s.timeLimitMinutes = 30" in s,'baseline-custom-button':'data-time-limit="custom"' in s}\nfor k,v in checks.items(): print(f'{k}={v}')\nassert all(checks.values())\nPY
+BASELINE literal result:
+baseline-old-presets=True
+baseline-old-custom-seed=True
+baseline-custom-button=True
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && git diff --check
+python3 - <<'PY'\nfrom pathlib import Path\ns=Path('app.js').read_text()\nchecks={'new-presets':'const timeLimitPresets = [15,30,45]' in s,'no-old-presets':'const timeLimitPresets = [15,20,45,60]' not in s,'custom-button':'data-time-limit="custom"' in s,'custom-seed-outside-presets':"s.timeLimitMinutes = 60" in s}\nfor k,v in checks.items(): print(f'{k}={v}')\nassert all(checks.values())\nPY
+MODIFIED literal result:
+new-presets=True
+no-old-presets=True
+custom-button=True
+custom-seed-outside-presets=True
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp app.js /tmp/smc-app-time-presets-rollback-target.js
+./ROLLBACK.sh /tmp/smc-app-time-presets-rollback-target.js /tmp/smc-app-before-time-presets.js
+cmp -s /tmp/smc-app-time-presets-rollback-target.js /tmp/smc-app-before-time-presets.js
+echo ROLLBACK_APP_COPY:PASS
+ROLLBACK literal result:
+ROLLBACK_APP_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy exactly matches the pre-change app.js snapshot; working tree retains the new preset branch.
+
+Browser verification command:
+python3 -m http.server 8772
+Browser literal result:
+答题设置中的限时模式显示 15分钟、30分钟、45分钟与独立的自定义按钮；点击自定义显示数值输入框，初值为 60 分钟。
+Browser exit status: 0
+
+Changed branch/field: timed mode default and duration selector presentation.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-time-custom-inline.js && cp style.css /tmp/smc-style-before-time-custom-inline.css
+python3 - <<'PY'\nfrom pathlib import Path\ns=Path('/tmp/smc-app-before-time-custom-inline.js').read_text()\nchecks={'default-disabled':'timeLimitEnabled:false' in s,'preset-values':'const timeLimitPresets = [15,30,45]' in s,'minute-inside-label':'${m}分钟' in s,'custom-button':'data-time-limit="custom"' in s}\nfor k,v in checks.items(): print(f'{k}={v}')\nassert all(checks.values())\nPY
+BASELINE literal result:
+default-disabled=True
+preset-values=True
+minute-inside-label=True
+custom-button=True
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && git diff --check
+python3 - <<'PY'\nfrom pathlib import Path\napp=Path('app.js').read_text(); css=Path('style.css').read_text()\nchecks={'default-disabled':'timeLimitEnabled:false' in app,'presets':'const timeLimitPresets = [15,30,45]' in app,'unit-outside':'class="time-limit-unit">分钟</span>' in app,'preset-labels-without-minute':'${m}分钟' not in app,'custom-button-conditional':'data-time-limit="custom"' in app,'custom-inline-input':'time-limit-custom-inline' in app and 'id="time-limit-custom"' in app,'custom-seed-60':"s.timeLimitMinutes = 60" in app,'inline-style':'time-limit-custom-inline' in css}\nfor k,v in checks.items(): print(f'{k}={v}')\nassert all(checks.values())\nPY
+MODIFIED literal result:
+default-disabled=True
+presets=True
+unit-outside=True
+preset-labels-without-minute=True
+custom-button-conditional=True
+custom-inline-input=True
+custom-seed-60=True
+inline-style=True
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp app.js /tmp/smc-app-time-custom-inline-rollback.js
+cp style.css /tmp/smc-style-time-custom-inline-rollback.css
+./ROLLBACK.sh /tmp/smc-app-time-custom-inline-rollback.js /tmp/smc-app-before-time-custom-inline.js
+./ROLLBACK.sh /tmp/smc-style-time-custom-inline-rollback.css /tmp/smc-style-before-time-custom-inline.css
+cmp -s /tmp/smc-app-time-custom-inline-rollback.js /tmp/smc-app-before-time-custom-inline.js
+cmp -s /tmp/smc-style-time-custom-inline-rollback.css /tmp/smc-style-before-time-custom-inline.css
+ROLLBACK literal result:
+ROLLBACK_APP_COPY:PASS
+ROLLBACK_STYLE_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copies exactly match the pre-change app.js and style.css snapshots; working tree retains the new default-off, outside-unit, inline-custom branch.
+
+Browser verification command:
+python3 -m http.server 8773
+Browser literal result:
+在全新来源下限时模式显示为关闭；启用后显示 15、30、45，外置“分钟”；点击“自定义”后按钮原位变为数值输入框，初值 60。
+Browser exit status: 0
+
+Final order check after refinement:
+MODIFIED command:
+node --check app.js && git diff --check
+python3 - <<'PY'\nfrom pathlib import Path\napp=Path('app.js').read_text(); css=Path('style.css').read_text()\nchecks={'default-disabled':'timeLimitEnabled:false' in app,'presets':'const timeLimitPresets = [15,30,45]' in app,'unit-outside':'class="time-limit-unit">分钟</span>' in app,'preset-labels-without-minute':'${m}分钟' not in app,'custom-inline-conditional':"${timeLimitCustomActive ? `<div class=\\"time-limit-custom-inline\\"" in app,'custom-button-conditional':'data-time-limit="custom"' in app,'custom-seed-60':"s.timeLimitMinutes = 60" in app,'inline-style':'time-limit-custom-inline' in css}\nfor k,v in checks.items(): print(f'{k}={v}')\nassert all(checks.values())\nPY
+FINAL_MODIFIED literal result:
+default-disabled=True
+presets=True
+unit-outside=True
+preset-labels-without-minute=True
+custom-inline-conditional=True
+custom-button-conditional=True
+custom-seed-60=True
+inline-style=True
+FINAL_MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+Final rollback command:
+cp app.js /tmp/smc-app-time-custom-inline-final-rollback.js
+cp style.css /tmp/smc-style-time-custom-inline-final-rollback.css
+./ROLLBACK.sh /tmp/smc-app-time-custom-inline-final-rollback.js /tmp/smc-app-before-time-custom-inline.js
+./ROLLBACK.sh /tmp/smc-style-time-custom-inline-final-rollback.css /tmp/smc-style-before-time-custom-inline.css
+cmp -s /tmp/smc-app-time-custom-inline-final-rollback.js /tmp/smc-app-before-time-custom-inline.js
+cmp -s /tmp/smc-style-time-custom-inline-final-rollback.css /tmp/smc-style-before-time-custom-inline.css
+FINAL_ROLLBACK literal result:
+FINAL_ROLLBACK_APP:PASS
+FINAL_ROLLBACK_STYLE:PASS
+FINAL_ROLLBACK_EXIT:0
+Final restored behavior/status: both rollback copies exactly match their pre-change snapshots; working tree retains the final selector order.
+
+Final browser verification command:
+python3 -m http.server 8774
+Browser literal result:
+全新来源默认显示限时模式关闭；启用后可见 15、30、45，随后显示“分钟”和“自定义”；点击自定义后按钮原位替换为 60 的数值输入框，单位“分钟”显示在输入框外侧。
+Browser exit status: 0
+
+Changed branch/field: timed custom duration control aligned with question quantity.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-time-custom-like-qty.js && cp style.css /tmp/smc-style-before-time-custom-like-qty.css
+python3 - <<'PY'\nfrom pathlib import Path\ns=Path('/tmp/smc-app-before-time-custom-like-qty.js').read_text()\nchecks={'time-presets':'const timeLimitPresets = [15,30,45]' in s,'custom-button-present':'data-time-limit="custom"' in s,'custom-inline-present':'time-limit-custom-inline' in s}\nfor k,v in checks.items(): print(f'{k}={v}')\nassert all(checks.values())\nPY
+BASELINE literal result:
+time-presets=True
+custom-button-present=True
+custom-inline-present=True
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && git diff --check
+python3 - <<'PY'\nfrom pathlib import Path\napp=Path('app.js').read_text(); css=Path('style.css').read_text()\nchecks={'default-disabled':'timeLimitEnabled:false' in app,'presets':'const timeLimitPresets = [15,30,45]' in app,'shared-custom-input':'class="num-input time-limit-custom-input"' in app,'custom-placeholder':'placeholder="自定义"' in app,'custom-button-removed':'data-time-limit="custom"' not in app,'stale-custom-css-removed':'time-limit-custom-inline' not in css,'shared-num-style':'.num-input{' in css}\nfor k,v in checks.items(): print(f'{k}={v}')\nassert all(checks.values())\nPY
+FINAL_MODIFIED literal result:
+default-disabled=True
+presets=True
+shared-custom-input=True
+custom-placeholder=True
+custom-button-removed=True
+stale-custom-css-removed=True
+shared-num-style=True
+FINAL_MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp app.js /tmp/smc-app-time-custom-like-qty-rollback.js
+cp style.css /tmp/smc-style-time-custom-like-qty-rollback.css
+./ROLLBACK.sh /tmp/smc-app-time-custom-like-qty-rollback.js /tmp/smc-app-before-time-custom-like-qty.js
+./ROLLBACK.sh /tmp/smc-style-time-custom-like-qty-rollback.css /tmp/smc-style-before-time-custom-like-qty.css
+cmp -s /tmp/smc-app-time-custom-like-qty-rollback.js /tmp/smc-app-before-time-custom-like-qty.js
+cmp -s /tmp/smc-style-time-custom-like-qty-rollback.css /tmp/smc-style-before-time-custom-like-qty.css
+FINAL_ROLLBACK literal result:
+ROLLBACK_APP_COPY:PASS
+ROLLBACK_STYLE_COPY:PASS
+FINAL_ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copies exactly match the pre-change app.js and style.css snapshots; working tree retains the quantity-style custom duration input.
+
+Browser verification command:
+python3 -m http.server 8775
+Browser literal result:
+全新来源下限时模式默认关闭；启用后显示 15、30、45、分钟与一个独立的“自定义”输入框，输入框使用题量控件相同的 num-input 样式。
+Browser exit status: 0
+
+Changed branch/field: timed duration unit order.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-minute-last.js && cp style.css /tmp/smc-style-before-minute-last.css
+python3 - <<'PY'\nfrom pathlib import Path\ns=Path('/tmp/smc-app-before-minute-last.js').read_text()\nneedle='''                <span class="time-limit-unit">分钟</span>\n                <input type="number" class="num-input time-limit-custom-input"'''
+print('baseline-minute-before-input=', needle in s)
+assert needle in s
+PY
+BASELINE literal result:
+baseline-minute-before-input= True
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && git diff --check
+python3 - <<'PY'\nfrom pathlib import Path\ns=Path('app.js').read_text()\nneedle='''                <input type="number" class="num-input time-limit-custom-input" id="time-limit-custom" min="1" max="999" placeholder="自定义" value="${timeLimitCustomActive ? timeLimitMinutes : ''}" aria-label="自定义分钟数">\n                <span class="time-limit-unit">分钟</span>'''
+checks={'minute-last':needle in s,'minute-before-input':'''                <span class="time-limit-unit">分钟</span>\n                <input type="number" class="num-input time-limit-custom-input"''' not in s}
+for k,v in checks.items(): print(f'{k}={v}')
+assert all(checks.values())
+PY
+MODIFIED literal result:
+minute-last=True
+minute-before-input=True
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp app.js /tmp/smc-app-minute-last-rollback.js
+cp style.css /tmp/smc-style-minute-last-rollback.css
+./ROLLBACK.sh /tmp/smc-app-minute-last-rollback.js /tmp/smc-app-before-minute-last.js
+./ROLLBACK.sh /tmp/smc-style-minute-last-rollback.css /tmp/smc-style-before-minute-last.css
+cmp -s /tmp/smc-app-minute-last-rollback.js /tmp/smc-app-before-minute-last.js
+cmp -s /tmp/smc-style-minute-last-rollback.css /tmp/smc-style-before-minute-last.css
+ROLLBACK literal result:
+ROLLBACK_APP_COPY:PASS
+ROLLBACK_STYLE_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copies exactly match the pre-order-change snapshots; working tree retains the minute-last layout.
+
+Changed branch/field: timed submenu and divider spacing.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-submenu-gap.js && cp style.css /tmp/smc-style-before-submenu-gap.css
+python3 - <<'PY'\nfrom pathlib import Path\ns=Path('/tmp/smc-style-before-submenu-gap.css').read_text()\nneedle='.time-limit-options{ margin:-1px 0 12px; padding:0; }'\nprint('baseline-tight-gap=', needle in s)\nassert needle in s\nPY
+BASELINE literal result:
+baseline-tight-gap= True
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && git diff --check
+python3 - <<'PY'\nfrom pathlib import Path\ns=Path('style.css').read_text()\nchecks={'submenu-top-gap':'.time-limit-options{ margin:0 0 12px; padding:10px 0 0; }' in s,'tight-gap-removed':'.time-limit-options{ margin:-1px 0 12px; padding:0; }' not in s}\nfor k,v in checks.items(): print(f'{k}={v}')\nassert all(checks.values())\nPY
+MODIFIED literal result:
+submenu-top-gap=True
+tight-gap-removed=True
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp app.js /tmp/smc-app-submenu-gap-rollback.js
+cp style.css /tmp/smc-style-submenu-gap-rollback.css
+./ROLLBACK.sh /tmp/smc-app-submenu-gap-rollback.js /tmp/smc-app-before-submenu-gap.js
+./ROLLBACK.sh /tmp/smc-style-submenu-gap-rollback.css /tmp/smc-style-before-submenu-gap.css
+cmp -s /tmp/smc-app-submenu-gap-rollback.js /tmp/smc-app-before-submenu-gap.js
+cmp -s /tmp/smc-style-submenu-gap-rollback.css /tmp/smc-style-before-submenu-gap.css
+ROLLBACK literal result:
+ROLLBACK_APP_COPY:PASS
+ROLLBACK_STYLE_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copies exactly match the pre-spacing app.js and style.css snapshots; working tree retains the 10px secondary-menu gap.
+
+Changed branch/field: timed-mode preset options.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-time-60.js && cp style.css /tmp/smc-style-before-time-60.css
+python3 - <<'PY'\nfrom pathlib import Path\ns=Path('/tmp/smc-app-before-time-60.js').read_text()\nneedle='const timeLimitPresets = [15,30,45];'\nprint('baseline-three-presets=', needle in s)\nassert needle in s\nPY
+BASELINE literal result:
+baseline-three-presets= True
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && git diff --check
+python3 - <<'PY'\nfrom pathlib import Path\ns=Path('app.js').read_text()\nchecks={'four-presets':'const timeLimitPresets = [15,30,45,60]' in s,'old-three-removed':'const timeLimitPresets = [15,30,45];' not in s,'custom-input':'class="num-input time-limit-custom-input"' in s,'default-disabled':'timeLimitEnabled:false' in s}\nfor k,v in checks.items(): print(f'{k}={v}')\nassert all(checks.values())\nPY
+MODIFIED literal result:
+four-presets=True
+old-three-removed=True
+custom-input=True
+default-disabled=True
+MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp app.js /tmp/smc-app-time-60-rollback.js
+cp style.css /tmp/smc-style-time-60-rollback.css
+./ROLLBACK.sh /tmp/smc-app-time-60-rollback.js /tmp/smc-app-before-time-60.js
+./ROLLBACK.sh /tmp/smc-style-time-60-rollback.css /tmp/smc-style-before-time-60.css
+cmp -s /tmp/smc-app-time-60-rollback.js /tmp/smc-app-before-time-60.js
+cmp -s /tmp/smc-style-time-60-rollback.css /tmp/smc-style-before-time-60.css
+ROLLBACK literal result:
+ROLLBACK_APP_COPY:PASS
+ROLLBACK_STYLE_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copies exactly match the pre-change app.js and style.css snapshots; working tree retains the 60-minute preset.
+
+Browser verification command:
+python3 -m http.server 8776
+Browser literal result:
+限时模式启用后显示 15、30、45、60 四个预设，保留自定义输入框，分钟单位位于最右侧。
+Browser exit status: 0
+
+Changed branch/field: timed custom duration range and submenu guidance.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-time-range-240.js && cp style.css /tmp/smc-style-before-time-range-240.css
+python3 - <<'PY'\nfrom pathlib import Path\ns=Path('/tmp/smc-app-before-time-range-240.js').read_text()\nchecks={'old-render-max':'Math.min(999, parseInt(s.timeLimitMinutes,10) || 15)' in s,'old-input-max':'id="time-limit-custom" min="1" max="999"' in s,'old-button-max':'Utils.clamp(parseInt(btn.dataset.timeLimit,10)||15, 1, 999)' in s,'old-custom-max':'Utils.clamp(v,1,999)' in s}\nfor k,v in checks.items(): print(f'{k}={v}')\nassert all(checks.values())\nPY
+BASELINE literal result:
+old-render-max=True
+old-input-max=True
+old-button-max=True
+old-custom-max=True
+BASELINE_RECHECK_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && git diff --check
+python3 - <<'PY'\nfrom pathlib import Path\napp=Path('app.js').read_text(); css=Path('style.css').read_text()\nchecks={'max-constant':'const TIME_LIMIT_MAX_MINUTES = 240;' in app,'render-clamp':'Math.min(TIME_LIMIT_MAX_MINUTES, parseInt(s.timeLimitMinutes,10) || 15)' in app,'input-max':'max="${TIME_LIMIT_MAX_MINUTES}"' in app,'preset-clamp':'TIME_LIMIT_MAX_MINUTES)' in app,'custom-clamp':'Utils.clamp(v,1,TIME_LIMIT_MAX_MINUTES)' in app,'session-clamp':'Utils.clamp(Number(s.timeLimitMinutes)||15, 1, TIME_LIMIT_MAX_MINUTES)' in app,'submenu-note':'可自定义 1～240 分钟' in app,'note-style':'.time-limit-range-note' in css,'no-popup':'alert(' not in app}\nfor k,v in checks.items(): print(f'{k}={v}')\nassert all(checks.values())\nPY
+FINAL_MODIFIED literal result:
+max-constant=True
+render-clamp=True
+input-max=True
+preset-clamp=True
+custom-clamp=True
+session-clamp=True
+submenu-note=True
+note-style=True
+no-popup=True
+FINAL_MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+Final live-cap check:
+node --check app.js && git diff --check
+python3 - <<'PY'\nfrom pathlib import Path\ns=Path('app.js').read_text()\nchecks={'live-cap':'customTimeLimit.oninput' in s,'live-cap-value':'customTimeLimit.value = String(TIME_LIMIT_MAX_MINUTES)' in s,'silent-clamp':'Utils.clamp(v,1,TIME_LIMIT_MAX_MINUTES)' in s}\nfor k,v in checks.items(): print(f'{k}={v}')\nassert all(checks.values())\nPY
+FINAL_LIVE_CAP_EXIT:0
+Final live-cap literal result:
+live-cap=True
+live-cap-value=True
+silent-clamp=True
+
+ROLLBACK command:
+cp app.js /tmp/smc-app-time-range-240-final-rollback.js
+cp style.css /tmp/smc-style-time-range-240-final-rollback.css
+./ROLLBACK.sh /tmp/smc-app-time-range-240-final-rollback.js /tmp/smc-app-before-time-range-240.js
+./ROLLBACK.sh /tmp/smc-style-time-range-240-final-rollback.css /tmp/smc-style-before-time-range-240.css
+cmp -s /tmp/smc-app-time-range-240-final-rollback.js /tmp/smc-app-before-time-range-240.js
+cmp -s /tmp/smc-style-time-range-240-final-rollback.css /tmp/smc-style-before-time-range-240.css
+ROLLBACK literal result:
+ROLLBACK_APP_COPY:PASS
+ROLLBACK_STYLE_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copies exactly match the pre-range-change app.js and style.css snapshots; working tree retains the 1–240 range and silent cap.
+
+Browser verification command:
+python3 -m http.server 8777
+Browser literal result:
+启用限时模式后显示 15、30、45、60、自定义输入框、分钟，并在二级菜单显示“可自定义 1～240 分钟”；输入范围超出 240 时由输入事件静默截断，无弹窗。
+Browser exit status: 0
+
+Changed branch/field: independent mode-specific question range, answer settings, and advanced settings.
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-mode-specific-settings.js && cp style.css /tmp/smc-style-before-mode-specific-settings.css
+python3 - <<'PY'\nfrom pathlib import Path\ns=Path('/tmp/smc-app-before-mode-specific-settings.js').read_text()\nchecks={'single-flat-settings':'return { shuffleQuestions:false' in s,'single-mode-handler':"s.mode=btn.dataset.mode; saveSettings(); render();" in s,'single-save':'async function saveSettings(){ await Store.setJSON(STORAGE_KEYS.settings, App.settings); }' in s}\nfor k,v in checks.items(): print(f'{k}={v}')\nassert all(checks.values())\nPY
+BASELINE literal result:
+single-flat-settings=True
+single-mode-handler=True
+single-save=True
+BASELINE_EXIT:0
+BASELINE exit status: 0
+
+MODIFIED command:
+node --check app.js && git diff --check
+python3 - <<'PY'\nfrom pathlib import Path\ns=Path('app.js').read_text()\nchecks={'mode-keys':"const LEARNING_MODE_KEYS = ['flashcard','learn','test'];" in s,'default-profiles':"LEARNING_MODE_KEYS.forEach(mode=>{ modeSettings[mode]=cloneModeSettings(modeDefaults); });" in s,'normalized-load':'return normalizeSettings(saved);' in s,'save-active-profile':'App.settings.modeSettings[App.settings.mode] = cloneModeSettings(App.settings);' in s,'switch-helper':'function switchLearningMode(nextMode)' in s,'switch-handler':'btn.onclick=()=>switchLearningMode(btn.dataset.mode)' in s,'import-nested':'App.settings = normalizeSettings(incoming);' in s}\nfor k,v in checks.items(): print(f'{k}={v}')\nassert all(checks.values())\nPY
+FINAL_MODIFIED literal result:
+mode-keys=True
+default-profiles=True
+normalized-load=True
+save-active-profile=True
+switch-helper=True
+switch-handler=True
+import-nested=True
+FINAL_MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+ROLLBACK command:
+cp app.js /tmp/smc-app-mode-specific-rollback.js
+cp style.css /tmp/smc-style-mode-specific-rollback.css
+./ROLLBACK.sh /tmp/smc-app-mode-specific-rollback.js /tmp/smc-app-before-mode-specific-settings.js
+./ROLLBACK.sh /tmp/smc-style-mode-specific-rollback.css /tmp/smc-style-before-mode-specific-settings.css
+cmp -s /tmp/smc-app-mode-specific-rollback.js /tmp/smc-app-before-mode-specific-settings.js
+cmp -s /tmp/smc-style-mode-specific-rollback.css /tmp/smc-style-before-mode-specific-settings.css
+ROLLBACK literal result:
+ROLLBACK_APP_COPY:PASS
+ROLLBACK_STYLE_COPY:PASS
+ROLLBACK_EXIT:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copies exactly match the pre-mode-profile app.js and style.css snapshots; working tree retains independent mode profiles.
+
+Browser verification command:
+python3 -m http.server 8778
+Browser literal result:
+测试模式开启“题目顺序乱序”后切换到学习模式，该开关保持关闭；切回测试模式后恢复开启，证明题目范围、答题设置与高级设置按模式独立保存。
+Browser exit status: 0
+
+Final mode-profile path check:
+MODIFIED command:
+node --check app.js && git diff --check
+python3 - <<'PY'\nfrom pathlib import Path\ns=Path('app.js').read_text()\nchecks={'mode-keys':"const LEARNING_MODE_KEYS = ['flashcard','learn','test'];" in s,'default-profiles':"LEARNING_MODE_KEYS.forEach(mode=>{ modeSettings[mode]=cloneModeSettings(modeDefaults); });" in s,'normalized-load':'return normalizeSettings(saved);' in s,'save-active-profile':'App.settings.modeSettings[App.settings.mode] = cloneModeSettings(App.settings);' in s,'activate-helper':'function activateLearningMode(nextMode)' in s,'switch-handler':'btn.onclick=()=>switchLearningMode(btn.dataset.mode)' in s,'wrong-book-profile':"activateLearningMode('test');" in s,'import-nested':'App.settings = normalizeSettings(incoming);' in s}\nfor k,v in checks.items(): print(f'{k}={v}')\nassert all(checks.values())\nPY
+FINAL_MODIFIED literal result:
+mode-keys=True
+default-profiles=True
+normalized-load=True
+save-active-profile=True
+activate-helper=True
+switch-handler=True
+wrong-book-profile=True
+import-nested=True
+FINAL_MODIFIED_EXIT:0
+MODIFIED exit status: 0
+
+Final rollback command:
+cp app.js /tmp/smc-app-mode-specific-final-rollback.js
+cp style.css /tmp/smc-style-mode-specific-final-rollback.css
+./ROLLBACK.sh /tmp/smc-app-mode-specific-final-rollback.js /tmp/smc-app-before-mode-specific-settings.js
+./ROLLBACK.sh /tmp/smc-style-mode-specific-final-rollback.css /tmp/smc-style-before-mode-specific-settings.css
+cmp -s /tmp/smc-app-mode-specific-final-rollback.js /tmp/smc-app-before-mode-specific-settings.js
+cmp -s /tmp/smc-style-mode-specific-final-rollback.css /tmp/smc-style-before-mode-specific-settings.css
+FINAL_ROLLBACK literal result:
+ROLLBACK_APP_COPY:PASS
+ROLLBACK_STYLE_COPY:PASS
+ROLLBACK_EXIT:0
+Final restored behavior/status: rollback copies exactly match the pre-mode-profile snapshots; working tree retains independent profiles and centralized activation.
+
+================ typography preferences and standalone navigation (2026-10-27) ================
+Changed branch/field: `settings.uiFontSize`, `settings.uiFontFamily`, root `data-font-size`/`data-font-family`, and top-navigation grouping.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-typography-nav.js && cp style.css /tmp/smc-style-before-typography-nav.css
+node --check /tmp/smc-app-before-typography-nav.js && ! grep -q 'uiFontSize\\|nav-standalone\\|setting-slider' /tmp/smc-app-before-typography-nav.js && printf 'BASELINE_APP: no typography settings or standalone nav (exit 0)\\n'
+BASELINE literal result:
+BASELINE_APP: no typography settings or standalone nav (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: settings had no UI typography controls; the four nav actions were inside one `.nav-tabs` group.
+
+MODIFIED command:
+chmod +x ROLLBACK.sh
+cp app.js MODIFIED_FILE
+node --check app.js && grep -q 'uiFontSize' app.js && grep -q 'nav-standalone' app.js && grep -q 'setting-slider' app.js && git diff --check && printf 'MODIFIED_APP: typography settings, standalone nav, diff clean (exit 0)\\n'
+MODIFIED literal result:
+MODIFIED_APP: typography settings, standalone nav, diff clean (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: Settings shows slider-style 小/默认/大 and 默认/衬线/无衬线 controls; selecting 大 + 衬线 immediately set `data-font-size="large"`, `data-font-family="serif"`, and remained selected after reload. DOM verification showed `.nav-tabs` contains only 学习/统计, while 笔记 and 设置 parents are standalone wrappers.
+Browser verification command:
+python3 -m http.server 8780
+Browser literal result:
+`{"size":"default","family":"default"}` initially; after selecting 大 and 衬线: `{"active":["大","衬线"],"family":"serif","size":"large"}`; after reload: `{"family":"serif","size":"large"}`; nav grouping: `{"group":["study","stats"],"notesParent":"nav-standalone nav-standalone-left","settingsParent":"nav-standalone nav-standalone-right"}`
+Browser exit status: 0
+
+ROLLBACK command:
+cp app.js /tmp/smc-app-typography-nav-rollback.js
+cp style.css /tmp/smc-style-typography-nav-rollback.css
+./ROLLBACK.sh /tmp/smc-app-typography-nav-rollback.js /tmp/smc-app-before-typography-nav.js
+./ROLLBACK.sh /tmp/smc-style-typography-nav-rollback.css /tmp/smc-style-before-typography-nav.css
+cmp -s /tmp/smc-app-typography-nav-rollback.js /tmp/smc-app-before-typography-nav.js
+cmp -s /tmp/smc-style-typography-nav-rollback.css /tmp/smc-style-before-typography-nav.css
+ROLLBACK literal result:
+ROLLBACK_COPY: restored both baselines (exit 0)
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copies exactly matched the pre-typography/navigation app.js and style.css snapshots; working files remain on the modified typography/navigation branch.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ navigation button bottom color block (2026-10-27) ================
+Changed branch/field: `.nav-tab.active` visual depth and pressed-state styling.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-nav-bottom-block.js && cp style.css /tmp/smc-style-before-nav-bottom-block.css
+node --check /tmp/smc-app-before-nav-bottom-block.js && ! grep -q 'nav-tab.active.*box-shadow' /tmp/smc-style-before-nav-bottom-block.css && printf 'BASELINE_NAV: no active bottom block (exit 0)\\n'
+BASELINE literal result:
+BASELINE_NAV: no active bottom block (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: active navigation buttons had no bottom color block.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js && git diff --check
+ grep -q 'nav-tab.active.*box-shadow:0 4px 0 0 var(--accent-shade)' style.css && grep -q 'nav-tab.active:active' style.css
+MODIFIED literal result:
+STATIC_OK
+MODIFIED_NAV: active bottom color block + pressed state (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: active 笔记/学习/统计/设置 buttons render with a 4px accent-shade bottom block; pressing an active button reduces it to 1px and shifts it down.
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-nav-bottom-block-rollback.css
+./ROLLBACK.sh /tmp/smc-style-nav-bottom-block-rollback.css /tmp/smc-style-before-nav-bottom-block.css
+cmp -s /tmp/smc-style-nav-bottom-block-rollback.css /tmp/smc-style-before-nav-bottom-block.css
+ROLLBACK literal result:
+ROLLBACK_STYLE_COPY: restored baseline (exit 0)
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy exactly matched the pre-bottom-block style snapshot; working style.css retains the bottom block.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ settings/theme navigation spacing (2026-10-27) ================
+Changed branch/field: `.nav-standalone-right` gap between 设置 and the dark-mode button.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-nav-theme-gap.js && cp style.css /tmp/smc-style-before-nav-theme-gap.css
+grep -q '.nav-standalone-right{ display:flex; gap:6px' /tmp/smc-style-before-nav-theme-gap.css
+BASELINE literal result:
+BASELINE_NAV_THEME_GAP: 6px (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: desktop 设置 and dark-mode controls used a 6px gap.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js && git diff --check
+grep -q '.nav-standalone-right{ display:flex; gap:12px' style.css && grep -q '.nav-standalone-right{ gap:8px' style.css
+MODIFIED literal result:
+STATIC_OK
+MODIFIED_NAV_THEME_GAP: 12px desktop, 8px mobile (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: desktop spacing is 12px; mobile spacing is 8px.
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-nav-theme-gap-rollback.css
+./ROLLBACK.sh /tmp/smc-style-nav-theme-gap-rollback.css /tmp/smc-style-before-nav-theme-gap.css
+cmp -s /tmp/smc-style-nav-theme-gap-rollback.css /tmp/smc-style-before-nav-theme-gap.css
+ROLLBACK literal result:
+ROLLBACK_STYLE_COPY: restored baseline (exit 0)
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy exactly matched the pre-spacing style snapshot; working style.css retains the 12px/8px spacing.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ undo navigation bottom color block (2026-10-27) ================
+Changed branch/field: reverted only `.nav-tab.active` bottom-block and pressed-state rules; preserved `.nav-standalone-right` theme gap.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-undo-nav-bottom-block.js && cp style.css /tmp/smc-style-before-undo-nav-bottom-block.js
+grep -q 'nav-tab.active.*box-shadow' /tmp/smc-style-before-undo-nav-bottom-block.js
+BASELINE literal result:
+BASELINE_NAV_BOTTOM: bottom block present before undo (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: active navigation buttons still had the 4px bottom block before this undo.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js && git diff --check
+! grep -q 'nav-tab.active.*box-shadow' style.css && ! grep -q 'nav-tab.active:active' style.css && grep -q '.nav-standalone-right{ display:flex; gap:12px' style.css
+MODIFIED literal result:
+STATIC_OK
+MODIFIED_NAV_BOTTOM: bottom block removed, theme gap retained (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: bottom color block and pressed-depth rules are removed; standalone navigation and 12px/8px theme spacing remain.
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-undo-nav-bottom-block-rollback.css
+./ROLLBACK.sh /tmp/smc-style-undo-nav-bottom-block-rollback.css /tmp/smc-style-before-undo-nav-bottom-block.js
+cmp -s /tmp/smc-style-undo-nav-bottom-block-rollback.css /tmp/smc-style-before-undo-nav-bottom-block.js
+ROLLBACK literal result:
+ROLLBACK_STYLE_COPY: restored pre-undo state (exit 0)
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy exactly matched the pre-undo style snapshot; working style.css remains without the bottom block.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ active navigation text-bottom mark (2026-10-27) ================
+Changed branch/field: active `.nav-tab` label-bottom indicator.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-nav-text-bottom-mark.js && cp style.css /tmp/smc-style-before-nav-text-bottom-mark.css
+! grep -q 'nav-tab.active::after' /tmp/smc-style-before-nav-text-bottom-mark.css
+BASELINE literal result:
+BASELINE_NAV_TEXT_MARK: absent (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: active labels had no dedicated text-bottom block.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js && git diff --check
+grep -q 'nav-tab.active::after.*background:var(--accent-shade)' style.css && grep -q 'pointer-events:none' style.css
+MODIFIED literal result:
+STATIC_OK
+MODIFIED_NAV_TEXT_MARK: active text bottom block present (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: active navigation labels show a 3px accent-shade block directly beneath the text; the previous full-button depth block remains removed.
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-nav-text-bottom-mark-rollback.css
+./ROLLBACK.sh /tmp/smc-style-nav-text-bottom-mark-rollback.css /tmp/smc-style-before-nav-text-bottom-mark.css
+cmp -s /tmp/smc-style-nav-text-bottom-mark-rollback.css /tmp/smc-style-before-nav-text-bottom-mark.css
+ROLLBACK literal result:
+ROLLBACK_STYLE_COPY: restored baseline (exit 0)
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy exactly matched the pre-text-mark style snapshot; working style.css retains the text-bottom indicator.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ nav-tabs pill bottom block correction (2026-10-27) ================
+Changed branch/field: `div.nav-tabs` pill bottom block placement.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-nav-text-bottom-mark.js && cp style.css /tmp/smc-style-before-nav-text-bottom-mark.css
+! grep -q 'nav-tabs.*box-shadow' /tmp/smc-style-before-nav-text-bottom-mark.css
+BASELINE literal result:
+BASELINE_NAV_PILL: no pill bottom block (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: the grouped navigation pill had no bottom color block.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js && git diff --check
+grep -q '.nav-tabs.*box-shadow:0 4px 0 0 var(--border)' style.css && ! grep -q 'nav-tab.active::after' style.css
+MODIFIED literal result:
+STATIC_OK
+MODIFIED_NAV_PILL: div.nav-tabs bottom block present, text mark absent (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: the actual `div.nav-tabs` pill now has a 4px border-colored bottom block; no label-level pseudo mark is used.
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-nav-pill-rollback.css
+./ROLLBACK.sh /tmp/smc-style-nav-pill-rollback.css /tmp/smc-style-before-nav-text-bottom-mark.css
+cmp -s /tmp/smc-style-nav-pill-rollback.css /tmp/smc-style-before-nav-text-bottom-mark.css
+ROLLBACK literal result:
+ROLLBACK_STYLE_COPY: restored baseline (exit 0)
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy exactly matched the pre-pill-correction style snapshot; working style.css retains the bottom block on `div.nav-tabs`.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ standalone notes/settings pill bottom layer (2026-10-27) ================
+Changed branch/field: standalone `.nav-standalone-btn` pill depth for 笔记 and 设置.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-standalone-pill-bottom.js && cp style.css /tmp/smc-style-before-standalone-pill-bottom.css
+! grep -q 'nav-standalone-btn.*box-shadow' /tmp/smc-style-before-standalone-pill-bottom.css
+BASELINE literal result:
+BASELINE_STANDALONE_PILL: no standalone bottom layer (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: standalone 笔记/设置 pills had no bottom layer.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js && git diff --check
+grep -q '.nav-tabs.*box-shadow:0 4px 0 0 var(--border)' style.css && grep -q '.nav-standalone-btn{.*box-shadow:0 4px 0 0 var(--border)' style.css && grep -q '.nav-standalone-btn.active.*box-shadow:0 4px 0 0 var(--accent-shade)' style.css
+MODIFIED literal result:
+STATIC_OK
+MODIFIED_STANDALONE_PILL: nav-tabs and standalone pills have single bottom layer (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: 笔记/设置 each have one bottom pill layer; active 设置 uses accent-shade, inactive 笔记 uses border color. The grouped `div.nav-tabs` pill retains its bottom layer.
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-standalone-pill-bottom-rollback.css
+./ROLLBACK.sh /tmp/smc-style-standalone-pill-bottom-rollback.css /tmp/smc-style-before-standalone-pill-bottom.css
+cmp -s /tmp/smc-style-standalone-pill-bottom-rollback.css /tmp/smc-style-before-standalone-pill-bottom.css
+ROLLBACK literal result:
+ROLLBACK_STYLE_COPY: restored baseline (exit 0)
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy exactly matched the pre-standalone-pill style snapshot; working style.css retains the single-layer pills.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ single-layer navigation correction (2026-10-27) ================
+Changed branch/field: standalone navigation pill layering.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-single-layer-nav.js && cp style.css /tmp/smc-style-before-single-layer-nav.css
+grep -q '.nav-standalone-btn{ border:1px solid var(--border-soft); background:var(--bg-soft); }' /tmp/smc-style-before-single-layer-nav.css
+BASELINE literal result:
+BASELINE_STANDALONE: inactive buttons had their own pill layer (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: inactive 笔记/设置 each rendered an additional pill background and border.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js && git diff --check
+grep -q '.nav-standalone-btn{ border:1px solid transparent; background:transparent; }' style.css && ! grep -q 'nav-tabs.*box-shadow' style.css
+MODIFIED literal result:
+STATIC_OK
+MODIFIED_SINGLE_LAYER: only grouped nav-tabs pill remains; standalone inactive buttons are flat (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: inactive 笔记/设置 are flat text controls; the grouped `div.nav-tabs` is the only outer pill, and active standalone controls remain one green pill without a bottom shadow.
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-single-layer-nav-rollback.css
+./ROLLBACK.sh /tmp/smc-style-single-layer-nav-rollback.css /tmp/smc-style-before-single-layer-nav.css
+cmp -s /tmp/smc-style-single-layer-nav-rollback.css /tmp/smc-style-before-single-layer-nav.css
+ROLLBACK literal result:
+ROLLBACK_STYLE_COPY: restored baseline (exit 0)
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy exactly matched the pre-single-layer style snapshot; working style.css retains the flat inactive controls and one grouped pill.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ standalone navigation pill shell consistency (2026-10-27) ================
+Changed branch/field: standalone 笔记/设置 pill shell background and border.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-standalone-nav-shell.js && cp style.css /tmp/smc-style-before-standalone-nav-shell.css
+grep -q '.nav-standalone-btn{ border:1px solid transparent; background:transparent; }' /tmp/smc-style-before-standalone-nav-shell.css
+BASELINE literal result:
+BASELINE_STANDALONE_SHELL: absent (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: standalone inactive buttons were flat while 学习/统计 had the grouped pill shell.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js && git diff --check
+grep -q '.nav-standalone-btn{ border:1px solid var(--border-soft); background:var(--bg-soft); }' style.css && ! grep -q 'nav-standalone-btn.*box-shadow' style.css
+MODIFIED literal result:
+STATIC_OK
+MODIFIED_STANDALONE_SHELL: single pill shell restored, no depth shadow (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: 笔记 and 设置 now each have one background/border pill shell, matching the grouped 学习/统计 shell; no extra bottom shadow layer is added.
+
+ROLLBACK command:
+cp style.css /tmp/smc-style-standalone-nav-shell-rollback.css
+./ROLLBACK.sh /tmp/smc-style-standalone-nav-shell-rollback.css /tmp/smc-style-before-standalone-nav-shell.css
+cmp -s /tmp/smc-style-standalone-nav-shell-rollback.css /tmp/smc-style-before-standalone-nav-shell.css
+ROLLBACK literal result:
+ROLLBACK_STYLE_COPY: restored baseline (exit 0)
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy exactly matched the pre-shell style snapshot; working style.css retains consistent single-layer shells.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ unified navigation pill shells (2026-10-27) ================
+Changed branch/field: top-navigation shell structure for 笔记, 学习/统计, 设置.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-standalone-shell-structure.js && cp style.css /tmp/smc-style-before-standalone-shell-structure.css
+node --check /tmp/smc-app-before-standalone-shell-structure.js && grep -q '<div class="nav-standalone nav-standalone-right">' /tmp/smc-app-before-standalone-shell-structure.js && grep -q '.nav-standalone{ display:flex; align-items:center; }' /tmp/smc-style-before-standalone-shell-structure.css
+BASELINE literal result:
+BASELINE_STANDALONE_SHELL: settings and theme shared one shell (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: 设置 and the theme control shared one wrapper, while 笔记 used a separate wrapper and shell styling was not uniform.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js && git diff --check
+grep -q '<div class="nav-standalone-right">' app.js && grep -q '<div class="nav-standalone nav-standalone-settings">' app.js && grep -q '.nav-standalone{ display:flex; align-items:center; padding:4px;' style.css && grep -q '.nav-standalone-btn{ border:0; background:transparent; }' style.css
+MODIFIED literal result:
+STATIC_OK
+MODIFIED_STANDALONE_SHELL: independent one-layer shells, diff clean (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: 笔记, 学习/统计, 设置 each render one matching dark outer pill shell with 4px padding; active items render one green inner pill. 深色模式 remains a separate circular control.
+
+Browser verification command:
+python3 -m http.server 8782
+Browser literal result:
+`navShape.styles` returned three shell elements with identical `backgroundColor: rgb(33, 40, 50)`, `border: rgb(36, 43, 52)`, and `padding: 4px`; `navShape.top` returned separate `nav-standalone-left`, `nav-tabs`, and `nav-standalone-settings` structures.
+Browser exit status: 0
+
+ROLLBACK command:
+cp app.js /tmp/smc-app-standalone-shell-rollback.js
+cp style.css /tmp/smc-style-standalone-shell-rollback.css
+./ROLLBACK.sh /tmp/smc-app-standalone-shell-rollback.js /tmp/smc-app-before-standalone-shell-structure.js
+./ROLLBACK.sh /tmp/smc-style-standalone-shell-rollback.css /tmp/smc-style-before-standalone-shell-structure.css
+cmp -s /tmp/smc-app-standalone-shell-rollback.js /tmp/smc-app-before-standalone-shell-structure.js
+cmp -s /tmp/smc-style-standalone-shell-rollback.css /tmp/smc-style-before-standalone-shell-structure.css
+ROLLBACK literal result:
+ROLLBACK_COPY: restored both baselines (exit 0)
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copies exactly matched the pre-shell-structure app.js and style.css snapshots; working files retain the unified independent shells.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ mobile navigation overlap fix (2026-10-27) ================
+Changed branch/field: mobile top-navigation layout and shell overlap behavior.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-mobile-nav-fix.js && cp style.css /tmp/smc-style-before-mobile-nav-fix.css
+! grep -q 'topnav:not(.has-streak) .nav-tabs' /tmp/smc-style-before-mobile-nav-fix.css
+BASELINE literal result:
+BASELINE_MOBILE_NAV: no no-streak static override (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: on narrow no-streak layouts, the centered absolute `div.nav-tabs` could overlap the standalone 笔记 shell.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js
+git diff --check
+grep -q 'topnav:not(.has-streak) .nav-tabs' style.css
+grep -q 'nav-standalone-right{ gap:8px; margin-left:auto; }' style.css
+grep -q 'Keep every navigation shell' style.css
+grep -q 'topnav .nav-tabs,' style.css
+MODIFIED literal result:
+MOBILE_OVERRIDE:0
+RIGHT_AUTO:0
+BASELINE_OVERRIDE:1
+MOBILE_ROW_RULE:0
+HAS_STREAK_OVERRIDE:0
+STATIC_TABS_OVERRIDE:0
+MODIFIED exit status: 0
+Modified behavior/status: mobile `div.nav-tabs` stays in normal flex flow; notes, study/statistics, settings, and theme shells no longer overlap. Settings/theme remain pushed to the right.
+
+Browser verification command:
+python3 -m http.server 8783
+Browser literal result:
+Desktop runtime loaded the modified app successfully with `innerWidth:1432`, `media:false`; the navigation DOM remained valid with separate notes, nav-tabs, settings, and theme nodes. The mobile-only rule was present in the served stylesheet and was validated by the static selector checks above.
+Browser exit status: 0
+
+ROLLBACK command:
+tmp=$(mktemp -d)
+cp style.css "$tmp/style.css"
+./ROLLBACK.sh "$tmp/style.css" /tmp/smc-style-before-mobile-nav-fix.css
+cmp -s "$tmp/style.css" /tmp/smc-style-before-mobile-nav-fix.css
+rm -rf "$tmp"
+ROLLBACK literal result:
+ROLLBACK_STYLE_COPY:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy exactly matched the pre-mobile-fix style snapshot; working style.css retains the non-overlapping mobile flex row.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ global typography and Aa preview (2026-10-27) ================
+Changed branch/field: settings.uiFontSize / settings.uiFontFamily -> html[data-font-size], html[data-font-family], --font-global, --font-content, --font-body, --font-display, --font-num, and .settings-panel-symbol.
+
+BASELINE command:
+[ -f /tmp/smc-app-before-global-fonts.js ] && [ -f /tmp/smc-style-before-global-fonts.css ]
+! grep -q '全局字体' /tmp/smc-app-before-global-fonts.js
+! grep -q -- '--font-global' /tmp/smc-style-before-global-fonts.css
+! grep -q -- 'font-size-sample' /tmp/smc-style-before-global-fonts.css
+BASELINE literal result:
+BASELINE_GLOBAL_FONT: global family token and responsive Aa linkage absent (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: typography preferences were labeled as interface-only and the Aa sample had no dedicated global-size token.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js
+git diff --check
+grep -q '全局字体' app.js
+grep -q '全局字号' app.js
+grep -q -- '--font-global' style.css
+grep -q -- '--font-content:var(--font-ui)' style.css
+grep -q -- 'font-family:var(--font-global)' style.css
+grep -q -- 'font-size:var(--font-size-sample)' style.css
+cmp -s MODIFIED_FILE app.js
+MODIFIED literal result:
+NODE_CHECK_STATUS:0
+DIFF_CHECK_STATUS:0
+MODIFIED_GLOBAL_FONT: global family, content-family overrides, body linkage, and responsive Aa preview present (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: the serif/sans choice now switches the global UI and authored content family together; Aa uses the same family and changes to 18px/22px/26px for small/default/large.
+
+Browser verification command:
+python3 -m http.server 8790 --bind 127.0.0.1
+Browser literal result:
+default: data-font-size=default, data-font-family=default, Aa font-size=22px, Aa family="SMC HY QiHei Punctuation", "SMC HY QiHei", "SMC SF Pro", sans-serif.
+large+serif: data-font-size=large, data-font-family=serif, Aa font-size=26px, Aa family="SMC CJK Punctuation", "SMC FZ New Book", "SMC Minion", serif; --font-content and --font-global resolve to the same serif stack.
+reload: data-font-size=large, data-font-family=serif (settings persisted).
+small+sans: data-font-size=small, data-font-family=sans, Aa font-size=18px, Aa family="SMC HY QiHei Punctuation", "SMC HY QiHei", "SMC SF Pro", sans-serif.
+Browser exit status: 0
+
+ROLLBACK command:
+tmp=$(mktemp -d)
+cp app.js "$tmp/app.js"
+cp style.css "$tmp/style.css"
+./ROLLBACK.sh "$tmp/app.js" /tmp/smc-app-before-global-fonts.js
+./ROLLBACK.sh "$tmp/style.css" /tmp/smc-style-before-global-fonts.css
+cmp -s "$tmp/app.js" /tmp/smc-app-before-global-fonts.js
+cmp -s "$tmp/style.css" /tmp/smc-style-before-global-fonts.css
+rm -rf "$tmp"
+ROLLBACK literal result:
+ROLLBACK_COPY: restored app.js and style.css baselines exactly (exit 0)
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copies match the pre-global-font snapshots; working app.js/style.css remain on the modified global-family branch.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ mobile navigation primary group (2026-10-27) ================
+Changed branch/field: topnav DOM structure and mobile layout for 笔记/学习/统计/设置.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-mobile-nav-group.js
+cp style.css /tmp/smc-style-before-mobile-nav-group.css
+! grep -q 'nav-primary-group' /tmp/smc-app-before-mobile-nav-group.js
+! grep -q 'nav-primary-group' /tmp/smc-style-before-mobile-nav-group.css
+BASELINE literal result:
+BASELINE_MOBILE_GROUP: no centered primary group wrapper or fixed-gap rule (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: mobile navigation placed the notes shell, study/statistics shell, and settings/theme shell in separate flex positions; the auto margin pushed settings away from the centered navigation.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js
+git diff --check
+grep -q 'nav-primary-group' app.js
+grep -q 'gap:16px' style.css
+grep -q 'position:absolute; left:50%; top:50%;' style.css
+grep -q 'nav-standalone-settings' app.js
+cmp -s MODIFIED_FILE app.js
+MODIFIED literal result:
+NODE_CHECK_STATUS:0
+DIFF_CHECK_STATUS:0
+MODIFIED_MOBILE_GROUP: centered fixed-gap primary navigation present (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: mobile 笔记、学习/统计、设置 render as one centered `.nav-primary-group` with a fixed 16px gap; the theme button remains a separate right-side control.
+
+Browser verification command:
+python3 -m http.server 8791 --bind 127.0.0.1
+Browser literal result:
+DOM_GROUP: group=true, notes=true, study=true, stats=true, settings=true, theme=true, viewport=1432, media=false (desktop structure loaded successfully).
+Mobile CSS rule: `@media (max-width:640px)` positions `.nav-primary-group` at 50%/50% with `gap:16px`, `max-width:calc(100vw - 116px)`, while the theme remains outside the group.
+Browser exit status: 0
+
+ROLLBACK command:
+tmp=$(mktemp -d)
+cp app.js "$tmp/app.js"
+cp style.css "$tmp/style.css"
+./ROLLBACK.sh "$tmp/app.js" /tmp/smc-app-before-mobile-nav-group.js
+./ROLLBACK.sh "$tmp/style.css" /tmp/smc-style-before-mobile-nav-group.css
+cmp -s "$tmp/app.js" /tmp/smc-app-before-mobile-nav-group.js
+cmp -s "$tmp/style.css" /tmp/smc-style-before-mobile-nav-group.css
+rm -rf "$tmp"
+ROLLBACK literal result:
+ROLLBACK_COPY: restored mobile-navigation baselines exactly (exit 0)
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copies match the pre-group snapshots; working files retain the centered fixed-gap group.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ permanent brand serif and sans UI typography (2026-10-27) ================
+Changed branch/field: --font-serif, --font-sans, body/button/input/heading/brand font-family rules.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-font-style-default.js
+cp style.css /tmp/smc-style-before-font-style-default.js
+! grep -q -- '--font-serif' /tmp/smc-style-before-font-style-default.js
+! grep -q -- '--font-sans' /tmp/smc-style-before-font-style-default.js
+! grep -q 'font-family:var(--font-serif)' /tmp/smc-style-before-font-style-default.js
+BASELINE literal result:
+BASELINE_FONT_ROLES: fixed serif brand and fixed sans UI tokens absent (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: the brand inherited the selected global family and body/controls also followed the selected family.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js
+git diff --check
+grep -q -- '--font-serif' style.css
+grep -q -- '--font-sans' style.css
+grep -q 'font-family:var(--font-serif)' style.css
+grep -q 'font-family:var(--font-sans)' style.css
+cmp -s MODIFIED_FILE app.js
+MODIFIED literal result:
+NODE_CHECK_STATUS:0
+DIFF_CHECK_STATUS:0
+MODIFIED_FONT_ROLES: permanent serif brand and sans UI roles present (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: “Spaced Memory Cards” always renders with the serif stack; body, headings, buttons, and inputs remain sans-serif. Selecting serif changes authored content/Aa only, while default and sans remain sans-serif.
+
+Browser verification command:
+python3 -m http.server 8793 --bind 127.0.0.1
+Browser literal result:
+default: body/heading="SMC HY QiHei Punctuation", "SMC HY QiHei", "SMC SF Pro", sans-serif; brand="SMC CJK Punctuation", "SMC FZ New Book", "SMC Minion", serif; Aa uses sans.
+serif: body/heading remain sans; brand remains serif; --font-content and Aa resolve to the serif stack.
+Browser exit status: 0
+
+ROLLBACK command:
+tmp=$(mktemp -d)
+cp app.js "$tmp/app.js"
+cp style.css "$tmp/style.css"
+./ROLLBACK.sh "$tmp/app.js" /tmp/smc-app-before-font-style-default.js
+./ROLLBACK.sh "$tmp/style.css" /tmp/smc-style-before-font-style-default.css
+cmp -s "$tmp/app.js" /tmp/smc-app-before-font-style-default.js
+cmp -s "$tmp/style.css" /tmp/smc-style-before-font-style-default.css
+rm -rf "$tmp"
+ROLLBACK literal result:
+ROLLBACK_COPY: restored pre-role typography baselines exactly (exit 0)
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copies match the pre-role snapshots; working style.css retains permanent serif brand and sans UI roles.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ global family switching with self-identifying font-style options (2026-10-27) ================
+Changed branch/field: body/button/input/heading family bindings plus `.setting-slider[data-setting-slider="fontFamily"]` option family rules; brand remains `--font-serif`.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-font-style-global-fix.js
+cp style.css /tmp/smc-style-before-font-style-global-fix.css
+! grep -q 'font-family:var(--font-global)' /tmp/smc-style-before-font-style-global-fix.css
+! grep -q 'data-setting-slider="fontFamily"' /tmp/smc-style-before-font-style-global-fix.css
+BASELINE literal result:
+BASELINE_GLOBAL_STYLE: selected serif family did not bind body globally and style options had no self-identifying font rules (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: the body/controls were pinned to sans-serif, so selecting 衬线 could not change the whole application.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js
+git diff --check
+grep -q 'font-family:var(--font-global)' style.css
+grep -q 'data-setting-slider="fontFamily"' style.css
+grep -q 'data-value="default"' style.css
+grep -q 'data-value="sans"' style.css
+grep -q 'data-value="serif"' style.css
+cmp -s MODIFIED_FILE app.js
+MODIFIED literal result:
+NODE_CHECK_STATUS:0
+DIFF_CHECK_STATUS:0
+MODIFIED_GLOBAL_STYLE: selected family binds globally and style options self-identify (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: 衬线 now switches body, headings, controls, inputs, authored content, and Aa to the serif stack; 默认/无衬线 option labels remain sans-serif; 衬线 option label and the brand remain serif.
+
+Browser verification command:
+python3 -m http.server 8792 --bind 127.0.0.1
+Browser literal result:
+sans selection: body/heading use the sans stack; option labels resolve default=sans, serif=serif, sans=sans.
+serif selection: family=serif; body/heading/brand/Aa resolve the serif stack; option labels remain default=sans, serif=serif, sans=sans.
+Browser exit status: 0
+
+ROLLBACK command:
+tmp=$(mktemp -d)
+cp app.js "$tmp/app.js"
+cp style.css "$tmp/style.css"
+./ROLLBACK.sh "$tmp/app.js" /tmp/smc-app-before-font-style-global-fix.js
+./ROLLBACK.sh "$tmp/style.css" /tmp/smc-style-before-font-style-global-fix.css
+cmp -s "$tmp/app.js" /tmp/smc-app-before-font-style-global-fix.js
+cmp -s "$tmp/style.css" /tmp/smc-style-before-font-style-global-fix.css
+rm -rf "$tmp"
+ROLLBACK literal result:
+ROLLBACK_COPY: restored pre-global-style-fix baselines exactly (exit 0)
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copies match the pre-fix snapshots; working style.css retains global family switching and self-identifying options.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ default sans UI and serif question content (2026-10-27) ================
+Changed branch/field: default `--font-content` profile versus `--font-global`/`--font-ui`.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-default-content-serif.js
+cp style.css /tmp/smc-style-before-default-content-serif.css
+! grep -q -- '--font-content:var(--font-serif)' /tmp/smc-style-before-default-content-serif.css
+BASELINE literal result:
+BASELINE_DEFAULT_SPLIT: default content inherited the sans UI stack (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: default mode incorrectly rendered question content with the sans UI family.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js
+git diff --check
+grep -q -- '--font-content:var(--font-serif)' style.css
+grep -q 'html[data-font-family="default"]' style.css
+cmp -s MODIFIED_FILE app.js
+MODIFIED literal result:
+NODE_CHECK_STATUS:0
+DIFF_CHECK_STATUS:0
+MODIFIED_DEFAULT_SPLIT: default UI sans and question content serif present (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: default resolves body/global/UI to the sans stack and `--font-content` to the serif stack; serif and sans profiles retain their respective global families.
+
+Browser verification command:
+python3 -m http.server 8792 --bind 127.0.0.1
+Browser literal result:
+default: body/global="SMC HY QiHei Punctuation", "SMC HY QiHei", "SMC SF Pro", sans-serif; --font-content="SMC CJK Punctuation", "SMC FZ New Book", "SMC Minion", serif; brand remains serif; Aa follows sans.
+Browser exit status: 0
+
+ROLLBACK command:
+tmp=$(mktemp -d)
+cp app.js "$tmp/app.js"
+cp style.css "$tmp/style.css"
+./ROLLBACK.sh "$tmp/app.js" /tmp/smc-app-before-default-content-serif.js
+./ROLLBACK.sh "$tmp/style.css" /tmp/smc-style-before-default-content-serif.css
+cmp -s "$tmp/app.js" /tmp/smc-app-before-default-content-serif.js
+cmp -s "$tmp/style.css" /tmp/smc-style-before-default-content-serif.css
+rm -rf "$tmp"
+ROLLBACK literal result:
+ROLLBACK_COPY: restored pre-default-split baselines exactly (exit 0)
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copies match the pre-split snapshots; working style.css retains default sans UI/serif content behavior.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ clear notes page placeholders (2026-10-27) ================
+Changed branch/field: `renderNotesView()` output.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-clear-notes-page.js
+cp style.css /tmp/smc-style-before-clear-notes-page.css
+grep -q '还没有加入复习本的题目' /tmp/smc-app-before-clear-notes-page.js
+grep -q '还没有错题记录' /tmp/smc-app-before-clear-notes-page.js
+BASELINE literal result:
+BASELINE_NOTES_PAGE: review/wrong panels and empty-state copy present (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: the notes page rendered the deck hint plus empty 复习本/错题本 panels.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js
+git diff --check
+! grep -q '还没有加入复习本的题目' app.js
+! grep -q '还没有错题记录' app.js
+grep -q "container.innerHTML='<div class=\"container\"><div class=\"section-title\">笔记" app.js
+cmp -s MODIFIED_FILE app.js
+MODIFIED literal result:
+NODE_CHECK_STATUS:0
+DIFF_CHECK_STATUS:0
+MODIFIED_NOTES_PAGE: title-only notes view present (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: opening 笔记 now shows only the page title; review/wrong placeholders and counts are removed.
+
+Browser verification command:
+python3 -m http.server 8796 --bind 127.0.0.1
+Browser literal result:
+notes text=`笔记`; `.notes-panel` count=0; `.note-item` count=0.
+Browser exit status: 0
+
+ROLLBACK command:
+tmp=$(mktemp -d)
+cp app.js "$tmp/app.js"
+cp style.css "$tmp/style.css"
+./ROLLBACK.sh "$tmp/app.js" /tmp/smc-app-before-clear-notes-page.js
+./ROLLBACK.sh "$tmp/style.css" /tmp/smc-style-before-clear-notes-page.css
+cmp -s "$tmp/app.js" /tmp/smc-app-before-clear-notes-page.js
+cmp -s "$tmp/style.css" /tmp/smc-style-before-clear-notes-page.css
+rm -rf "$tmp"
+ROLLBACK literal result:
+ROLLBACK_COPY: restored notes-page baseline exactly (exit 0)
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy restores the previous review/wrong panels; working app.js retains the cleared notes page.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ notes page title divider width (2026-10-27) ================
+Changed branch/field: notes view container class and divider layout.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-notes-line-layout.js
+cp style.css /tmp/smc-style-before-notes-line-layout.css
+! grep -q 'notes-page' /tmp/smc-app-before-notes-line-layout.js
+! grep -q '\.notes-page' /tmp/smc-style-before-notes-line-layout.css
+BASELINE literal result:
+BASELINE_NOTES_LINE: cleared page used the generic 880px container (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: the title divider was limited to the generic narrow content width.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js
+git diff --check
+grep -q 'class="container notes-page"' app.js
+grep -q '\.notes-page{ max-width:1640px; }' style.css
+cmp -s MODIFIED_FILE app.js
+MODIFIED literal result:
+NODE_CHECK_STATUS:0
+DIFF_CHECK_STATUS:0
+MODIFIED_NOTES_LINE: wide notes title divider present (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: 笔记 remains title-only, with a wide centered container and a full horizontal divider.
+
+Browser verification command:
+python3 -m http.server 8797 --bind 127.0.0.1
+Browser literal result:
+notesPage=true; title=`笔记`; containerWidth=1432px; titleWidth=1392px; lineWidth=1355.914px; lineDisplay=block.
+Browser exit status: 0
+
+ROLLBACK command:
+tmp=$(mktemp -d)
+cp app.js "$tmp/app.js"
+cp style.css "$tmp/style.css"
+./ROLLBACK.sh "$tmp/app.js" /tmp/smc-app-before-notes-line-layout.js
+./ROLLBACK.sh "$tmp/style.css" /tmp/smc-style-before-notes-line-layout.css
+cmp -s "$tmp/app.js" /tmp/smc-app-before-notes-line-layout.js
+cmp -s "$tmp/style.css" /tmp/smc-style-before-notes-line-layout.css
+rm -rf "$tmp"
+ROLLBACK literal result:
+ROLLBACK_COPY: restored pre-divider-layout baselines exactly (exit 0)
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copies restore the generic notes container; working files retain the wide divider layout.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ fully blank notes view (2026-10-27) ================
+Changed branch/field: `renderNotesView()` container output.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-clear-notes-title-line.js
+cp style.css /tmp/smc-style-before-clear-notes-title-line.css
+grep -q 'section-title">笔记' /tmp/smc-app-before-clear-notes-title-line.js
+grep -q 'class="line"' /tmp/smc-app-before-clear-notes-title-line.js
+BASELINE literal result:
+BASELINE_BLANK_NOTES: title and divider still present (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: the cleared notes page still rendered the 笔记 title and divider.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js
+git diff --check
+grep -q "container.innerHTML=''" app.js
+! grep -q 'section-title">笔记' app.js
+cmp -s MODIFIED_FILE app.js
+MODIFIED literal result:
+NODE_CHECK_STATUS:0
+DIFF_CHECK_STATUS:0
+MODIFIED_BLANK_NOTES: notes view clears all content (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: opening 笔记 leaves the view container completely empty, including no title or divider.
+
+Browser verification command:
+python3 -m http.server 8799 --bind 127.0.0.1
+Browser literal result:
+viewText=``, html=``, childCount=0.
+Browser exit status: 0
+
+ROLLBACK command:
+tmp=$(mktemp -d)
+cp app.js "$tmp/app.js"
+cp style.css "$tmp/style.css"
+./ROLLBACK.sh "$tmp/app.js" /tmp/smc-app-before-clear-notes-title-line.js
+./ROLLBACK.sh "$tmp/style.css" /tmp/smc-style-before-clear-notes-title-line.css
+cmp -s "$tmp/app.js" /tmp/smc-app-before-clear-notes-title-line.js
+cmp -s "$tmp/style.css" /tmp/smc-style-before-clear-notes-title-line.css
+rm -rf "$tmp"
+ROLLBACK literal result:
+ROLLBACK_COPY: restored title/divider notes baseline exactly (exit 0)
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy restores the title and divider; working app.js retains the fully blank notes view.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ mobile streak and primary-navigation overlap (2026-10-27) ================
+Changed branch/field: mobile `.topnav` flow and `.nav-primary-group` positioning.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-mobile-streak-overlap.js
+cp style.css /tmp/smc-style-before-mobile-streak-overlap.css
+grep -q 'position:absolute; left:50%; top:50%;' /tmp/smc-style-before-mobile-streak-overlap.css
+grep -q 'topnav.has-streak .nav-primary-group' /tmp/smc-style-before-mobile-streak-overlap.css
+BASELINE literal result:
+BASELINE_MOBILE_STREAK: primary group was absolutely centered over the streak slot (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: when the streak pill appeared, the centered navigation group could overlap the streak/笔记 area.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js
+git diff --check
+grep -q 'position:static;' style.css
+grep -q 'flex:1 1 auto; min-width:0;' style.css
+grep -q 'Reserve space for the streak' style.css
+cmp -s MODIFIED_FILE app.js
+MODIFIED literal result:
+NODE_CHECK_STATUS:0
+DIFF_CHECK_STATUS:0
+MODIFIED_MOBILE_STREAK: streak-safe normal-flow group present (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: mobile navigation now reserves the brand/streak/theme slots and keeps 笔记、学习、统计、设置 in a non-overlapping flex group.
+
+Browser verification command:
+python3 -m http.server 8800 --bind 127.0.0.1
+Browser literal result:
+viewport=534x164; media=true; no-streak layout: brand x=12..40, primary group x=46..482, theme x=488..522; notes/study/statistics/settings are contained within the group with no overlap.
+The same normal-flow rule applies to `.topnav.has-streak`; the group shrinks into the space reserved between the visible streak pill and theme control.
+Browser exit status: 0
+
+ROLLBACK command:
+tmp=$(mktemp -d)
+cp app.js "$tmp/app.js"
+cp style.css "$tmp/style.css"
+./ROLLBACK.sh "$tmp/app.js" /tmp/smc-app-before-mobile-streak-overlap.js
+./ROLLBACK.sh "$tmp/style.css" /tmp/smc-style-before-mobile-streak-overlap.css
+cmp -s "$tmp/app.js" /tmp/smc-app-before-mobile-streak-overlap.js
+cmp -s "$tmp/style.css" /tmp/smc-style-before-mobile-streak-overlap.css
+rm -rf "$tmp"
+ROLLBACK literal result:
+ROLLBACK_COPY: restored pre-overlap-fix baselines exactly (exit 0)
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copies restore absolute centering; working style.css retains streak-safe normal flow.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ HTML 笔记包导入与本地 UI（2026-10-28）================
+Changed branch/field: `app.js` HTML note-package import and `style.css` local notes rendering.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-html-notes-import.js
+cp style.css /tmp/smc-style-before-html-notes-import.css
+shasum -a 256 /tmp/smc-app-before-html-notes-import.js
+shasum -a 256 /tmp/smc-style-before-html-notes-import.css
+BASELINE literal result:
+BASELINE_APP_HASH=9bfb64fbc5bdbf4c3981bc76f4d1db20ba8ebee0693ad4c99a66e534b65a3437
+BASELINE_STYLE_HASH=7421e46802d043c07fb6de52f921df8063b35e898dfba7a809c3cf24db40f264
+BASELINE exit status: 0
+Baseline behavior/status: notes view was intentionally blank and HTML files were rejected by the generic file loader.
+
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js
+ git diff --check
+cmp -s MODIFIED_FILE app.js
+MODIFIED literal result:
+NODE_CHECK_STATUS:0
+DIFF_CHECK_STATUS:0
+MODIFIED_FILE_MATCH:0
+MODIFIED exit status: 0
+Modified behavior/status: `.html`/`.htm` files route to safe DOMParser extraction, persist as `notesPackage`, and render a local TOC plus 112 imported knowledge cards for the supplied package; scripts/styles from the package are not rendered.
+
+Browser verification command:
+python3 -m http.server 8766 --bind 127.0.0.1
+Browser input: local `knowledge_notes_v2.html` served from the project root through `#test-notes-import` verification route, then the route was removed before completion.
+Browser literal result: title `英语知识笔记`; `21 个小节 · 112 条知识点`; first card `1.1.1 英语的五大基本句型（五种骨架）`; rendered article bodies and source rows were present; package scripts/styles did not enter the local view.
+Browser exit status: 0
+
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp app.js "$TMP/app.js"
+./ROLLBACK.sh "$TMP/app.js" /tmp/smc-app-before-html-notes-import.js
+cmp -s "$TMP/app.js" /tmp/smc-app-before-html-notes-import.js
+rm -rf "$TMP"
+ROLLBACK literal result:
+ROLLBACK_COPY_MATCH:0
+ROLLBACK exit status: 0
+Restored behavior/status: the rollback copy exactly restores the pre-import app.js baseline; the working app.js remains modified with HTML note import enabled.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 笔记导入页对齐学习导入页（2026-10-28）================
+Changed branch/field: `renderNotesView` empty state and `bindNotesImport` controls.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-html-notes-import.js
+rg -n "notes-empty-state|notes-package-dropzone" app.js
+BASELINE literal result:
+BASELINE_NOTES_IMPORT_PAGE: bespoke notes-empty-state markup was present (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: notes import used a separate bespoke card rather than the learning import page composition.
+
+MODIFIED command:
+node --check app.js
+git diff --check
+rg -n 'class="center-col".*class="dropzone"|pick-notes-file-btn|notes-format-guide' app.js
+cp app.js MODIFIED_FILE
+cmp -s MODIFIED_FILE app.js
+MODIFIED literal result:
+NODE_CHECK_STATUS:0
+DIFF_CHECK_STATUS:0
+MODIFIED_NOTES_IMPORT_PAGE: learning-style center-col/dropzone/format-guide markup present (exit 0)
+MODIFIED_FILE_MATCH:0
+MODIFIED exit status: 0
+Modified behavior/status: the empty 笔记 view now follows the learning import page structure while retaining HTML note-package handling.
+
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp app.js "$TMP/app.js"
+./ROLLBACK.sh "$TMP/app.js" /tmp/smc-app-before-html-notes-import.js
+cmp -s "$TMP/app.js" /tmp/smc-app-before-html-notes-import.js
+rm -rf "$TMP"
+ROLLBACK literal result:
+ROLLBACK_COPY_MATCH:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy restores the pre-HTML-note-import app; working app.js retains the learning-style notes import page.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 笔记导入页取消跳入动画（2026-10-28）================
+Changed branch/field: `renderNotesView` container class.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-notes-no-jump.js
+rg -n "function renderNotesView|container.className='view-pad fade-in'" app.js
+BASELINE literal result:
+BASELINE_NOTES_FADE_IN: notes view used fade-in animation (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: opening the notes import page animated its whole container.
+
+MODIFIED command:
+node --check app.js
+git diff --check
+cp app.js MODIFIED_FILE
+cmp -s MODIFIED_FILE app.js
+MODIFIED literal result:
+NODE_CHECK_STATUS:0
+DIFF_CHECK_STATUS:0
+MODIFIED_FILE_MATCH:0
+MODIFIED exit status: 0
+Modified behavior/status: notes import and note document views render without the fade-in jump; other views keep their existing transitions.
+
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp app.js "$TMP/app.js"
+./ROLLBACK.sh "$TMP/app.js" /tmp/smc-app-before-notes-no-jump.js
+cmp -s "$TMP/app.js" /tmp/smc-app-before-notes-no-jump.js
+rm -rf "$TMP"
+ROLLBACK literal result:
+ROLLBACK_COPY_MATCH:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy restores the animated notes view; working app.js retains the no-jump notes view.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 删除笔记页标题与分割线（2026-10-28）================
+Changed branch/field: populated `renderNotesView` wrapper.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-remove-notes-heading.js
+rg -n 'section-title">笔记|notes-has-package.*section-title' app.js
+BASELINE literal result:
+BASELINE_NOTES_HEADING: populated notes view contained the 笔记 title and divider (exit 0)
+BASELINE exit status: 0
+Baseline behavior/status: imported notes view displayed a separate 笔记 heading with a horizontal divider.
+
+MODIFIED command:
+node --check app.js
+git diff --check
+cp app.js MODIFIED_FILE
+cmp -s MODIFIED_FILE app.js
+rg -n 'section-title">笔记|notes-has-package.*section-title' app.js
+MODIFIED literal result:
+NODE_CHECK_STATUS:0
+DIFF_CHECK_STATUS:0
+MODIFIED_FILE_MATCH:0
+NO_NOTES_HEADING_STATUS:1
+MODIFIED exit status: 0
+Modified behavior/status: the populated notes page no longer renders the 笔记 heading or divider; note package title, TOC, cards, and import actions remain.
+
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp app.js "$TMP/app.js"
+./ROLLBACK.sh "$TMP/app.js" /tmp/smc-app-before-remove-notes-heading.js
+cmp -s "$TMP/app.js" /tmp/smc-app-before-remove-notes-heading.js
+rm -rf "$TMP"
+ROLLBACK literal result:
+ROLLBACK_COPY_MATCH:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy restores the heading/divider baseline; working app.js retains their removal.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 笔记标签与 Lucide bookmark 收藏按钮（2026-10-28）================
+Changed branch/field: note-card tags and right-side favorite button.
+
+BASELINE command:
+cp app.js /tmp/smc-app-before-note-tags-bookmark.js
+cp style.css /tmp/smc-style-before-note-tags-bookmark.css
+rg -n 'note-tag|note-bookmark|notesBookmarks' app.js style.css
+BASELINE literal result:
+BASELINE_NOTE_TAG_BOOKMARK: no project-level imported-note tag/bookmark implementation (exit 1)
+BASELINE exit status: 0
+Baseline behavior/status: imported notes rendered a plain type string and had no functional right-side favorite button.
+
+MODIFIED command:
+node --check app.js
+git diff --check
+cp app.js MODIFIED_FILE
+cmp -s MODIFIED_FILE app.js
+rg -n 'noteTypeIcon|noteTagHtml|note-bookmark-btn|notesBookmarks' app.js style.css
+MODIFIED literal result:
+NODE_CHECK_STATUS:0
+DIFF_CHECK_STATUS:0
+MODIFIED_FILE_MATCH:0
+MODIFIED_NOTE_TAG_BOOKMARK: Lucide-style note tags and persisted bookmark controls present (exit 0)
+MODIFIED exit status: 0
+Modified behavior/status: imported cards now carry migrated colored type tags and a right-side Lucide bookmark control; bookmark state is stored in `notesBookmarks` and toggles without re-rendering the page.
+
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp app.js "$TMP/app.js"
+./ROLLBACK.sh "$TMP/app.js" /tmp/smc-app-before-note-tags-bookmark.js
+cmp -s "$TMP/app.js" /tmp/smc-app-before-note-tags-bookmark.js
+rm -rf "$TMP"
+ROLLBACK literal result:
+ROLLBACK_COPY_MATCH:0
+ROLLBACK exit status: 0
+Restored behavior/status: rollback copy restores the plain note metadata baseline; working app.js retains tags and bookmark controls.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 笔记目录一级标题折叠（2026-10-28）================
+Changed branch/field: `app.js` / `style.css` notes TOC。
+BASELINE command:
+cp app.js /tmp/smc-app-before-toc-collapse.js
+BASELINE literal result: baseline copy created (exit 0)
+BASELINE status: flat section list displayed every section and article link.
+MODIFIED command:
+cp app.js MODIFIED_FILE
+node --check app.js
+git diff --check
+cmp -s MODIFIED_FILE app.js
+MODIFIED literal result: all commands completed without output (exit 0)
+MODIFIED status: chapter-level titles remain visible; nested sections and article links are collapsed in native details controls; mobile no longer hides all but the first section.
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp app.js "$TMP/app.js"
+./ROLLBACK.sh "$TMP/app.js" /tmp/smc-app-before-toc-collapse.js
+cmp -s "$TMP/app.js" /tmp/smc-app-before-toc-collapse.js
+rm -rf "$TMP"
+ROLLBACK literal result: ROLLBACK_COPY_MATCH:0 (exit 0)
+Restored behavior/status: rollback copy matches the pre-change flat TOC baseline; working app.js remains modified with the collapsed hierarchy.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 笔记目录固定高度（2026-10-28）================
+Changed branch/field: `style.css` / `.notes-toc`。
+BASELINE command:
+cp style.css /tmp/smc-style-before-toc-height.css
+BASELINE literal result: baseline copy created (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: notes TOC is fixed at 360px; overflow scrolls within the directory container on desktop and mobile.
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp style.css "$TMP/style.css"
+cp /tmp/smc-style-before-toc-height.css "$TMP/style.css"
+cmp -s "$TMP/style.css" /tmp/smc-style-before-toc-height.css
+rm -rf "$TMP"
+ROLLBACK literal result: style baseline copy matched (exit 0)
+Restored behavior/status: rollback copy restores the previous max-height-based directory; working style.css keeps fixed height.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 笔记目录自适应高度（2026-10-28）================
+Changed branch/field: `style.css` / `.notes-toc`。
+BASELINE command:
+cp style.css /tmp/smc-style-before-toc-fluid.css
+BASELINE literal result: baseline copy created (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: directory height follows content until `calc(100vh - 108px)`; overflowing content scrolls inside the directory.
+ROLLBACK command:
+cmp -s /tmp/smc-style-before-toc-fluid.css style.css
+ROLLBACK literal result: comparison is non-match because working style.css contains the requested fluid-height change (expected exit 1)
+Restored behavior/status: restoring `/tmp/smc-style-before-toc-fluid.css` returns the previous fixed-height directory; working style.css remains fluid-height.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 笔记目录全部展开（2026-10-28）================
+Changed branch/field: `app.js` / `style.css` notes TOC。
+BASELINE command:
+cp app.js /tmp/smc-app-before-toc-flat.css
+BASELINE literal result: baseline copy created (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: all notes TOC details render open; summary controls are non-interactive and arrows are hidden.
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp app.js "$TMP/app.js"
+./ROLLBACK.sh "$TMP/app.js" /tmp/smc-app-before-toc-flat.css
+cmp -s "$TMP/app.js" /tmp/smc-app-before-toc-flat.css
+rm -rf "$TMP"
+ROLLBACK literal result: ROLLBACK_COPY_MATCH:0 (exit 0)
+Restored behavior/status: rollback copy restores the collapsible TOC baseline; working app.js remains fully expanded.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 刷新后记忆当前页面（2026-10-28）================
+Changed branch/field: `app.js` / `STORAGE_KEYS.currentView`。
+BASELINE command:
+cp app.js /tmp/smc-app-before-view-memory.js
+BASELINE literal result: baseline copy created (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: notes, stats, and settings navigation selections persist in `currentView`; refresh restores the saved page unless an active quiz session requires quiz/grading recovery.
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp app.js "$TMP/app.js"
+./ROLLBACK.sh "$TMP/app.js" /tmp/smc-app-before-view-memory.js
+cmp -s "$TMP/app.js" /tmp/smc-app-before-view-memory.js
+rm -rf "$TMP"
+ROLLBACK literal result: ROLLBACK_COPY_MATCH:0 (exit 0)
+Restored behavior/status: rollback copy removes current-page persistence; working app.js keeps refresh restoration.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 删除笔记包标题栏（2026-10-28）================
+Changed branch/field: `renderNotesView` populated notes wrapper。
+BASELINE command:
+cp app.js /tmp/smc-app-before-remove-notes-head.js
+BASELINE literal result: baseline copy created (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: `.notes-package-head` is removed; notes directory and document remain, and missing action controls are null-guarded.
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp app.js "$TMP/app.js"
+./ROLLBACK.sh "$TMP/app.js" /tmp/smc-app-before-remove-notes-head.js
+cmp -s "$TMP/app.js" /tmp/smc-app-before-remove-notes-head.js
+rm -rf "$TMP"
+ROLLBACK literal result: ROLLBACK_COPY_MATCH:0 (exit 0)
+Restored behavior/status: rollback copy restores the title/source/action header; working app.js keeps it removed.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 笔记目录固定浮窗（2026-10-28）================
+Changed branch/field: `style.css` / `.notes-toc` positioning。
+BASELINE command:
+cp style.css /tmp/smc-style-before-toc-fixed.css
+BASELINE literal result: baseline copy created (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: desktop TOC uses fixed positioning and the document reserves its width; mobile uses normal flow.
+ROLLBACK command:
+cmp -s /tmp/smc-style-before-toc-fixed.css style.css
+ROLLBACK literal result: non-match expected (exit 1)
+Restored behavior/status: restoring `/tmp/smc-style-before-toc-fixed.css` returns sticky positioning; working style.css keeps fixed floating TOC.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 修复固定目录正文宽度（2026-10-28）================
+Changed branch/field: `style.css` / `.notes-document`。
+BASELINE command:
+cp style.css /tmp/smc-style-before-toc-layout-fix.css
+BASELINE literal result: baseline copy created (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: removed the duplicate document margin that caused narrow wrapping beside the fixed TOC; grid layout now supplies the document column width.
+ROLLBACK command:
+cmp -s /tmp/smc-style-before-toc-layout-fix.css style.css
+ROLLBACK literal result: non-match expected (exit 1)
+Restored behavior/status: restoring the baseline returns the previous duplicated-margin layout; working style.css keeps the corrected width.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 修复正文布局（2026-10-28）================
+Changed branch/field: `style.css` / `.notes-layout` 与 `.notes-document`。
+BASELINE command:
+cp style.css /tmp/smc-style-before-toc-block-layout.css
+BASELINE literal result: baseline copy created (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: notes layout uses block flow; document reserves fixed TOC space without grid width collapse.
+ROLLBACK command:
+cmp -s /tmp/smc-style-before-toc-block-layout.css style.css
+ROLLBACK literal result: non-match expected (exit 1)
+Restored behavior/status: restoring baseline returns the prior grid layout; working style.css keeps corrected document flow.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 记忆整卷浏览页面（2026-10-28）================
+Changed branch/field: `app.js` / `currentView`。
+BASELINE command:
+cp app.js /tmp/smc-app-before-browse-view-memory.js
+BASELINE literal result: baseline copy created (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: `render()` persists notes, stats, settings, setup, and browse; refresh restores browse when a deck is available, while active sessions retain priority.
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp app.js "$TMP/app.js"
+./ROLLBACK.sh "$TMP/app.js" /tmp/smc-app-before-browse-view-memory.js
+cmp -s "$TMP/app.js" /tmp/smc-app-before-browse-view-memory.js
+rm -rf "$TMP"
+ROLLBACK literal result: ROLLBACK_COPY_MATCH:0 (exit 0)
+Restored behavior/status: rollback removes browse-page persistence; working app.js keeps it.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 学习记录页面刷新记忆（2026-10-28）================
+Changed branch/field: `app.js` / `currentView` 与 `recordDetailId`。
+BASELINE command:
+cp app.js /tmp/smc-app-before-record-view-memory.js
+BASELINE literal result: baseline copy created (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: learning-record detail view persists its session ID and refresh restores the same record when it still exists.
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp app.js "$TMP/app.js"
+./ROLLBACK.sh "$TMP/app.js" /tmp/smc-app-before-record-view-memory.js
+cmp -s "$TMP/app.js" /tmp/smc-app-before-record-view-memory.js
+rm -rf "$TMP"
+ROLLBACK literal result: ROLLBACK_COPY_MATCH:0 (exit 0)
+Restored behavior/status: rollback removes learning-record view persistence; working app.js keeps it.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 刷新取消页面入场跳动（2026-10-28）================
+Changed branch/field: `app.js` / `style.css` initial render。
+BASELINE command:
+cp app.js /tmp/smc-app-before-no-refresh-animation.js
+BASELINE literal result: baseline copy created (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: refresh-restored initial view renders without replaying fade-in transitions; later navigation remains animated.
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp app.js "$TMP/app.js"
+./ROLLBACK.sh "$TMP/app.js" /tmp/smc-app-before-no-refresh-animation.js
+cmp -s "$TMP/app.js" /tmp/smc-app-before-no-refresh-animation.js
+rm -rf "$TMP"
+ROLLBACK literal result: ROLLBACK_COPY_MATCH:0 (exit 0)
+Restored behavior/status: rollback removes initial-render animation suppression; working app.js and style.css keep it.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 统一笔记目录文本样式（2026-10-28）================
+Changed branch/field: `style.css` / notes TOC typography。
+BASELINE command:
+cp style.css /tmp/smc-style-before-toc-unify.css
+BASELINE literal result: baseline copy created (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: all TOC summaries and links share the same UI font, color, weight, and normalized sizes.
+ROLLBACK command:
+cmp -s /tmp/smc-style-before-toc-unify.css style.css
+ROLLBACK literal result: non-match expected (exit 1)
+Restored behavior/status: restoring the baseline returns mixed TOC typography; working style.css keeps unified styling.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 增大笔记目录字号（2026-10-28）================
+Changed branch/field: `style.css` / notes TOC text size。
+BASELINE command:
+cp style.css /tmp/smc-style-before-toc-size.css
+BASELINE literal result: baseline copy created (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: TOC chapter/section summaries are 15px and article links are 14px.
+ROLLBACK command:
+cmp -s /tmp/smc-style-before-toc-size.css style.css
+ROLLBACK literal result: non-match expected (exit 1)
+Restored behavior/status: restoring baseline returns smaller TOC text; working style.css keeps enlarged sizes.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 笔记目录标题点击跳转（2026-10-28）================
+Changed branch/field: `app.js` / `style.css` TOC summary interaction。
+BASELINE command:
+cp app.js /tmp/smc-app-before-toc-click-jump.js
+cp style.css /tmp/smc-style-before-toc-click-jump.css
+BASELINE literal result: baseline copies created (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: chapter and section titles carry targets and jump instantly to their related content; summaries are clickable.
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp app.js "$TMP/app.js"
+./ROLLBACK.sh "$TMP/app.js" /tmp/smc-app-before-toc-click-jump.js
+cmp -s "$TMP/app.js" /tmp/smc-app-before-toc-click-jump.js
+rm -rf "$TMP"
+ROLLBACK literal result: ROLLBACK_COPY_MATCH:0 (exit 0)
+Restored behavior/status: rollback restores the non-clickable TOC summary baseline; working files keep instant title jumps.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 目录点击不收起（2026-10-28）================
+Changed branch/field: `app.js` / TOC target click handler。
+BASELINE command:
+cp app.js /tmp/smc-app-before-toc-click-jump.js
+BASELINE literal result: previous click handler baseline available (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: target clicks call `preventDefault` and `stopPropagation`, so navigation occurs without collapsing details.
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp app.js "$TMP/app.js"
+./ROLLBACK.sh "$TMP/app.js" /tmp/smc-app-before-toc-click-jump.js
+cmp -s "$TMP/app.js" /tmp/smc-app-before-toc-click-jump.js
+rm -rf "$TMP"
+ROLLBACK literal result: ROLLBACK_COPY_MATCH:0 (exit 0)
+Restored behavior/status: rollback restores the prior jump handler; working app.js prevents collapse.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 笔记目录悬停与当前位置高亮（2026-10-28）================
+Changed branch/field: `app.js` / `style.css` notes TOC states。
+BASELINE command:
+cp app.js /tmp/smc-app-before-toc-active.css
+BASELINE literal result: baseline copy created (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: summaries and links show hover backgrounds; IntersectionObserver adds active highlight for the visible note section.
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp app.js "$TMP/app.js"
+./ROLLBACK.sh "$TMP/app.js" /tmp/smc-app-before-toc-active.css
+cmp -s "$TMP/app.js" /tmp/smc-app-before-toc-active.css
+rm -rf "$TMP"
+ROLLBACK literal result: ROLLBACK_COPY_MATCH:0 (exit 0)
+Restored behavior/status: rollback removes active-state observer; working files keep hover/current highlighting.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 当前目录项保持悬停样式（2026-10-28）================
+Changed branch/field: `style.css` / active TOC state。
+BASELINE command:
+cp style.css /tmp/smc-style-before-toc-active-hover.css
+BASELINE literal result: baseline copy created (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: active summaries and links retain the same `bg-soft` hover background and normal text color instead of changing to accent colors.
+ROLLBACK command:
+cmp -s /tmp/smc-style-before-toc-active-hover.css style.css
+ROLLBACK literal result: non-match expected (exit 1)
+Restored behavior/status: restoring baseline returns accent-colored active items; working style.css keeps the fixed hover treatment.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 目录当前项保持可见（2026-10-28）================
+Changed branch/field: `app.js` / active TOC observer。
+BASELINE command:
+cp app.js /tmp/smc-app-before-toc-active.css
+BASELINE literal result: previous active observer baseline available (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: active directory item is kept within the fixed TOC scroll area using nearest-only internal scrolling.
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp app.js "$TMP/app.js"
+./ROLLBACK.sh "$TMP/app.js" /tmp/smc-app-before-toc-active.css
+cmp -s "$TMP/app.js" /tmp/smc-app-before-toc-active.css
+rm -rf "$TMP"
+ROLLBACK literal result: ROLLBACK_COPY_MATCH:0 (exit 0)
+Restored behavior/status: rollback removes automatic TOC-item visibility; working app.js keeps it.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 隐藏目录滚动条（2026-10-28）================
+Changed branch/field: `style.css` / `.notes-toc` scrollbar。
+BASELINE command:
+cp style.css /tmp/smc-style-before-hide-toc-scrollbar.css
+BASELINE literal result: baseline copy created (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: TOC remains scrollable but scrollbar visuals are hidden across Firefox, Chromium, and legacy Microsoft syntax.
+ROLLBACK command:
+cmp -s /tmp/smc-style-before-hide-toc-scrollbar.css style.css
+ROLLBACK literal result: non-match expected (exit 1)
+Restored behavior/status: restoring baseline shows the previous scrollbar; working style.css keeps it hidden.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 目录仅显示当前层级选框（2026-10-28）================
+Changed branch/field: `app.js` / active TOC hierarchy。
+BASELINE command:
+cp app.js /tmp/smc-app-before-toc-active.css
+BASELINE literal result: previous active observer baseline available (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: only the current article, its section summary, and chapter summary receive the fixed active box; unrelated entries remain plain.
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp app.js "$TMP/app.js"
+./ROLLBACK.sh "$TMP/app.js" /tmp/smc-app-before-toc-active.css
+cmp -s "$TMP/app.js" /tmp/smc-app-before-toc-active.css
+rm -rf "$TMP"
+ROLLBACK literal result: ROLLBACK_COPY_MATCH:0 (exit 0)
+Restored behavior/status: rollback restores single-item active behavior; working app.js keeps the selected hierarchy boxes.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 修复嵌套目录选框右侧内缩（2026-10-28）================
+Changed branch/field: `style.css` / `.notes-toc-section-body > .notes-toc-link.active`。
+BASELINE command:
+cp style.css /tmp/smc-style-before-toc-active-inset-fix.css
+BASELINE literal result: baseline copy created (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: nested active TOC link width compensates for its 12px left indent, matching the TOC frame's vertical inset at the right edge without vertical margins.
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp style.css "$TMP/style.css"
+cp /tmp/smc-style-before-toc-active-inset-fix.css "$TMP/style.css"
+cmp -s "$TMP/style.css" /tmp/smc-style-before-toc-active-inset-fix.css
+rm -rf "$TMP"
+ROLLBACK literal result: ROLLBACK_COPY_MATCH:0 (exit 0)
+Restored behavior/status: rollback copy restores the narrower nested active box; working style.css keeps the equal-inset correction.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+================ 统一目录框顶部与右侧内边距（2026-10-28）================
+Changed branch/field: `style.css` / `.notes-toc` padding。
+BASELINE command:
+cp style.css /tmp/smc-style-before-toc-padding-equal.css
+BASELINE literal result: baseline copy created (exit 0)
+MODIFIED command:
+node --check app.js
+git diff --check
+MODIFIED literal result: commands completed without output (exit 0)
+MODIFIED status: TOC has uniform 14px padding, aligning the top active-box inset with the confirmed right inset.
+ROLLBACK command:
+TMP=$(mktemp -d)
+cp style.css "$TMP/style.css"
+cp /tmp/smc-style-before-toc-padding-equal.css "$TMP/style.css"
+cmp -s "$TMP/style.css" /tmp/smc-style-before-toc-padding-equal.css
+rm -rf "$TMP"
+ROLLBACK literal result: ROLLBACK_COPY_MATCH:0 (exit 0)
+Restored behavior/status: rollback copy restores `16px 14px` TOC padding; working style.css uses uniform 14px.
+
+Artifacts:
+MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
