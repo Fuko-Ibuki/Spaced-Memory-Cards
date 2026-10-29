@@ -100,6 +100,8 @@ python3 -m http.server 8000
 - 图片必须提供 `alt`，音频建议提供 `transcript`；资源路径相对于题库文件所在目录。
 - 选择题为每个选项提供稳定的 `key`，正确答案只引用 `answer.keys`，不要依赖选项显示顺序。
 - 新题库使用 JSON；JS 仅用于兼容旧题库，导入后建议转换并导出 JSON。
+- 块内不要滥用 Markdown 粗体；仅突出真正需要强调的关键词，避免整段或连续多句加粗。
+- 块内不要滥用 Emoji；仅在必要时用于提示或分类，正文优先使用清晰的文字和统一的标记。
 
 ### 富媒体内容
 
@@ -152,6 +154,66 @@ module.exports = {
 | 当前 | JSON v2.1 为唯一推荐格式；保留 `.js` / 旧格式导入以迁移存量题库。 |
 | 下个小版本 | UI 对 JS 导入显示“旧格式兼容”提示，并提供转换/导出 v2.1 JSON。 |
 | 下个破坏性主版本 | 删除 `.js` 执行与裸对象求值，仅接收 JSON。 |
+
+## 笔记 HTML 编写规范
+
+笔记导入支持 `.html` / `.htm` 文件。导入器只读取正文结构，并会排除脚本、样式、表单、嵌入内容和不安全链接。
+
+### 推荐结构
+
+```html
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="subject" content="英语">
+  <title>英语语法笔记</title>
+</head>
+<body>
+  <main data-subject="英语">
+    <h1>英语语法笔记</h1>
+    <section class="chap">
+      <h2>语法体系</h2>
+      <section class="sec">
+        <h3>五大基本句型</h3>
+        <article class="kp" data-id="grammar-svo" data-question-id="q-001" data-test-config='{"timeLimitEnabled":true,"timeLimitMinutes":15}'>
+          <h4>主语、谓语与宾语</h4>
+          <div class="md">
+            <p>这里是笔记正文，<strong>重点内容</strong>可以使用加粗。</p>
+          </div>
+          <div class="src">来源说明（可选）</div>
+        </article>
+      </section>
+    </section>
+  </main>
+</body>
+</html>
+```
+
+### 标签类型说明
+
+- 页面结构标签：`main`、`section`、`article`、`h1`、`h2`、`h3`、`h4`。
+- 笔记结构类名：`section.sec` 表示小节，`section.chap` 表示章节，`article.kp` 表示知识点，`.md` 表示正文，`.src` 表示来源，`.desc` 表示小节描述。
+- 正文文本标签：`p`、`br`、`strong`、`b`、`em`、`i`、`u`、`s`、`mark`、`code`、`pre`、`blockquote`。
+- 列表标签：`ul`、`ol`、`li`、`dl`、`dt`、`dd`。
+- 表格标签：`table`、`thead`、`tbody`、`tfoot`、`tr`、`th`、`td`。
+- 媒体和链接：`a`、`img`；图片应提供 `alt`，链接和图片路径应使用相对路径或允许的 HTTPS 地址。
+- 公式辅助标签：`sup`、`sub`；LaTeX 公式可直接写在正文文本中。
+- 笔记分类：`data-type="rule"` 规则、`concept` 概念、`contrast` 辨析、`method` 方法、`example` 例题、`pitfall` 易错、`memo` 记忆项、`vocabulary` 词汇。
+- 不支持或会被排除的标签：`script`、`style`、`iframe`、`object`、`embed`、`form`、表单控件、`meta`、`link`、`base`。
+
+### 必须与建议
+
+- 使用 `main > section.sec > article.kp` 组织笔记；每个 `article.kp` 必须包含 `.md` 正文。
+- 使用 `h1`、`h2`、`h3` 表示标题层级；导入页面会使用本地界面重新渲染标题。
+- 学科可写在 `<main data-subject="学科">` 或 `<meta name="subject" content="学科">`。
+- `data-id` 应稳定且唯一；如需从笔记开始测试，使用 `data-question-id` 关联题库题目的 `uid` 或 `rawId`。
+- `data-test-config` 可配置 `questionLimit`、`timeLimitEnabled`、`timeLimitMinutes`、`shuffleQuestions`、`shuffleOptions`、`includeTypes` 和 `chapterFilter`。
+- 正文中的 `**文字**` 会自动渲染为加粗；代码块中的符号会保持原样。
+- 正文中的 LaTeX 支持 `$...$`、`$$...$$`、`\(...\)` 和 `\[...\]`；公式由本地 KaTeX 渲染，并继承块内字体与字号。
+- 拖入 HTML 时会显示高斯模糊和虚线导入状态；重复导入的相同内容会自动跳过，并与已有笔记合并。
+- 不要在块内滥用加粗或 Emoji，避免整段强调，保持内容易读。
+- 不要写脚本、样式依赖或重复复制同一知识点；重复导入时应用会自动跳过相同内容。
 
 ## 内置题库
 

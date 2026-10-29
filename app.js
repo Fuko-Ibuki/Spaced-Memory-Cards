@@ -16,7 +16,12 @@ const RATING_TO_PCT = { again:0, hard:50, good:80, easy:100 };
 const SELF_GRADE_FRACTION = { again:0, hard:1/3, good:2/3, easy:1 };
 const TIME_LIMIT_MAX_MINUTES = 240;
 const LEARNING_MODE_KEYS = ['flashcard','learn','test'];
-const STORAGE_KEYS = { settings:'settings', progress:'progress', lastDeck:'lastDeck', deckRegistry:'deckRegistry', activeSession:'activeSession', notesPackage:'notesPackage', notesBookmarks:'notesBookmarks', currentView:'currentView', recordDetailId:'recordDetailId' };
+const STORAGE_KEYS = { settings:'settings', progress:'progress', lastDeck:'lastDeck', deckRegistry:'deckRegistry', activeSession:'activeSession', notesPackage:'notesPackage', notesBookmarks:'notesBookmarks', notesScrollY:'notesScrollY', notesTocCollapsed:'notesTocCollapsed', currentView:'currentView', recordDetailId:'recordDetailId' };
+const VIEW_CACHE_KEY = 'smc-current-view';
+const TYPOGRAPHY_CACHE_KEY = 'smc-typography';
+function cacheCurrentView(view){ try{ localStorage.setItem(VIEW_CACHE_KEY,view); }catch(e){} }
+function cachedCurrentView(){ try{ return localStorage.getItem(VIEW_CACHE_KEY); }catch(e){ return null; } }
+function cacheTypography(settings){ try{ localStorage.setItem(TYPOGRAPHY_CACHE_KEY,JSON.stringify({uiFontFamily:settings?.uiFontFamily||'default',uiFontSize:settings?.uiFontSize||'default'})); }catch(e){} }
 const LOCAL_DECK_FILES = [
   'XiThoughtQuiz.js',
   'AutoMechanicsQuiz.js',
@@ -384,11 +389,86 @@ function sanitizeNoteFragment(source){
 }
 function sanitizeNoteHtml(element){
   const fragment=sanitizeNoteFragment(element);
-  const holder=document.createElement('div'); holder.appendChild(fragment); return holder.innerHTML;
+  const wrapper=document.createElement('div'); wrapper.appendChild(fragment);
+  const walker=document.createTreeWalker(wrapper, NodeFilter.SHOW_TEXT);
+  const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(node=>{
+    if(node.parentElement?.closest('code,pre')) return;
+    const text=node.nodeValue||'';
+    if(!/\*\*[^*\n]+?\*\*/.test(text)) return;
+    const frag=document.createDocumentFragment(); let last=0;
+    text.replace(/\*\*([^*\n]+?)\*\*/g,(match,value,offset)=>{
+      if(offset>last) frag.appendChild(document.createTextNode(text.slice(last,offset)));
+      const strong=document.createElement('strong'); strong.textContent=value; frag.appendChild(strong); last=offset+match.length; return match;
+    });
+    if(last<text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+    node.replaceWith(frag);
+  });
+  const mathWalker=document.createTreeWalker(wrapper, NodeFilter.SHOW_TEXT);
+  const mathNodes=[]; while(mathWalker.nextNode()) mathNodes.push(mathWalker.currentNode);
+  const mathPattern=/\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]|\\\(([\s\S]+?)\\\)|\$([^$\n]+?)\$/g;
+  mathNodes.forEach(node=>{
+    if(node.parentElement?.closest('code,pre,.katex')) return;
+    const text=node.nodeValue||''; if(!mathPattern.test(text)){ mathPattern.lastIndex=0; return; } mathPattern.lastIndex=0;
+    const frag=document.createDocumentFragment(); let last=0, match;
+    while((match=mathPattern.exec(text))){
+      if(match.index>last) frag.appendChild(document.createTextNode(text.slice(last,match.index)));
+      const latex=match[1]||match[2]||match[3]||match[4]||''; const display=Boolean(match[1]||match[2]);
+      const span=document.createElement(display?'div':'span'); span.className='note-math';
+      try{ const katex=window.katex; span.innerHTML=katex&&katex.renderToString ? katex.renderToString(latex,{throwOnError:true,displayMode:display}) : Utils.escapeHtml(latex); }
+      catch(e){ span.textContent=latex; span.classList.add('math-error'); }
+      frag.appendChild(span); last=match.index+match[0].length;
+    }
+    if(last<text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+    node.replaceWith(frag);
+  });
+  return wrapper.innerHTML;
 }
 function noteArticleTitle(article){
   const heading=article.querySelector('.kh h4, h4, h3');
   return heading ? heading.textContent.replace(/\s+/g,' ').trim() : (article.getAttribute('data-id') || '未命名知识点');
+}
+function noteTocTitle(value){
+  return String(value||'').replace(/^\s*\d+(?:\.\d+)*(?:\s+|$)/,'').trim();
+}
+function parseNoteTestConfig(article){
+  const raw=article?.getAttribute('data-test-config');
+  if(!raw) return null;
+  try{ const cfg=JSON.parse(raw); return cfg&&typeof cfg==='object'?cfg:null; }catch(e){ return null; }
+}
+function applyNoteTestConfig(config){
+  if(!App.settings) return;
+  activateLearningMode('test');
+  if(!config) return;
+  const s=App.settings;
+  if(config.questionLimit==='all'||Number.isFinite(Number(config.questionLimit))) s.questionLimit=config.questionLimit==='all'?'all':Utils.clamp(Number(config.questionLimit),1,Math.max(1,App.deck.totalQuestions));
+  if(typeof config.timeLimitEnabled==='boolean') s.timeLimitEnabled=config.timeLimitEnabled;
+  if(Number.isFinite(Number(config.timeLimitMinutes))) s.timeLimitMinutes=Utils.clamp(Number(config.timeLimitMinutes),1,TIME_LIMIT_MAX_MINUTES);
+  if(typeof config.shuffleQuestions==='boolean') s.shuffleQuestions=config.shuffleQuestions;
+  if(typeof config.shuffleOptions==='boolean') s.shuffleOptions=config.shuffleOptions;
+  if(Array.isArray(config.includeTypes)) TYPE_ORDER.forEach(t=>{ s.includeTypes[t]=config.includeTypes.includes(t); });
+  if(typeof config.chapterFilter==='string') s.chapterFilter=config.chapterFilter;
+}
+function isNoteArticleLinked(article){
+  if(!article||!App.deck) return false;
+  return App.deck.questions.some(q=>
+    (article.questionId && (q.uid===article.questionId || q.rawId===article.questionId)) ||
+    q.uid===article.id || q.rawId===article.id || q.question===article.title
+  );
+}
+function startNoteTest(articleId){
+  const article=(App.notesPackage?.sections||[]).flatMap(section=>section.articles||[]).find(item=>item.id===articleId);
+  if(!article||!App.deck){ toast('请先加载对应题库',{icon:'⚠️'}); return; }
+  const match=App.deck.questions.find(q=>
+    (article.questionId && (q.uid===article.questionId || q.rawId===article.questionId)) ||
+    q.uid===article.id || q.rawId===article.id || q.question===article.title
+  );
+  if(!match){ toast('该笔记尚未关联题库题目',{icon:'⚠️'}); return; }
+  applyNoteTestConfig(article.testConfig);
+  saveSettings();
+  App.view='setup';
+  render();
+  toast('已进入默认测试模式，可检查配置后开始',{icon:'✅'});
 }
 function parseNotesHtmlPackage(text, filename){
   const source=String(text||'');
@@ -396,6 +476,7 @@ function parseNotesHtmlPackage(text, filename){
   const parsed=new DOMParser().parseFromString(source,'text/html');
   if (parsed.querySelector('parsererror')) throw new Error('HTML 笔记包解析失败。');
   const root=parsed.querySelector('main') || parsed.body;
+  const subject=root.getAttribute('data-subject') || parsed.querySelector('meta[name=subject]')?.getAttribute('content') || '';
   const title=(root.querySelector('h1') || parsed.querySelector('title'))?.textContent.replace(/\s+/g,' ').trim() || (filename||'HTML 笔记包').replace(/\.html?$/i,'');
   const sectionNodes=Array.from(root.querySelectorAll('section.sec'));
   const articleNodes=Array.from(root.querySelectorAll('article.kp'));
@@ -407,7 +488,7 @@ function parseNotesHtmlPackage(text, filename){
     const id=String(article.getAttribute('data-id') || article.id || `note-${index+1}`).replace(/[^a-zA-Z0-9_-]/g,'-');
     const typeRaw=String(article.getAttribute('data-type') || Array.from(article.classList).find(c=>/^t-/.test(c))?.slice(2) || 'note');
     const src=article.querySelector('.src');
-    return { id, title:noteArticleTitle(article), number:article.getAttribute('data-num')||'', type:typeRaw, typeLabel:NOTE_TYPE_LABELS[typeRaw] || typeRaw || '笔记', path:article.getAttribute('data-path')||'', body:sanitizeNoteHtml(body), source:src ? src.textContent.replace(/\s+/g,' ').trim() : '', sectionTitle, chapterTitle };
+    return { id, title:noteArticleTitle(article), number:article.getAttribute('data-num')||'', type:typeRaw, typeLabel:NOTE_TYPE_LABELS[typeRaw] || typeRaw || '笔记', path:article.getAttribute('data-path')||'', body:sanitizeNoteHtml(body), source:src ? src.textContent.replace(/\s+/g,' ').trim() : '', testConfig:parseNoteTestConfig(article), questionId:article.getAttribute('data-question-id') || article.getAttribute('data-uid') || article.getAttribute('data-raw-id') || '', sectionTitle, chapterTitle };
   };
   const addSection=(node, index)=>{
     const heading=node.querySelector(':scope > h3, :scope > h2');
@@ -423,7 +504,7 @@ function parseNotesHtmlPackage(text, filename){
   }
   const count=sections.reduce((n,s)=>n+s.articles.length,0);
   if (!count) throw new Error('笔记包中没有可显示的正文。');
-  return { version:1, title, sourceName:filename||'notes.html', importedAt:Date.now(), sections, totalArticles:count };
+  return { version:1, title, subject, sourceName:filename||'notes.html', importedAt:Date.now(), sections, totalArticles:count };
 }
 async function handleNotesHtmlFile(file){
   const name=file?.name || 'notes.html';
@@ -431,9 +512,13 @@ async function handleNotesHtmlFile(file){
   try{
     const text=await Utils.readFileAsText(file);
     const pack=parseNotesHtmlPackage(text,name);
-    await Store.setJSON(STORAGE_KEYS.notesPackage,pack);
-    App.notesPackage=pack; App.view='notes'; render();
-    toast(`已导入「${pack.title}」，共 ${pack.totalArticles} 条笔记`, {icon:'📖'});
+    const existing=App.notesPackage;
+    const seen=new Set((existing?.sections||[]).flatMap(section=>(section.articles||[]).map(article=>`${article.questionId||article.id}|${article.title}|${article.body}`)));
+    const fresh=pack.sections.map(section=>({...section, articles:(section.articles||[]).filter(article=>{ const key=`${article.questionId||article.id}|${article.title}|${article.body}`; if(seen.has(key)) return false; seen.add(key); return true; })})).filter(section=>section.articles.length);
+    const merged=existing ? {...existing, subject:existing.subject||pack.subject, sourceName:[existing.sourceName,pack.sourceName].filter(Boolean).join(', '), importedAt:Date.now(), sections:[...(existing.sections||[]),...fresh], totalArticles:(existing.totalArticles||0)+fresh.reduce((n,section)=>n+section.articles.length,0)} : pack;
+    await Store.setJSON(STORAGE_KEYS.notesPackage,merged);
+    App.notesPackage=merged; App.view='notes'; render();
+    toast(`已导入「${pack.title}」，新增 ${fresh.reduce((n,section)=>n+section.articles.length,0)} 条笔记`, {icon:'📖'});
   }catch(e){ toast('笔记导入失败：'+e.message, {icon:'⚠️', duration:4200}); }
 }
 
@@ -556,6 +641,9 @@ const App = {
   formatGuideOpen:false,
   setupCollapse:{ range:false, answer:false, advanced:false },
   notesPackage:null,
+  notesScrollY:0,
+  notesTocReturnY:0,
+  notesTocCollapsed:!!(window.matchMedia && window.matchMedia('(max-width:760px)').matches),
   notesBookmarks:new Set()
 };
 
@@ -624,13 +712,16 @@ function normalizeSettings(saved){
 }
 async function loadSettings(){
   const saved = await Store.getJSON(STORAGE_KEYS.settings, null);
-  return normalizeSettings(saved);
+  const settings=normalizeSettings(saved);
+  cacheTypography(settings);
+  return settings;
 }
 async function saveSettings(){
   if (App.settings){
     App.settings.modeSettings = App.settings.modeSettings || {};
     App.settings.modeSettings[App.settings.mode] = cloneModeSettings(App.settings);
   }
+  cacheTypography(App.settings);
   await Store.setJSON(STORAGE_KEYS.settings, App.settings);
 }
 
@@ -952,7 +1043,7 @@ function confirmModal(title, bodyHtml, onConfirm, opts={}){
    §8. 路由 / 顶部导航渲染
    ============================================================ */
 function render(){
-  if (['notes','stats','settings','setup','browse','record'].includes(App.view)) { Store.setJSON(STORAGE_KEYS.currentView, App.view); if (App.view==='record' && App.recordDetailId) Store.setJSON(STORAGE_KEYS.recordDetailId, App.recordDetailId); }
+  if (['notes','stats','settings','setup','browse','record'].includes(App.view)) { cacheCurrentView(App.view); Store.setJSON(STORAGE_KEYS.currentView, App.view); if (App.view==='record' && App.recordDetailId) Store.setJSON(STORAGE_KEYS.recordDetailId, App.recordDetailId); }
   renderNav();
   document.body.classList.remove('view-swipe-active');
   document.querySelectorAll('.view-swipe-preview').forEach(el=>el.remove());
@@ -963,6 +1054,26 @@ function render(){
   view.style.opacity = '';
   renderViewContent(App.view, view);
 }
+let notesScrollWriteTimer=0;
+function captureNotesScrollPosition(){
+  if (App.view!=='notes') return;
+  App.notesScrollY=Math.max(0, Math.round(window.scrollY||0));
+  clearTimeout(notesScrollWriteTimer);
+  notesScrollWriteTimer=setTimeout(()=>Store.setJSON(STORAGE_KEYS.notesScrollY, App.notesScrollY),120);
+}
+function flushNotesScrollPosition(){
+  if (App.view!=='notes') return;
+  clearTimeout(notesScrollWriteTimer);
+  App.notesScrollY=Math.max(0, Math.round(window.scrollY||0));
+  Store.setJSON(STORAGE_KEYS.notesScrollY, App.notesScrollY);
+}
+function restoreNotesScrollPosition(){
+  const y=Number.isFinite(App.notesScrollY) ? Math.max(0, App.notesScrollY) : 0;
+  if (!y) return;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>window.scrollTo({top:y, behavior:'auto'})));
+}
+window.addEventListener('scroll', captureNotesScrollPosition, {passive:true});
+window.addEventListener('pagehide', flushNotesScrollPosition);
 function renderViewContent(viewName, view){
   if (viewName==='load') renderLoadView(view);
   else if (viewName==='setup') renderSetupView(view);
@@ -1184,8 +1295,19 @@ function applyTheme(){
 }
 function applyTypography(){
   const root = document.documentElement;
-  root.setAttribute('data-font-size', ['small','default','large'].includes(App.settings?.uiFontSize) ? App.settings.uiFontSize : 'default');
-  root.setAttribute('data-font-family', ['default','serif','sans'].includes(App.settings?.uiFontFamily) ? App.settings.uiFontFamily : 'default');
+  const size=['small','default','large'].includes(App.settings?.uiFontSize) ? App.settings.uiFontSize : 'default';
+  const family=['default','serif','sans'].includes(App.settings?.uiFontFamily) ? App.settings.uiFontFamily : 'default';
+  if (root.getAttribute('data-font-size')!==size) root.setAttribute('data-font-size',size);
+  if (root.getAttribute('data-font-family')!==family) root.setAttribute('data-font-family',family);
+}
+async function waitForInitialTypography(){
+  if (!document.fonts?.load) return;
+  const family=App.settings?.uiFontFamily||'default';
+  const faces=family==='serif' ? ['400 16px "SMC FZ New Book"','400 16px "SMC Minion"'] : ['400 16px "SMC HY QiHei"','400 16px "SMC SF Pro"'];
+  await Promise.race([
+    Promise.all(faces.map(face=>document.fonts.load(face,'中文Aa'))),
+    new Promise(resolve=>setTimeout(resolve,900))
+  ]);
 }
 function themeIcon(){
   const mode = App.settings.themeMode||'auto';
@@ -1621,7 +1743,7 @@ function renderSetupView(container){
 
       <div class="setup-grid">
         <div class="panel setup-panel ${rangeOpen?'open':''}" data-collapse-key="range">
-          <button type="button" class="mobile-collapse-head" aria-expanded="${rangeOpen?'true':'false'}"><span>题目范围</span><span class="chev">􀆍</span></button>
+          <button type="button" class="mobile-collapse-head" aria-expanded="${rangeOpen?'true':'false'}"><span>题目范围</span><span class="chev">${rangeOpen?'􀄥':'􀄧'}</span></button>
           <div class="mobile-collapse-body">
           <div class="section-title">题目范围<span class="line"></span></div>
           <div class="source-scope-row">
@@ -1663,7 +1785,7 @@ function renderSetupView(container){
         </div>
 
         <div class="panel setup-panel ${answerOpen?'open':''}" data-collapse-key="answer">
-          <button type="button" class="mobile-collapse-head" aria-expanded="${answerOpen?'true':'false'}"><span>答题设置</span><span class="chev">􀆍</span></button>
+          <button type="button" class="mobile-collapse-head" aria-expanded="${answerOpen?'true':'false'}"><span>答题设置</span><span class="chev">${answerOpen?'􀄥':'􀄧'}</span></button>
           <div class="mobile-collapse-body">
           <div class="section-title">答题设置<span class="line"></span></div>
           <div class="toggle-row">
@@ -1698,7 +1820,7 @@ function renderSetupView(container){
       </div>
 
       <div class="panel adv-panel">
-        <button type="button" class="collapsible-head ${advancedVisible?'open':''}" id="adv-head" aria-expanded="${advancedVisible?'true':'false'}"><span class="chev">􀆍</span><span>高级设置 · 各题型分值</span><span class="line"></span></button>
+        <button type="button" class="collapsible-head ${advancedVisible?'open':''}" id="adv-head" aria-expanded="${advancedVisible?'true':'false'}"><span class="chev">${advancedVisible?'􀄥':'􀄧'}</span><span>高级设置 · 各题型分值</span><span class="line"></span></button>
         <div class="collapsible-body ${advancedVisible?'open':''}" id="adv-body">
           <div class="points-grid">
             ${presentTypes.map(t=>`<div class="points-item"><span>${QuestionTypes[t].label}</span><input type="number" class="num-input" min="0" step="0.5" data-points="${t}" value="${s.points[t]}"></div>`).join('')}
@@ -1725,6 +1847,8 @@ function renderSetupView(container){
       const open = !panel.classList.contains('open');
       panel.classList.toggle('open', open);
       btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      const chev=btn.querySelector('.chev');
+      if (chev) chev.textContent=open?'􀄥':'􀄧';
       const key = panel.dataset.collapseKey;
       if (key){
         if (key==='range' || key==='answer'){
@@ -1739,7 +1863,7 @@ function renderSetupView(container){
           container.querySelectorAll('.setup-panel[data-collapse-key="range"], .setup-panel[data-collapse-key="answer"]').forEach(pairPanel=>{
             pairPanel.classList.toggle('open', open);
             const pairHead = pairPanel.querySelector('.mobile-collapse-head');
-            if (pairHead) pairHead.setAttribute('aria-expanded', open ? 'true' : 'false');
+            if (pairHead){ pairHead.setAttribute('aria-expanded', open ? 'true' : 'false'); const pairChev=pairHead.querySelector('.chev'); if (pairChev) pairChev.textContent=open?'􀄥':'􀄧'; }
           });
           return;
         }
@@ -1804,6 +1928,8 @@ function renderSetupView(container){
     ensureSetupCollapse().advanced = open;
     advHead.classList.toggle('open', open);
     advHead.setAttribute('aria-expanded', open ? 'true' : 'false');
+    const advChev=advHead.querySelector('.chev');
+    if (advChev) advChev.textContent=open?'􀄥':'􀄧';
     advBody.classList.toggle('open', open);
   };
   container.querySelectorAll('[data-points]').forEach(inp=>inp.onchange=()=>{
@@ -3278,6 +3404,11 @@ setupMobileViewSwipe();
 /* ============================================================
    §15b. 视图：浏览整卷（原始顺序，侧栏导航）
    ============================================================ */
+function hasRelatedNotesForDeck(deck){
+  if(!deck||!App.notesPackage) return false;
+  const ids=new Set((deck.questions||[]).flatMap(q=>[q.uid,q.rawId].filter(Boolean).map(String)));
+  return (App.notesPackage.sections||[]).some(section=>(section.articles||[]).some(article=>article.questionId && ids.has(String(article.questionId))));
+}
 function renderBrowseView(container){
   const deck = App.deck;
   const showAns = App._browseShowAnswers !== false;
@@ -3319,6 +3450,7 @@ function renderBrowseView(container){
   container.innerHTML = `
     <div class="container" style="max-width:1120px;">
       <div class="browse-topbar">
+        ${hasRelatedNotesForDeck(deck) ? `<button class="btn btn-secondary browse-notes-btn" id="browse-notes-btn" type="button">查看笔记</button>` : '<div class="browse-notes-placeholder" aria-hidden="true"></div>'}
         ${showAnswerControl ? `<div class="browse-answer-fixed">
           <div class="label" style="font-size:13px;">显示答案</div>
           <button type="button" class="switch ${showAns?'on':''}" id="browse-answer-switch" aria-label="显示答案" aria-pressed="${showAns?'true':'false'}"><span class="knob"></span></button>
@@ -3339,6 +3471,8 @@ function renderBrowseView(container){
     </div>
   `;
   document.getElementById('browse-back-btn').onclick = ()=>{ App.view=App.browseBackView||'setup'; render(); };
+  const browseNotesBtn = document.getElementById('browse-notes-btn');
+  if (browseNotesBtn) browseNotesBtn.onclick = ()=>{ App.view='notes'; Store.setJSON(STORAGE_KEYS.currentView, App.view); render(); };
   const answerSwitch = document.getElementById('browse-answer-switch');
   if (answerSwitch) answerSwitch.onclick = ()=>{
     const anchor = capturePreviewAnchor(container);
@@ -3852,11 +3986,13 @@ function bindCacheManagement(container){
       await Store.remove(STORAGE_KEYS.lastDeck);
       await Store.remove(STORAGE_KEYS.notesPackage);
       await Store.remove(STORAGE_KEYS.notesBookmarks);
+      await Store.remove(STORAGE_KEYS.notesScrollY);
       await clearActiveSessionDraft();
       App.settings = defaultSettings();
       await saveSettings();
       App.session = null;
       App.notesPackage = null;
+      App.notesScrollY = 0;
       App.notesBookmarks = new Set();
       App.recordDetailId = null;
       applyTheme();
@@ -3899,25 +4035,59 @@ function renderNotesView(container){
     if(!group){ group={title,sections:[]}; tocGroups.push(group); }
     group.sections.push(section);
   });
-  const toc=tocGroups.map(group=>`<details open class="notes-toc-chapter"><summary data-note-target="notes-section-${Utils.escapeHtml(group.sections[0]?.id||'')}">${Utils.escapeHtml(group.title)}</summary><div class="notes-toc-chapter-body">${group.sections.map(section=>`<details open class="notes-toc-section"><summary data-note-target="notes-section-${Utils.escapeHtml(section.id)}">${Utils.escapeHtml(section.title)}</summary><div class="notes-toc-section-body">${section.articles.map(article=>`<button type="button" class="notes-toc-link" data-note-target="note-${Utils.escapeHtml(article.id)}"><span>${Utils.escapeHtml(article.number||'')}</span>${Utils.escapeHtml(article.title.replace(/^\s*\d+(?:\.\d+)*\s*/,''))}</button>`).join('')}</div></details>`).join('')}</div></details>`).join('');
-  const content=pack.sections.map(section=>`<section class="note-section" id="notes-section-${Utils.escapeHtml(section.id)}"><header class="note-section-heading"><div><h2>${Utils.escapeHtml(section.title)}</h2>${section.description?`<p>${Utils.escapeHtml(section.description)}</p>`:''}</div><span class="note-count">${section.articles.length} 条</span></header>${section.articles.map(article=>{ const starred=App.notesBookmarks.has(article.id); return `<article class="note-card" id="note-${Utils.escapeHtml(article.id)}"><header class="note-card-heading"><div><h3>${Utils.escapeHtml(article.title)}</h3><div class="note-meta">${noteTagHtml(article)}${article.path?`<span>${Utils.escapeHtml(article.path)}</span>`:''}</div></div><div class="note-card-tools"><span class="note-index">${Utils.escapeHtml(article.number||'')}</span><button type="button" class="note-bookmark-btn ${starred?'on':''}" data-note-bookmark="${Utils.escapeHtml(article.id)}" title="${starred?'取消收藏':'收藏'}" aria-label="${starred?'取消收藏':'收藏'}：${Utils.escapeHtml(article.title)}" aria-pressed="${starred?'true':'false'}">${noteBookmarkIcon()}</button></div></header><div class="note-rich">${article.body}</div>${article.source?`<p class="note-source">${Utils.escapeHtml(article.source)}</p>`:''}</article>`; }).join('')}</section>`).join('');
-  container.innerHTML=`<div class="container notes-shell notes-has-package"><div class="notes-layout"><aside class="notes-toc" aria-label="笔记目录"><h2>目录</h2>${toc}</aside><main class="notes-document">${content}</main></div></div>`;
+  const toc=tocGroups.map(group=>`<details open class="notes-toc-chapter"><summary data-note-target="notes-section-${Utils.escapeHtml(group.sections[0]?.id||'')}">${Utils.escapeHtml(noteTocTitle(group.title))}</summary><div class="notes-toc-chapter-body">${group.sections.map(section=>`<details open class="notes-toc-section"><summary data-note-target="notes-section-${Utils.escapeHtml(section.id)}">${Utils.escapeHtml(noteTocTitle(section.title))}</summary><div class="notes-toc-section-body">${section.articles.map(article=>{ const starred=App.notesBookmarks.has(article.id); const bookmark=starred ? `<span class="notes-toc-bookmark on" data-note-bookmark="${Utils.escapeHtml(article.id)}" role="button" tabindex="0" title="取消收藏" aria-label="取消收藏：${Utils.escapeHtml(article.title)}" aria-pressed="true">${noteBookmarkIcon()}</span>` : ''; return `<button type="button" class="notes-toc-link" data-note-target="note-${Utils.escapeHtml(article.id)}">${bookmark}${Utils.escapeHtml(noteTocTitle(article.title))}</button>`; }).join('')}</div></details>`).join('')}</div></details>`).join('');
+  const content=pack.sections.map(section=>`<section class="note-section" id="notes-section-${Utils.escapeHtml(section.id)}"><header class="note-section-heading"><div><h2>${Utils.escapeHtml(section.title)}</h2><p class="note-section-description">${section.articles.length} 条${section.description?` ｜ ${Utils.escapeHtml(section.description)}`:''}</p></div><div class="note-section-tools">${section.articles.find(isNoteArticleLinked)?`<button type="button" class="btn btn-primary note-test-btn" data-note-test="${Utils.escapeHtml(section.articles.find(isNoteArticleLinked).id)}" title="开始测试">开始测试</button>`:''}</div></header>${section.articles.map(article=>{ const starred=App.notesBookmarks.has(article.id); return `<article class="note-card" id="note-${Utils.escapeHtml(article.id)}"><header class="note-card-heading"><div><h3>${Utils.escapeHtml(article.title)}</h3></div><div class="note-card-tools">${noteTagHtml(article)}<button type="button" class="note-bookmark-btn ${starred?'on':''}" data-note-bookmark="${Utils.escapeHtml(article.id)}" title="${starred?'取消收藏':'收藏'}" aria-label="${starred?'取消收藏':'收藏'}：${Utils.escapeHtml(article.title)}" aria-pressed="${starred?'true':'false'}">${noteBookmarkIcon()}</button></div></header><div class="note-rich">${article.body}</div></article>`; }).join('')}</section>`).join('');
+  const tocCollapsed=Boolean(App.notesTocCollapsed);
+  container.innerHTML=`<div class="container notes-shell notes-has-package"><div class="notes-package-toolbar"><span>${Utils.escapeHtml(pack.subject||'')}</span><button type="button" class="notes-more-btn" aria-label="更多" aria-expanded="false">•••</button><div class="notes-more-menu" hidden><button type="button" data-notes-filter="all">全部学科</button></div></div><div class="notes-layout${tocCollapsed?' toc-collapsed':''}"><aside class="notes-toc${tocCollapsed?' collapsed':''}" aria-label="笔记目录"><div class="notes-toc-head"><h2>目录</h2><button type="button" class="notes-toc-action" aria-label="${tocCollapsed?'展开目录':'收起目录'}" title="${tocCollapsed?'展开目录':'收起目录'}" aria-expanded="${tocCollapsed?'false':'true'}"><svg data-no-autosize="true" aria-hidden="true" class="Icon-X4VkKC" focusable="false" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M14.5 2.877a3.665 3.665 0 0 1 3.665 3.665v6.917a3.665 3.665 0 0 1-3.665 3.665h-9a3.665 3.665 0 0 1-3.665-3.665V6.542A3.665 3.665 0 0 1 5.5 2.877zM8.165 15.794H14.5a2.335 2.335 0 0 0 2.335-2.335V6.542A2.335 2.335 0 0 0 14.5 4.207H8.165zM5.5 4.207a2.335 2.335 0 0 0-2.335 2.335v6.917A2.335 2.335 0 0 0 5.5 15.794h1.335V4.207z"></path></svg></button></div><div class="notes-toc-body">${toc}</div></aside><main class="notes-document">${content}</main></div></div>`;
+  const moreBtn=container.querySelector('.notes-more-btn'), moreMenu=container.querySelector('.notes-more-menu'); if(moreBtn&&moreMenu){ moreBtn.onclick=event=>{event.stopPropagation(); moreMenu.hidden=!moreMenu.hidden; moreBtn.setAttribute('aria-expanded',String(!moreMenu.hidden));}; }
   const reimport=container.querySelector('#notes-reimport-btn'), input=container.querySelector('#notes-reimport-input');
   if (reimport&&input) reimport.onclick=()=>input.click();
   if (input) input.onchange=e=>{ if(e.target.files[0]) handleNotesHtmlFile(e.target.files[0]); e.target.value=''; };
+  const notesLayout=container.querySelector('.notes-layout'), tocBox=container.querySelector('.notes-toc'), tocAction=container.querySelector('.notes-toc-action');
+  if (notesLayout&&tocBox&&tocAction) tocAction.onclick=()=>{ const opening=tocBox.classList.contains('collapsed'); if(opening) App.notesTocReturnY=Math.max(0,window.scrollY); const returnY=opening ? App.notesTocReturnY : Math.max(0,App.notesTocReturnY||App.notesScrollY||window.scrollY); App.notesTocCollapsed=!opening; Store.setJSON(STORAGE_KEYS.notesTocCollapsed,App.notesTocCollapsed); notesLayout.classList.toggle('toc-collapsed',App.notesTocCollapsed); tocBox.classList.toggle('collapsed',App.notesTocCollapsed); tocAction.setAttribute('aria-expanded',String(!App.notesTocCollapsed)); const label=App.notesTocCollapsed?'展开目录':'收起目录'; tocAction.setAttribute('aria-label',label); tocAction.title=label; if(!opening) requestAnimationFrame(()=>requestAnimationFrame(()=>{ alignNotesTocToActive(); window.scrollTo({top:returnY,behavior:'auto'}); })); };
+  const collapseMobileToc=()=>{ if(!window.matchMedia?.('(max-width:760px)').matches||tocBox.classList.contains('collapsed')) return; App.notesTocReturnY=Math.max(0,window.scrollY); App.notesTocCollapsed=true; Store.setJSON(STORAGE_KEYS.notesTocCollapsed,true); notesLayout.classList.add('toc-collapsed'); tocBox.classList.add('collapsed'); tocAction.setAttribute('aria-expanded','false'); tocAction.setAttribute('aria-label','展开目录'); tocAction.title='展开目录'; };
+  if (notesLayout&&tocBox){ let touchStart=null; tocBox.addEventListener('touchmove',event=>event.stopPropagation(),{passive:true}); notesLayout.addEventListener('click',event=>{ if(!tocBox.contains(event.target)) collapseMobileToc(); }); notesLayout.addEventListener('touchstart',event=>{ if(event.target.closest?.('.notes-document')){ const point=event.touches[0]; touchStart={x:point.clientX,y:point.clientY}; } else touchStart=null; },{passive:true,capture:true}); notesLayout.addEventListener('touchend',event=>{ if(!touchStart) return; const point=event.changedTouches[0]; if(Math.hypot(point.clientX-touchStart.x,point.clientY-touchStart.y)>12) collapseMobileToc(); touchStart=null; },{passive:true,capture:true}); }
   const clearNotesBtn=container.querySelector('#notes-clear-btn');
-  if (clearNotesBtn) clearNotesBtn.onclick=()=>confirmModal('清空笔记？','这会删除已导入的 HTML 笔记包和收藏，不影响题库和学习记录。',async()=>{ await Store.remove(STORAGE_KEYS.notesPackage); await Store.remove(STORAGE_KEYS.notesBookmarks); App.notesPackage=null; App.notesBookmarks=new Set(); toast('已清空笔记',{icon:'🗑️'}); render(); },{danger:true,confirmLabel:'清空'});
-  container.querySelectorAll('[data-note-bookmark]').forEach(btn=>btn.onclick=()=>toggleNotesBookmark(btn.dataset.noteBookmark, btn));
-  container.querySelectorAll('[data-note-target]').forEach(link=>link.onclick=(event)=>{ event.preventDefault(); event.stopPropagation(); const target=document.getElementById(link.dataset.noteTarget); if(target){ window.scrollTo({top:Math.max(0, target.getBoundingClientRect().top + window.scrollY - 90), behavior:'auto'}); } });
+  if (clearNotesBtn) clearNotesBtn.onclick=()=>confirmModal('清空笔记？','这会删除已导入的 HTML 笔记包和收藏，不影响题库和学习记录。',async()=>{ await Store.remove(STORAGE_KEYS.notesPackage); await Store.remove(STORAGE_KEYS.notesBookmarks); await Store.remove(STORAGE_KEYS.notesScrollY); App.notesPackage=null; App.notesScrollY=0; App.notesBookmarks=new Set(); toast('已清空笔记',{icon:'🗑️'}); render(); },{danger:true,confirmLabel:'清空'});
+  container.querySelectorAll('[data-note-bookmark]').forEach(bindNotesBookmarkControl);
+  container.querySelectorAll('[data-note-test]').forEach(btn=>btn.onclick=event=>{ event.preventDefault(); event.stopPropagation(); startNoteTest(btn.dataset.noteTest); });
+  container.querySelectorAll('[data-note-target]').forEach(link=>link.onclick=(event)=>{ event.preventDefault(); event.stopPropagation(); clearPendingNotesTocBookmarks(); const target=document.getElementById(link.dataset.noteTarget); if(target) window.scrollTo({top:Math.max(0, target.getBoundingClientRect().top + window.scrollY - 90), behavior:'auto'}); });
   const tocTargets=[...container.querySelectorAll('.note-card')], tocLinks=[...container.querySelectorAll('[data-note-target]')];
-  if (window.IntersectionObserver && tocTargets.length){ const observer=new IntersectionObserver(entries=>{ entries.filter(entry=>entry.isIntersecting).forEach(entry=>{ const id=entry.target.id; tocLinks.forEach(link=>link.classList.remove('active')); const activeLink=tocLinks.find(link=>link.dataset.noteTarget===id); if(activeLink){ activeLink.classList.add('active'); const tocBox=container.querySelector('.notes-toc'); if(tocBox){ const linkRect=activeLink.getBoundingClientRect(), boxRect=tocBox.getBoundingClientRect(); if(linkRect.top<boxRect.top) tocBox.scrollTop-=boxRect.top-linkRect.top+8; else if(linkRect.bottom>boxRect.bottom) tocBox.scrollTop+=linkRect.bottom-boxRect.bottom+8; } } }); },{rootMargin:'-18% 0px -68% 0px',threshold:0}); tocTargets.forEach(target=>observer.observe(target)); }
+  if (window.IntersectionObserver && tocTargets.length){ const observer=new IntersectionObserver(entries=>{ entries.filter(entry=>entry.isIntersecting).forEach(entry=>{ const id=entry.target.id; tocLinks.forEach(link=>link.classList.remove('active')); const activeLink=tocLinks.find(link=>link.dataset.noteTarget===id); if(activeLink){ activeLink.classList.add('active'); const tocBox=container.querySelector('.notes-toc-body'); if(tocBox){ const linkRect=activeLink.getBoundingClientRect(), boxRect=tocBox.getBoundingClientRect(); if(linkRect.top<boxRect.top) tocBox.scrollTop-=boxRect.top-linkRect.top+8; else if(linkRect.bottom>boxRect.bottom) tocBox.scrollTop+=linkRect.bottom-boxRect.bottom+8; } } }); },{rootMargin:'-18% 0px -68% 0px',threshold:0}); tocTargets.forEach(target=>observer.observe(target)); }
+  restoreNotesScrollPosition();
+  requestAnimationFrame(updateNotesHeadingClearance);
 }
+function bindNotesBookmarkControl(btn){ btn.onclick=event=>{ event.preventDefault(); event.stopPropagation(); toggleNotesBookmark(btn.dataset.noteBookmark, btn); }; btn.onkeydown=event=>{ if(event.key==='Enter'||event.key===' '){ event.preventDefault(); event.stopPropagation(); toggleNotesBookmark(btn.dataset.noteBookmark, btn); } }; }
+function clearPendingNotesTocBookmarks(exceptId=''){ document.querySelectorAll('.notes-toc-bookmark[data-note-pending-cancel="true"]').forEach(marker=>{ if (exceptId && marker.dataset.noteBookmark===exceptId) return; marker.remove(); }); }
+function updateNotesHeadingClearance(){
+  const layout=document.querySelector('.notes-layout'), button=document.querySelector('.notes-toc.collapsed .notes-toc-action');
+  if(!layout) return;
+  if(!button){ layout.querySelectorAll('.note-section-heading.needs-toc-clearance').forEach(heading=>heading.classList.remove('needs-toc-clearance')); return; }
+  const buttonRect=button.getBoundingClientRect();
+  layout.querySelectorAll('.note-section-heading').forEach(heading=>{
+    const rect=heading.getBoundingClientRect();
+    heading.classList.toggle('needs-toc-clearance', buttonRect.right>rect.left && buttonRect.left<rect.right && buttonRect.bottom>rect.top && buttonRect.top<rect.bottom);
+  });
+}
+if (!window.__smcNotesClearanceBound){
+  window.__smcNotesClearanceBound=true;
+  const scheduleNotesHeadingClearance=()=>requestAnimationFrame(updateNotesHeadingClearance);
+  window.addEventListener('resize',scheduleNotesHeadingClearance,{passive:true});
+  window.addEventListener('scroll',scheduleNotesHeadingClearance,{passive:true});
+}
+function alignNotesTocToActive(){ const body=document.querySelector('.notes-toc-body'), active=document.querySelector('.notes-toc-link.active'); if(!body||!active) return; const bodyRect=body.getBoundingClientRect(), activeRect=active.getBoundingClientRect(); if(activeRect.top<bodyRect.top) body.scrollTop-=bodyRect.top-activeRect.top+8; else if(activeRect.bottom>bodyRect.bottom) body.scrollTop+=activeRect.bottom-bodyRect.bottom+8; }
+function alignNotesTocToItem(id){ const body=document.querySelector('.notes-toc-body'), item=[...document.querySelectorAll('.notes-toc-link')].find(link=>link.dataset.noteTarget===`note-${id}`); if(!body||!item) return; item.scrollIntoView({block:'nearest',inline:'nearest'}); }
 async function toggleNotesBookmark(id, button){
   if (!id) return;
+  clearPendingNotesTocBookmarks(id);
   if (App.notesBookmarks.has(id)) App.notesBookmarks.delete(id); else App.notesBookmarks.add(id);
   await Store.setJSON(STORAGE_KEYS.notesBookmarks, [...App.notesBookmarks]);
   const on=App.notesBookmarks.has(id);
-  if (button){ button.classList.toggle('on',on); button.setAttribute('aria-pressed',String(on)); button.setAttribute('title',on?'取消收藏':'收藏'); }
+  const fromToc=Boolean(button?.classList?.contains('notes-toc-bookmark'));
+  document.querySelectorAll('[data-note-bookmark]').forEach(control=>{ if(control.dataset.noteBookmark!==id) return; control.classList.toggle('on',on); control.setAttribute('aria-pressed',String(on)); control.setAttribute('title',on?'取消收藏':'收藏'); if(control.classList.contains('note-bookmark-btn')){ const title=control.closest('.note-card')?.querySelector('h3')?.textContent?.trim()||''; control.setAttribute('aria-label',`${on?'取消收藏':'收藏'}：${title}`); } });
+  requestAnimationFrame(()=>{ alignNotesTocToActive(); alignNotesTocToItem(id); });
+  const tocLink=[...document.querySelectorAll('.notes-toc-link')].find(link=>link.dataset.noteTarget===`note-${id}`);
+  if (tocLink){ const marker=tocLink.querySelector('.notes-toc-bookmark'); if (on&&!marker){ const next=document.createElement('span'); next.className='notes-toc-bookmark on'; next.dataset.noteBookmark=id; next.setAttribute('role','button'); next.tabIndex=0; next.title='取消收藏'; next.setAttribute('aria-label',`取消收藏：${tocLink.textContent.trim()}`); next.setAttribute('aria-pressed','true'); next.innerHTML=noteBookmarkIcon(); bindNotesBookmarkControl(next); tocLink.prepend(next); } else if (on&&marker){ marker.classList.add('on'); marker.removeAttribute('data-note-pending-cancel'); marker.setAttribute('aria-pressed','true'); marker.setAttribute('title','取消收藏'); } else if (!on&&marker){ if (fromToc){ marker.classList.remove('on'); marker.dataset.notePendingCancel='true'; marker.setAttribute('aria-pressed','false'); marker.setAttribute('title','收藏'); } else marker.remove(); } }
 }
 function bindNotesImport(container){
   const dz=container.querySelector('#notes-dropzone'), input=container.querySelector('#notes-file-input');
@@ -4215,6 +4385,9 @@ async function initApp(){
     App.settings = await loadSettings();
     App.progress = await loadProgress();
     App.notesPackage = await Store.getJSON(STORAGE_KEYS.notesPackage, null);
+    App.notesScrollY = await Store.getJSON(STORAGE_KEYS.notesScrollY, 0);
+    const savedTocCollapsed = await Store.getJSON(STORAGE_KEYS.notesTocCollapsed, null);
+    if (typeof savedTocCollapsed === 'boolean') App.notesTocCollapsed = savedTocCollapsed;
     App.notesBookmarks = new Set(await Store.getJSON(STORAGE_KEYS.notesBookmarks, []));
     applyTheme();
     if (window.matchMedia){
@@ -4257,7 +4430,7 @@ async function initApp(){
     } else {
       App.view = 'load';
     }
-    const rememberedView = await Store.getJSON(STORAGE_KEYS.currentView, null);
+    const rememberedView = cachedCurrentView() || await Store.getJSON(STORAGE_KEYS.currentView, null);
     const rememberedRecordId = await Store.getJSON(STORAGE_KEYS.recordDetailId, null);
     if (!activeDraft && ['notes','stats','settings','setup','browse'].includes(rememberedView) && (rememberedView!=='browse' || App.deck)) App.view = rememberedView;
     else if (!activeDraft && rememberedView==='record' && rememberedRecordId && App.progress.sessions.some(item=>item.id===rememberedRecordId)){ App.recordDetailId=rememberedRecordId; App.view='record'; }
@@ -4269,6 +4442,8 @@ async function initApp(){
   }
   document.body.classList.add('no-initial-view-transition');
   render();
+  await waitForInitialTypography();
+  document.documentElement.classList.remove('app-booting');
   requestAnimationFrame(()=>document.body.classList.remove('no-initial-view-transition'));
 }
 initApp();

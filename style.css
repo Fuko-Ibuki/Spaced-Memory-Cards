@@ -292,6 +292,7 @@ button:focus-visible{ outline-offset:2px; }
    3. 应用外壳 / 顶部导航
    ============================================================ */
 #app-root{ position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column; }
+html.app-booting #app-root{ visibility:hidden; }
 
 .topnav{
   position:sticky; top:0; z-index:40;
@@ -474,6 +475,8 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
    5. 通用容器 / 面板
    ============================================================ */
 .container{ max-width:880px; margin:0 auto; width:100%; padding:0 20px; }
+/* 学习设置的控件布局可横向展开；文本内容仍使用通用 880px 文本流。 */
+.setup-container{ max-width:1180px; }
 .panel{
   background:var(--bg-elevated);
   border:1px solid var(--border-soft);
@@ -678,8 +681,8 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   transition:background var(--dur-fast) var(--ease);
 }
 .collapsible-head:hover{ background:var(--bg-soft); }
-.collapsible-head .chev{ transition:transform var(--dur) var(--ease); font-size:inherit; color:var(--text-faint); flex-shrink:0; line-height:1; }
-.collapsible-head.open .chev{ transform:rotate(180deg); color:var(--accent); }
+.collapsible-head .chev{ font-size:inherit; color:var(--text-faint); flex-shrink:0; line-height:1; transform:none; }
+.collapsible-head.open .chev{ color:var(--accent); }
 .collapsible-body{ overflow:hidden; max-height:0; transition:max-height var(--dur-slow) var(--ease); }
 .collapsible-body.open{ max-height:600px; }
 .adv-panel{ margin-top:16px; }
@@ -687,10 +690,10 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   display:flex; align-items:center; justify-content:space-between; width:100%;
   border:none; background:transparent; color:var(--text); padding:0; font-size:14px; font-weight:var(--font-weight-heavy); cursor:pointer;
 }
-.mobile-collapse-head .chev{ color:var(--text-faint); transition:transform var(--dur-fast) var(--ease); font-size:inherit; line-height:1; }
+.mobile-collapse-head .chev{ color:var(--text-faint); font-size:inherit; line-height:1; transform:none; }
 .setup-panel .mobile-collapse-body{ display:none; margin-top:14px; }
 .setup-panel.open .mobile-collapse-body{ display:block; }
-.setup-panel.open .mobile-collapse-head .chev{ transform:rotate(180deg); color:var(--accent); }
+.setup-panel.open .mobile-collapse-head .chev{ color:var(--accent); }
 .setup-panel .mobile-collapse-body > .section-title:first-child{ display:none; }
 .points-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-top:16px; }
 .points-item{ display:flex; align-items:center; justify-content:space-between; gap:8px; background:var(--bg-soft); padding:10px 12px; border-radius:var(--radius-md); border:1px solid var(--border-soft); }
@@ -1288,8 +1291,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   .brand .brand-text{ display:none; }
   .nav-spacer{ display:none; }
   .format-guide-grid{ grid-template-columns:1fr; }
-  .streak-pill{ padding:5px 9px 5px 7px; font-size:12px; }
-  .streak-pill.streak-placeholder{ display:none; visibility:hidden; }
+  .streak-pill{ display:none; }
   .nav-primary-group{
     position:absolute;
     left:50%; top:50%; transform:translate(-50%, -50%);
@@ -1573,8 +1575,18 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
 .notes-package-head p{ margin:6px 0 0; color:var(--text-faint); font-size:12px; }
 .notes-package-actions{ display:flex; gap:8px; flex:0 0 auto; }
 .notes-layout{ display:block; }
-.notes-toc{ position:fixed; top:84px; width:240px; height:auto; max-height:calc(100vh - 108px); overflow:auto; padding:14px; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--bg-elevated); }
-.notes-toc h2{ margin:0 0 12px; color:var(--text); font-size:15px; }
+.notes-layout.toc-collapsed .notes-document{ width:min(880px,100%); margin-left:auto; margin-right:auto; }
+.notes-toc{ position:fixed; top:84px; left:20px; width:240px; height:auto; max-height:calc(100vh - 108px); display:flex; flex-direction:column; overflow:hidden; padding:0; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--bg-elevated); touch-action:pan-y; }
+.notes-toc-head{ flex:0 0 auto; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 14px 12px; border-bottom:1px solid var(--border-soft); background:var(--bg-elevated); }
+.notes-toc h2{ margin:0; color:var(--text); font-size:15px; }
+.notes-toc-action{ display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto; width:28px; height:28px; padding:0; border:0; border-radius:7px; background:transparent; color:var(--text-faint); font-family:var(--font-symbol); font-size:18px; line-height:1; cursor:pointer; }
+.notes-toc-action:hover,.notes-toc-action:focus-visible{ background:var(--bg-soft); color:var(--text); outline:none; }
+.notes-toc-body{ flex:1 1 auto; min-height:0; overflow:auto; padding:12px 14px 14px; }
+.notes-toc.collapsed{ position:fixed; left:20px; width:40px; height:40px; max-height:40px; overflow:visible; border:0; border-radius:10px; box-sizing:border-box; background:transparent; }
+.notes-toc.collapsed .notes-toc-head{ width:40px; height:40px; padding:0; border-bottom:0; border-radius:inherit; background:transparent; }
+.notes-toc.collapsed .notes-toc-head h2,.notes-toc.collapsed .notes-toc-body{ display:none; }
+.notes-toc.collapsed .notes-toc-action{ width:40px; height:40px; border-radius:inherit; background:color-mix(in srgb,var(--bg-elevated) 65%,transparent); color:var(--text-soft); box-shadow:none; -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px); }
+.notes-toc.collapsed .notes-toc-action:hover,.notes-toc.collapsed .notes-toc-action:focus-visible{ background:var(--bg-hover); color:var(--text); }
 .notes-toc-chapter + .notes-toc-chapter{ margin-top:8px; padding-top:8px; border-top:1px solid var(--border-soft); }
 .notes-toc-chapter > summary,
 .notes-toc-section > summary{ list-style:none; cursor:pointer; user-select:none; display:flex; align-items:center; gap:7px; color:var(--text); font-size:12px; line-height:1.45; }
@@ -1588,10 +1600,15 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
 .notes-toc-section{ margin-top:7px; padding-left:8px; }
 .notes-toc-section > summary{ color:var(--text-soft); font-size:11.5px; }
 .notes-toc-section-body{ padding-left:12px; }
-.notes-toc-link{ display:flex; width:100%; gap:6px; padding:5px 4px; border:0; border-radius:6px; background:transparent; color:var(--text-faint); text-align:left; font-size:11.5px; line-height:1.4; cursor:pointer; }
+.notes-toc-link{ display:block; width:100%; padding:5px 4px; border:0; border-radius:6px; background:transparent; color:var(--text-faint); text-align:left; font-size:11.5px; line-height:1.4; cursor:pointer; }
 .notes-toc-link span{ flex:0 0 auto; color:var(--accent); font-family:var(--font-num); font-style:italic; }
+.notes-toc-bookmark{ display:inline-flex; align-items:center; justify-content:center; width:1em; height:1em; margin-top:0; margin-left:0; color:var(--gold); line-height:1; vertical-align:middle; }
+.notes-toc-link .notes-toc-bookmark{ color:var(--text-faint); cursor:pointer; user-select:none; }
+.notes-toc-link .notes-toc-bookmark.on,.notes-toc-link .notes-toc-bookmark:hover{ color:var(--gold); }
+.notes-toc-bookmark .note-bookmark-icon{ width:1em; height:1em; fill:none; }
+.notes-toc-bookmark.on .note-bookmark-icon{ fill:currentColor; }
 .notes-toc-link:hover,.notes-toc-link:focus-visible{ background:var(--bg-soft); color:var(--text); }
-.notes-document{ min-width:0; margin-left:262px; }
+.notes-document{ min-width:0; width:calc(100% - 262px); max-width:880px; margin-left:262px; transition:transform .24s var(--ease); }
 .note-section + .note-section{ margin-top:30px; }
 .note-section-heading{ display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid var(--border-soft); }
 .note-section-heading h2{ margin:0; color:var(--text); font-size:19px; line-height:1.4; }
@@ -1599,7 +1616,7 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
 .note-count{ flex:0 0 auto; color:var(--text-faint); font-size:11px; }
 .note-card{ margin:0 0 14px; padding:18px 20px 14px; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--bg-elevated); box-shadow:var(--shadow-soft); scroll-margin-top:90px; }
 .note-card-heading{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding-bottom:11px; border-bottom:1px solid var(--border-soft); }
-.note-card-heading h3{ margin:0; color:var(--text); font-family:var(--font-content); font-size:17px; line-height:1.45; font-weight:var(--weight-content-emphasis); }
+.note-card-heading h3{ margin:0; color:var(--text); font-family:var(--font-ui); font-size:17px; line-height:1.45; font-weight:var(--weight-content-emphasis); }
 .note-meta{ display:flex; align-items:center; gap:8px; margin-top:6px; color:var(--text-faint); font-family:var(--font-ui); font-size:10.5px; }
 .note-tag{ --note-color:var(--accent); display:inline-flex; align-items:center; gap:4px; padding:1px 6px; border:1px solid var(--note-color); color:var(--note-color); white-space:nowrap; font-size:11px; font-weight:var(--weight-ui-label); line-height:1.45; }
 .note-tag-icon{ flex:0 0 auto; display:block; }
@@ -1608,20 +1625,21 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
 .note-index{ flex:0 0 auto; color:var(--text-faint); font-family:var(--font-num); font-size:12px; font-style:italic; }
 .note-card-tools{ display:flex; align-items:center; gap:8px; flex:0 0 auto; }
 .note-bookmark-btn{ display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; padding:4px; border:0; border-radius:7px; background:transparent; color:var(--text-faint); cursor:pointer; transition:color var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease); }
-.note-bookmark-btn:hover{ color:var(--accent); background:var(--bg-soft); transform:translateY(-1px); }
+.note-bookmark-btn:hover{ color:var(--gold); background:var(--gold-bg); transform:translateY(-1px); }
 .note-bookmark-btn.on{ color:var(--gold); background:var(--gold-bg); }
 .note-bookmark-btn.on .note-bookmark-icon{ fill:currentColor; }
 .note-bookmark-btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
-.note-rich{ margin-top:14px; color:var(--text-soft); font-family:var(--font-content); font-size:14px; line-height:1.85; overflow-wrap:anywhere; }
+.note-rich{ margin-top:14px; color:var(--text); font-family:var(--font-ui); font-size:16px; line-height:1.6; overflow-wrap:anywhere; }
+.note-rich :where(p,li,blockquote,h1,h2,h3,h4,h5,h6){ font-family:inherit; font-size:inherit; color:inherit; }
 .note-rich p{ margin:0 0 11px; }
 .note-rich p:last-child{ margin-bottom:0; }
-.note-rich h5,.note-rich h6{ margin:16px 0 7px; color:var(--text); font-family:var(--font-content); }
+.note-rich h5,.note-rich h6{ margin:16px 0 7px; color:var(--text); font-family:var(--font-ui); }
 .note-rich ul,.note-rich ol{ margin:8px 0 12px; padding-left:1.5em; }
 .note-rich li + li{ margin-top:4px; }
 .note-rich strong,.note-rich b{ color:var(--text); font-weight:var(--weight-content-strong); }
-.note-rich code{ padding:1px 5px; border-radius:4px; background:var(--bg-soft); color:var(--accent); font-family:var(--font-symbol); font-size:.9em; }
-.note-rich pre{ margin:12px 0; padding:12px 14px; border-radius:8px; background:var(--bg-soft); overflow:auto; font-family:var(--font-symbol); font-size:12px; line-height:1.6; }
-.note-rich blockquote{ margin:12px 0; padding:7px 12px; border-left:3px solid var(--accent); background:var(--bg-soft); color:var(--text-faint); }
+.note-rich code{ padding:0 2px; border-radius:3px; background:color-mix(in srgb,var(--text) 5%,transparent); color:var(--text); font-family:inherit; font-size:inherit; }
+.note-rich pre{ margin:12px 0; padding:8px 10px; border-radius:6px; background:color-mix(in srgb,var(--text) 5%,transparent); color:var(--text); overflow:auto; font-family:inherit; font-size:inherit; line-height:inherit; }
+.note-rich blockquote{ margin:12px 0; padding:7px 12px; border-left:3px solid var(--accent); background:var(--bg-soft); color:var(--text); }
 .note-rich a{ color:var(--accent); text-decoration:underline; text-underline-offset:2px; }
 .note-rich img{ display:block; max-width:100%; height:auto; margin:10px 0; border-radius:8px; border:1px solid var(--border-soft); }
 .note-rich table{ width:100%; margin:12px 0; border-collapse:collapse; font-size:.92em; }
@@ -1629,16 +1647,23 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
 .note-rich th{ color:var(--text); background:var(--bg-soft); font-weight:var(--weight-ui-label); }
 .note-source{ margin:13px 0 0; padding-top:10px; border-top:1px solid var(--border-soft); color:var(--text-faint); font-family:var(--font-ui); font-size:11px; }
 @media (max-width:760px){
+  .topnav{ position:fixed; top:0; left:0; right:0; z-index:90; }
+  main#view{ padding-top:76px; }
   .notes-empty-state{ margin-top:4vh; padding:30px 16px; }
   .notes-package-head{ flex-direction:column; gap:14px; }
   .notes-package-actions{ width:100%; }
   .notes-package-actions .btn{ flex:1 1 0; }
   .notes-layout{ display:block; }
   .notes-toc{ position:static; width:auto; height:auto; max-height:none; margin-bottom:18px; }
-  .notes-document{ margin-left:0; }
+  .notes-layout.toc-collapsed .notes-toc{ position:fixed; top:70px; left:12px; z-index:85; margin:0; }
+  .notes-layout:not(.toc-collapsed) .notes-toc{ position:fixed; top:70px; left:12px; z-index:80; width:320px; max-width:calc(100vw - 24px); height:calc(100dvh - 82px); max-height:none; margin:0; border:1px solid var(--border); border-radius:var(--radius-md); }
+  .notes-layout:not(.toc-collapsed) .notes-toc-head{ padding:14px 16px 12px; }
+  .notes-layout:not(.toc-collapsed) .notes-toc-body{ padding:12px 16px 20px; }
+  .notes-layout:not(.toc-collapsed) .notes-document{ display:block; width:100%; max-width:none; margin-left:0; margin-right:0; transform:translateX(344px); }
+  .notes-document{ margin-left:0; transform:translateX(0); }
   .note-card{ padding:15px 14px 12px; }
   .note-card-heading h3{ font-size:16px; }
-  .note-rich{ font-size:13.5px; }
+  .note-rich{ font-size:15.5px; }
 }
 
 /* Notes TOC is intentionally fully expanded. */
@@ -1654,7 +1679,6 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
 .notes-toc .notes-toc-chapter > summary,
 .notes-toc .notes-toc-section > summary{ font-size:12px; line-height:1.45; }
 .notes-toc .notes-toc-link{ font-size:11.5px; line-height:1.4; }
-.notes-toc .notes-toc-link span{ color:inherit; font-family:var(--font-ui); font-style:normal; font-weight:var(--weight-ui-label); }
 
 /* Increase notes TOC labels for comfortable reading. */
 .notes-toc .notes-toc-chapter > summary,
@@ -1665,31 +1689,26 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
 .notes-toc summary,.notes-toc .notes-toc-link{ border-radius:6px; }
 .notes-toc summary{ padding:5px 6px; }
 .notes-toc .notes-toc-link{ padding:6px; }
-.notes-toc summary.active,.notes-toc .notes-toc-link.active{ background:var(--accent-bg); color:var(--accent); }
+.notes-toc .notes-toc-link.active{ background:var(--accent-bg); color:var(--accent); }
 
 /* The current TOC item keeps the same fixed hover treatment, without accent recoloring. */
-.notes-toc summary.active,
-.notes-toc .notes-toc-link.active{ background:var(--bg-soft); color:var(--text); }
-.notes-toc .notes-toc-link.active span{ color:inherit; }
+.notes-toc .notes-toc-link.active{ background:var(--bg-soft); color:var(--text); font-weight:var(--weight-ui-heading); }
 
 /* Keep internal TOC navigation scrollable without showing a scrollbar. */
-.notes-toc{ scrollbar-width:none; -ms-overflow-style:none; }
-.notes-toc::-webkit-scrollbar{ display:none; width:0; height:0; }
+.notes-toc,.notes-toc-body{ scrollbar-width:none; -ms-overflow-style:none; }
+.notes-toc::-webkit-scrollbar,.notes-toc-body::-webkit-scrollbar{ display:none; width:0; height:0; }
 
 /* Keep the selected TOC box clear of the directory frame while it auto-scrolls. */
 .notes-toc summary,
 .notes-toc .notes-toc-link{ scroll-margin:10px; }
 
 /* Match the active selection's right inset to its vertical breathing room. */
-.notes-toc summary.active,
 .notes-toc .notes-toc-link.active{ margin-right:10px; }
 
 /* Equalize the active TOC box's vertical and right insets in the local project. */
-.notes-toc summary.active,
 .notes-toc .notes-toc-link.active{ margin-top:10px; margin-bottom:10px; margin-right:10px; }
 
 /* Active TOC boxes do not add vertical spacing to neighboring labels. */
-.notes-toc summary.active,
 .notes-toc .notes-toc-link.active{ margin-top:0; margin-bottom:0; }
 
 /* Active-item visibility is handled by the TOC container logic, not browser scroll margins. */
@@ -1697,8 +1716,56 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
 .notes-toc .notes-toc-link{ scroll-margin:0; }
 
 /* Keep the active box inset equal to the TOC's regular vertical padding. */
-.notes-toc summary.active,
 .notes-toc .notes-toc-link.active{ margin-right:0; }
+
+/* Dark mode uses a brighter fill only; the selected item has no outline. */
+html[data-theme="dark"] .notes-toc .notes-toc-link.active{ background:#3a4858; border:0; color:#f4f7e8; box-shadow:none; }
 
 /* A nested active link compensates for its left indent so its right inset matches the TOC frame padding. */
 .notes-toc-section-body > .notes-toc-link.active{ width:calc(100% + 2px); }
+.note-section-tools{ display:flex; align-items:center; gap:10px; flex-shrink:0; }
+@media (max-width:640px){ .note-section-heading{ align-items:center; } .note-section-tools{ gap:7px; } .note-section-tools .note-count{ display:none; } }
+.browse-notes-btn,.browse-notes-placeholder{ min-width:88px; }
+.browse-notes-btn{ white-space:nowrap; }
+@media (max-width:640px){ .browse-notes-btn,.browse-notes-placeholder{ min-width:0; } .browse-notes-btn{ padding-inline:10px; } }
+.note-section-description{ margin:4px 0 0; color:var(--text-faint); font-size:12px; line-height:1.5; }
+.note-section-heading > div:first-child{ padding-left:72px; }
+@media (max-width:640px){ .note-section-heading > div:first-child{ padding-left:56px; } }
+.note-section-heading > div:first-child{ padding-left:40px; }
+@media (max-width:640px){ .note-section-heading > div:first-child{ padding-left:32px; } }
+.note-section-heading > div:first-child{ padding-left:48px; }
+@media (max-width:640px){ .note-section-heading > div:first-child{ padding-left:40px; } }
+/* The collapsed sidebar button reserves space only while it is present; headings stay naturally left-aligned otherwise. */
+.note-section-heading > div:first-child{ padding-left:0; }
+.notes-layout.toc-collapsed .note-section-heading > div:first-child{ padding-left:40px; }
+@media (max-width:640px){ .notes-layout.toc-collapsed .note-section-heading > div:first-child{ padding-left:32px; } }
+.note-section-heading > div:first-child,
+.notes-layout.toc-collapsed .note-section-heading > div:first-child{ padding-left:0; }
+/* Reserve the collapsed directory button's footprint so it pushes only overlapping headings. */
+.notes-layout.toc-collapsed .note-section-heading{ padding-left:48px; }
+@media (max-width:640px){ .notes-layout.toc-collapsed .note-section-heading{ padding-left:40px; } }
+.notes-layout.toc-collapsed .note-section-heading{ padding-left:0; }
+.notes-layout.toc-collapsed .note-section-heading.needs-toc-clearance{ padding-left:48px; }
+@media (max-width:640px){ .notes-layout.toc-collapsed .note-section-heading.needs-toc-clearance{ padding-left:40px; } }
+.notes-package-toolbar{ position:relative; display:flex; justify-content:flex-end; align-items:center; min-height:34px; margin-bottom:8px; }
+.notes-package-toolbar > span{ margin-right:8px; color:var(--text-faint); font-size:12px; }
+.notes-more-btn{ width:34px; height:30px; border:0; border-radius:8px; background:var(--bg-soft); color:var(--text); cursor:pointer; font-weight:700; letter-spacing:2px; }
+.notes-more-btn:hover{ background:var(--bg-hover); }
+.notes-more-menu{ position:absolute; top:34px; right:0; z-index:40; min-width:120px; padding:5px; border:1px solid var(--border); border-radius:9px; background:var(--bg-elevated); box-shadow:var(--shadow-soft); }
+.notes-more-menu button{ display:block; width:100%; padding:7px 9px; border:0; border-radius:6px; background:transparent; color:var(--text); text-align:left; cursor:pointer; }
+.notes-more-menu button:hover{ background:var(--bg-soft); }
+.dropzone.dragover{
+  border-style:dashed;
+  border-width:2px;
+  background:color-mix(in srgb,var(--bg-elevated) 72%,var(--accent) 28%);
+  -webkit-backdrop-filter:blur(14px) saturate(1.08);
+  backdrop-filter:blur(14px) saturate(1.08);
+  box-shadow:0 0 0 9999px color-mix(in srgb,var(--text) 10%,transparent), 0 0 28px color-mix(in srgb,var(--accent) 24%,transparent);
+}
+.dropzone.dragover .dz-hint{ font-size:0; color:var(--accent); font-weight:600; }
+.dropzone.dragover .dz-hint::after{ content:'松手以导入'; font-size:13px; }
+.note-rich .note-math,
+.note-rich .note-math .katex,
+.note-rich .note-math .katex *{ font-family:var(--font-ui) !important; font-size:1em; }
+.note-rich .note-math{ line-height:inherit; }
+.note-rich .note-math[style*="display"]{ display:block; }
