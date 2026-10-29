@@ -1,0 +1,186 @@
+<svg width="100%" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460.8 280.8" role="img" aria-label="2(x+2) 左移 2，2(x-1) 右移 1；三条曲线过 (-1,0)、(1,0)、(2,0)">
+ <defs>
+  </defs>
+ <g id="shift-log-figure_1">
+  <g id="shift-log-patch_1">
+   <path d="M 0 280.8  L 460.8 280.8  L 460.8 0  L 0 0  L 0 280.8  z " fill="none" />
+  </g>
+  <g id="shift-log-axes_1">
+   <g id="shift-log-line2d_1">
+    <path d="M 88.090192 281.8  L 88.724392 265.454684  L 89.482072 251.471482  L 90.360147 239.322142  L 91.338956 228.777432  L 92.426171 219.378887  L 93.656978 210.668039  L 94.978362 202.874123  L 96.448337 195.538673  L 98.003007 188.890921  L 99.671071 182.701635  L 101.508262 176.741582  L 103.433125 171.239994  L 105.511123 165.967639  L 107.738878 160.924517  L 110.1102 156.110627  L 112.615884 151.525971  L 115.243571 147.170547  L 118.137013 142.815124  L 121.147635 138.688933  L 124.254726 134.791975  L 127.641535 130.895017  L 131.333243 126.998059  L 135.110866 123.330334  L 139.207745 119.662609  L 143.65086 115.994883  L 148.156721 112.556391  L 153.018667 109.117899  L 158.264838 105.679406  L 163.925598 102.240914  L 170.033711 98.802422  L 176.624531 95.363929  L 183.245079 92.15467  L 190.352697 88.94541  L 197.98322 85.736151  L 206.175116 82.526891  L 214.969686 79.317632  L 224.411268 76.108372  L 234.547463 72.899113  L 245.429372 69.689853  L 257.111858 66.480594  L 269.653819 63.271334  L 283.118486 60.062074  L 297.573741 56.852815  L 313.092463 53.643555  L 318.907317 52.497391  L 318.907317 52.497391  " clip-path="url(#shift-log-pbfbc670fd4)" fill="none" stroke="#3a9d5d" stroke-width="2" stroke-linecap="square" />
+   </g>
+   <g id="shift-log-line2d_2">
+    <path d="M 86.634146 249.912  L 86.634146 33.696  " clip-path="url(#shift-log-pbfbc670fd4)" fill="none" stroke-dasharray="2.7,2.7" stroke-dashoffset="0" stroke="#3a9d5d" stroke-opacity="0.55" stroke-width="0.9" />
+   </g>
+   <g id="shift-log-line2d_3">
+    <path d="M 295.68 174.079722  L 318.907317 174.079722  " clip-path="url(#shift-log-pbfbc670fd4)" fill="none" stroke="#3a9d5d" stroke-width="2" stroke-linecap="square" />
+   </g>
+   <g id="shift-log-line2d_4">
+    <path d="M 146.158485 281.8  L 146.792684 265.454684  L 147.550365 251.471482  L 148.42844 239.322142  L 149.407248 228.777432  L 150.494463 219.378887  L 151.725271 210.668039  L 153.046655 202.874123  L 154.516629 195.538673  L 156.0713 188.890921  L 157.739363 182.701635  L 159.576555 176.741582  L 161.501418 171.239994  L 163.579416 165.967639  L 165.807171 160.924517  L 168.178493 156.110627  L 170.684176 151.525971  L 173.311864 147.170547  L 176.205305 142.815124  L 179.215927 138.688933  L 182.323019 134.791975  L 185.709828 130.895017  L 189.401536 126.998059  L 193.179159 123.330334  L 197.276037 119.662609  L 201.719152 115.994883  L 206.225013 112.556391  L 211.086959 109.117899  L 216.33313 105.679406  L 221.993891 102.240914  L 228.102004 98.802422  L 234.692823 95.363929  L 241.313371 92.15467  L 248.42099 88.94541  L 256.051512 85.736151  L 264.243409 82.526891  L 273.037979 79.317632  L 282.479561 76.108372  L 292.615755 72.899113  L 303.497665 69.689853  L 315.180151 66.480594  L 327.722112 63.271334  L 341.186778 60.062074  L 355.642034 56.852815  L 371.160756 53.643555  L 376.97561 52.497391  L 376.97561 52.497391  " clip-path="url(#shift-log-pbfbc670fd4)" fill="none" stroke="#3b7dd8" stroke-width="2" stroke-linecap="square" />
+   </g>
+   <g id="shift-log-line2d_5">
+    <path d="M 144.702439 249.912  L 144.702439 33.696  " clip-path="url(#shift-log-pbfbc670fd4)" fill="none" stroke-dasharray="2.7,2.7" stroke-dashoffset="0" stroke="#3b7dd8" stroke-opacity="0.55" stroke-width="0.9" />
+   </g>
+   <g id="shift-log-line2d_6">
+    <path d="M 295.68 197.581461  L 318.907317 197.581461  " clip-path="url(#shift-log-pbfbc670fd4)" fill="none" stroke="#3b7dd8" stroke-width="2" stroke-linecap="square" />
+   </g>
+   <g id="shift-log-line2d_7">
+    <path d="M 175.192631 281.8  L 175.826831 265.454684  L 176.584511 251.471482  L 177.462586 239.322142  L 178.441395 228.777432  L 179.52861 219.378887  L 180.759417 210.668039  L 182.080801 202.874123  L 183.550776 195.538673  L 185.105447 188.890921  L 186.77351 182.701635  L 188.610701 176.741582  L 190.535564 171.239994  L 192.613562 165.967639  L 194.841317 160.924517  L 197.212639 156.110627  L 199.718323 151.525971  L 202.34601 147.170547  L 205.239452 142.815124  L 208.250074 138.688933  L 211.357165 134.791975  L 214.743974 130.895017  L 218.435682 126.998059  L 222.213305 123.330334  L 226.310184 119.662609  L 230.753299 115.994883  L 235.25916 112.556391  L 240.121106 109.117899  L 245.367277 105.679406  L 251.028037 102.240914  L 257.13615 98.802422  L 263.72697 95.363929  L 270.347518 92.15467  L 277.455136 88.94541  L 285.085659 85.736151  L 293.277555 82.526891  L 302.072125 79.317632  L 311.513707 76.108372  L 321.649902 72.899113  L 332.531811 69.689853  L 344.214297 66.480594  L 356.756258 63.271334  L 370.220925 60.062074  L 384.67618 56.852815  L 400.194902 53.643555  L 406.009756 52.497391  L 406.009756 52.497391  " clip-path="url(#shift-log-pbfbc670fd4)" fill="none" stroke="#d9534f" stroke-width="2" stroke-linecap="square" />
+   </g>
+   <g id="shift-log-line2d_8">
+    <path d="M 173.736585 249.912  L 173.736585 33.696  " clip-path="url(#shift-log-pbfbc670fd4)" fill="none" stroke-dasharray="2.7,2.7" stroke-dashoffset="0" stroke="#d9534f" stroke-opacity="0.55" stroke-width="0.9" />
+   </g>
+   <g id="shift-log-line2d_9">
+    <path d="M 295.68 221.0832  L 318.907317 221.0832  " clip-path="url(#shift-log-pbfbc670fd4)" fill="none" stroke="#d9534f" stroke-width="2" stroke-linecap="square" />
+   </g>
+   <g id="shift-log-patch_2">
+    <path d="M 57.6 146.504348  Q 236.16 146.504348 413.490163 146.504348  " fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+    <path d="M 409.490163 144.504348  L 413.490163 146.504348  L 409.490163 148.504348  z " fill="currentColor" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+   </g>
+   <g id="shift-log-patch_3">
+    <path d="M 144.702439 249.912  Q 144.702439 141.804 144.702439 34.925837  " fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+    <path d="M 142.702439 38.925837  L 144.702439 34.925837  L 146.702439 38.925837  z " fill="currentColor" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+   </g>
+   <g id="shift-log-text_1">
+    
+    <g transform="translate(408.87 159.707262) scale(0.13 -0.13)" fill="currentColor">
+     <defs>
+      <path id="shift-log-STIXGeneral-Italic-78" d="M 1555 2272  L 1632 1907  Q 1971 2426 2179 2624  Q 2387 2822 2598 2822  Q 2714 2822 2787 2755  Q 2861 2688 2861 2585  Q 2861 2483 2800 2419  Q 2739 2355 2643 2355  Q 2586 2355 2490 2409  Q 2394 2464 2310 2464  Q 2125 2464 1683 1690  Q 1683 1606 1734 1402  L 1939 544  Q 2003 282 2131 282  Q 2234 282 2432 538  Q 2451 563 2476 598  Q 2502 634 2521 662  Q 2541 691 2566 717  L 2662 659  Q 2387 230 2227 80  Q 2067 -70 1882 -70  Q 1728 -70 1645 26  Q 1562 122 1504 365  L 1318 1126  L 755 365  Q 557 96 432 13  Q 307 -70 147 -70  Q 0 -70 -86 0  Q -173 70 -173 198  Q -173 294 -112 361  Q -51 429 45 429  Q 122 429 250 358  Q 346 301 416 301  Q 525 301 742 614  L 1267 1357  L 1088 2150  Q 1024 2432 969 2509  Q 915 2586 794 2586  Q 717 2586 544 2541  L 429 2509  L 410 2611  L 480 2637  Q 992 2822 1229 2822  Q 1350 2822 1420 2707  Q 1491 2592 1555 2272  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.90625)" href="#shift-log-STIXGeneral-Italic-78" />
+    </g>
+   </g>
+   <g id="shift-log-text_2">
+    
+    <g transform="translate(151.844839 42.574594) scale(0.13 -0.13)" fill="currentColor">
+     <defs>
+      <path id="shift-log-STIXGeneral-Italic-79" d="M 1555 1190  L 1690 486  Q 2118 1190 2294 1558  Q 2470 1926 2470 2131  Q 2470 2234 2304 2336  Q 2138 2445 2138 2586  Q 2138 2688 2211 2755  Q 2285 2822 2394 2822  Q 2534 2822 2630 2720  Q 2726 2618 2726 2470  Q 2726 1914 1888 518  Q 1389 -307 918 -812  Q 448 -1318 173 -1318  Q 26 -1318 -64 -1241  Q -154 -1165 -154 -1043  Q -154 -934 -80 -860  Q -6 -787 96 -787  Q 218 -787 314 -876  Q 410 -966 486 -966  Q 602 -966 794 -755  Q 877 -672 1040 -457  Q 1203 -243 1248 -173  Q 1312 -45 1312 51  Q 1312 243 1113 1046  Q 915 1850 787 2176  Q 698 2413 592 2499  Q 486 2586 294 2586  Q 192 2586 96 2560  L 96 2669  Q 237 2694 301 2707  Q 563 2758 986 2822  L 1011 2822  Q 1082 2822 1277 2227  Q 1472 1632 1555 1190  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.90625)" href="#shift-log-STIXGeneral-Italic-79" />
+    </g>
+   </g>
+   <g id="shift-log-text_3">
+    
+    <g transform="translate(324.714146 180.895) scale(0.13 -0.13)" fill="#3a9d5d">
+     <defs>
+      <path id="shift-log-STIXGeneral-Regular-3d" d="M 4077 2048  L 307 2048  L 307 2470  L 4077 2470  L 4077 2048  z M 4077 768  L 307 768  L 307 1190  L 4077 1190  L 4077 768  z " transform="scale(0.015625)" />
+      <path id="shift-log-STIXGeneral-Regular-6c" d="M 1645 0  L 134 0  L 134 96  Q 435 122 531 221  Q 627 320 627 589  L 627 3590  Q 627 3821 569 3910  Q 512 4000 358 4000  Q 224 4000 122 3987  L 122 4090  Q 730 4237 1133 4371  L 1165 4346  L 1165 557  Q 1165 288 1254 201  Q 1344 115 1645 96  L 1645 0  z " transform="scale(0.015625)" />
+      <path id="shift-log-STIXGeneral-Regular-6f" d="M 3008 1478  Q 3008 806 2608 371  Q 2208 -64 1568 -64  Q 979 -64 582 368  Q 186 800 186 1459  Q 186 2125 582 2534  Q 979 2944 1626 2944  Q 2221 2944 2614 2537  Q 3008 2131 3008 1478  z M 2432 1306  Q 2432 2035 2112 2445  Q 1856 2765 1504 2765  Q 1171 2765 966 2493  Q 762 2221 762 1747  Q 762 928 1101 435  Q 1318 115 1677 115  Q 2029 115 2230 432  Q 2432 749 2432 1306  z " transform="scale(0.015625)" />
+      <path id="shift-log-STIXGeneral-Regular-67" d="M 3008 2483  L 2477 2483  Q 2598 2208 2598 1946  Q 2598 1453 2265 1203  Q 1933 954 1600 954  Q 1530 954 1357 973  L 1235 986  Q 1107 947 979 812  Q 851 678 851 582  Q 851 435 1350 410  L 2176 371  Q 2528 358 2739 172  Q 2950 -13 2950 -314  Q 2950 -685 2566 -986  Q 2035 -1395 1286 -1395  Q 826 -1395 502 -1212  Q 179 -1030 179 -774  Q 179 -595 320 -419  Q 461 -243 806 6  Q 602 102 534 172  Q 467 243 467 346  Q 467 531 762 787  Q 909 915 1037 1043  Q 717 1203 579 1401  Q 442 1600 442 1901  Q 442 2336 752 2640  Q 1062 2944 1510 2944  Q 1766 2944 2022 2848  L 2163 2797  Q 2349 2733 2515 2733  L 3008 2733  L 3008 2483  z M 973 2163  L 973 2144  Q 973 1683 1155 1398  Q 1338 1114 1632 1114  Q 1850 1114 1978 1270  Q 2106 1427 2106 1690  Q 2106 2112 1914 2464  Q 1754 2765 1446 2765  Q 1222 2765 1097 2605  Q 973 2445 973 2163  z M 2771 -410  Q 2771 -230 2595 -163  Q 2419 -96 1978 -96  Q 1344 -96 941 -13  Q 749 -243 688 -348  Q 627 -454 627 -563  Q 627 -774 880 -902  Q 1133 -1030 1555 -1030  Q 2099 -1030 2435 -860  Q 2771 -691 2771 -410  z " transform="scale(0.015625)" />
+      <path id="shift-log-STIXGeneral-Regular-32" d="M 3034 877  L 2688 0  L 186 0  L 186 77  L 1325 1286  Q 1773 1754 1965 2144  Q 2157 2534 2157 2950  Q 2157 3379 1920 3616  Q 1683 3853 1267 3853  Q 922 3853 720 3673  Q 518 3494 326 3021  L 192 3053  Q 301 3648 630 3987  Q 960 4326 1523 4326  Q 2054 4326 2380 4006  Q 2707 3686 2707 3200  Q 2707 2477 1888 1613  L 832 486  L 2330 486  Q 2541 486 2665 569  Q 2790 653 2944 915  L 3034 877  z " transform="scale(0.015625)" />
+      <path id="shift-log-STIXGeneral-Regular-28" d="M 1946 -1030  L 1869 -1133  Q 1126 -710 716 32  Q 307 774 307 1613  Q 307 3386 1888 4326  L 1946 4224  Q 1293 3667 1075 3126  Q 858 2586 858 1632  Q 858 685 1082 96  Q 1306 -493 1946 -1030  z " transform="scale(0.015625)" />
+      <path id="shift-log-STIXGeneral-Regular-2b" d="M 4070 1408  L 2400 1408  L 2400 -262  L 1978 -262  L 1978 1408  L 307 1408  L 307 1830  L 1978 1830  L 1978 3501  L 2400 3501  L 2400 1830  L 4070 1830  L 4070 1408  z " transform="scale(0.015625)" />
+      <path id="shift-log-STIXGeneral-Regular-29" d="M 186 4224  L 262 4326  Q 992 3891 1408 3148  Q 1824 2406 1824 1581  Q 1824 -166 243 -1133  L 186 -1030  Q 845 -486 1059 54  Q 1274 595 1274 1562  Q 1274 2534 1059 3120  Q 845 3706 186 4224  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.703125)" href="#shift-log-STIXGeneral-Italic-79" />
+     <use transform="translate(58.83999 0.703125)" href="#shift-log-STIXGeneral-Regular-3d" />
+     <use transform="translate(141.779971 0.703125)" href="#shift-log-STIXGeneral-Regular-6c" />
+     <use transform="translate(169.579959 0.703125)" href="#shift-log-STIXGeneral-Regular-6f" />
+     <use transform="translate(219.579944 0.703125)" href="#shift-log-STIXGeneral-Regular-67" />
+     <use transform="translate(271.12321 -12.525) scale(0.7)" href="#shift-log-STIXGeneral-Regular-32" />
+     <use transform="translate(322.566145 0.703125)" href="#shift-log-STIXGeneral-Regular-28" />
+     <use transform="translate(355.866133 0.703125)" href="#shift-log-STIXGeneral-Italic-78" />
+     <use transform="translate(414.706123 0.703125)" href="#shift-log-STIXGeneral-Regular-2b" />
+     <use transform="translate(497.646104 0.703125)" href="#shift-log-STIXGeneral-Regular-32" />
+     <use transform="translate(547.646089 0.703125)" href="#shift-log-STIXGeneral-Regular-29" />
+    </g>
+   </g>
+   <g id="shift-log-text_4">
+    
+    <g transform="translate(324.714146 204.396739) scale(0.13 -0.13)" fill="#3b7dd8">
+     <use transform="translate(0 0.703125)" href="#shift-log-STIXGeneral-Italic-79" />
+     <use transform="translate(58.83999 0.703125)" href="#shift-log-STIXGeneral-Regular-3d" />
+     <use transform="translate(141.779971 0.703125)" href="#shift-log-STIXGeneral-Regular-6c" />
+     <use transform="translate(169.579959 0.703125)" href="#shift-log-STIXGeneral-Regular-6f" />
+     <use transform="translate(219.579944 0.703125)" href="#shift-log-STIXGeneral-Regular-67" />
+     <use transform="translate(271.12321 -12.525) scale(0.7)" href="#shift-log-STIXGeneral-Regular-32" />
+     <use transform="translate(322.566145 0.703125)" href="#shift-log-STIXGeneral-Italic-78" />
+    </g>
+   </g>
+   <g id="shift-log-text_5">
+    
+    <g transform="translate(324.714146 227.898478) scale(0.13 -0.13)" fill="#d9534f">
+     <defs>
+      <path id="shift-log-STIXGeneral-Regular-2212" d="M 3974 1408  L 410 1408  L 410 1830  L 3974 1830  L 3974 1408  z " transform="scale(0.015625)" />
+      <path id="shift-log-STIXGeneral-Regular-31" d="M 2522 0  L 755 0  L 755 96  Q 1107 115 1235 227  Q 1363 339 1363 608  L 1363 3482  Q 1363 3795 1171 3795  Q 1082 3795 883 3718  L 710 3654  L 710 3744  L 1856 4326  L 1914 4307  L 1914 486  Q 1914 275 2042 185  Q 2170 96 2522 96  L 2522 0  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.703125)" href="#shift-log-STIXGeneral-Italic-79" />
+     <use transform="translate(58.83999 0.703125)" href="#shift-log-STIXGeneral-Regular-3d" />
+     <use transform="translate(141.779971 0.703125)" href="#shift-log-STIXGeneral-Regular-6c" />
+     <use transform="translate(169.579959 0.703125)" href="#shift-log-STIXGeneral-Regular-6f" />
+     <use transform="translate(219.579944 0.703125)" href="#shift-log-STIXGeneral-Regular-67" />
+     <use transform="translate(271.12321 -12.525) scale(0.7)" href="#shift-log-STIXGeneral-Regular-32" />
+     <use transform="translate(322.566145 0.703125)" href="#shift-log-STIXGeneral-Regular-28" />
+     <use transform="translate(355.866133 0.703125)" href="#shift-log-STIXGeneral-Italic-78" />
+     <use transform="translate(414.706123 0.703125)" href="#shift-log-STIXGeneral-Regular-2212" />
+     <use transform="translate(497.646104 0.703125)" href="#shift-log-STIXGeneral-Regular-31" />
+     <use transform="translate(547.646089 0.703125)" href="#shift-log-STIXGeneral-Regular-29" />
+    </g>
+   </g>
+   <g id="shift-log-text_6">
+    
+    <g transform="translate(101.230793 159.94265) scale(0.105 -0.105)" fill="#3a9d5d">
+     <defs>
+      <path id="shift-log-STIXGeneral-Regular-2c" d="M 531 -902  L 467 -781  Q 998 -422 998 -96  Q 998 -13 909 -13  Q 883 -13 822 -25  Q 762 -38 723 -38  Q 352 -38 352 288  Q 352 454 457 553  Q 563 653 736 653  Q 954 653 1101 496  Q 1248 339 1248 96  Q 1248 -198 1053 -473  Q 858 -749 531 -902  z " transform="scale(0.015625)" />
+      <path id="shift-log-STIXGeneral-Regular-30" d="M 3046 2112  Q 3046 1683 2963 1302  Q 2880 922 2717 602  Q 2554 282 2266 96  Q 1978 -90 1600 -90  Q 1210 -90 915 108  Q 621 307 461 640  Q 301 973 227 1350  Q 154 1728 154 2150  Q 154 2746 301 3222  Q 448 3699 790 4012  Q 1133 4326 1626 4326  Q 2253 4326 2649 3712  Q 3046 3098 3046 2112  z M 2432 2080  Q 2432 3091 2217 3625  Q 2003 4160 1587 4160  Q 1190 4160 979 3622  Q 768 3085 768 2106  Q 768 1120 979 598  Q 1190 77 1600 77  Q 2003 77 2217 598  Q 2432 1120 2432 2080  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.40625)" href="#shift-log-STIXGeneral-Regular-28" />
+     <use transform="translate(33.299988 0.40625)" href="#shift-log-STIXGeneral-Regular-2212" />
+     <use transform="translate(101.799973 0.40625)" href="#shift-log-STIXGeneral-Regular-31" />
+     <use transform="translate(151.799957 0.40625)" href="#shift-log-STIXGeneral-Regular-2c" />
+     <use transform="translate(191.239938 0.40625)" href="#shift-log-STIXGeneral-Regular-30" />
+     <use transform="translate(241.239923 0.40625)" href="#shift-log-STIXGeneral-Regular-29" />
+    </g>
+   </g>
+   <g id="shift-log-text_7">
+    
+    <g transform="translate(180.995122 139.525172) scale(0.105 -0.105)" fill="#3b7dd8">
+     <use transform="translate(0 0.40625)" href="#shift-log-STIXGeneral-Regular-28" />
+     <use transform="translate(33.299988 0.40625)" href="#shift-log-STIXGeneral-Regular-31" />
+     <use transform="translate(83.299973 0.40625)" href="#shift-log-STIXGeneral-Regular-2c" />
+     <use transform="translate(122.739954 0.40625)" href="#shift-log-STIXGeneral-Regular-30" />
+     <use transform="translate(172.739938 0.40625)" href="#shift-log-STIXGeneral-Regular-29" />
+    </g>
+   </g>
+   <g id="shift-log-text_8">
+    
+    <g transform="translate(205.674146 159.94265) scale(0.105 -0.105)" fill="#d9534f">
+     <use transform="translate(0 0.40625)" href="#shift-log-STIXGeneral-Regular-28" />
+     <use transform="translate(33.299988 0.40625)" href="#shift-log-STIXGeneral-Regular-32" />
+     <use transform="translate(83.299973 0.40625)" href="#shift-log-STIXGeneral-Regular-2c" />
+     <use transform="translate(122.739954 0.40625)" href="#shift-log-STIXGeneral-Regular-30" />
+     <use transform="translate(172.739938 0.40625)" href="#shift-log-STIXGeneral-Regular-29" />
+    </g>
+   </g>
+   <g id="shift-log-line2d_10">
+    <defs>
+     <path id="shift-log-m68b7473b57" d="M 0 2.5  C 0.663008 2.5 1.29895 2.236584 1.767767 1.767767  C 2.236584 1.29895 2.5 0.663008 2.5 0  C 2.5 -0.663008 2.236584 -1.29895 1.767767 -1.767767  C 1.29895 -2.236584 0.663008 -2.5 0 -2.5  C -0.663008 -2.5 -1.29895 -2.236584 -1.767767 -1.767767  C -2.236584 -1.29895 -2.5 -0.663008 -2.5 0  C -2.5 0.663008 -2.236584 1.29895 -1.767767 1.767767  C -1.29895 2.236584 -0.663008 2.5 0 2.5  z " stroke="#3a9d5d" />
+    </defs>
+    <g clip-path="url(#shift-log-pbfbc670fd4)">
+     <use x="115.668293" y="146.504348" fill="#3a9d5d" stroke="#3a9d5d" href="#shift-log-m68b7473b57" />
+    </g>
+   </g>
+   <g id="shift-log-line2d_11">
+    <defs>
+     <path id="shift-log-m9ef2182ce6" d="M 0 2.5  C 0.663008 2.5 1.29895 2.236584 1.767767 1.767767  C 2.236584 1.29895 2.5 0.663008 2.5 0  C 2.5 -0.663008 2.236584 -1.29895 1.767767 -1.767767  C 1.29895 -2.236584 0.663008 -2.5 0 -2.5  C -0.663008 -2.5 -1.29895 -2.236584 -1.767767 -1.767767  C -2.236584 -1.29895 -2.5 -0.663008 -2.5 0  C -2.5 0.663008 -2.236584 1.29895 -1.767767 1.767767  C -1.29895 2.236584 -0.663008 2.5 0 2.5  z " stroke="#3b7dd8" />
+    </defs>
+    <g clip-path="url(#shift-log-pbfbc670fd4)">
+     <use x="173.736585" y="146.504348" fill="#3b7dd8" stroke="#3b7dd8" href="#shift-log-m9ef2182ce6" />
+    </g>
+   </g>
+   <g id="shift-log-line2d_12">
+    <defs>
+     <path id="shift-log-m3df139498b" d="M 0 2.5  C 0.663008 2.5 1.29895 2.236584 1.767767 1.767767  C 2.236584 1.29895 2.5 0.663008 2.5 0  C 2.5 -0.663008 2.236584 -1.29895 1.767767 -1.767767  C 1.29895 -2.236584 0.663008 -2.5 0 -2.5  C -0.663008 -2.5 -1.29895 -2.236584 -1.767767 -1.767767  C -2.236584 -1.29895 -2.5 -0.663008 -2.5 0  C -2.5 0.663008 -2.236584 1.29895 -1.767767 1.767767  C -1.29895 2.236584 -0.663008 2.5 0 2.5  z " stroke="#d9534f" />
+    </defs>
+    <g clip-path="url(#shift-log-pbfbc670fd4)">
+     <use x="202.770732" y="146.504348" fill="#d9534f" stroke="#d9534f" href="#shift-log-m3df139498b" />
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="shift-log-pbfbc670fd4">
+   <rect x="57.6" y="33.696" width="357.12" height="216.216" />
+  </clipPath>
+ </defs>
+</svg>

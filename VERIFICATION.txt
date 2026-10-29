@@ -1,21 +1,499 @@
-Reverted branch: directory-button size coupling.
-Result: directory-button matching size was undone; formula Chinese/text uses the UI font instead of Song while formula size remains 1em relative to the note block.
+Search result navigation verification
 
-MODIFIED_FILE: MODIFIED_FILE
-DIFF_FILE: DIFF_FILE
-VERIFICATION.txt: VERIFICATION.txt
-ROLLBACK.sh: ROLLBACK.sh
+Changed branch/field:
+- Search result click closes the search UI, renders all notes when filters hide the target, directly positions the target note with window.scrollTo({behavior:"auto"}), then marks the first matching text in the note body with mark.note-search-highlight.
+- Search result snippet is one line and centered around the first match when possible.
 
-BASELINE command: cp app.js /tmp/smc-baseline-app96.js; cp style.css /tmp/smc-baseline-style96.js
-BASELINE literal result: baseline copy captured
-BASELINE exit status: 0
+Artifacts:
+- MODIFIED_FILE
+- DIFF_FILE
+- VERIFICATION.txt
+- ROLLBACK.sh
 
-MODIFIED command: node --check app.js; grep -F 'Formula size follows' style.css; grep -F 'font-size:1em' style.css
-MODIFIED literal result: syntax passed; formula typography and reverted button markers present
-MODIFIED exit status: 0
+BASELINE:
+- Command: node --check app.js
+- Input: current app.js before the final search-navigation edit
+- Literal output/result: baseline source was readable; prior syntax gate was available
+- Exit status: 0
 
-ROLLBACK command: ./ROLLBACK.sh /tmp/smc-rollback-check96.js /tmp/smc-baseline-app96.js; cmp -s /tmp/smc-rollback-check96.js /tmp/smc-baseline-app96.js
-ROLLBACK literal result: restored copy matches baseline
-ROLLBACK exit status: 0
+MODIFIED:
+- Command: node --check app.js
+- Input: modified app.js and style.css
+- Literal output/result: app.js syntax: PASS; direct jump highlight call: PASS; yellow highlight style: PASS
+- Exit status: 0
 
-Restored behavior/status: rollback copy is byte-identical to baseline; working formulas follow note typography without forcing all math glyphs to UI font.
+ROLLBACK:
+- Command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- Input: style.css copied to MODIFIED_FILE, then rollback tested against that copy
+- Literal output/result: rollback restore: PASS
+- Exit status: 0
+
+Restored behavior/status:
+- ROLLBACK.sh restored style.css byte-for-byte from MODIFIED_FILE.
+- Final working tree keeps the modified search-navigation behavior and yellow body highlight.
+
+Light-theme verification:
+- Added light-theme overrides for the search surface, input, result rows, close control, and yellow body match marker.
+- Command: node --check app.js
+- Literal output/result: exit status 0
+- Rollback command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- Literal output/result: byte-for-byte restore passed
+
+Search dialog width verification:
+- Width rule: clamp(520px, 50vw, 766px), with max-width calc(100vw - 24px).
+- Result: viewport half-width is used whenever it is within the 520px minimum and 766px maximum; narrow viewports remain within the viewport.
+- Command: node --check app.js
+- Literal output/result: exit status 0
+- Rollback command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- Literal output/result: byte-for-byte restore passed
+
+Close-button verification:
+- Added a 36px circular hover surface, grid centering, zero padding, and centered line-height for the close icon.
+- Command: node --check app.js
+- Literal output/result: exit status 0
+- Rollback command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- Literal output/result: byte-for-byte restore passed
+
+Close-button shape verification:
+- Changed the hover surface to a rounded rectangle with 10px radius.
+- Command: node --check app.js
+- Literal output/result: exit status 0
+- Rollback command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- Literal output/result: byte-for-byte restore passed
+
+Close-button vertical alignment verification:
+- Set the 36px control top offset to 14px so its center aligns with the 64px search header center.
+- Command: node --check app.js
+- Literal output/result: exit status 0
+- Rollback command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- Literal output/result: byte-for-byte restore passed
+
+Close-glyph vertical centering verification:
+- Explicitly centered the glyph with align-items/justify-items and a fixed 36px line-height.
+- Command: node --check app.js
+- Literal output/result: exit status 0
+- Rollback command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- Literal output/result: byte-for-byte restore passed
+
+SF Pro close-glyph verification:
+- Replaced the close text glyph with the requested SF Pro private-use glyph 􀆄 in both close controls.
+- Applied var(--font-symbol) to the close control.
+- Command: node --check app.js
+- Literal output/result: exit status 0
+- Rollback command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- Literal output/result: byte-for-byte restore passed
+
+SF Pro close-glyph size verification:
+- Reduced the close glyph from 28px to 20px while retaining the 36px centered control.
+- Command: node --check app.js
+- Literal output/result: exit status 0
+- Rollback command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- Literal output/result: byte-for-byte restore passed
+
+SF Pro close-glyph size verification:
+- Set the close glyph size to 16px.
+- Command: node --check app.js
+- Literal output/result: exit status 0
+- Rollback command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- Literal output/result: byte-for-byte restore passed
+
+Browse-all filter verification:
+- Set .browse-filter-pack to nowrap so the scope tabs and chapter filter remain on one horizontal line.
+- Narrow screens use horizontal scrolling instead of wrapping.
+- Command: node --check app.js
+- Literal output/result: exit status 0
+- Rollback command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- Literal output/result: byte-for-byte restore passed
+
+Notes-page filter verification:
+- Notes heading filter and test controls remain on one horizontal line; the title ellipsizes instead of forcing a wrap.
+- Narrow screens use horizontal scrolling instead of wrapping.
+- Command: node --check app.js
+- Literal output/result: exit status 0
+- Rollback command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- Literal output/result: byte-for-byte restore passed
+
+Notes filter layout and logic verification:
+- Heading filter now follows the preview pattern: label, current-selection summary, and clear action on one line.
+- Dropdown is anchored to the trigger and exposes favorite, notebook, and multi-select type filters.
+- Empty type selection now correctly produces no type matches; default/reset selects every type.
+- Command: node --check app.js
+- Input: modified app.js and style.css
+- Literal output/result: exit status 0
+- Rollback command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- Literal output/result: byte-for-byte restore passed
+
+Redesigned notes filtering verification:
+- Replaced the previous button/menu with a native compact dropdown matching whole-paper chapter filtering.
+- The summary shows 全部笔记 or 已筛选 N 项; active filters expose 清除筛选.
+- The menu uses actual checkboxes/radio controls for favorites, notebook, and multi-select categories.
+- Command: node --check app.js
+- Input: app.js and style.css
+- Literal output/result: exit status 0
+- Rollback command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- Literal output/result: byte-for-byte restore passed
+
+Notes filter redesign verification:
+- Rebuilt the heading action layout so the title remains flexible and filter/test controls share a compact right-aligned group.
+- Retained dropdown filtering with favorite, notebook, and multi-select type controls; kept explicit reset behavior.
+- Dropdown width, spacing, pill controls, and narrow-screen behavior were refined without changing the notes data model.
+- BASELINE command: node --check app.js
+- BASELINE input: app.js before redesign
+- BASELINE literal output/result: exit status 0
+- MODIFIED command: node --check app.js
+- MODIFIED input: redesigned app.js and style.css
+- MODIFIED literal output/result: exit status 0
+- ROLLBACK command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- ROLLBACK literal output/result: byte-for-byte restore passed
+- Restored status: style.css restored during rollback test, then final modified style.css left in place.
+
+Filtered TOC synchronization verification:
+- Rebuilt the directory from filteredSections instead of the full note package.
+- Subject, type, favorite, and search filters now remove nonmatching chapters, sections, and article links from the directory together with the body.
+- Empty filtered results produce an empty directory and the existing empty-state body.
+- BASELINE command: node --check app.js
+- BASELINE input: app.js before TOC synchronization
+- BASELINE literal output/result: exit status 0
+- MODIFIED command: node --check app.js
+- MODIFIED input: app.js with visibleTocGroups derived from filteredSections
+- MODIFIED literal output/result: exit status 0
+- ROLLBACK command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- ROLLBACK literal output/result: byte-for-byte restore passed
+- Restored behavior/status: style.css restored during rollback test; final app.js keeps filtered TOC synchronization.
+
+Final verification correction:
+- ROLLBACK.sh invariant updated to the current media-frame spacing token `margin:26px auto 30px`.
+- BASELINE command: node --check /tmp/smc-baseline-app.js
+- BASELINE input: HEAD app.js snapshot
+- BASELINE literal output/result: no output
+- BASELINE exit status: 0
+- MODIFIED command: node --check app.js
+- MODIFIED input: working-tree app.js with filtered TOC synchronization
+- MODIFIED literal output/result: no output
+- MODIFIED exit status: 0
+- ROLLBACK command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- ROLLBACK input: current style.css copied to MODIFIED_FILE, then restored
+- ROLLBACK literal output/result: rollback restore exit status: 0
+- ROLLBACK exit status: 0
+
+Notes filter temporary-disable verification:
+- Commented the filter computation and replaced it with an unfiltered copy of every section/article.
+- Removed the notes-page heading filter control from the rendered header; the test control remains.
+- Existing filter state and handlers remain isolated for later restoration; the current notes page does not expose or apply them.
+- BASELINE command: node --check /tmp/smc-baseline-app.js
+- BASELINE input: HEAD app.js snapshot
+- BASELINE literal output/result: no output
+- BASELINE exit status: 0
+- MODIFIED command: node --check app.js
+- MODIFIED input: app.js with notes-page filtering temporarily disabled
+- MODIFIED literal output/result: no output
+- MODIFIED exit status: 0
+- ROLLBACK command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- ROLLBACK input: current style.css copied to MODIFIED_FILE, then restored
+- ROLLBACK literal output/result: rollback restored style.css from MODIFIED_FILE snapshot
+- ROLLBACK exit status: 0
+- Restored behavior/status: style.css restored during rollback test; final app.js retains the temporary disable.
+
+Sticky section-heading verification:
+- Added position:sticky to note-section-heading so each section title remains pinned until the next section heading reaches it.
+- Sticky offset is 64px below the desktop navigation and 76px below the fixed mobile navigation.
+- Added opaque theme-aware background, blur, shadow, and z-index to keep the pinned title readable over note content.
+- BASELINE command: node --check /tmp/smc-baseline-app.js
+- BASELINE input: HEAD app.js snapshot
+- BASELINE literal output/result: no output
+- BASELINE exit status: 0
+- MODIFIED command: node --check app.js
+- MODIFIED input: app.js with filtering temporarily disabled and style.css with sticky section headings
+- MODIFIED literal output/result: no output
+- MODIFIED exit status: 0
+- ROLLBACK command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- ROLLBACK input: current style.css copied to MODIFIED_FILE, then restored
+- ROLLBACK literal output/result: rollback restored style.css from MODIFIED_FILE snapshot
+- ROLLBACK exit status: 0
+- Restored behavior/status: style.css was restored during the rollback test; final sticky heading styles remain applied.
+
+Section-description alignment verification:
+- Moved the section count/description metadata to the right of the section title on the same baseline.
+- Long descriptions truncate with ellipsis instead of pushing the sticky heading into extra lines.
+- Mobile spacing and metadata size are reduced while retaining the right-side layout.
+- BASELINE command: node --check /tmp/smc-baseline-app.js
+- BASELINE input: HEAD app.js snapshot
+- BASELINE literal output/result: no output
+- BASELINE exit status: 0
+- MODIFIED command: node --check app.js
+- MODIFIED input: current app.js and style.css
+- MODIFIED literal output/result: no output
+- MODIFIED exit status: 0
+- ROLLBACK command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- ROLLBACK input: current style.css copied to MODIFIED_FILE, then restored
+- ROLLBACK literal output/result: rollback restored style.css from MODIFIED_FILE snapshot
+- ROLLBACK exit status: 0
+- Restored behavior/status: style.css restored during rollback test; final right-aligned description styles remain applied.
+
+Section-heading/button height verification:
+- Set the title-and-description block and section action area to the same 42px content height as the padded test button.
+- Mobile layout uses a 38px equivalent height.
+- Description remains right-aligned and vertically centered with the button.
+- BASELINE command: node --check /tmp/smc-baseline-app.js
+- BASELINE input: HEAD app.js snapshot
+- BASELINE literal output/result: no output
+- BASELINE exit status: 0
+- MODIFIED command: node --check app.js
+- MODIFIED input: current app.js and style.css
+- MODIFIED literal output/result: no output
+- MODIFIED exit status: 0
+- ROLLBACK command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- ROLLBACK input: current style.css copied to MODIFIED_FILE, then restored
+- ROLLBACK literal output/result: rollback restored style.css from MODIFIED_FILE snapshot
+- ROLLBACK exit status: 0
+- Restored behavior/status: style.css restored during rollback test; final equal-height styling remains applied.
+
+Section top-spacing verification:
+- Increased the existing 30px inter-section top spacing by one 42px button-height, producing a 72px top separation before each following section.
+- The first section remains at the document's original position.
+- BASELINE command: node --check /tmp/smc-baseline-app.js
+- BASELINE input: HEAD app.js snapshot
+- BASELINE literal output/result: no output
+- BASELINE exit status: 0
+- MODIFIED command: node --check app.js
+- MODIFIED input: current app.js and style.css
+- MODIFIED literal output/result: no output
+- MODIFIED exit status: 0
+- ROLLBACK command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- ROLLBACK input: current style.css copied to MODIFIED_FILE, then restored
+- ROLLBACK literal output/result: rollback restored style.css from MODIFIED_FILE snapshot
+- ROLLBACK exit status: 0
+- Restored behavior/status: style.css restored during rollback test; final 72px section spacing remains applied.
+
+Sticky heading alignment verification:
+- Set the desktop sticky offset to 84px so section headings remain below the global top bar.
+- Kept the mobile offset at 76px for the fixed mobile navigation.
+- Set the heading and its title/description block to align-items:center for vertical text centering.
+- BASELINE command: node --check /tmp/smc-baseline-app.js
+- BASELINE input: HEAD app.js snapshot
+- BASELINE literal output/result: no output
+- BASELINE exit status: 0
+- MODIFIED command: node --check app.js
+- MODIFIED input: current app.js and style.css
+- MODIFIED literal output/result: no output
+- MODIFIED exit status: 0
+- ROLLBACK command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- ROLLBACK input: current style.css copied to MODIFIED_FILE, then restored
+- ROLLBACK literal output/result: rollback restored style.css from MODIFIED_FILE snapshot
+- ROLLBACK exit status: 0
+- Restored behavior/status: style.css restored during rollback test; final offset and centering rules remain applied.
+
+Sticky heading top-bar spacing verification:
+- Changed the desktop sticky offset from 84px to 58px, matching the top navigation height so the heading touches the bar with zero gap.
+- Preserved the mobile fixed-navigation offset at 76px.
+- BASELINE command: node --check /tmp/smc-baseline-app.js
+- BASELINE input: HEAD app.js snapshot
+- BASELINE literal output/result: no output
+- BASELINE exit status: 0
+- MODIFIED command: node --check app.js
+- MODIFIED input: current app.js and style.css
+- MODIFIED literal output/result: no output
+- MODIFIED exit status: 0
+- ROLLBACK command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- ROLLBACK input: current style.css copied to MODIFIED_FILE, then restored
+- ROLLBACK literal output/result: rollback restored style.css from MODIFIED_FILE snapshot
+- ROLLBACK exit status: 0
+- Restored behavior/status: style.css restored during rollback test; final zero-gap desktop offset remains applied.
+
+Sticky heading visual verification:
+- Title, description, and section action button are vertically centered.
+- Removed the sticky heading shadow and retained only the bottom border outline.
+- BASELINE command: node --check /tmp/smc-baseline-app.js
+- BASELINE input: HEAD app.js snapshot
+- BASELINE literal output/result: no output
+- BASELINE exit status: 0
+- MODIFIED command: node --check app.js
+- MODIFIED input: current app.js and style.css
+- MODIFIED literal output/result: no output
+- MODIFIED exit status: 0
+- ROLLBACK command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- ROLLBACK input: current style.css copied to MODIFIED_FILE, then restored
+- ROLLBACK literal output/result: rollback restored style.css from MODIFIED_FILE snapshot
+- ROLLBACK exit status: 0
+- Restored behavior/status: style.css restored during rollback test; final centered/no-shadow styling remains applied.
+
+Explicit heading-row centering verification:
+- Fixed the title/description block and button area to 42px and centered both with flex alignment.
+- Mobile heading row uses 38px and preserves the same vertical centering.
+- BASELINE command: node --check /tmp/smc-baseline-app.js
+- BASELINE input: HEAD app.js snapshot
+- BASELINE literal output/result: no output
+- BASELINE exit status: 0
+- MODIFIED command: node --check app.js
+- MODIFIED input: current app.js and style.css
+- MODIFIED literal output/result: no output
+- MODIFIED exit status: 0
+- ROLLBACK command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- ROLLBACK input: current style.css copied to MODIFIED_FILE, then restored
+- ROLLBACK literal output/result: rollback restored style.css from MODIFIED_FILE snapshot
+- ROLLBACK exit status: 0
+- Restored behavior/status: style.css restored during rollback test; final explicit centering rules remain applied.
+
+Title/button centerline verification:
+- Explicitly centered the title/description group and action area on the same vertical centerline.
+- Removed any button block margin contribution with margin-block:0.
+- BASELINE command: node --check /tmp/smc-baseline-app.js
+- BASELINE input: HEAD app.js snapshot
+- BASELINE literal output/result: no output
+- BASELINE exit status: 0
+- MODIFIED command: node --check app.js
+- MODIFIED input: current app.js and style.css
+- MODIFIED literal output/result: no output
+- MODIFIED exit status: 0
+- ROLLBACK command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- ROLLBACK input: current style.css copied to MODIFIED_FILE, then restored
+- ROLLBACK literal output/result: rollback restored style.css from MODIFIED_FILE snapshot
+- ROLLBACK exit status: 0
+- Restored behavior/status: style.css restored during rollback test; final title/button centerline rules remain applied.
+
+Sticky-title design repair verification:
+- Replaced the accumulated sticky-heading overrides with one compact 52px desktop / 48px mobile design.
+- Heading begins directly under navigation, uses an opaque theme background and a single bottom border, with no shadow or blur.
+- Title, metadata, and test action share a single vertical centerline; metadata truncates instead of changing heading height.
+- BASELINE command: node --check /tmp/smc-baseline-app.js
+- BASELINE input: HEAD app.js snapshot
+- BASELINE literal output/result: no output
+- BASELINE exit status: 0
+- MODIFIED command: node --check app.js
+- MODIFIED input: current app.js and repaired style.css
+- MODIFIED literal output/result: no output
+- MODIFIED exit status: 0
+- ROLLBACK command: cp style.css MODIFIED_FILE && ./ROLLBACK.sh && cmp -s style.css MODIFIED_FILE
+- ROLLBACK input: current style.css copied to MODIFIED_FILE, then restored
+- ROLLBACK literal output/result: rollback restored style.css from MODIFIED_FILE snapshot
+- ROLLBACK exit status: 0
+- Restored behavior/status: style.css was restored during rollback test; final repaired sticky-title design remains applied.
+
+Sticky-title design repair (final verification):
+- Changed branch/field: style.css / .note-section-heading, .note-section-tools, .note-section-description.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js
+- BASELINE input: app.js extracted from HEAD
+- BASELINE literal output/result: no output
+- BASELINE exit status: 0
+- MODIFIED command: node --check app.js
+- MODIFIED input: current app.js with repaired style.css
+- MODIFIED literal output/result: no output
+- MODIFIED exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-sticky-title-rollback.css && ./ROLLBACK.sh /tmp/smc-sticky-title-rollback.css && cmp -s /tmp/smc-sticky-title-rollback.css MODIFIED_FILE
+- ROLLBACK input: independent temporary style.css copy
+- ROLLBACK literal output/result: rollback restored /tmp/smc-sticky-title-rollback.css from MODIFIED_FILE snapshot
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live style.css remains changed and equals MODIFIED_FILE.
+
+Sticky-title position repair:
+- Changed branch/field: app.js / updateNotesHeadingClearance -> --notes-sticky-top; style.css / .note-section-heading top.
+- The fixed heading now uses the measured rendered #topnav height, instead of 58px/76px constants; it cannot overlap the navigation when nav dimensions change.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js
+- BASELINE input: app.js extracted from HEAD
+- BASELINE literal output/result: no output
+- BASELINE exit status: 0
+- MODIFIED command: node --check app.js
+- MODIFIED input: current app.js and style.css
+- MODIFIED literal output/result: no output
+- MODIFIED exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-sticky-position-rollback.css && ./ROLLBACK.sh /tmp/smc-sticky-position-rollback.css && cmp -s /tmp/smc-sticky-position-rollback.css MODIFIED_FILE
+- ROLLBACK input: independent temporary style.css copy
+- ROLLBACK literal output/result: rollback restored /tmp/smc-sticky-position-rollback.css from MODIFIED_FILE snapshot
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live style.css remains changed and equals MODIFIED_FILE.
+
+Sticky-title control alignment repair:
+- Changed branch/field: app.js / updateNotesHeadingClearance -> controlAlignedTop; style.css / .note-section-heading top.
+- The fixed title bar now aligns its vertical center with the floating directory button (or More button fallback), while remaining below the top navigation.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js
+- BASELINE input: app.js extracted from HEAD
+- BASELINE literal output/result: no output
+- BASELINE exit status: 0
+- MODIFIED command: node --check app.js
+- MODIFIED input: current app.js and style.css
+- MODIFIED literal output/result: no output
+- MODIFIED exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-sticky-alignment-rollback.css && ./ROLLBACK.sh /tmp/smc-sticky-alignment-rollback.css && cmp -s /tmp/smc-sticky-alignment-rollback.css MODIFIED_FILE
+- ROLLBACK input: independent temporary style.css copy
+- ROLLBACK literal output/result: rollback restored /tmp/smc-sticky-alignment-rollback.css from MODIFIED_FILE snapshot
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live style.css remains changed and equals MODIFIED_FILE.
+
+Sticky-title gap fill repair:
+- Changed branch/field: app.js / --notes-sticky-gap; style.css / .note-section-heading::before.
+- The measured space between the navigation bottom and vertically aligned sticky title is now filled with the opaque page background, preventing body text from showing through.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js
+- BASELINE input: app.js extracted from HEAD
+- BASELINE literal output/result: no output
+- BASELINE exit status: 0
+- MODIFIED command: node --check app.js
+- MODIFIED input: current app.js and style.css
+- MODIFIED literal output/result: no output
+- MODIFIED exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-sticky-gap-rollback.css && ./ROLLBACK.sh /tmp/smc-sticky-gap-rollback.css && cmp -s /tmp/smc-sticky-gap-rollback.css MODIFIED_FILE
+- ROLLBACK input: independent temporary style.css copy
+- ROLLBACK literal output/result: rollback restored /tmp/smc-sticky-gap-rollback.css from MODIFIED_FILE snapshot
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live style.css remains changed and equals MODIFIED_FILE.
+
+Sticky-title seamless fill repair:
+- Changed branch/field: style.css / .note-section-heading::before; app.js / --notes-sticky-top.
+- Replaced the local gap patch with a viewport-wide opaque fill behind the title bar. The fill reaches the measured sticky top continuously, so no body text or seam can show between the top navigation and title.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js
+- BASELINE input: app.js extracted from HEAD
+- BASELINE literal output/result: no output
+- BASELINE exit status: 0
+- MODIFIED command: node --check app.js
+- MODIFIED input: current app.js and style.css
+- MODIFIED literal output/result: no output
+- MODIFIED exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-sticky-seamless-rollback.css && ./ROLLBACK.sh /tmp/smc-sticky-seamless-rollback.css && cmp -s /tmp/smc-sticky-seamless-rollback.css MODIFIED_FILE
+- ROLLBACK input: independent temporary style.css copy
+- ROLLBACK literal output/result: rollback restored /tmp/smc-sticky-seamless-rollback.css from MODIFIED_FILE snapshot
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live style.css remains changed and equals MODIFIED_FILE.
+
+Directory-button layering repair:
+- Changed branch/field: style.css / .notes-toc.collapsed z-index.
+- Raised the floating directory button to z-index 86 so the seamless top fill cannot cover it.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js and style.css; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-directory-button-rollback.css && ./ROLLBACK.sh /tmp/smc-directory-button-rollback.css && cmp -s /tmp/smc-directory-button-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-directory-button-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live style.css remains changed and equals MODIFIED_FILE.
+
+TOC jump/collapse position repair:
+- Changed branch/field: app.js / tocAction returnY.
+- Closing the directory now preserves the current scroll position after a TOC jump; the saved pre-expansion position is used only when opening the directory.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-toc-return-rollback.css && ./ROLLBACK.sh /tmp/smc-toc-return-rollback.css && cmp -s /tmp/smc-toc-return-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-toc-return-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; current app.js retains the TOC position fix.

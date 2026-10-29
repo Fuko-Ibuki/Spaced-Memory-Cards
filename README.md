@@ -23,6 +23,16 @@ python3 -m http.server 8000
 
 然后访问 <http://localhost:8000>。首次进入时可选择“新手教程示例题库”体验完整流程，也可在题库页面拖入自己的 `.json` 文件。
 
+## 编写规范导航
+
+- [题库 JSON 基础格式](#题库-json-格式)：题库元数据、题目结构与字段约束。
+- [题型与富媒体块](#题型)：题型、公式、图片、音频和填空块的写法。
+- [笔记 HTML 与题库关联](#必须与建议)：标题层级、学科、`data-question-id`、测试配置及入口显示规则。
+- [图片框与题注](#图片框与题注规范)：图片尺寸、段前段后距、题注样式与绕排写法。
+- [SVG 字体与颜色](#svg-字体与颜色规范)：固定字号、颜色及黑白主题切换规则。
+
+编写时建议按“[题库 JSON](#题库-json-格式) → [笔记关联](#必须与建议) → [图片与题注](#图片框与题注规范) → [SVG 规范](#svg-字体与颜色规范)”顺序检查；公式写法同时参见[富媒体内容](#富媒体内容)中的 `math` 块和[笔记关联规范](#必须与建议)中的 LaTeX 说明。
+
 ## 题库 JSON 格式
 
 新题库统一使用 **SMC Deck v2.1**：一个 `.json` 文件、一个 `questions` 数组、每题显式声明 `type`。新建、分享与版本管理都应使用该格式。
@@ -104,6 +114,8 @@ python3 -m http.server 8000
 - 块内不要滥用 Emoji；仅在必要时用于提示或分类，正文优先使用清晰的文字和统一的标记。
 
 ### 富媒体内容
+
+题库中的公式、图片和音频统一使用内容块；笔记 HTML 中的公式与配图则遵循[图片框与题注规范](#图片框与题注规范)和 [SVG 字体与颜色规范](#svg-字体与颜色规范)。
 
 `content`、选择题的 `options[].content` 与 `explanation` 都可由下列块组成：
 
@@ -190,6 +202,25 @@ module.exports = {
 </html>
 ```
 
+### 笔记与题库关联示例
+
+题库：
+
+```json
+{ "questions": [{ "id": "exp-005", "type": "fill_in_the_blank", "question": "..." }] }
+```
+
+笔记：
+
+```html
+<article class="kp" data-id="math-explog-relation" data-question-id="exp-005">
+  <h4>对数与指数的关系</h4>
+  <div class="md"><p>笔记正文</p></div>
+</article>
+```
+
+建议先导入题库，再导入 HTML 笔记。浏览器会把笔记包保存到本地存储；修改 HTML 后需要重新导入，或先清除旧笔记缓存。
+
 ### 标签类型说明
 
 - 页面结构标签：`main`、`section`、`article`、`h1`、`h2`、`h3`、`h4`。
@@ -204,18 +235,81 @@ module.exports = {
 
 ### 必须与建议
 
+以下规则决定笔记能否正确显示标题、题库关联和测试入口；题库字段本身仍须先符合[题库 JSON 格式](#题库-json-格式)。
+
 - 使用 `main > section.sec > article.kp` 组织笔记；每个 `article.kp` 必须包含 `.md` 正文。
 - 使用 `h1`、`h2`、`h3` 表示标题层级；导入页面会使用本地界面重新渲染标题。
 - 学科可写在 `<main data-subject="学科">` 或 `<meta name="subject" content="学科">`。
-- `data-id` 应稳定且唯一；如需从笔记开始测试，使用 `data-question-id` 关联题库题目的 `uid` 或 `rawId`。
+- 笔记与题库关联使用 `data-question-id`，其值填写题库 `questions[].id`（导入后作为 `rawId`），也可填写规范化后的 `uid`。仅填写相同学科不会关联具体题目。
+- 关联匹配顺序为：`data-question-id` → 笔记 `data-id` → 笔记标题与题干完全相同。
+- 当前小节至少有一个知识点关联成功时，标题右侧显示“开始测试”按钮；按钮进入测试模式，并应用 `data-test-config`。
+- 学习页“浏览整卷”顶部仅在当前题库存在关联笔记时显示“查看笔记”按钮；关联判断与小节“开始测试”使用同一套题目匹配规则。
+- 可在 `<main data-deck-id="题库 deck.id">` 显式绑定整份笔记与题库；例如高数使用 `data-deck-id="gaoshu-zhuanshengben"`。显式绑定用于目录和“查看笔记”入口，具体小节的“开始测试”仍需 `data-question-id` 关联题目。
 - `data-test-config` 可配置 `questionLimit`、`timeLimitEnabled`、`timeLimitMinutes`、`shuffleQuestions`、`shuffleOptions`、`includeTypes` 和 `chapterFilter`。
 - 正文中的 `**文字**` 会自动渲染为加粗；代码块中的符号会保持原样。
 - 正文中的 LaTeX 支持 `$...$`、`$$...$$`、`\(...\)` 和 `\[...\]`；公式由本地 KaTeX 渲染，并继承块内字体与字号。
 - 拖入 HTML 时会显示高斯模糊和虚线导入状态；重复导入的相同内容会自动跳过，并与已有笔记合并。
+- 多个 HTML 笔记合并时按文件导入时间戳排序，较早导入的内容在前；重复内容仍会自动跳过。
 - 不要在块内滥用加粗或 Emoji，避免整段强调，保持内容易读。
 - 不要写脚本、样式依赖或重复复制同一知识点；重复导入时应用会自动跳过相同内容。
 
+笔记正文的段落缩进、图片间距和题注样式见[图片框与题注规范](#图片框与题注规范)；HTML 中的 SVG 颜色和字号见 [SVG 字体与颜色规范](#svg-字体与颜色规范)。
+
 ## UI 设计与组件规范
+
+### 图片框与题注规范
+
+本节是笔记 HTML 配图的编写规范；题库 JSON 中的图片资源字段请先参见[富媒体内容](#富媒体内容)。
+
+导入后的配图使用图片框限制尺寸：默认最大宽度为 `720px`，最小宽度为 `280px`（移动端自动使用容器宽度），高度按图片原始宽高比自动缩放；图片不会被裁切。推荐使用 `figure` 包裹图片，并使用 `figcaption` 写题注：
+
+```html
+<figure class="note-image">
+  <img src="assets/exp-log.svg" alt="指数函数与对数函数图像">
+  <figcaption>图 1｜指数函数与对数函数的对称关系</figcaption>
+</figure>
+```
+
+题注规范：使用“图：简短说明”的格式（需要编号时使用“图 N｜简短说明”）；说明对象、变量或结论，不重复正文；每张图提供准确的 `alt`；题注不使用整段加粗或 Emoji。题注由 `figcaption` 承载，位于图片下方，使用比正文小一级的正体字、弱化颜色并居中显示；图片与前后正文分别保留段前 `26px`、段后 `30px` 间距，移动端为 `20px`、`24px`。
+
+正文排版：笔记正文段落默认首行缩进 `2em`（两个汉字字符宽度）；标题、列表、引用、代码块和题注不缩进。
+
+推荐写法：
+
+```html
+<figure class="note-image">
+  <img src="assets/exp-log.svg" alt="y=2^x 与 y=log_2 x 的图像">
+  <figcaption>图：y=2^x 与 y=log_2 x 的图像，关于 y=x 对称</figcaption>
+</figure>
+```
+
+默认图片居中显示且不绕排。需要文字绕排时，给 `figure` 或图片添加 `float-right` 类；导入器会保留该类：
+
+```html
+<figure class="note-image float-right">
+  <img src="assets/diagram.svg" alt="函数图像">
+  <figcaption>图 2｜函数图像平移</figcaption>
+</figure>
+<p>这段文字会从图片左侧开始，并在图片旁边自动绕排。</p>
+```
+
+不要把绕排类用于装饰性小图；移动端会自动取消绕排并恢复全宽显示。
+
+### SVG 字体与颜色规范
+
+本节仅约束笔记 HTML 中嵌入或导入的 SVG；题库图片资源的声明方式见[题库 JSON 格式](#题库-json-格式)和[富媒体内容](#富媒体内容)。
+
+- SVG 内文字必须显式设置固定 `font-size`，不要依赖页面继承字号；建议统一使用 `font-size="16"` 或在 SVG 内部使用固定的 `px` 值。
+- 非黑白颜色必须显式固定，例如品牌色、曲线色和标注色不要使用 `currentColor`。
+- 黑色文字和白色文字允许随主题自动切换：使用 `fill="currentColor"`，或给元素添加 `data-theme-color="bw"`，由页面主题控制黑白颜色。
+- 黑白自动切换只适用于黑色/白色文字；彩色文字、曲线和图例保持原始颜色。
+- SVG 文字示例：
+
+```svg
+<text x="20" y="32" font-size="16" fill="currentColor">标题</text>
+<text x="20" y="58" font-size="16" fill="#e05252">固定颜色标注</text>
+```
+
 
 ### SVG 配图
 

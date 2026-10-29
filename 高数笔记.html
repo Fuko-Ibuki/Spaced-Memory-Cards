@@ -1,0 +1,1032 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="subject" content="高等数学">
+<title>高等数学笔记（专升本）</title>
+</head>
+<body>
+<main data-subject="高等数学" data-deck-id="gaoshu-zhuanshengben">
+<h1>高等数学笔记（专升本）</h1>
+<section class="chap">
+<h2>基础恢复</h2>
+<section class="sec">
+<h3>指数与对数</h3>
+<article class="kp" data-id="math-explog-relation" data-question-id="exp-005" data-type="rule">
+<h4>对数与指数的关系</h4>
+<div class="md">
+<p>对数是指数换一种问法。底数、指数、真数满足：底数$^{\text{指数}}$ = 真数。</p>
+<p>$$a^b=N\iff\log_a N=b$$</p>
+<p>条件：$a&gt;0$ 且 $a\ne1$，$N&gt;0$（真数只要大于 0，不是大于 1）。</p>
+<p>例：解 $\log_2(x+3)=4$。$2^4=x+3$，$x=16-3=13$。验证：$13+3=16=2^4$。</p>
+</div>
+<div class="src">单元1，整理于 2026年10月26日</div>
+</article>
+<article class="kp" data-id="math-explog-laws" data-question-id="exp-003" data-type="concept">
+<h4>指数法则与对数法则的来源</h4>
+<div class="md">
+<p>指数是几个 $a$ 相乘：$a^m\cdot a^n=a^{m+n}$（共 $m+n$ 个 $a$）；$(a^m)^n=a^{mn}$（$n$ 组，每组 $m$ 个）。验证：$2^3\cdot2^2=32=2^5$；$(2^3)^2=64=2^6$。</p>
+<p>0、负数、分数指数的规定，都是为了让上面的法则继续成立：$a^m\cdot a^0=a^m\Rightarrow a^0=1$；$a^n\cdot a^{-n}=1\Rightarrow a^{-n}=\dfrac1{a^n}$；$\left(a^{1/n}\right)^n=a\Rightarrow a^{1/n}=\sqrt[n]{a}$。</p>
+<p>对数法则：设 $M=a^x,\ N=a^y$。$MN=a^{x+y}\Rightarrow\log_a(MN)=\log_aM+\log_aN$；$\dfrac MN=a^{x-y}\Rightarrow\log_a\dfrac MN=\log_aM-\log_aN$；$M^n=a^{nx}\Rightarrow\log_aM^n=n\log_aM$。另有 $\log_aa=1,\ \log_a1=0$。</p>
+<p>条件与易错：$M,N&gt;0$；$\log_a(M+N)$ 没有拆分法则。反例：$\log_2(4+4)=3$，而 $\log_24+\log_24=4$。</p>
+</div>
+<div class="src">单元8，整理于 2026年10月26日</div>
+</article>
+<article class="kp" data-id="math-explog-functions" data-question-id="exp-004" data-type="rule">
+<h4>指数函数与对数函数</h4>
+<div class="md">
+<p><svg width="100%" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 316.8 316.8" role="img" aria-label="y=2x 与 y=2x 的图像，关于 y=x 对称">
+ <defs>
+  </defs>
+ <g id="exp-log-graph-figure_1">
+  <g id="exp-log-graph-patch_1">
+   <path d="M 0 316.8  L 316.8 316.8  L 316.8 0  L 0 0  L 0 316.8  z " fill="none" />
+  </g>
+  <g id="exp-log-graph-axes_1">
+   <g id="exp-log-graph-line2d_1">
+    <path d="M 43.519385 200.544205  L 51.80831 199.263473  L 59.360443 197.872989  L 66.35998 196.35898  L 72.806922 194.740668  L 78.885468 192.987797  L 84.595617 191.111525  L 89.937369 189.127776  L 95.094922 186.976181  L 100.068278 184.655006  L 104.673237 182.265262  L 109.093997 179.72986  L 113.514757 176.933459  L 117.751319 173.983827  L 121.803683 170.891097  L 125.671848 167.668205  L 129.540014 164.156814  L 133.223981 160.520808  L 136.907948 156.575464  L 140.591915 152.294462  L 144.091683 147.890626  L 147.591452 143.131594  L 151.091221 137.988719  L 154.590989 132.43104  L 157.90656 126.752952  L 161.22213 120.641893  L 164.5377 114.064846  L 167.85327 106.98628  L 171.168841 99.367951  L 174.484411 91.168701  L 177.799981 82.344233  L 181.115552 72.846873  L 184.246923 63.213094  L 187.378295 52.886953  L 190.509667 41.818691  L 190.693866 41.143385  L 190.693866 41.143385  " clip-path="url(#exp-log-graph-pbbf1531653)" fill="none" stroke="#3b7dd8" stroke-width="2" stroke-linecap="square" />
+   </g>
+   <g id="exp-log-graph-line2d_2">
+    <path d="M 121.799795 278.824615  L 123.129243 270.248581  L 124.591636 262.384299  L 126.054029 255.68946  L 127.649366 249.366513  L 129.377649 243.38901  L 131.238876 237.73009  L 133.233048 232.363928  L 135.360165 227.26642  L 137.620227 222.41545  L 140.013233 217.790922  L 142.539184 213.374671  L 145.331025 208.949144  L 148.255811 204.735981  L 151.313541 200.7153  L 154.637162 196.71661  L 158.093726 192.90276  L 161.816181 189.126841  L 165.804525 185.403795  L 170.058759 181.744466  L 174.578882 178.156447  L 179.364895 174.644776  L 184.416798 171.212517  L 189.867535 167.780543  L 195.717106 164.366527  L 201.965512 160.984294  L 208.612752 157.64445  L 215.658827 154.354955  L 223.236681 151.06593  L 231.346314 147.792964  L 239.987726 144.548381  L 249.160918 141.341754  L 258.998833 138.138569  L 269.501473 134.952691  L 280.801781 131.758831  L 281.200615 131.650134  L 281.200615 131.650134  " clip-path="url(#exp-log-graph-pbbf1531653)" fill="none" stroke="#d9534f" stroke-width="2" stroke-linecap="square" />
+   </g>
+   <g id="exp-log-graph-line2d_3">
+    <path d="M 40.392 281.952  L 284.328 38.016  " clip-path="url(#exp-log-graph-pbbf1531653)" fill="none" stroke-dasharray="4,3" stroke-dashoffset="0" stroke="currentColor" stroke-opacity="0.7" />
+   </g>
+   <g id="exp-log-graph-line2d_4">
+    <path d="M 146.723077 144.347077  L 177.996923 175.620923  " clip-path="url(#exp-log-graph-pbbf1531653)" fill="none" stroke-dasharray="0.8,1.32" stroke-dashoffset="0" stroke="currentColor" stroke-width="0.8" />
+   </g>
+   <g id="exp-log-graph-patch_2">
+    <path d="M 40.392 206.894769  Q 162.36 206.894769 283.098163 206.894769  " fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+    <path d="M 279.098163 204.894769  L 283.098163 206.894769  L 279.098163 208.894769  z " fill="currentColor" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+   </g>
+   <g id="exp-log-graph-patch_3">
+    <path d="M 115.449231 281.952  Q 115.449231 159.984 115.449231 39.245837  " fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+    <path d="M 113.449231 43.245837  L 115.449231 39.245837  L 117.449231 43.245837  z " fill="currentColor" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+   </g>
+   <g id="exp-log-graph-text_1">
+    
+    <g transform="translate(278.478 220.652083) scale(0.13 -0.13)" fill="currentColor">
+     <defs>
+      <path id="exp-log-graph-STIXGeneral-Italic-78" d="M 1555 2272  L 1632 1907  Q 1971 2426 2179 2624  Q 2387 2822 2598 2822  Q 2714 2822 2787 2755  Q 2861 2688 2861 2585  Q 2861 2483 2800 2419  Q 2739 2355 2643 2355  Q 2586 2355 2490 2409  Q 2394 2464 2310 2464  Q 2125 2464 1683 1690  Q 1683 1606 1734 1402  L 1939 544  Q 2003 282 2131 282  Q 2234 282 2432 538  Q 2451 563 2476 598  Q 2502 634 2521 662  Q 2541 691 2566 717  L 2662 659  Q 2387 230 2227 80  Q 2067 -70 1882 -70  Q 1728 -70 1645 26  Q 1562 122 1504 365  L 1318 1126  L 755 365  Q 557 96 432 13  Q 307 -70 147 -70  Q 0 -70 -86 0  Q -173 70 -173 198  Q -173 294 -112 361  Q -51 429 45 429  Q 122 429 250 358  Q 346 301 416 301  Q 525 301 742 614  L 1267 1357  L 1088 2150  Q 1024 2432 969 2509  Q 915 2586 794 2586  Q 717 2586 544 2541  L 429 2509  L 410 2611  L 480 2637  Q 992 2822 1229 2822  Q 1350 2822 1420 2707  Q 1491 2592 1555 2272  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.90625)" href="#exp-log-graph-STIXGeneral-Italic-78" />
+    </g>
+   </g>
+   <g id="exp-log-graph-text_2">
+    
+    <g transform="translate(120.327951 46.894594) scale(0.13 -0.13)" fill="currentColor">
+     <defs>
+      <path id="exp-log-graph-STIXGeneral-Italic-79" d="M 1555 1190  L 1690 486  Q 2118 1190 2294 1558  Q 2470 1926 2470 2131  Q 2470 2234 2304 2336  Q 2138 2445 2138 2586  Q 2138 2688 2211 2755  Q 2285 2822 2394 2822  Q 2534 2822 2630 2720  Q 2726 2618 2726 2470  Q 2726 1914 1888 518  Q 1389 -307 918 -812  Q 448 -1318 173 -1318  Q 26 -1318 -64 -1241  Q -154 -1165 -154 -1043  Q -154 -934 -80 -860  Q -6 -787 96 -787  Q 218 -787 314 -876  Q 410 -966 486 -966  Q 602 -966 794 -755  Q 877 -672 1040 -457  Q 1203 -243 1248 -173  Q 1312 -45 1312 51  Q 1312 243 1113 1046  Q 915 1850 787 2176  Q 698 2413 592 2499  Q 486 2586 294 2586  Q 192 2586 96 2560  L 96 2669  Q 237 2694 301 2707  Q 563 2758 986 2822  L 1011 2822  Q 1082 2822 1277 2227  Q 1472 1632 1555 1190  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.90625)" href="#exp-log-graph-STIXGeneral-Italic-79" />
+    </g>
+   </g>
+   <g id="exp-log-graph-text_3">
+    
+    <g transform="translate(88.926369 168.740677) scale(0.11 -0.11)" fill="#3b7dd8">
+     <defs>
+      <path id="exp-log-graph-STIXGeneral-Regular-28" d="M 1946 -1030  L 1869 -1133  Q 1126 -710 716 32  Q 307 774 307 1613  Q 307 3386 1888 4326  L 1946 4224  Q 1293 3667 1075 3126  Q 858 2586 858 1632  Q 858 685 1082 96  Q 1306 -493 1946 -1030  z " transform="scale(0.015625)" />
+      <path id="exp-log-graph-STIXGeneral-Regular-30" d="M 3046 2112  Q 3046 1683 2963 1302  Q 2880 922 2717 602  Q 2554 282 2266 96  Q 1978 -90 1600 -90  Q 1210 -90 915 108  Q 621 307 461 640  Q 301 973 227 1350  Q 154 1728 154 2150  Q 154 2746 301 3222  Q 448 3699 790 4012  Q 1133 4326 1626 4326  Q 2253 4326 2649 3712  Q 3046 3098 3046 2112  z M 2432 2080  Q 2432 3091 2217 3625  Q 2003 4160 1587 4160  Q 1190 4160 979 3622  Q 768 3085 768 2106  Q 768 1120 979 598  Q 1190 77 1600 77  Q 2003 77 2217 598  Q 2432 1120 2432 2080  z " transform="scale(0.015625)" />
+      <path id="exp-log-graph-STIXGeneral-Regular-2c" d="M 531 -902  L 467 -781  Q 998 -422 998 -96  Q 998 -13 909 -13  Q 883 -13 822 -25  Q 762 -38 723 -38  Q 352 -38 352 288  Q 352 454 457 553  Q 563 653 736 653  Q 954 653 1101 496  Q 1248 339 1248 96  Q 1248 -198 1053 -473  Q 858 -749 531 -902  z " transform="scale(0.015625)" />
+      <path id="exp-log-graph-STIXGeneral-Regular-31" d="M 2522 0  L 755 0  L 755 96  Q 1107 115 1235 227  Q 1363 339 1363 608  L 1363 3482  Q 1363 3795 1171 3795  Q 1082 3795 883 3718  L 710 3654  L 710 3744  L 1856 4326  L 1914 4307  L 1914 486  Q 1914 275 2042 185  Q 2170 96 2522 96  L 2522 0  z " transform="scale(0.015625)" />
+      <path id="exp-log-graph-STIXGeneral-Regular-29" d="M 186 4224  L 262 4326  Q 992 3891 1408 3148  Q 1824 2406 1824 1581  Q 1824 -166 243 -1133  L 186 -1030  Q 845 -486 1059 54  Q 1274 595 1274 1562  Q 1274 2534 1059 3120  Q 845 3706 186 4224  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-28" />
+     <use transform="translate(33.299988 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-30" />
+     <use transform="translate(83.299973 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-2c" />
+     <use transform="translate(122.739954 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-31" />
+     <use transform="translate(172.739938 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-29" />
+    </g>
+   </g>
+   <g id="exp-log-graph-text_4">
+    
+    <g transform="translate(135.338077 223.789579) scale(0.11 -0.11)" fill="#d9534f">
+     <use transform="translate(0 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-28" />
+     <use transform="translate(33.299988 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-31" />
+     <use transform="translate(83.299973 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-2c" />
+     <use transform="translate(122.739954 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-30" />
+     <use transform="translate(172.739938 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-29" />
+    </g>
+   </g>
+   <g id="exp-log-graph-text_5">
+    
+    <g transform="translate(121.451169 138.092308) scale(0.11 -0.11)" fill="#3b7dd8">
+     <defs>
+      <path id="exp-log-graph-STIXGeneral-Regular-32" d="M 3034 877  L 2688 0  L 186 0  L 186 77  L 1325 1286  Q 1773 1754 1965 2144  Q 2157 2534 2157 2950  Q 2157 3379 1920 3616  Q 1683 3853 1267 3853  Q 922 3853 720 3673  Q 518 3494 326 3021  L 192 3053  Q 301 3648 630 3987  Q 960 4326 1523 4326  Q 2054 4326 2380 4006  Q 2707 3686 2707 3200  Q 2707 2477 1888 1613  L 832 486  L 2330 486  Q 2541 486 2665 569  Q 2790 653 2944 915  L 3034 877  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-28" />
+     <use transform="translate(33.299988 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-31" />
+     <use transform="translate(83.299973 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-2c" />
+     <use transform="translate(122.739954 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-32" />
+     <use transform="translate(172.739938 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-29" />
+    </g>
+   </g>
+   <g id="exp-log-graph-text_6">
+    
+    <g transform="translate(182.688 192.515733) scale(0.11 -0.11)" fill="#d9534f">
+     <use transform="translate(0 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-28" />
+     <use transform="translate(33.299988 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-32" />
+     <use transform="translate(83.299973 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-2c" />
+     <use transform="translate(122.739954 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-31" />
+     <use transform="translate(172.739938 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-29" />
+    </g>
+   </g>
+   <g id="exp-log-graph-text_7">
+    
+    <g transform="translate(193.633846 59.907692) scale(0.14 -0.14)" fill="#3b7dd8">
+     <defs>
+      <path id="exp-log-graph-STIXGeneral-Regular-3d" d="M 4077 2048  L 307 2048  L 307 2470  L 4077 2470  L 4077 2048  z M 4077 768  L 307 768  L 307 1190  L 4077 1190  L 4077 768  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.40625)" href="#exp-log-graph-STIXGeneral-Italic-79" />
+     <use transform="translate(58.83999 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-3d" />
+     <use transform="translate(141.779971 0.40625)" href="#exp-log-graph-STIXGeneral-Regular-32" />
+     <use transform="translate(193.323237 35.68125) scale(0.7)" href="#exp-log-graph-STIXGeneral-Italic-78" />
+    </g>
+   </g>
+   <g id="exp-log-graph-text_8">
+    
+    <g transform="translate(231.162462 172.493538) scale(0.14 -0.14)" fill="#d9534f">
+     <defs>
+      <path id="exp-log-graph-STIXGeneral-Regular-6c" d="M 1645 0  L 134 0  L 134 96  Q 435 122 531 221  Q 627 320 627 589  L 627 3590  Q 627 3821 569 3910  Q 512 4000 358 4000  Q 224 4000 122 3987  L 122 4090  Q 730 4237 1133 4371  L 1165 4346  L 1165 557  Q 1165 288 1254 201  Q 1344 115 1645 96  L 1645 0  z " transform="scale(0.015625)" />
+      <path id="exp-log-graph-STIXGeneral-Regular-6f" d="M 3008 1478  Q 3008 806 2608 371  Q 2208 -64 1568 -64  Q 979 -64 582 368  Q 186 800 186 1459  Q 186 2125 582 2534  Q 979 2944 1626 2944  Q 2221 2944 2614 2537  Q 3008 2131 3008 1478  z M 2432 1306  Q 2432 2035 2112 2445  Q 1856 2765 1504 2765  Q 1171 2765 966 2493  Q 762 2221 762 1747  Q 762 928 1101 435  Q 1318 115 1677 115  Q 2029 115 2230 432  Q 2432 749 2432 1306  z " transform="scale(0.015625)" />
+      <path id="exp-log-graph-STIXGeneral-Regular-67" d="M 3008 2483  L 2477 2483  Q 2598 2208 2598 1946  Q 2598 1453 2265 1203  Q 1933 954 1600 954  Q 1530 954 1357 973  L 1235 986  Q 1107 947 979 812  Q 851 678 851 582  Q 851 435 1350 410  L 2176 371  Q 2528 358 2739 172  Q 2950 -13 2950 -314  Q 2950 -685 2566 -986  Q 2035 -1395 1286 -1395  Q 826 -1395 502 -1212  Q 179 -1030 179 -774  Q 179 -595 320 -419  Q 461 -243 806 6  Q 602 102 534 172  Q 467 243 467 346  Q 467 531 762 787  Q 909 915 1037 1043  Q 717 1203 579 1401  Q 442 1600 442 1901  Q 442 2336 752 2640  Q 1062 2944 1510 2944  Q 1766 2944 2022 2848  L 2163 2797  Q 2349 2733 2515 2733  L 3008 2733  L 3008 2483  z M 973 2163  L 973 2144  Q 973 1683 1155 1398  Q 1338 1114 1632 1114  Q 1850 1114 1978 1270  Q 2106 1427 2106 1690  Q 2106 2112 1914 2464  Q 1754 2765 1446 2765  Q 1222 2765 1097 2605  Q 973 2445 973 2163  z M 2771 -410  Q 2771 -230 2595 -163  Q 2419 -96 1978 -96  Q 1344 -96 941 -13  Q 749 -243 688 -348  Q 627 -454 627 -563  Q 627 -774 880 -902  Q 1133 -1030 1555 -1030  Q 2099 -1030 2435 -860  Q 2771 -691 2771 -410  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.703125)" href="#exp-log-graph-STIXGeneral-Italic-79" />
+     <use transform="translate(58.83999 0.703125)" href="#exp-log-graph-STIXGeneral-Regular-3d" />
+     <use transform="translate(141.779971 0.703125)" href="#exp-log-graph-STIXGeneral-Regular-6c" />
+     <use transform="translate(169.579959 0.703125)" href="#exp-log-graph-STIXGeneral-Regular-6f" />
+     <use transform="translate(219.579944 0.703125)" href="#exp-log-graph-STIXGeneral-Regular-67" />
+     <use transform="translate(271.12321 -12.525) scale(0.7)" href="#exp-log-graph-STIXGeneral-Regular-32" />
+     <use transform="translate(322.566145 0.703125)" href="#exp-log-graph-STIXGeneral-Italic-78" />
+    </g>
+   </g>
+   <g id="exp-log-graph-text_9">
+    
+    <g transform="translate(251.490462 58.344) scale(0.12 -0.12)" fill="currentColor">
+     <use transform="translate(0 0.90625)" href="#exp-log-graph-STIXGeneral-Italic-79" />
+     <use transform="translate(58.83999 0.90625)" href="#exp-log-graph-STIXGeneral-Regular-3d" />
+     <use transform="translate(141.779971 0.90625)" href="#exp-log-graph-STIXGeneral-Italic-78" />
+    </g>
+   </g>
+   <g id="exp-log-graph-line2d_5">
+    <defs>
+     <path id="exp-log-graph-m9ef2182ce6" d="M 0 2.5  C 0.663008 2.5 1.29895 2.236584 1.767767 1.767767  C 2.236584 1.29895 2.5 0.663008 2.5 0  C 2.5 -0.663008 2.236584 -1.29895 1.767767 -1.767767  C 1.29895 -2.236584 0.663008 -2.5 0 -2.5  C -0.663008 -2.5 -1.29895 -2.236584 -1.767767 -1.767767  C -2.236584 -1.29895 -2.5 -0.663008 -2.5 0  C -2.5 0.663008 -2.236584 1.29895 -1.767767 1.767767  C -1.29895 2.236584 -0.663008 2.5 0 2.5  z " stroke="#3b7dd8" />
+    </defs>
+    <g clip-path="url(#exp-log-graph-pbbf1531653)">
+     <use x="115.449231" y="175.620923" fill="#3b7dd8" stroke="#3b7dd8" href="#exp-log-graph-m9ef2182ce6" />
+    </g>
+   </g>
+   <g id="exp-log-graph-line2d_6">
+    <defs>
+     <path id="exp-log-graph-m3df139498b" d="M 0 2.5  C 0.663008 2.5 1.29895 2.236584 1.767767 1.767767  C 2.236584 1.29895 2.5 0.663008 2.5 0  C 2.5 -0.663008 2.236584 -1.29895 1.767767 -1.767767  C 1.29895 -2.236584 0.663008 -2.5 0 -2.5  C -0.663008 -2.5 -1.29895 -2.236584 -1.767767 -1.767767  C -2.236584 -1.29895 -2.5 -0.663008 -2.5 0  C -2.5 0.663008 -2.236584 1.29895 -1.767767 1.767767  C -1.29895 2.236584 -0.663008 2.5 0 2.5  z " stroke="#d9534f" />
+    </defs>
+    <g clip-path="url(#exp-log-graph-pbbf1531653)">
+     <use x="146.723077" y="206.894769" fill="#d9534f" stroke="#d9534f" href="#exp-log-graph-m3df139498b" />
+    </g>
+   </g>
+   <g id="exp-log-graph-line2d_7">
+    <g clip-path="url(#exp-log-graph-pbbf1531653)">
+     <use x="146.723077" y="144.347077" fill="#3b7dd8" stroke="#3b7dd8" href="#exp-log-graph-m9ef2182ce6" />
+    </g>
+   </g>
+   <g id="exp-log-graph-line2d_8">
+    <g clip-path="url(#exp-log-graph-pbbf1531653)">
+     <use x="177.996923" y="175.620923" fill="#d9534f" stroke="#d9534f" href="#exp-log-graph-m3df139498b" />
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="exp-log-graph-pbbf1531653">
+   <rect x="40.392" y="38.016" width="243.936" height="243.936" />
+  </clipPath>
+ </defs>
+</svg></p>
+<p><em>图：$y=2^x$ 与 $y=\log_2x$ 的图像，关于 $y=x$ 对称</em></p>
+<ul><li>指数函数 $y=a^x\ (a&gt;0,\ a\ne1)$：定义域 $\mathbb R$，值域 $y&gt;0$，过点 $(0,1)$。</li><li>对数函数 $y=\log_ax$：定义域 $x&gt;0$，值域 $\mathbb R$，过点 $(1,0)$。</li><li>$a&gt;1$ 时两者都递增，$0&lt;a&lt;1$ 时两者都递减。</li><li>两条曲线关于 $y=x$ 对称：$(m,n)$ 在 $y=a^x$ 上，$(n,m)$ 就在 $y=\log_ax$ 上。</li></ul>
+<p>例：比较 $2^{0.5}$ 与 $2^{0.3}$。底数 $2&gt;1$，$y=2^x$ 递增，且 $0.5&gt;0.3$，所以 $2^{0.5}&gt;2^{0.3}$。底数在 0 到 1 之间时结论相反。</p>
+<p>例：$\log_39+\log_3\dfrac13=2+(-1)=1$。验证：$\log_3\left(9\times\dfrac13\right)=\log_33=1$。</p>
+</div>
+<div class="src">单元8，整理于 2026年10月26日</div>
+</article>
+<article class="kp" data-id="math-explog-shift" data-question-id="shift-001" data-type="method">
+<h4>图像平移：括号里加减 x</h4>
+<div class="md">
+<p><svg width="100%" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460.8 280.8" role="img" aria-label="2(x+2) 左移 2，2(x-1) 右移 1；三条曲线过 (-1,0)、(1,0)、(2,0)">
+ <defs>
+  </defs>
+ <g id="shift-log-figure_1">
+  <g id="shift-log-patch_1">
+   <path d="M 0 280.8  L 460.8 280.8  L 460.8 0  L 0 0  L 0 280.8  z " fill="none" />
+  </g>
+  <g id="shift-log-axes_1">
+   <g id="shift-log-line2d_1">
+    <path d="M 88.090192 281.8  L 88.724392 265.454684  L 89.482072 251.471482  L 90.360147 239.322142  L 91.338956 228.777432  L 92.426171 219.378887  L 93.656978 210.668039  L 94.978362 202.874123  L 96.448337 195.538673  L 98.003007 188.890921  L 99.671071 182.701635  L 101.508262 176.741582  L 103.433125 171.239994  L 105.511123 165.967639  L 107.738878 160.924517  L 110.1102 156.110627  L 112.615884 151.525971  L 115.243571 147.170547  L 118.137013 142.815124  L 121.147635 138.688933  L 124.254726 134.791975  L 127.641535 130.895017  L 131.333243 126.998059  L 135.110866 123.330334  L 139.207745 119.662609  L 143.65086 115.994883  L 148.156721 112.556391  L 153.018667 109.117899  L 158.264838 105.679406  L 163.925598 102.240914  L 170.033711 98.802422  L 176.624531 95.363929  L 183.245079 92.15467  L 190.352697 88.94541  L 197.98322 85.736151  L 206.175116 82.526891  L 214.969686 79.317632  L 224.411268 76.108372  L 234.547463 72.899113  L 245.429372 69.689853  L 257.111858 66.480594  L 269.653819 63.271334  L 283.118486 60.062074  L 297.573741 56.852815  L 313.092463 53.643555  L 318.907317 52.497391  L 318.907317 52.497391  " clip-path="url(#shift-log-pbfbc670fd4)" fill="none" stroke="#3a9d5d" stroke-width="2" stroke-linecap="square" />
+   </g>
+   <g id="shift-log-line2d_2">
+    <path d="M 86.634146 249.912  L 86.634146 33.696  " clip-path="url(#shift-log-pbfbc670fd4)" fill="none" stroke-dasharray="2.7,2.7" stroke-dashoffset="0" stroke="#3a9d5d" stroke-opacity="0.55" stroke-width="0.9" />
+   </g>
+   <g id="shift-log-line2d_3">
+    <path d="M 295.68 174.079722  L 318.907317 174.079722  " clip-path="url(#shift-log-pbfbc670fd4)" fill="none" stroke="#3a9d5d" stroke-width="2" stroke-linecap="square" />
+   </g>
+   <g id="shift-log-line2d_4">
+    <path d="M 146.158485 281.8  L 146.792684 265.454684  L 147.550365 251.471482  L 148.42844 239.322142  L 149.407248 228.777432  L 150.494463 219.378887  L 151.725271 210.668039  L 153.046655 202.874123  L 154.516629 195.538673  L 156.0713 188.890921  L 157.739363 182.701635  L 159.576555 176.741582  L 161.501418 171.239994  L 163.579416 165.967639  L 165.807171 160.924517  L 168.178493 156.110627  L 170.684176 151.525971  L 173.311864 147.170547  L 176.205305 142.815124  L 179.215927 138.688933  L 182.323019 134.791975  L 185.709828 130.895017  L 189.401536 126.998059  L 193.179159 123.330334  L 197.276037 119.662609  L 201.719152 115.994883  L 206.225013 112.556391  L 211.086959 109.117899  L 216.33313 105.679406  L 221.993891 102.240914  L 228.102004 98.802422  L 234.692823 95.363929  L 241.313371 92.15467  L 248.42099 88.94541  L 256.051512 85.736151  L 264.243409 82.526891  L 273.037979 79.317632  L 282.479561 76.108372  L 292.615755 72.899113  L 303.497665 69.689853  L 315.180151 66.480594  L 327.722112 63.271334  L 341.186778 60.062074  L 355.642034 56.852815  L 371.160756 53.643555  L 376.97561 52.497391  L 376.97561 52.497391  " clip-path="url(#shift-log-pbfbc670fd4)" fill="none" stroke="#3b7dd8" stroke-width="2" stroke-linecap="square" />
+   </g>
+   <g id="shift-log-line2d_5">
+    <path d="M 144.702439 249.912  L 144.702439 33.696  " clip-path="url(#shift-log-pbfbc670fd4)" fill="none" stroke-dasharray="2.7,2.7" stroke-dashoffset="0" stroke="#3b7dd8" stroke-opacity="0.55" stroke-width="0.9" />
+   </g>
+   <g id="shift-log-line2d_6">
+    <path d="M 295.68 197.581461  L 318.907317 197.581461  " clip-path="url(#shift-log-pbfbc670fd4)" fill="none" stroke="#3b7dd8" stroke-width="2" stroke-linecap="square" />
+   </g>
+   <g id="shift-log-line2d_7">
+    <path d="M 175.192631 281.8  L 175.826831 265.454684  L 176.584511 251.471482  L 177.462586 239.322142  L 178.441395 228.777432  L 179.52861 219.378887  L 180.759417 210.668039  L 182.080801 202.874123  L 183.550776 195.538673  L 185.105447 188.890921  L 186.77351 182.701635  L 188.610701 176.741582  L 190.535564 171.239994  L 192.613562 165.967639  L 194.841317 160.924517  L 197.212639 156.110627  L 199.718323 151.525971  L 202.34601 147.170547  L 205.239452 142.815124  L 208.250074 138.688933  L 211.357165 134.791975  L 214.743974 130.895017  L 218.435682 126.998059  L 222.213305 123.330334  L 226.310184 119.662609  L 230.753299 115.994883  L 235.25916 112.556391  L 240.121106 109.117899  L 245.367277 105.679406  L 251.028037 102.240914  L 257.13615 98.802422  L 263.72697 95.363929  L 270.347518 92.15467  L 277.455136 88.94541  L 285.085659 85.736151  L 293.277555 82.526891  L 302.072125 79.317632  L 311.513707 76.108372  L 321.649902 72.899113  L 332.531811 69.689853  L 344.214297 66.480594  L 356.756258 63.271334  L 370.220925 60.062074  L 384.67618 56.852815  L 400.194902 53.643555  L 406.009756 52.497391  L 406.009756 52.497391  " clip-path="url(#shift-log-pbfbc670fd4)" fill="none" stroke="#d9534f" stroke-width="2" stroke-linecap="square" />
+   </g>
+   <g id="shift-log-line2d_8">
+    <path d="M 173.736585 249.912  L 173.736585 33.696  " clip-path="url(#shift-log-pbfbc670fd4)" fill="none" stroke-dasharray="2.7,2.7" stroke-dashoffset="0" stroke="#d9534f" stroke-opacity="0.55" stroke-width="0.9" />
+   </g>
+   <g id="shift-log-line2d_9">
+    <path d="M 295.68 221.0832  L 318.907317 221.0832  " clip-path="url(#shift-log-pbfbc670fd4)" fill="none" stroke="#d9534f" stroke-width="2" stroke-linecap="square" />
+   </g>
+   <g id="shift-log-patch_2">
+    <path d="M 57.6 146.504348  Q 236.16 146.504348 413.490163 146.504348  " fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+    <path d="M 409.490163 144.504348  L 413.490163 146.504348  L 409.490163 148.504348  z " fill="currentColor" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+   </g>
+   <g id="shift-log-patch_3">
+    <path d="M 144.702439 249.912  Q 144.702439 141.804 144.702439 34.925837  " fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+    <path d="M 142.702439 38.925837  L 144.702439 34.925837  L 146.702439 38.925837  z " fill="currentColor" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+   </g>
+   <g id="shift-log-text_1">
+    
+    <g transform="translate(408.87 159.707262) scale(0.13 -0.13)" fill="currentColor">
+     <defs>
+      <path id="shift-log-STIXGeneral-Italic-78" d="M 1555 2272  L 1632 1907  Q 1971 2426 2179 2624  Q 2387 2822 2598 2822  Q 2714 2822 2787 2755  Q 2861 2688 2861 2585  Q 2861 2483 2800 2419  Q 2739 2355 2643 2355  Q 2586 2355 2490 2409  Q 2394 2464 2310 2464  Q 2125 2464 1683 1690  Q 1683 1606 1734 1402  L 1939 544  Q 2003 282 2131 282  Q 2234 282 2432 538  Q 2451 563 2476 598  Q 2502 634 2521 662  Q 2541 691 2566 717  L 2662 659  Q 2387 230 2227 80  Q 2067 -70 1882 -70  Q 1728 -70 1645 26  Q 1562 122 1504 365  L 1318 1126  L 755 365  Q 557 96 432 13  Q 307 -70 147 -70  Q 0 -70 -86 0  Q -173 70 -173 198  Q -173 294 -112 361  Q -51 429 45 429  Q 122 429 250 358  Q 346 301 416 301  Q 525 301 742 614  L 1267 1357  L 1088 2150  Q 1024 2432 969 2509  Q 915 2586 794 2586  Q 717 2586 544 2541  L 429 2509  L 410 2611  L 480 2637  Q 992 2822 1229 2822  Q 1350 2822 1420 2707  Q 1491 2592 1555 2272  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.90625)" href="#shift-log-STIXGeneral-Italic-78" />
+    </g>
+   </g>
+   <g id="shift-log-text_2">
+    
+    <g transform="translate(151.844839 42.574594) scale(0.13 -0.13)" fill="currentColor">
+     <defs>
+      <path id="shift-log-STIXGeneral-Italic-79" d="M 1555 1190  L 1690 486  Q 2118 1190 2294 1558  Q 2470 1926 2470 2131  Q 2470 2234 2304 2336  Q 2138 2445 2138 2586  Q 2138 2688 2211 2755  Q 2285 2822 2394 2822  Q 2534 2822 2630 2720  Q 2726 2618 2726 2470  Q 2726 1914 1888 518  Q 1389 -307 918 -812  Q 448 -1318 173 -1318  Q 26 -1318 -64 -1241  Q -154 -1165 -154 -1043  Q -154 -934 -80 -860  Q -6 -787 96 -787  Q 218 -787 314 -876  Q 410 -966 486 -966  Q 602 -966 794 -755  Q 877 -672 1040 -457  Q 1203 -243 1248 -173  Q 1312 -45 1312 51  Q 1312 243 1113 1046  Q 915 1850 787 2176  Q 698 2413 592 2499  Q 486 2586 294 2586  Q 192 2586 96 2560  L 96 2669  Q 237 2694 301 2707  Q 563 2758 986 2822  L 1011 2822  Q 1082 2822 1277 2227  Q 1472 1632 1555 1190  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.90625)" href="#shift-log-STIXGeneral-Italic-79" />
+    </g>
+   </g>
+   <g id="shift-log-text_3">
+    
+    <g transform="translate(324.714146 180.895) scale(0.13 -0.13)" fill="#3a9d5d">
+     <defs>
+      <path id="shift-log-STIXGeneral-Regular-3d" d="M 4077 2048  L 307 2048  L 307 2470  L 4077 2470  L 4077 2048  z M 4077 768  L 307 768  L 307 1190  L 4077 1190  L 4077 768  z " transform="scale(0.015625)" />
+      <path id="shift-log-STIXGeneral-Regular-6c" d="M 1645 0  L 134 0  L 134 96  Q 435 122 531 221  Q 627 320 627 589  L 627 3590  Q 627 3821 569 3910  Q 512 4000 358 4000  Q 224 4000 122 3987  L 122 4090  Q 730 4237 1133 4371  L 1165 4346  L 1165 557  Q 1165 288 1254 201  Q 1344 115 1645 96  L 1645 0  z " transform="scale(0.015625)" />
+      <path id="shift-log-STIXGeneral-Regular-6f" d="M 3008 1478  Q 3008 806 2608 371  Q 2208 -64 1568 -64  Q 979 -64 582 368  Q 186 800 186 1459  Q 186 2125 582 2534  Q 979 2944 1626 2944  Q 2221 2944 2614 2537  Q 3008 2131 3008 1478  z M 2432 1306  Q 2432 2035 2112 2445  Q 1856 2765 1504 2765  Q 1171 2765 966 2493  Q 762 2221 762 1747  Q 762 928 1101 435  Q 1318 115 1677 115  Q 2029 115 2230 432  Q 2432 749 2432 1306  z " transform="scale(0.015625)" />
+      <path id="shift-log-STIXGeneral-Regular-67" d="M 3008 2483  L 2477 2483  Q 2598 2208 2598 1946  Q 2598 1453 2265 1203  Q 1933 954 1600 954  Q 1530 954 1357 973  L 1235 986  Q 1107 947 979 812  Q 851 678 851 582  Q 851 435 1350 410  L 2176 371  Q 2528 358 2739 172  Q 2950 -13 2950 -314  Q 2950 -685 2566 -986  Q 2035 -1395 1286 -1395  Q 826 -1395 502 -1212  Q 179 -1030 179 -774  Q 179 -595 320 -419  Q 461 -243 806 6  Q 602 102 534 172  Q 467 243 467 346  Q 467 531 762 787  Q 909 915 1037 1043  Q 717 1203 579 1401  Q 442 1600 442 1901  Q 442 2336 752 2640  Q 1062 2944 1510 2944  Q 1766 2944 2022 2848  L 2163 2797  Q 2349 2733 2515 2733  L 3008 2733  L 3008 2483  z M 973 2163  L 973 2144  Q 973 1683 1155 1398  Q 1338 1114 1632 1114  Q 1850 1114 1978 1270  Q 2106 1427 2106 1690  Q 2106 2112 1914 2464  Q 1754 2765 1446 2765  Q 1222 2765 1097 2605  Q 973 2445 973 2163  z M 2771 -410  Q 2771 -230 2595 -163  Q 2419 -96 1978 -96  Q 1344 -96 941 -13  Q 749 -243 688 -348  Q 627 -454 627 -563  Q 627 -774 880 -902  Q 1133 -1030 1555 -1030  Q 2099 -1030 2435 -860  Q 2771 -691 2771 -410  z " transform="scale(0.015625)" />
+      <path id="shift-log-STIXGeneral-Regular-32" d="M 3034 877  L 2688 0  L 186 0  L 186 77  L 1325 1286  Q 1773 1754 1965 2144  Q 2157 2534 2157 2950  Q 2157 3379 1920 3616  Q 1683 3853 1267 3853  Q 922 3853 720 3673  Q 518 3494 326 3021  L 192 3053  Q 301 3648 630 3987  Q 960 4326 1523 4326  Q 2054 4326 2380 4006  Q 2707 3686 2707 3200  Q 2707 2477 1888 1613  L 832 486  L 2330 486  Q 2541 486 2665 569  Q 2790 653 2944 915  L 3034 877  z " transform="scale(0.015625)" />
+      <path id="shift-log-STIXGeneral-Regular-28" d="M 1946 -1030  L 1869 -1133  Q 1126 -710 716 32  Q 307 774 307 1613  Q 307 3386 1888 4326  L 1946 4224  Q 1293 3667 1075 3126  Q 858 2586 858 1632  Q 858 685 1082 96  Q 1306 -493 1946 -1030  z " transform="scale(0.015625)" />
+      <path id="shift-log-STIXGeneral-Regular-2b" d="M 4070 1408  L 2400 1408  L 2400 -262  L 1978 -262  L 1978 1408  L 307 1408  L 307 1830  L 1978 1830  L 1978 3501  L 2400 3501  L 2400 1830  L 4070 1830  L 4070 1408  z " transform="scale(0.015625)" />
+      <path id="shift-log-STIXGeneral-Regular-29" d="M 186 4224  L 262 4326  Q 992 3891 1408 3148  Q 1824 2406 1824 1581  Q 1824 -166 243 -1133  L 186 -1030  Q 845 -486 1059 54  Q 1274 595 1274 1562  Q 1274 2534 1059 3120  Q 845 3706 186 4224  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.703125)" href="#shift-log-STIXGeneral-Italic-79" />
+     <use transform="translate(58.83999 0.703125)" href="#shift-log-STIXGeneral-Regular-3d" />
+     <use transform="translate(141.779971 0.703125)" href="#shift-log-STIXGeneral-Regular-6c" />
+     <use transform="translate(169.579959 0.703125)" href="#shift-log-STIXGeneral-Regular-6f" />
+     <use transform="translate(219.579944 0.703125)" href="#shift-log-STIXGeneral-Regular-67" />
+     <use transform="translate(271.12321 -12.525) scale(0.7)" href="#shift-log-STIXGeneral-Regular-32" />
+     <use transform="translate(322.566145 0.703125)" href="#shift-log-STIXGeneral-Regular-28" />
+     <use transform="translate(355.866133 0.703125)" href="#shift-log-STIXGeneral-Italic-78" />
+     <use transform="translate(414.706123 0.703125)" href="#shift-log-STIXGeneral-Regular-2b" />
+     <use transform="translate(497.646104 0.703125)" href="#shift-log-STIXGeneral-Regular-32" />
+     <use transform="translate(547.646089 0.703125)" href="#shift-log-STIXGeneral-Regular-29" />
+    </g>
+   </g>
+   <g id="shift-log-text_4">
+    
+    <g transform="translate(324.714146 204.396739) scale(0.13 -0.13)" fill="#3b7dd8">
+     <use transform="translate(0 0.703125)" href="#shift-log-STIXGeneral-Italic-79" />
+     <use transform="translate(58.83999 0.703125)" href="#shift-log-STIXGeneral-Regular-3d" />
+     <use transform="translate(141.779971 0.703125)" href="#shift-log-STIXGeneral-Regular-6c" />
+     <use transform="translate(169.579959 0.703125)" href="#shift-log-STIXGeneral-Regular-6f" />
+     <use transform="translate(219.579944 0.703125)" href="#shift-log-STIXGeneral-Regular-67" />
+     <use transform="translate(271.12321 -12.525) scale(0.7)" href="#shift-log-STIXGeneral-Regular-32" />
+     <use transform="translate(322.566145 0.703125)" href="#shift-log-STIXGeneral-Italic-78" />
+    </g>
+   </g>
+   <g id="shift-log-text_5">
+    
+    <g transform="translate(324.714146 227.898478) scale(0.13 -0.13)" fill="#d9534f">
+     <defs>
+      <path id="shift-log-STIXGeneral-Regular-2212" d="M 3974 1408  L 410 1408  L 410 1830  L 3974 1830  L 3974 1408  z " transform="scale(0.015625)" />
+      <path id="shift-log-STIXGeneral-Regular-31" d="M 2522 0  L 755 0  L 755 96  Q 1107 115 1235 227  Q 1363 339 1363 608  L 1363 3482  Q 1363 3795 1171 3795  Q 1082 3795 883 3718  L 710 3654  L 710 3744  L 1856 4326  L 1914 4307  L 1914 486  Q 1914 275 2042 185  Q 2170 96 2522 96  L 2522 0  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.703125)" href="#shift-log-STIXGeneral-Italic-79" />
+     <use transform="translate(58.83999 0.703125)" href="#shift-log-STIXGeneral-Regular-3d" />
+     <use transform="translate(141.779971 0.703125)" href="#shift-log-STIXGeneral-Regular-6c" />
+     <use transform="translate(169.579959 0.703125)" href="#shift-log-STIXGeneral-Regular-6f" />
+     <use transform="translate(219.579944 0.703125)" href="#shift-log-STIXGeneral-Regular-67" />
+     <use transform="translate(271.12321 -12.525) scale(0.7)" href="#shift-log-STIXGeneral-Regular-32" />
+     <use transform="translate(322.566145 0.703125)" href="#shift-log-STIXGeneral-Regular-28" />
+     <use transform="translate(355.866133 0.703125)" href="#shift-log-STIXGeneral-Italic-78" />
+     <use transform="translate(414.706123 0.703125)" href="#shift-log-STIXGeneral-Regular-2212" />
+     <use transform="translate(497.646104 0.703125)" href="#shift-log-STIXGeneral-Regular-31" />
+     <use transform="translate(547.646089 0.703125)" href="#shift-log-STIXGeneral-Regular-29" />
+    </g>
+   </g>
+   <g id="shift-log-text_6">
+    
+    <g transform="translate(101.230793 159.94265) scale(0.105 -0.105)" fill="#3a9d5d">
+     <defs>
+      <path id="shift-log-STIXGeneral-Regular-2c" d="M 531 -902  L 467 -781  Q 998 -422 998 -96  Q 998 -13 909 -13  Q 883 -13 822 -25  Q 762 -38 723 -38  Q 352 -38 352 288  Q 352 454 457 553  Q 563 653 736 653  Q 954 653 1101 496  Q 1248 339 1248 96  Q 1248 -198 1053 -473  Q 858 -749 531 -902  z " transform="scale(0.015625)" />
+      <path id="shift-log-STIXGeneral-Regular-30" d="M 3046 2112  Q 3046 1683 2963 1302  Q 2880 922 2717 602  Q 2554 282 2266 96  Q 1978 -90 1600 -90  Q 1210 -90 915 108  Q 621 307 461 640  Q 301 973 227 1350  Q 154 1728 154 2150  Q 154 2746 301 3222  Q 448 3699 790 4012  Q 1133 4326 1626 4326  Q 2253 4326 2649 3712  Q 3046 3098 3046 2112  z M 2432 2080  Q 2432 3091 2217 3625  Q 2003 4160 1587 4160  Q 1190 4160 979 3622  Q 768 3085 768 2106  Q 768 1120 979 598  Q 1190 77 1600 77  Q 2003 77 2217 598  Q 2432 1120 2432 2080  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.40625)" href="#shift-log-STIXGeneral-Regular-28" />
+     <use transform="translate(33.299988 0.40625)" href="#shift-log-STIXGeneral-Regular-2212" />
+     <use transform="translate(101.799973 0.40625)" href="#shift-log-STIXGeneral-Regular-31" />
+     <use transform="translate(151.799957 0.40625)" href="#shift-log-STIXGeneral-Regular-2c" />
+     <use transform="translate(191.239938 0.40625)" href="#shift-log-STIXGeneral-Regular-30" />
+     <use transform="translate(241.239923 0.40625)" href="#shift-log-STIXGeneral-Regular-29" />
+    </g>
+   </g>
+   <g id="shift-log-text_7">
+    
+    <g transform="translate(180.995122 139.525172) scale(0.105 -0.105)" fill="#3b7dd8">
+     <use transform="translate(0 0.40625)" href="#shift-log-STIXGeneral-Regular-28" />
+     <use transform="translate(33.299988 0.40625)" href="#shift-log-STIXGeneral-Regular-31" />
+     <use transform="translate(83.299973 0.40625)" href="#shift-log-STIXGeneral-Regular-2c" />
+     <use transform="translate(122.739954 0.40625)" href="#shift-log-STIXGeneral-Regular-30" />
+     <use transform="translate(172.739938 0.40625)" href="#shift-log-STIXGeneral-Regular-29" />
+    </g>
+   </g>
+   <g id="shift-log-text_8">
+    
+    <g transform="translate(205.674146 159.94265) scale(0.105 -0.105)" fill="#d9534f">
+     <use transform="translate(0 0.40625)" href="#shift-log-STIXGeneral-Regular-28" />
+     <use transform="translate(33.299988 0.40625)" href="#shift-log-STIXGeneral-Regular-32" />
+     <use transform="translate(83.299973 0.40625)" href="#shift-log-STIXGeneral-Regular-2c" />
+     <use transform="translate(122.739954 0.40625)" href="#shift-log-STIXGeneral-Regular-30" />
+     <use transform="translate(172.739938 0.40625)" href="#shift-log-STIXGeneral-Regular-29" />
+    </g>
+   </g>
+   <g id="shift-log-line2d_10">
+    <defs>
+     <path id="shift-log-m68b7473b57" d="M 0 2.5  C 0.663008 2.5 1.29895 2.236584 1.767767 1.767767  C 2.236584 1.29895 2.5 0.663008 2.5 0  C 2.5 -0.663008 2.236584 -1.29895 1.767767 -1.767767  C 1.29895 -2.236584 0.663008 -2.5 0 -2.5  C -0.663008 -2.5 -1.29895 -2.236584 -1.767767 -1.767767  C -2.236584 -1.29895 -2.5 -0.663008 -2.5 0  C -2.5 0.663008 -2.236584 1.29895 -1.767767 1.767767  C -1.29895 2.236584 -0.663008 2.5 0 2.5  z " stroke="#3a9d5d" />
+    </defs>
+    <g clip-path="url(#shift-log-pbfbc670fd4)">
+     <use x="115.668293" y="146.504348" fill="#3a9d5d" stroke="#3a9d5d" href="#shift-log-m68b7473b57" />
+    </g>
+   </g>
+   <g id="shift-log-line2d_11">
+    <defs>
+     <path id="shift-log-m9ef2182ce6" d="M 0 2.5  C 0.663008 2.5 1.29895 2.236584 1.767767 1.767767  C 2.236584 1.29895 2.5 0.663008 2.5 0  C 2.5 -0.663008 2.236584 -1.29895 1.767767 -1.767767  C 1.29895 -2.236584 0.663008 -2.5 0 -2.5  C -0.663008 -2.5 -1.29895 -2.236584 -1.767767 -1.767767  C -2.236584 -1.29895 -2.5 -0.663008 -2.5 0  C -2.5 0.663008 -2.236584 1.29895 -1.767767 1.767767  C -1.29895 2.236584 -0.663008 2.5 0 2.5  z " stroke="#3b7dd8" />
+    </defs>
+    <g clip-path="url(#shift-log-pbfbc670fd4)">
+     <use x="173.736585" y="146.504348" fill="#3b7dd8" stroke="#3b7dd8" href="#shift-log-m9ef2182ce6" />
+    </g>
+   </g>
+   <g id="shift-log-line2d_12">
+    <defs>
+     <path id="shift-log-m3df139498b" d="M 0 2.5  C 0.663008 2.5 1.29895 2.236584 1.767767 1.767767  C 2.236584 1.29895 2.5 0.663008 2.5 0  C 2.5 -0.663008 2.236584 -1.29895 1.767767 -1.767767  C 1.29895 -2.236584 0.663008 -2.5 0 -2.5  C -0.663008 -2.5 -1.29895 -2.236584 -1.767767 -1.767767  C -2.236584 -1.29895 -2.5 -0.663008 -2.5 0  C -2.5 0.663008 -2.236584 1.29895 -1.767767 1.767767  C -1.29895 2.236584 -0.663008 2.5 0 2.5  z " stroke="#d9534f" />
+    </defs>
+    <g clip-path="url(#shift-log-pbfbc670fd4)">
+     <use x="202.770732" y="146.504348" fill="#d9534f" stroke="#d9534f" href="#shift-log-m3df139498b" />
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="shift-log-pbfbc670fd4">
+   <rect x="57.6" y="33.696" width="357.12" height="216.216" />
+  </clipPath>
+ </defs>
+</svg></p>
+<p><em>图：$\log_2(x+2)$ 左移 2，$\log_2(x-1)$ 右移 1；三条曲线过 $(-1,0)$、$(1,0)$、$(2,0)$</em></p>
+<p>不用口诀，用特征点判断：取原函数的特征点，让括号里等于原来的输入，解出新的 x，比较位置。</p>
+<p>例：$y=\log_2(x-1)$。特征点 $(1,0)$：$x-1=1\Rightarrow x=2$，新点 $(2,0)$，右移 1。验证：$\log_2(2-1)=0$；定义域边界从 $x&gt;0$ 变成 $x&gt;1$。</p>
+<p>例：$y=2^{x+1}$。特征点 $(0,1)$：$x+1=0\Rightarrow x=-1$，新点 $(-1,1)$，左移 1。验证：$2^{-1+1}=1$。</p>
+<p>例：$y=\log_2(x+2)$。$(1,0)$ 的新位置是 $(-1,0)$，左移 2。同一高度 $y=0$，新函数在 $x=-1$，原函数在 $x=1$。</p>
+<p>结论（$a&gt;0$）：$f(x-a)$ 向右移 $a$，$f(x+a)$ 向左移 $a$。方向与符号相反，因为括号里是对输入的操作。对比：$y=\log_2x+2$ 加在结果上，向上移 2。平移只改变位置，值域不变。</p>
+<p>易错：此处曾三次把方向判反，每次都先用特征点验证。</p>
+</div>
+<div class="src">单元8，进行中，整理于 2026年10月26日</div>
+</article>
+</section>
+<section class="sec">
+<h3>定义域</h3>
+<article class="kp" data-id="math-domain" data-question-id="dom-001" data-type="method">
+<h4>先写条件，再解不等式</h4>
+<div class="md">
+<p>例：$f(x)=\sqrt{4-x}+\ln(x-1)$。根号内 $4-x\ge0\Rightarrow x\le4$；真数 $x-1&gt;0\Rightarrow x&gt;1$。取交集：$D=(1,4]$。</p>
+<p>导数的定义域不超出原函数的定义域，含 $\ln x$ 的求导结果要标注 $x&gt;0$。</p>
+</div>
+<div class="src">单元2，整理于 2026年10月26日</div>
+</article>
+</section>
+<section class="sec">
+<h3>分数指数与根式</h3>
+<article class="kp" data-id="math-fracexp" data-question-id="frac-001" data-type="rule">
+<h4>分数指数</h4>
+<div class="md">
+<p>先写成指数形式，再按需要改写成根式（$a&gt;0$）。分母 $n$ 是开几次方，分子 $m$ 是乘几次方。</p>
+<p>$$a^{m/n}=\left(a^{1/n}\right)^m=\left(a^m\right)^{1/n}$$</p>
+<p>$$a^{m/n}=\sqrt[n]{a^m}=\left(\sqrt[n]{a}\right)^m$$</p>
+<p>实际计算先开方、后乘方，数字更小。每个新数字都重新找底数：$16^{3/4}=\left(16^{1/4}\right)^3=2^3=8$（因为 $2^4=16$）；$81^{3/4}=3^3=27$（因为 $3^4=81$）；$27^{2/3}=3^2=9$（因为 $3^3=27$）。</p>
+</div>
+<div class="src">单元3，整理于 2026年10月26日</div>
+</article>
+</section>
+<section class="sec">
+<h3>数列与级数</h3>
+<article class="kp" data-id="math-series" data-question-id="ser-001" data-type="contrast">
+<h4>数列与级数的区别</h4>
+<div class="md">
+<p>数列看每一项趋向什么；级数看部分和 $S_N=a_1+a_2+\cdots+a_N$ 趋向什么。部分和趋向有限值，级数收敛，否则发散。</p>
+<ul><li>$1+\dfrac12+\dfrac14+\cdots$ 收敛，和为 2（部分和 $1,\ 1.5,\ 1.75,\ \dots$）。</li><li>$\displaystyle\sum_{n=1}^{\infty}\dfrac1n$ 发散：每项趋于 0，但部分和无上界。</li><li>$\displaystyle\sum_{n=1}^{\infty}\dfrac1{n^2}$ 收敛。</li></ul>
+<p>$a_n\to0$ 是级数收敛的必要条件，不是充分条件。</p>
+</div>
+<div class="src">单元4，整理于 2026年10月26日</div>
+</article>
+</section>
+<section class="sec">
+<h3>求导与积分的起点</h3>
+<article class="kp" data-id="math-derivstart" data-question-id="f-001" data-type="rule">
+<h4>幂函数求导、积分与乘积法则</h4>
+<div class="md">
+<p>$(x^n)&#x27;=nx^{n-1}$；$\displaystyle\int2x\,dx=x^2+C$。积分的检验：把结果求导必须回到被积函数，所以不能丢 $C$。</p>
+<p>乘积法则：$(uv)&#x27;=u&#x27;v+uv&#x27;$。例：$(x^2\ln x)&#x27;=2x\ln x+x^2\cdot\dfrac1x=2x\ln x+x\ \ (x&gt;0)$。</p>
+</div>
+<div class="src">已有基础，整理于 2026年10月26日</div>
+</article>
+</section>
+<section class="sec">
+<h3>弧度制与圆</h3>
+<article class="kp" data-id="math-radian" data-question-id="rad-003" data-type="concept">
+<h4>弧度制</h4>
+<div class="md">
+<p>弧度 $\theta=\dfrac sr$。整圆弧长 $2\pi r$，所以整圆是 $2\pi$ 弧度，$180^\circ=\pi$。</p>
+<p>$$\text{弧度}=\text{角度}\times\frac{\pi}{180},\qquad\text{角度}=\text{弧度}\times\frac{180}{\pi}$$</p>
+</div>
+<div class="src">单元5，整理于 2026年10月26日</div>
+</article>
+<article class="kp" data-id="math-circle" data-question-id="rad-002" data-type="rule">
+<h4>圆与扇形</h4>
+<div class="md">
+<p><svg width="100%" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 331.2 230.4" role="img" aria-label="半径 3、圆心角 120 的扇形，弧长 2，面积 3">
+ <defs>
+  </defs>
+ <g id="sector-120-figure_1">
+  <g id="sector-120-patch_1">
+   <path d="M 0 230.4  L 331.2 230.4  L 331.2 0  L 0 0  L 0 230.4  z " fill="none" />
+  </g>
+  <g id="sector-120-axes_1">
+   <g id="sector-120-patch_2">
+    <path d="M 270.115579 177.044211  C 270.115579 152.460561 263.643063 128.304802 251.351238 107.014737  C 239.059413 85.724671 221.376171 68.041429 200.086105 55.749604  C 178.79604 43.457779 154.640282 36.985263 130.056632 36.985263  C 105.472982 36.985263 81.317223 43.457779 60.027158 55.749604  L 130.056632 177.044211  z " clip-path="url(#sector-120-pb90ba99b1e)" fill="#3b7dd8" opacity="0.18" />
+   </g>
+   <g id="sector-120-patch_3">
+    <path d="M 270.115579 177.044211  C 270.115579 152.460561 263.643063 128.304802 251.351238 107.014737  C 239.059413 85.724671 221.376171 68.041429 200.086105 55.749604  C 178.79604 43.457779 154.640282 36.985263 130.056632 36.985263  C 105.472982 36.985263 81.317223 43.457779 60.027158 55.749604  L 130.056632 177.044211  L 270.115579 177.044211  z " clip-path="url(#sector-120-pb90ba99b1e)" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="miter" />
+   </g>
+   <g id="sector-120-patch_4">
+    <path d="M 160.402737 177.044211  C 160.402737 171.717753 159.000358 166.484005 156.33713 161.871158  C 153.673901 157.25831 149.842532 153.426941 145.229684 150.763712  C 140.616837 148.100484 135.383089 146.698105 130.056632 146.698105  C 124.730174 146.698105 119.496426 148.100484 114.883579 150.763712  " clip-path="url(#sector-120-pb90ba99b1e)" fill="none" stroke="currentColor" stroke-linejoin="miter" />
+   </g>
+   <g id="sector-120-line2d_1">
+    <defs>
+     <path id="sector-120-m8ba960386c" d="M 0 1.75  C 0.464105 1.75 0.909265 1.565609 1.237437 1.237437  C 1.565609 0.909265 1.75 0.464105 1.75 0  C 1.75 -0.464105 1.565609 -0.909265 1.237437 -1.237437  C 0.909265 -1.565609 0.464105 -1.75 0 -1.75  C -0.464105 -1.75 -0.909265 -1.565609 -1.237437 -1.237437  C -1.565609 -0.909265 -1.75 -0.464105 -1.75 0  C -1.75 0.464105 -1.565609 0.909265 -1.237437 1.237437  C -0.909265 1.565609 -0.464105 1.75 0 1.75  z " stroke="currentColor" />
+    </defs>
+    <g clip-path="url(#sector-120-pb90ba99b1e)">
+     <use x="130.056632" y="177.044211" fill="currentColor" stroke="currentColor" href="#sector-120-m8ba960386c" />
+    </g>
+   </g>
+   <g id="sector-120-text_1">
+    
+    <g transform="translate(174.408632 160.704) scale(0.12 -0.12)">
+     <defs>
+      <path id="sector-120-STIXGeneral-Italic-3b8" d="M 3162 3270  Q 3162 2534 2925 1862  Q 2688 1190 2304 678  Q 1741 -70 992 -70  Q 608 -70 390 224  Q 173 518 173 1030  Q 173 1997 592 2813  Q 1011 3629 1594 4070  Q 1952 4339 2374 4339  Q 2733 4339 2947 4076  Q 3162 3814 3162 3270  z M 941 2221  L 2432 2221  Q 2624 2874 2624 3533  Q 2624 4205 2285 4205  Q 2029 4205 1728 3814  Q 1427 3424 1232 2992  Q 1037 2560 941 2221  z M 2387 2016  L 896 2016  Q 710 1530 710 960  Q 710 64 1069 64  Q 1286 64 1510 275  Q 1734 486 1904 806  Q 2074 1126 2198 1440  Q 2323 1754 2387 2016  z " transform="scale(0.015625)" />
+      <path id="sector-120-STIXGeneral-Regular-3d" d="M 4077 2048  L 307 2048  L 307 2470  L 4077 2470  L 4077 2048  z M 4077 768  L 307 768  L 307 1190  L 4077 1190  L 4077 768  z " transform="scale(0.015625)" />
+      <path id="sector-120-STIXGeneral-Regular-32" d="M 3034 877  L 2688 0  L 186 0  L 186 77  L 1325 1286  Q 1773 1754 1965 2144  Q 2157 2534 2157 2950  Q 2157 3379 1920 3616  Q 1683 3853 1267 3853  Q 922 3853 720 3673  Q 518 3494 326 3021  L 192 3053  Q 301 3648 630 3987  Q 960 4326 1523 4326  Q 2054 4326 2380 4006  Q 2707 3686 2707 3200  Q 2707 2477 1888 1613  L 832 486  L 2330 486  Q 2541 486 2665 569  Q 2790 653 2944 915  L 3034 877  z " transform="scale(0.015625)" />
+      <path id="sector-120-STIXGeneral-Italic-3c0" d="M 3430 2739  L 3296 2266  L 2643 2266  Q 2624 2195 2502 1782  Q 2381 1370 2297 1072  Q 2214 774 2214 717  Q 2214 448 2413 448  Q 2694 448 2867 838  L 2970 838  Q 2886 486 2652 208  Q 2419 -70 2093 -70  Q 1901 -70 1808 67  Q 1715 205 1715 410  Q 1715 627 1824 922  L 2310 2266  L 1645 2266  Q 1568 2061 1401 1469  Q 1235 877 1068 512  Q 902 147 672 -38  Q 563 -115 442 -115  Q 314 -115 218 -32  Q 122 51 122 166  Q 122 429 314 480  Q 634 563 774 928  L 1299 2266  L 1261 2266  Q 973 2266 819 2208  Q 666 2150 474 1914  L 371 1914  Q 640 2362 931 2550  Q 1222 2739 1696 2739  L 3430 2739  z " transform="scale(0.015625)" />
+      <path id="sector-120-STIXGeneral-Regular-33" d="M 390 3264  L 288 3290  Q 435 3770 748 4048  Q 1062 4326 1542 4326  Q 1990 4326 2265 4083  Q 2541 3840 2541 3450  Q 2541 2925 1946 2566  Q 2298 2413 2477 2227  Q 2758 1914 2758 1402  Q 2758 890 2464 506  Q 2246 211 1840 60  Q 1434 -90 979 -90  Q 262 -90 262 275  Q 262 378 339 442  Q 416 506 525 506  Q 685 506 915 339  Q 1197 141 1466 141  Q 1818 141 2058 425  Q 2298 710 2298 1120  Q 2298 1856 1632 2048  Q 1434 2112 979 2112  L 979 2202  Q 1338 2323 1517 2432  Q 2035 2726 2035 3290  Q 2035 3610 1852 3776  Q 1670 3942 1344 3942  Q 768 3942 390 3264  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.629688)" href="#sector-120-STIXGeneral-Italic-3b8" />
+     <use transform="translate(62.439981 0.629688)" href="#sector-120-STIXGeneral-Regular-3d" />
+     <use transform="translate(145.379962 39.684375) scale(0.7)" href="#sector-120-STIXGeneral-Regular-32" />
+     <use transform="translate(180.379951 39.684375) scale(0.7)" href="#sector-120-STIXGeneral-Italic-3c0" />
+     <use transform="translate(163.379962 -40.139062) scale(0.7)" href="#sector-120-STIXGeneral-Regular-33" />
+     <path d="M 145.379962 13.426563  L 145.379962 19.676563  L 215.659947 19.676563  L 215.659947 13.426563  L 145.379962 13.426563  z " />
+    </g>
+   </g>
+   <g id="sector-120-text_2">
+    
+    <g transform="translate(187.931105 191.525162) scale(0.13 -0.13)">
+     <defs>
+      <path id="sector-120-STIXGeneral-Italic-72" d="M 1126 1427  L 1229 1651  Q 1446 2131 1830 2534  Q 2106 2822 2336 2822  Q 2470 2822 2553 2732  Q 2637 2643 2637 2496  Q 2637 2349 2557 2249  Q 2477 2150 2336 2150  Q 2214 2150 2112 2317  Q 2061 2406 2010 2406  Q 1837 2406 1485 1805  Q 1267 1434 1136 1104  Q 1005 774 774 0  L 288 0  L 806 1869  Q 909 2246 909 2394  Q 909 2560 666 2560  Q 614 2560 467 2541  L 467 2650  L 1459 2822  L 1478 2810  L 1126 1427  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.40625)" href="#sector-120-STIXGeneral-Italic-72" />
+     <use transform="translate(53.33999 0.40625)" href="#sector-120-STIXGeneral-Regular-3d" />
+     <use transform="translate(136.279971 0.40625)" href="#sector-120-STIXGeneral-Regular-33" />
+    </g>
+   </g>
+   <g id="sector-120-text_3">
+    
+    <g transform="translate(228.097895 76.668632) scale(0.13 -0.13)" fill="#d9534f">
+     <defs>
+      <path id="sector-120-STIXGeneral-Italic-73" d="M 2342 2829  L 2214 1933  L 2112 1933  Q 2022 2675 1542 2675  Q 1370 2675 1267 2579  Q 1165 2483 1165 2310  Q 1165 2067 1510 1658  Q 1946 1152 1946 787  Q 1946 397 1686 163  Q 1427 -70 1024 -70  Q 838 -70 672 -6  Q 538 51 390 51  Q 262 51 205 -83  L 102 -83  L 230 934  L 333 934  Q 461 64 973 64  Q 1203 64 1331 192  Q 1459 320 1459 557  Q 1459 845 1101 1293  Q 698 1798 698 2131  Q 698 2451 909 2636  Q 1120 2822 1472 2822  Q 1600 2822 1830 2758  Q 1971 2714 2061 2714  Q 2189 2714 2253 2829  L 2342 2829  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.40625)" href="#sector-120-STIXGeneral-Italic-73" />
+     <use transform="translate(53.33999 0.40625)" href="#sector-120-STIXGeneral-Regular-3d" />
+     <use transform="translate(136.279971 0.40625)" href="#sector-120-STIXGeneral-Regular-32" />
+     <use transform="translate(186.279956 0.40625)" href="#sector-120-STIXGeneral-Italic-3c0" />
+    </g>
+   </g>
+   <g id="sector-120-text_4">
+    
+    <g transform="translate(116.850947 118.686316) scale(0.12 -0.12)">
+     <defs>
+      <path id="sector-120-STIXGeneral-Italic-41" d="M 3610 0  L 2042 0  L 2042 102  Q 2330 115 2432 192  Q 2534 269 2534 442  Q 2534 493 2522 608  L 2394 1446  L 986 1446  L 608 736  Q 467 474 467 314  Q 467 122 864 102  L 864 0  L -326 0  L -326 102  Q -109 147 28 307  Q 166 467 531 1101  L 2355 4275  L 2522 4275  L 3110 736  Q 3174 339 3264 230  Q 3354 122 3610 102  L 3610 0  z M 2362 1677  L 2074 3360  L 1120 1677  L 2362 1677  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.40625)" href="#sector-120-STIXGeneral-Italic-41" />
+     <use transform="translate(75.539987 0.40625)" href="#sector-120-STIXGeneral-Regular-3d" />
+     <use transform="translate(158.479968 0.40625)" href="#sector-120-STIXGeneral-Regular-33" />
+     <use transform="translate(208.479953 0.40625)" href="#sector-120-STIXGeneral-Italic-3c0" />
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="sector-120-pb90ba99b1e">
+   <rect x="46.021263" y="27.648" width="247.437474" height="177.408" />
+  </clipPath>
+ </defs>
+</svg></p>
+<p><em>图：半径 3、圆心角 $120^\circ$ 的扇形，弧长 $2\pi$，面积 $3\pi$</em></p>
+<p>$C=2\pi r,\ A=\pi r^2,\ s=r\theta,\ A_{\text{扇}}=\dfrac12r^2\theta$（$\theta$ 用弧度）。</p>
+<p>例：$r=3$，圆心角 $120^\circ$。$\theta=120\times\dfrac{\pi}{180}=\dfrac{2\pi}3$；$s=3\times\dfrac{2\pi}3=2\pi$；$A_{\text{扇}}=\dfrac12\times9\times\dfrac{2\pi}3=3\pi$。验证：$120^\circ$ 占整圆的 $\dfrac13$，$6\pi\div3=2\pi$，$9\pi\div3=3\pi$。</p>
+</div>
+<div class="src">单元5，整理于 2026年10月26日</div>
+</article>
+</section>
+<section class="sec">
+<h3>单位圆与常用角</h3>
+<article class="kp" data-id="math-unitcircle" data-question-id="trig-007" data-type="concept">
+<h4>单位圆上的 sin 与 cos</h4>
+<div class="md">
+<p><svg width="100%" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 432 302.4" role="img" aria-label="单位圆：点绕圆转动，红线为 ，蓝线为 ">
+ <defs>
+  </defs>
+ <g id="unit-circle-anim-figure_1">
+  <g id="unit-circle-anim-patch_1">
+   <path d="M 0 302.4  L 432 302.4  L 432 0  L 0 0  L 0 302.4  z " fill="none" />
+  </g>
+  <g id="unit-circle-anim-axes_1">
+   <g id="unit-circle-anim-line2d_1">
+    <path d="M 267.9696 159.0624  L 267.85356 154.63101  L 267.505758 150.211766  L 266.927147 145.816781  L 266.119314 141.458101  L 265.084472 137.147674  L 263.825457 132.897313  L 262.345722 128.718669  L 260.649321 124.623195  L 258.740904 120.622116  L 256.625703 116.7264  L 254.309514 112.946724  L 251.798687 109.293447  L 249.100103 105.776584  L 246.221159 102.405773  L 243.169745 99.190255  L 239.954227 96.138841  L 236.583416 93.259897  L 233.066553 90.561313  L 229.413276 88.050486  L 225.6336 85.734297  L 221.737884 83.619096  L 217.736805 81.710679  L 213.641331 80.014278  L 209.462687 78.534543  L 205.212326 77.275528  L 200.901899 76.240686  L 196.543219 75.432853  L 192.148234 74.854242  L 187.72899 74.50644  L 183.2976 74.3904  L 178.86621 74.50644  L 174.446966 74.854242  L 170.051981 75.432853  L 165.693301 76.240686  L 161.382874 77.275528  L 157.132513 78.534543  L 152.953869 80.014278  L 148.858395 81.710679  L 144.857316 83.619096  L 140.9616 85.734297  L 137.181924 88.050486  L 133.528647 90.561313  L 130.011784 93.259897  L 126.640973 96.138841  L 123.425455 99.190255  L 120.374041 102.405773  L 117.495097 105.776584  L 114.796513 109.293447  L 112.285686 112.946724  L 109.969497 116.7264  L 107.854296 120.622116  L 105.945879 124.623195  L 104.249478 128.718669  L 102.769743 132.897313  L 101.510728 137.147674  L 100.475886 141.458101  L 99.668053 145.816781  L 99.089442 150.211766  L 98.74164 154.63101  L 98.6256 159.0624  L 98.74164 163.49379  L 99.089442 167.913034  L 99.668053 172.308019  L 100.475886 176.666699  L 101.510728 180.977126  L 102.769743 185.227487  L 104.249478 189.406131  L 105.945879 193.501605  L 107.854296 197.502684  L 109.969497 201.3984  L 112.285686 205.178076  L 114.796513 208.831353  L 117.495097 212.348216  L 120.374041 215.719027  L 123.425455 218.934545  L 126.640973 221.985959  L 130.011784 224.864903  L 133.528647 227.563487  L 137.181924 230.074314  L 140.9616 232.390503  L 144.857316 234.505704  L 148.858395 236.414121  L 152.953869 238.110522  L 157.132513 239.590257  L 161.382874 240.849272  L 165.693301 241.884114  L 170.051981 242.691947  L 174.446966 243.270558  L 178.86621 243.61836  L 183.2976 243.7344  L 187.72899 243.61836  L 192.148234 243.270558  L 196.543219 242.691947  L 200.901899 241.884114  L 205.212326 240.849272  L 209.462687 239.590257  L 213.641331 238.110522  L 217.736805 236.414121  L 221.737884 234.505704  L 225.6336 232.390503  L 229.413276 230.074314  L 233.066553 227.563487  L 236.583416 224.864903  L 239.954227 221.985959  L 243.169745 218.934545  L 246.221159 215.719027  L 249.100103 212.348216  L 251.798687 208.831353  L 254.309514 205.178076  L 256.625703 201.3984  L 258.740904 197.502684  L 260.649321 193.501605  L 262.345722 189.406131  L 263.825457 185.227487  L 265.084472 180.977126  L 266.119314 176.666699  L 266.927147 172.308019  L 267.505758 167.913034  L 267.85356 163.49379  L 267.9696 159.0624  L 267.9696 159.0624  " clip-path="url(#unit-circle-anim-p4abced0803)" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square" />
+   </g>
+   <g id="unit-circle-anim-line2d_2">
+    <defs>
+     <path id="unit-circle-anim-m8ba960386c" d="M 0 1.75  C 0.464105 1.75 0.909265 1.565609 1.237437 1.237437  C 1.565609 0.909265 1.75 0.464105 1.75 0  C 1.75 -0.464105 1.565609 -0.909265 1.237437 -1.237437  C 0.909265 -1.565609 0.464105 -1.75 0 -1.75  C -0.464105 -1.75 -0.909265 -1.565609 -1.237437 -1.237437  C -1.565609 -0.909265 -1.75 -0.464105 -1.75 0  C -1.75 0.464105 -1.565609 0.909265 -1.237437 1.237437  C -0.909265 1.565609 -0.464105 1.75 0 1.75  z " stroke="currentColor" />
+    </defs>
+    <g clip-path="url(#unit-circle-anim-p4abced0803)">
+     <use x="256.625703" y="116.7264" fill="currentColor" stroke="currentColor" href="#unit-circle-anim-m8ba960386c" />
+    </g>
+   </g>
+   <g id="unit-circle-anim-line2d_3">
+    <g clip-path="url(#unit-circle-anim-p4abced0803)">
+     <use x="243.169745" y="99.190255" fill="currentColor" stroke="currentColor" href="#unit-circle-anim-m8ba960386c" />
+    </g>
+   </g>
+   <g id="unit-circle-anim-line2d_4">
+    <g clip-path="url(#unit-circle-anim-p4abced0803)">
+     <use x="225.6336" y="85.734297" fill="currentColor" stroke="currentColor" href="#unit-circle-anim-m8ba960386c" />
+    </g>
+   </g>
+   <g id="unit-circle-anim-patch_2">
+    <path d="M 64.7568 159.0624  Q 221.4 159.0624 376.813363 159.0624  " fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+    <path d="M 372.813363 157.0624  L 376.813363 159.0624  L 372.813363 161.0624  z " fill="currentColor" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+   </g>
+   <g id="unit-circle-anim-patch_3">
+    <path d="M 183.2976 269.136  Q 183.2976 152.712 183.2976 37.517837  " fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+    <path d="M 181.2976 41.517837  L 183.2976 37.517837  L 185.2976 41.517837  z " fill="currentColor" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+   </g>
+   <g id="unit-circle-anim-text_1">
+    
+    <g transform="translate(372.1932 172.597954) scale(0.13 -0.13)" fill="currentColor">
+     <defs>
+      <path id="unit-circle-anim-STIXGeneral-Italic-78" d="M 1555 2272  L 1632 1907  Q 1971 2426 2179 2624  Q 2387 2822 2598 2822  Q 2714 2822 2787 2755  Q 2861 2688 2861 2585  Q 2861 2483 2800 2419  Q 2739 2355 2643 2355  Q 2586 2355 2490 2409  Q 2394 2464 2310 2464  Q 2125 2464 1683 1690  Q 1683 1606 1734 1402  L 1939 544  Q 2003 282 2131 282  Q 2234 282 2432 538  Q 2451 563 2476 598  Q 2502 634 2521 662  Q 2541 691 2566 717  L 2662 659  Q 2387 230 2227 80  Q 2067 -70 1882 -70  Q 1728 -70 1645 26  Q 1562 122 1504 365  L 1318 1126  L 755 365  Q 557 96 432 13  Q 307 -70 147 -70  Q 0 -70 -86 0  Q -173 70 -173 198  Q -173 294 -112 361  Q -51 429 45 429  Q 122 429 250 358  Q 346 301 416 301  Q 525 301 742 614  L 1267 1357  L 1088 2150  Q 1024 2432 969 2509  Q 915 2586 794 2586  Q 717 2586 544 2541  L 429 2509  L 410 2611  L 480 2637  Q 992 2822 1229 2822  Q 1350 2822 1420 2707  Q 1491 2592 1555 2272  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.90625)" href="#unit-circle-anim-STIXGeneral-Italic-78" />
+    </g>
+   </g>
+   <g id="unit-circle-anim-text_2">
+    
+    <g transform="translate(189.563328 45.166594) scale(0.13 -0.13)" fill="currentColor">
+     <defs>
+      <path id="unit-circle-anim-STIXGeneral-Italic-79" d="M 1555 1190  L 1690 486  Q 2118 1190 2294 1558  Q 2470 1926 2470 2131  Q 2470 2234 2304 2336  Q 2138 2445 2138 2586  Q 2138 2688 2211 2755  Q 2285 2822 2394 2822  Q 2534 2822 2630 2720  Q 2726 2618 2726 2470  Q 2726 1914 1888 518  Q 1389 -307 918 -812  Q 448 -1318 173 -1318  Q 26 -1318 -64 -1241  Q -154 -1165 -154 -1043  Q -154 -934 -80 -860  Q -6 -787 96 -787  Q 218 -787 314 -876  Q 410 -966 486 -966  Q 602 -966 794 -755  Q 877 -672 1040 -457  Q 1203 -243 1248 -173  Q 1312 -45 1312 51  Q 1312 243 1113 1046  Q 915 1850 787 2176  Q 698 2413 592 2499  Q 486 2586 294 2586  Q 192 2586 96 2560  L 96 2669  Q 237 2694 301 2707  Q 563 2758 986 2822  L 1011 2822  Q 1082 2822 1277 2227  Q 1472 1632 1555 1190  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.90625)" href="#unit-circle-anim-STIXGeneral-Italic-79" />
+    </g>
+   </g>
+   <g id="unit-circle-anim-text_3">
+    
+    <g transform="translate(276.4368 126.61064) scale(0.11 -0.11)" fill="currentColor">
+     <defs>
+      <path id="unit-circle-anim-STIXGeneral-Regular-28" d="M 1946 -1030  L 1869 -1133  Q 1126 -710 716 32  Q 307 774 307 1613  Q 307 3386 1888 4326  L 1946 4224  Q 1293 3667 1075 3126  Q 858 2586 858 1632  Q 858 685 1082 96  Q 1306 -493 1946 -1030  z " transform="scale(0.015625)" />
+      <path id="unit-circle-anim-STIXGeneral-Regular-221a" d="M 6163 6227  L 3104 -1658  L 2899 -1658  L 1606 1734  Q 1466 2112 1210 2112  Q 1011 2112 794 1914  L 717 2042  L 1715 2835  L 1837 2835  L 3142 -595  L 3168 -595  L 5818 6227  L 6163 6227  z " transform="scale(0.015625)" />
+      <path id="unit-circle-anim-STIXGeneral-Regular-33" d="M 390 3264  L 288 3290  Q 435 3770 748 4048  Q 1062 4326 1542 4326  Q 1990 4326 2265 4083  Q 2541 3840 2541 3450  Q 2541 2925 1946 2566  Q 2298 2413 2477 2227  Q 2758 1914 2758 1402  Q 2758 890 2464 506  Q 2246 211 1840 60  Q 1434 -90 979 -90  Q 262 -90 262 275  Q 262 378 339 442  Q 416 506 525 506  Q 685 506 915 339  Q 1197 141 1466 141  Q 1818 141 2058 425  Q 2298 710 2298 1120  Q 2298 1856 1632 2048  Q 1434 2112 979 2112  L 979 2202  Q 1338 2323 1517 2432  Q 2035 2726 2035 3290  Q 2035 3610 1852 3776  Q 1670 3942 1344 3942  Q 768 3942 390 3264  z " transform="scale(0.015625)" />
+      <path id="unit-circle-anim-STIXGeneral-Regular-32" d="M 3034 877  L 2688 0  L 186 0  L 186 77  L 1325 1286  Q 1773 1754 1965 2144  Q 2157 2534 2157 2950  Q 2157 3379 1920 3616  Q 1683 3853 1267 3853  Q 922 3853 720 3673  Q 518 3494 326 3021  L 192 3053  Q 301 3648 630 3987  Q 960 4326 1523 4326  Q 2054 4326 2380 4006  Q 2707 3686 2707 3200  Q 2707 2477 1888 1613  L 832 486  L 2330 486  Q 2541 486 2665 569  Q 2790 653 2944 915  L 3034 877  z " transform="scale(0.015625)" />
+      <path id="unit-circle-anim-STIXGeneral-Regular-2c" d="M 531 -902  L 467 -781  Q 998 -422 998 -96  Q 998 -13 909 -13  Q 883 -13 822 -25  Q 762 -38 723 -38  Q 352 -38 352 288  Q 352 454 457 553  Q 563 653 736 653  Q 954 653 1101 496  Q 1248 339 1248 96  Q 1248 -198 1053 -473  Q 858 -749 531 -902  z " transform="scale(0.015625)" />
+      <path id="unit-circle-anim-STIXGeneral-Regular-31" d="M 2522 0  L 755 0  L 755 96  Q 1107 115 1235 227  Q 1363 339 1363 608  L 1363 3482  Q 1363 3795 1171 3795  Q 1082 3795 883 3718  L 710 3654  L 710 3744  L 1856 4326  L 1914 4307  L 1914 486  Q 1914 275 2042 185  Q 2170 96 2522 96  L 2522 0  z " transform="scale(0.015625)" />
+      <path id="unit-circle-anim-STIXGeneral-Regular-29" d="M 186 4224  L 262 4326  Q 992 3891 1408 3148  Q 1824 2406 1824 1581  Q 1824 -166 243 -1133  L 186 -1030  Q 845 -486 1059 54  Q 1274 595 1274 1562  Q 1274 2534 1059 3120  Q 845 3706 186 4224  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.760938)" href="#unit-circle-anim-STIXGeneral-Regular-28" />
+     <use transform="translate(33.299988 56.692188) scale(0.7)" href="#unit-circle-anim-STIXGeneral-Regular-221a" />
+     <use transform="translate(107.009979 56.309375) scale(0.7)" href="#unit-circle-anim-STIXGeneral-Regular-33" />
+     <use transform="translate(74.299988 -40.007812) scale(0.7)" href="#unit-circle-anim-STIXGeneral-Regular-32" />
+     <use transform="translate(163.259969 0.760938)" href="#unit-circle-anim-STIXGeneral-Regular-2c" />
+     <use transform="translate(202.69995 38.557813) scale(0.7)" href="#unit-circle-anim-STIXGeneral-Regular-31" />
+     <use transform="translate(202.69995 -40.007812) scale(0.7)" href="#unit-circle-anim-STIXGeneral-Regular-32" />
+     <use transform="translate(250.199939 0.760938)" href="#unit-circle-anim-STIXGeneral-Regular-29" />
+     <path d="M 98.259979 120.25  L 98.259979 124.625  L 150.759969 124.625  L 150.759969 120.25  L 98.259979 120.25  z " />
+     <path d="M 33.299988 13.557813  L 33.299988 19.807813  L 150.759969 19.807813  L 150.759969 13.557813  L 33.299988 13.557813  z " />
+     <path d="M 202.69995 13.557813  L 202.69995 19.807813  L 237.699939 19.807813  L 237.699939 13.557813  L 202.69995 13.557813  z " />
+    </g>
+   </g>
+   <g id="unit-circle-anim-text_4">
+    
+    <g transform="translate(253.57536 88.50824) scale(0.11 -0.11)" fill="currentColor">
+     <use transform="translate(0 0.760938)" href="#unit-circle-anim-STIXGeneral-Regular-28" />
+     <use transform="translate(33.299988 56.692188) scale(0.7)" href="#unit-circle-anim-STIXGeneral-Regular-221a" />
+     <use transform="translate(107.009979 56.309375) scale(0.7)" href="#unit-circle-anim-STIXGeneral-Regular-32" />
+     <use transform="translate(74.299988 -40.007812) scale(0.7)" href="#unit-circle-anim-STIXGeneral-Regular-32" />
+     <use transform="translate(163.259969 0.760938)" href="#unit-circle-anim-STIXGeneral-Regular-2c" />
+     <use transform="translate(202.69995 56.692188) scale(0.7)" href="#unit-circle-anim-STIXGeneral-Regular-221a" />
+     <use transform="translate(276.409941 56.309375) scale(0.7)" href="#unit-circle-anim-STIXGeneral-Regular-32" />
+     <use transform="translate(243.69995 -40.007812) scale(0.7)" href="#unit-circle-anim-STIXGeneral-Regular-32" />
+     <use transform="translate(332.65993 0.760938)" href="#unit-circle-anim-STIXGeneral-Regular-29" />
+     <path d="M 98.259979 120.25  L 98.259979 124.625  L 150.759969 124.625  L 150.759969 120.25  L 98.259979 120.25  z " />
+     <path d="M 33.299988 13.557813  L 33.299988 19.807813  L 150.759969 19.807813  L 150.759969 13.557813  L 33.299988 13.557813  z " />
+     <path d="M 267.659941 120.25  L 267.659941 124.625  L 320.15993 124.625  L 320.15993 120.25  L 267.659941 120.25  z " />
+     <path d="M 202.69995 13.557813  L 202.69995 19.807813  L 320.15993 19.807813  L 320.15993 13.557813  L 202.69995 13.557813  z " />
+    </g>
+   </g>
+   <g id="unit-circle-anim-text_5">
+    
+    <g transform="translate(232.40736 66.49352) scale(0.11 -0.11)" fill="currentColor">
+     <use transform="translate(0 0.760938)" href="#unit-circle-anim-STIXGeneral-Regular-28" />
+     <use transform="translate(33.299988 38.557813) scale(0.7)" href="#unit-circle-anim-STIXGeneral-Regular-31" />
+     <use transform="translate(33.299988 -40.007812) scale(0.7)" href="#unit-circle-anim-STIXGeneral-Regular-32" />
+     <use transform="translate(80.799977 0.760938)" href="#unit-circle-anim-STIXGeneral-Regular-2c" />
+     <use transform="translate(120.239958 56.692188) scale(0.7)" href="#unit-circle-anim-STIXGeneral-Regular-221a" />
+     <use transform="translate(193.94995 56.309375) scale(0.7)" href="#unit-circle-anim-STIXGeneral-Regular-33" />
+     <use transform="translate(161.239958 -40.007812) scale(0.7)" href="#unit-circle-anim-STIXGeneral-Regular-32" />
+     <use transform="translate(250.199939 0.760938)" href="#unit-circle-anim-STIXGeneral-Regular-29" />
+     <path d="M 33.299988 13.557813  L 33.299988 19.807813  L 68.299977 19.807813  L 68.299977 13.557813  L 33.299988 13.557813  z " />
+     <path d="M 185.19995 120.25  L 185.19995 124.625  L 237.699939 124.625  L 237.699939 120.25  L 185.19995 120.25  z " />
+     <path d="M 120.239958 13.557813  L 120.239958 19.807813  L 237.699939 19.807813  L 237.699939 13.557813  L 120.239958 13.557813  z " />
+    </g>
+   </g>
+   <g id="unit-circle-anim-text_6">
+    
+    <g transform="translate(271.35648 169.961936) scale(0.11 -0.11)">
+     <use transform="translate(0 0.40625)" href="#unit-circle-anim-STIXGeneral-Regular-31" />
+    </g>
+   </g>
+   <g id="unit-circle-anim-text_7">
+    
+    <g transform="translate(173.564 68.616176) scale(0.11 -0.11)">
+     <use transform="translate(0 0.40625)" href="#unit-circle-anim-STIXGeneral-Regular-31" />
+    </g>
+   </g>
+   <g id="unit-circle-anim-text_8">
+    
+    <g transform="translate(82.14872 169.961936) scale(0.11 -0.11)">
+     <defs>
+      <path id="unit-circle-anim-STIXGeneral-Regular-2212" d="M 3974 1408  L 410 1408  L 410 1830  L 3974 1830  L 3974 1408  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.40625)" href="#unit-circle-anim-STIXGeneral-Regular-2212" />
+     <use transform="translate(68.499985 0.40625)" href="#unit-circle-anim-STIXGeneral-Regular-31" />
+    </g>
+   </g>
+   <g id="unit-circle-anim-text_9">
+    
+    <g transform="translate(165.974 254.633936) scale(0.11 -0.11)">
+     <use transform="translate(0 0.40625)" href="#unit-circle-anim-STIXGeneral-Regular-2212" />
+     <use transform="translate(68.499985 0.40625)" href="#unit-circle-anim-STIXGeneral-Regular-31" />
+    </g>
+   </g>
+   <g id="unit-circle-anim-text_10">
+    
+    <g transform="translate(66.45024 58.550363) scale(0.14 -0.14)" fill="#d9534f">
+     <defs>
+      <path id="unit-circle-anim-STIXGeneral-Regular-73" d="M 998 1926  L 1664 1523  Q 1984 1331 2105 1164  Q 2227 998 2227 736  Q 2227 416 1961 176  Q 1696 -64 1331 -64  Q 1030 -64 864 -6  Q 691 51 570 51  Q 461 51 416 -26  L 333 -26  L 333 979  L 435 979  Q 538 512 730 294  Q 922 77 1248 77  Q 1485 77 1632 211  Q 1779 346 1779 550  Q 1779 845 1440 1030  L 1094 1222  Q 326 1651 326 2150  Q 326 2522 566 2730  Q 806 2938 1210 2938  Q 1491 2938 1638 2867  Q 1754 2816 1818 2816  Q 1862 2816 1920 2880  L 1990 2880  L 2022 2010  L 1926 2010  Q 1818 2445 1654 2621  Q 1491 2797 1203 2797  Q 986 2797 854 2688  Q 723 2579 723 2362  Q 723 2253 796 2128  Q 870 2003 998 1926  z " transform="scale(0.015625)" />
+      <path id="unit-circle-anim-STIXGeneral-Regular-69" d="M 1152 4045  Q 1152 3904 1056 3811  Q 960 3718 819 3718  Q 685 3718 592 3811  Q 499 3904 499 4045  Q 499 4179 595 4275  Q 691 4371 826 4371  Q 966 4371 1059 4275  Q 1152 4179 1152 4045  z M 1619 0  L 102 0  L 102 96  Q 435 115 521 211  Q 608 307 608 666  L 608 2118  Q 608 2342 563 2432  Q 518 2522 397 2522  Q 243 2522 128 2490  L 128 2592  L 1120 2944  L 1146 2918  L 1146 672  Q 1146 314 1226 218  Q 1306 122 1619 96  L 1619 0  z " transform="scale(0.015625)" />
+      <path id="unit-circle-anim-STIXGeneral-Regular-6e" d="M 3104 0  L 1773 0  L 1779 96  Q 2016 115 2096 233  Q 2176 352 2176 672  L 2176 1946  Q 2176 2592 1709 2592  Q 1549 2592 1408 2515  Q 1267 2438 1050 2227  L 1050 461  Q 1050 269 1136 192  Q 1222 115 1466 96  L 1466 0  L 115 0  L 115 96  Q 358 115 435 214  Q 512 314 512 602  L 512 2157  Q 512 2394 467 2483  Q 422 2573 288 2573  Q 160 2573 102 2547  L 102 2656  Q 550 2784 979 2944  L 1030 2925  L 1030 2426  L 1037 2426  Q 1491 2944 1958 2944  Q 2323 2944 2518 2688  Q 2714 2432 2714 1958  L 2714 544  Q 2714 288 2790 205  Q 2867 122 3104 96  L 3104 0  z " transform="scale(0.015625)" />
+      <path id="unit-circle-anim-STIXGeneral-Italic-3b8" d="M 3162 3270  Q 3162 2534 2925 1862  Q 2688 1190 2304 678  Q 1741 -70 992 -70  Q 608 -70 390 224  Q 173 518 173 1030  Q 173 1997 592 2813  Q 1011 3629 1594 4070  Q 1952 4339 2374 4339  Q 2733 4339 2947 4076  Q 3162 3814 3162 3270  z M 941 2221  L 2432 2221  Q 2624 2874 2624 3533  Q 2624 4205 2285 4205  Q 2029 4205 1728 3814  Q 1427 3424 1232 2992  Q 1037 2560 941 2221  z M 2387 2016  L 896 2016  Q 710 1530 710 960  Q 710 64 1069 64  Q 1286 64 1510 275  Q 1734 486 1904 806  Q 2074 1126 2198 1440  Q 2323 1754 2387 2016  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.703125)" href="#unit-circle-anim-STIXGeneral-Regular-73" />
+     <use transform="translate(38.899994 0.703125)" href="#unit-circle-anim-STIXGeneral-Regular-69" />
+     <use transform="translate(66.699982 0.703125)" href="#unit-circle-anim-STIXGeneral-Regular-6e" />
+     <use transform="translate(128.733537 0.703125)" href="#unit-circle-anim-STIXGeneral-Italic-3b8" />
+    </g>
+   </g>
+   <g id="unit-circle-anim-text_11">
+    
+    <g transform="translate(66.45024 75.484763) scale(0.14 -0.14)" fill="#3b7dd8">
+     <defs>
+      <path id="unit-circle-anim-STIXGeneral-Regular-63" d="M 2547 998  L 2637 941  Q 2362 403 2112 205  Q 1786 -64 1376 -64  Q 845 -64 502 336  Q 160 736 160 1357  Q 160 2170 698 2618  Q 1094 2944 1562 2944  Q 1965 2944 2256 2749  Q 2547 2554 2547 2285  Q 2547 2176 2457 2096  Q 2368 2016 2246 2016  Q 2022 2016 1939 2310  L 1901 2451  Q 1850 2630 1773 2694  Q 1696 2758 1523 2758  Q 1133 2758 893 2451  Q 653 2144 653 1645  Q 653 1094 928 745  Q 1203 397 1645 397  Q 1920 397 2118 528  Q 2317 659 2547 998  z " transform="scale(0.015625)" />
+      <path id="unit-circle-anim-STIXGeneral-Regular-6f" d="M 3008 1478  Q 3008 806 2608 371  Q 2208 -64 1568 -64  Q 979 -64 582 368  Q 186 800 186 1459  Q 186 2125 582 2534  Q 979 2944 1626 2944  Q 2221 2944 2614 2537  Q 3008 2131 3008 1478  z M 2432 1306  Q 2432 2035 2112 2445  Q 1856 2765 1504 2765  Q 1171 2765 966 2493  Q 762 2221 762 1747  Q 762 928 1101 435  Q 1318 115 1677 115  Q 2029 115 2230 432  Q 2432 749 2432 1306  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.203125)" href="#unit-circle-anim-STIXGeneral-Regular-63" />
+     <use transform="translate(44.399994 0.203125)" href="#unit-circle-anim-STIXGeneral-Regular-6f" />
+     <use transform="translate(94.399979 0.203125)" href="#unit-circle-anim-STIXGeneral-Regular-73" />
+     <use transform="translate(145.333543 0.203125)" href="#unit-circle-anim-STIXGeneral-Italic-3b8" />
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="unit-circle-anim-p4abced0803">
+   <rect x="64.7568" y="36.288" width="313.2864" height="232.848" />
+  </clipPath>
+ </defs>
+<line x1="254.58" y1="220.92" x2="372.18" y2="220.92" stroke="#3b7dd8" stroke-width="3"><animate attributeName="x2" values="372.18;372.11;371.89;371.54;371.04;370.39;369.61;368.69;367.62;366.42;365.09;363.62;362.01;360.28;358.41;356.42;354.31;352.07;349.72;347.25;344.67;341.97;339.17;336.27;333.27;330.17;326.98;323.70;320.34;316.90;313.38;309.79;306.13;302.41;298.63;294.80;290.92;286.99;283.03;279.03;275.00;270.95;266.87;262.78;258.68;254.58;250.48;246.38;242.29;238.21;234.16;230.13;226.13;222.17;218.24;214.36;210.53;206.75;203.03;199.37;195.78;192.26;188.82;185.46;182.18;178.99;175.89;172.89;169.99;167.19;164.49;161.91;159.44;157.09;154.85;152.74;150.75;148.88;147.15;145.54;144.07;142.74;141.54;140.47;139.55;138.77;138.12;137.62;137.27;137.05;136.98;137.05;137.27;137.62;138.12;138.77;139.55;140.47;141.54;142.74;144.07;145.54;147.15;148.88;150.75;152.74;154.85;157.09;159.44;161.91;164.49;167.19;169.99;172.89;175.89;178.99;182.18;185.46;188.82;192.26;195.78;199.37;203.03;206.75;210.53;214.36;218.24;222.17;226.13;230.13;234.16;238.21;242.29;246.38;250.48;254.58;258.68;262.78;266.87;270.95;275.00;279.03;283.03;286.99;290.92;294.80;298.63;302.41;306.13;309.79;313.38;316.90;320.34;323.70;326.98;330.17;333.27;336.27;339.17;341.97;344.67;347.25;349.72;352.07;354.31;356.42;358.41;360.28;362.01;363.62;365.09;366.42;367.62;368.69;369.61;370.39;371.04;371.54;371.89;372.11;372.18" dur="14s" repeatCount="indefinite"/></line><line x1="372.18" y1="220.92" x2="372.18" y2="220.92" stroke="#d9534f" stroke-width="3"><animate attributeName="x1" values="372.18;372.11;371.89;371.54;371.04;370.39;369.61;368.69;367.62;366.42;365.09;363.62;362.01;360.28;358.41;356.42;354.31;352.07;349.72;347.25;344.67;341.97;339.17;336.27;333.27;330.17;326.98;323.70;320.34;316.90;313.38;309.79;306.13;302.41;298.63;294.80;290.92;286.99;283.03;279.03;275.00;270.95;266.87;262.78;258.68;254.58;250.48;246.38;242.29;238.21;234.16;230.13;226.13;222.17;218.24;214.36;210.53;206.75;203.03;199.37;195.78;192.26;188.82;185.46;182.18;178.99;175.89;172.89;169.99;167.19;164.49;161.91;159.44;157.09;154.85;152.74;150.75;148.88;147.15;145.54;144.07;142.74;141.54;140.47;139.55;138.77;138.12;137.62;137.27;137.05;136.98;137.05;137.27;137.62;138.12;138.77;139.55;140.47;141.54;142.74;144.07;145.54;147.15;148.88;150.75;152.74;154.85;157.09;159.44;161.91;164.49;167.19;169.99;172.89;175.89;178.99;182.18;185.46;188.82;192.26;195.78;199.37;203.03;206.75;210.53;214.36;218.24;222.17;226.13;230.13;234.16;238.21;242.29;246.38;250.48;254.58;258.68;262.78;266.87;270.95;275.00;279.03;283.03;286.99;290.92;294.80;298.63;302.41;306.13;309.79;313.38;316.90;320.34;323.70;326.98;330.17;333.27;336.27;339.17;341.97;344.67;347.25;349.72;352.07;354.31;356.42;358.41;360.28;362.01;363.62;365.09;366.42;367.62;368.69;369.61;370.39;371.04;371.54;371.89;372.11;372.18" dur="14s" repeatCount="indefinite"/><animate attributeName="x2" values="372.18;372.11;371.89;371.54;371.04;370.39;369.61;368.69;367.62;366.42;365.09;363.62;362.01;360.28;358.41;356.42;354.31;352.07;349.72;347.25;344.67;341.97;339.17;336.27;333.27;330.17;326.98;323.70;320.34;316.90;313.38;309.79;306.13;302.41;298.63;294.80;290.92;286.99;283.03;279.03;275.00;270.95;266.87;262.78;258.68;254.58;250.48;246.38;242.29;238.21;234.16;230.13;226.13;222.17;218.24;214.36;210.53;206.75;203.03;199.37;195.78;192.26;188.82;185.46;182.18;178.99;175.89;172.89;169.99;167.19;164.49;161.91;159.44;157.09;154.85;152.74;150.75;148.88;147.15;145.54;144.07;142.74;141.54;140.47;139.55;138.77;138.12;137.62;137.27;137.05;136.98;137.05;137.27;137.62;138.12;138.77;139.55;140.47;141.54;142.74;144.07;145.54;147.15;148.88;150.75;152.74;154.85;157.09;159.44;161.91;164.49;167.19;169.99;172.89;175.89;178.99;182.18;185.46;188.82;192.26;195.78;199.37;203.03;206.75;210.53;214.36;218.24;222.17;226.13;230.13;234.16;238.21;242.29;246.38;250.48;254.58;258.68;262.78;266.87;270.95;275.00;279.03;283.03;286.99;290.92;294.80;298.63;302.41;306.13;309.79;313.38;316.90;320.34;323.70;326.98;330.17;333.27;336.27;339.17;341.97;344.67;347.25;349.72;352.07;354.31;356.42;358.41;360.28;362.01;363.62;365.09;366.42;367.62;368.69;369.61;370.39;371.04;371.54;371.89;372.11;372.18" dur="14s" repeatCount="indefinite"/><animate attributeName="y2" values="220.92;216.82;212.72;208.63;204.55;200.50;196.47;192.47;188.51;184.58;180.70;176.87;173.09;169.37;165.71;162.12;158.60;155.16;151.80;148.52;145.33;142.23;139.23;136.33;133.53;130.83;128.25;125.78;123.43;121.19;119.08;117.09;115.22;113.49;111.88;110.41;109.08;107.88;106.81;105.89;105.11;104.46;103.96;103.61;103.39;103.32;103.39;103.61;103.96;104.46;105.11;105.89;106.81;107.88;109.08;110.41;111.88;113.49;115.22;117.09;119.08;121.19;123.43;125.78;128.25;130.83;133.53;136.33;139.23;142.23;145.33;148.52;151.80;155.16;158.60;162.12;165.71;169.37;173.09;176.87;180.70;184.58;188.51;192.47;196.47;200.50;204.55;208.63;212.72;216.82;220.92;225.02;229.12;233.21;237.29;241.34;245.37;249.37;253.33;257.26;261.14;264.97;268.75;272.47;276.13;279.72;283.24;286.68;290.04;293.32;296.51;299.61;302.61;305.51;308.31;311.01;313.59;316.06;318.41;320.65;322.76;324.75;326.62;328.35;329.96;331.43;332.76;333.96;335.03;335.95;336.73;337.38;337.88;338.23;338.45;338.52;338.45;338.23;337.88;337.38;336.73;335.95;335.03;333.96;332.76;331.43;329.96;328.35;326.62;324.75;322.76;320.65;318.41;316.06;313.59;311.01;308.31;305.51;302.61;299.61;296.51;293.32;290.04;286.68;283.24;279.72;276.13;272.47;268.75;264.97;261.14;257.26;253.33;249.37;245.37;241.34;237.29;233.21;229.12;225.02;220.92" dur="14s" repeatCount="indefinite"/></line><line x1="254.58" y1="220.92" x2="372.18" y2="220.92" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3"><animate attributeName="x2" values="372.18;372.11;371.89;371.54;371.04;370.39;369.61;368.69;367.62;366.42;365.09;363.62;362.01;360.28;358.41;356.42;354.31;352.07;349.72;347.25;344.67;341.97;339.17;336.27;333.27;330.17;326.98;323.70;320.34;316.90;313.38;309.79;306.13;302.41;298.63;294.80;290.92;286.99;283.03;279.03;275.00;270.95;266.87;262.78;258.68;254.58;250.48;246.38;242.29;238.21;234.16;230.13;226.13;222.17;218.24;214.36;210.53;206.75;203.03;199.37;195.78;192.26;188.82;185.46;182.18;178.99;175.89;172.89;169.99;167.19;164.49;161.91;159.44;157.09;154.85;152.74;150.75;148.88;147.15;145.54;144.07;142.74;141.54;140.47;139.55;138.77;138.12;137.62;137.27;137.05;136.98;137.05;137.27;137.62;138.12;138.77;139.55;140.47;141.54;142.74;144.07;145.54;147.15;148.88;150.75;152.74;154.85;157.09;159.44;161.91;164.49;167.19;169.99;172.89;175.89;178.99;182.18;185.46;188.82;192.26;195.78;199.37;203.03;206.75;210.53;214.36;218.24;222.17;226.13;230.13;234.16;238.21;242.29;246.38;250.48;254.58;258.68;262.78;266.87;270.95;275.00;279.03;283.03;286.99;290.92;294.80;298.63;302.41;306.13;309.79;313.38;316.90;320.34;323.70;326.98;330.17;333.27;336.27;339.17;341.97;344.67;347.25;349.72;352.07;354.31;356.42;358.41;360.28;362.01;363.62;365.09;366.42;367.62;368.69;369.61;370.39;371.04;371.54;371.89;372.11;372.18" dur="14s" repeatCount="indefinite"/><animate attributeName="y2" values="220.92;216.82;212.72;208.63;204.55;200.50;196.47;192.47;188.51;184.58;180.70;176.87;173.09;169.37;165.71;162.12;158.60;155.16;151.80;148.52;145.33;142.23;139.23;136.33;133.53;130.83;128.25;125.78;123.43;121.19;119.08;117.09;115.22;113.49;111.88;110.41;109.08;107.88;106.81;105.89;105.11;104.46;103.96;103.61;103.39;103.32;103.39;103.61;103.96;104.46;105.11;105.89;106.81;107.88;109.08;110.41;111.88;113.49;115.22;117.09;119.08;121.19;123.43;125.78;128.25;130.83;133.53;136.33;139.23;142.23;145.33;148.52;151.80;155.16;158.60;162.12;165.71;169.37;173.09;176.87;180.70;184.58;188.51;192.47;196.47;200.50;204.55;208.63;212.72;216.82;220.92;225.02;229.12;233.21;237.29;241.34;245.37;249.37;253.33;257.26;261.14;264.97;268.75;272.47;276.13;279.72;283.24;286.68;290.04;293.32;296.51;299.61;302.61;305.51;308.31;311.01;313.59;316.06;318.41;320.65;322.76;324.75;326.62;328.35;329.96;331.43;332.76;333.96;335.03;335.95;336.73;337.38;337.88;338.23;338.45;338.52;338.45;338.23;337.88;337.38;336.73;335.95;335.03;333.96;332.76;331.43;329.96;328.35;326.62;324.75;322.76;320.65;318.41;316.06;313.59;311.01;308.31;305.51;302.61;299.61;296.51;293.32;290.04;286.68;283.24;279.72;276.13;272.47;268.75;264.97;261.14;257.26;253.33;249.37;245.37;241.34;237.29;233.21;229.12;225.02;220.92" dur="14s" repeatCount="indefinite"/></line><circle cx="372.18" cy="220.92" r="5" fill="currentColor"><animate attributeName="cx" values="372.18;372.11;371.89;371.54;371.04;370.39;369.61;368.69;367.62;366.42;365.09;363.62;362.01;360.28;358.41;356.42;354.31;352.07;349.72;347.25;344.67;341.97;339.17;336.27;333.27;330.17;326.98;323.70;320.34;316.90;313.38;309.79;306.13;302.41;298.63;294.80;290.92;286.99;283.03;279.03;275.00;270.95;266.87;262.78;258.68;254.58;250.48;246.38;242.29;238.21;234.16;230.13;226.13;222.17;218.24;214.36;210.53;206.75;203.03;199.37;195.78;192.26;188.82;185.46;182.18;178.99;175.89;172.89;169.99;167.19;164.49;161.91;159.44;157.09;154.85;152.74;150.75;148.88;147.15;145.54;144.07;142.74;141.54;140.47;139.55;138.77;138.12;137.62;137.27;137.05;136.98;137.05;137.27;137.62;138.12;138.77;139.55;140.47;141.54;142.74;144.07;145.54;147.15;148.88;150.75;152.74;154.85;157.09;159.44;161.91;164.49;167.19;169.99;172.89;175.89;178.99;182.18;185.46;188.82;192.26;195.78;199.37;203.03;206.75;210.53;214.36;218.24;222.17;226.13;230.13;234.16;238.21;242.29;246.38;250.48;254.58;258.68;262.78;266.87;270.95;275.00;279.03;283.03;286.99;290.92;294.80;298.63;302.41;306.13;309.79;313.38;316.90;320.34;323.70;326.98;330.17;333.27;336.27;339.17;341.97;344.67;347.25;349.72;352.07;354.31;356.42;358.41;360.28;362.01;363.62;365.09;366.42;367.62;368.69;369.61;370.39;371.04;371.54;371.89;372.11;372.18" dur="14s" repeatCount="indefinite"/><animate attributeName="cy" values="220.92;216.82;212.72;208.63;204.55;200.50;196.47;192.47;188.51;184.58;180.70;176.87;173.09;169.37;165.71;162.12;158.60;155.16;151.80;148.52;145.33;142.23;139.23;136.33;133.53;130.83;128.25;125.78;123.43;121.19;119.08;117.09;115.22;113.49;111.88;110.41;109.08;107.88;106.81;105.89;105.11;104.46;103.96;103.61;103.39;103.32;103.39;103.61;103.96;104.46;105.11;105.89;106.81;107.88;109.08;110.41;111.88;113.49;115.22;117.09;119.08;121.19;123.43;125.78;128.25;130.83;133.53;136.33;139.23;142.23;145.33;148.52;151.80;155.16;158.60;162.12;165.71;169.37;173.09;176.87;180.70;184.58;188.51;192.47;196.47;200.50;204.55;208.63;212.72;216.82;220.92;225.02;229.12;233.21;237.29;241.34;245.37;249.37;253.33;257.26;261.14;264.97;268.75;272.47;276.13;279.72;283.24;286.68;290.04;293.32;296.51;299.61;302.61;305.51;308.31;311.01;313.59;316.06;318.41;320.65;322.76;324.75;326.62;328.35;329.96;331.43;332.76;333.96;335.03;335.95;336.73;337.38;337.88;338.23;338.45;338.52;338.45;338.23;337.88;337.38;336.73;335.95;335.03;333.96;332.76;331.43;329.96;328.35;326.62;324.75;322.76;320.65;318.41;316.06;313.59;311.01;308.31;305.51;302.61;299.61;296.51;293.32;290.04;286.68;283.24;279.72;276.13;272.47;268.75;264.97;261.14;257.26;253.33;249.37;245.37;241.34;237.29;233.21;229.12;225.02;220.92" dur="14s" repeatCount="indefinite"/></circle></svg></p>
+<p><em>图：单位圆：点绕圆转动，红线为 $\sin\theta$，蓝线为 $\cos\theta$</em></p>
+<p>单位圆（$r=1$）上，角 $\theta$ 对应的点是 $(\cos\theta,\sin\theta)$：cos 是横坐标，sin 是点的高度。</p>
+<p>$$\tan\theta=\frac{\sin\theta}{\cos\theta}\ (\cos\theta\ne0),\qquad\sin^2\theta+\cos^2\theta=1$$</p>
+<p>恒等式成立，因为点在单位圆上。</p>
+</div>
+<div class="src">单元6，整理于 2026年10月26日</div>
+</article>
+<article class="kp" data-id="math-specialangles" data-question-id="trig-001" data-type="rule">
+<h4>常用角的值与来源</h4>
+<div class="md">
+<p><svg width="100%" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 532.8 237.6" role="img" aria-label="边长 1 的等腰直角三角形，与沿高切开的边长 2 的等边三角形">
+ <defs>
+  </defs>
+ <g id="special-triangles-figure_1">
+  <g id="special-triangles-patch_1">
+   <path d="M 0 237.6  L 532.8 237.6  L 532.8 0  L 0 0  L 0 237.6  z " fill="none" />
+  </g>
+  <g id="special-triangles-axes_1">
+   <g id="special-triangles-patch_2">
+    <path d="M 100.392812 170.677218  L 213.035518 170.677218  L 100.392812 58.034512  L 100.392812 170.677218  z " clip-path="url(#special-triangles-p3a096fe6b4)" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="miter" />
+   </g>
+   <g id="special-triangles-patch_3">
+    <path d="M 197.105434 154.747133  C 195.013514 156.839053 193.353999 159.322694 192.22186 162.055918  C 191.089721 164.789143 190.506977 167.718797 190.506977 170.677218  " clip-path="url(#special-triangles-p3a096fe6b4)" fill="none" stroke="currentColor" stroke-linejoin="miter" />
+   </g>
+   <g id="special-triangles-patch_4">
+    <path d="M 100.392812 80.563053  C 103.351233 80.563053 106.280887 79.980308 109.014111 78.84817  C 111.747336 77.716031 114.230977 76.056515 116.322896 73.964596  " clip-path="url(#special-triangles-p3a096fe6b4)" fill="none" stroke="currentColor" stroke-linejoin="miter" />
+   </g>
+   <g id="special-triangles-line2d_1">
+    <path d="M 100.392812 161.665801  L 109.404228 161.665801  L 109.404228 170.677218  " clip-path="url(#special-triangles-p3a096fe6b4)" fill="none" stroke="currentColor" stroke-linecap="square" />
+   </g>
+   <g id="special-triangles-text_1">
+    
+    <g transform="translate(153.464165 190.820082) scale(0.13 -0.13)">
+     <defs>
+      <path id="special-triangles-STIXGeneral-Regular-31" d="M 2522 0  L 755 0  L 755 96  Q 1107 115 1235 227  Q 1363 339 1363 608  L 1363 3482  Q 1363 3795 1171 3795  Q 1082 3795 883 3718  L 710 3654  L 710 3744  L 1856 4326  L 1914 4307  L 1914 486  Q 1914 275 2042 185  Q 2170 96 2522 96  L 2522 0  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.40625)" href="#special-triangles-STIXGeneral-Regular-31" />
+    </g>
+   </g>
+   <g id="special-triangles-text_2">
+    
+    <g transform="translate(84.881395 117.384458) scale(0.13 -0.13)">
+     <use transform="translate(0 0.40625)" href="#special-triangles-STIXGeneral-Regular-31" />
+    </g>
+   </g>
+   <g id="special-triangles-text_3">
+    
+    <g transform="translate(165.725581 101.964448) scale(0.13 -0.13)">
+     <defs>
+      <path id="special-triangles-STIXGeneral-Regular-221a" d="M 6163 6227  L 3104 -1658  L 2899 -1658  L 1606 1734  Q 1466 2112 1210 2112  Q 1011 2112 794 1914  L 717 2042  L 1715 2835  L 1837 2835  L 3142 -595  L 3168 -595  L 5818 6227  L 6163 6227  z " transform="scale(0.015625)" />
+      <path id="special-triangles-STIXGeneral-Regular-32" d="M 3034 877  L 2688 0  L 186 0  L 186 77  L 1325 1286  Q 1773 1754 1965 2144  Q 2157 2534 2157 2950  Q 2157 3379 1920 3616  Q 1683 3853 1267 3853  Q 922 3853 720 3673  Q 518 3494 326 3021  L 192 3053  Q 301 3648 630 3987  Q 960 4326 1523 4326  Q 2054 4326 2380 4006  Q 2707 3686 2707 3200  Q 2707 2477 1888 1613  L 832 486  L 2330 486  Q 2541 486 2665 569  Q 2790 653 2944 915  L 3034 877  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.703125)" href="#special-triangles-STIXGeneral-Regular-221a" />
+     <use transform="translate(105.299988 1.15625)" href="#special-triangles-STIXGeneral-Regular-32" />
+     <path d="M 92.799988 91.5  L 92.799988 97.75  L 167.799973 97.75  L 167.799973 91.5  L 92.799988 91.5  z " />
+    </g>
+   </g>
+   <g id="special-triangles-text_4">
+    
+    <g transform="translate(166.809498 156.033666) scale(0.105 -0.105)">
+     <defs>
+      <path id="special-triangles-STIXGeneral-Regular-34" d="M 3027 1069  L 2368 1069  L 2368 0  L 1869 0  L 1869 1069  L 77 1069  L 77 1478  L 2086 4326  L 2368 4326  L 2368 1478  L 3027 1478  L 3027 1069  z M 1869 1478  L 1869 3674  L 333 1478  L 1869 1478  z " transform="scale(0.015625)" />
+      <path id="special-triangles-STIXGeneral-Regular-35" d="M 2803 4358  L 2573 3814  Q 2534 3731 2400 3731  L 1158 3731  L 902 3187  Q 1606 3053 1920 2896  Q 2234 2739 2502 2368  Q 2726 2061 2726 1555  Q 2726 1094 2576 780  Q 2426 467 2099 224  Q 1664 -90 1011 -90  Q 646 -90 422 19  Q 198 128 198 307  Q 198 550 486 550  Q 717 550 960 352  Q 1210 147 1414 147  Q 1747 147 2012 480  Q 2278 813 2278 1229  Q 2278 1843 1850 2189  Q 1293 2637 486 2637  Q 410 2637 410 2688  L 416 2720  L 1114 4237  L 2438 4237  Q 2547 4237 2608 4269  Q 2669 4301 2746 4403  L 2803 4358  z " transform="scale(0.015625)" />
+      <path id="special-triangles-STIXGeneral-Regular-2218" d="M 1734 2224  Q 1984 1971 1984 1612  Q 1984 1254 1731 1001  Q 1478 749 1120 749  Q 755 749 505 1001  Q 256 1254 256 1626  Q 256 1984 509 2230  Q 762 2477 1133 2477  Q 1485 2477 1734 2224  z M 1434 1299  Q 1562 1427 1562 1612  Q 1562 1798 1434 1926  Q 1306 2054 1133 2054  Q 934 2054 806 1929  Q 678 1805 678 1626  Q 678 1427 803 1299  Q 928 1171 1120 1171  Q 1306 1171 1434 1299  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.203125)" href="#special-triangles-STIXGeneral-Regular-34" />
+     <use transform="translate(49.999985 0.203125)" href="#special-triangles-STIXGeneral-Regular-35" />
+     <use transform="translate(111.651248 35.478125) scale(0.7)" href="#special-triangles-STIXGeneral-Regular-2218" />
+    </g>
+   </g>
+   <g id="special-triangles-text_5">
+    
+    <g transform="translate(115.036364 98.585886) scale(0.105 -0.105)">
+     <use transform="translate(0 0.203125)" href="#special-triangles-STIXGeneral-Regular-34" />
+     <use transform="translate(49.999985 0.203125)" href="#special-triangles-STIXGeneral-Regular-35" />
+     <use transform="translate(111.651248 35.478125) scale(0.7)" href="#special-triangles-STIXGeneral-Regular-2218" />
+    </g>
+   </g>
+  </g>
+  <g id="special-triangles-axes_2">
+   <g id="special-triangles-patch_5">
+    <path d="M 308.480395 183.198289  L 457.210486 183.198289  L 382.84544 54.394251  L 308.480395 183.198289  z " clip-path="url(#special-triangles-pd3d060c330)" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="miter" />
+   </g>
+   <g id="special-triangles-patch_6">
+    <path d="M 334.508161 183.198289  C 334.508161 178.629802 333.305345 174.140832 331.021101 170.184406  C 328.736858 166.22798 325.450704 162.941826 321.494278 160.657582  " clip-path="url(#special-triangles-pd3d060c330)" fill="none" stroke="currentColor" stroke-linejoin="miter" />
+   </g>
+   <g id="special-triangles-patch_7">
+    <path d="M 369.831557 76.934958  C 371.80141 78.072253 373.911874 78.946436 376.108959 79.535143  C 378.306044 80.12385 380.570851 80.422017 382.84544 80.422017  " clip-path="url(#special-triangles-pd3d060c330)" fill="none" stroke="currentColor" stroke-linejoin="miter" />
+   </g>
+   <g id="special-triangles-line2d_2">
+    <path d="M 382.84544 183.198289  L 382.84544 54.394251  " clip-path="url(#special-triangles-pd3d060c330)" fill="none" stroke-dasharray="5.6,4.2" stroke-dashoffset="0" stroke="#3b7dd8" stroke-width="1.4" />
+   </g>
+   <g id="special-triangles-line2d_3">
+    <path d="M 382.84544 175.761784  L 390.281945 175.761784  L 390.281945 183.198289  " clip-path="url(#special-triangles-pd3d060c330)" fill="none" stroke="currentColor" stroke-linecap="square" />
+   </g>
+   <g id="special-triangles-text_6">
+    
+    <g transform="translate(330.239112 109.730089) scale(0.13 -0.13)">
+     <use transform="translate(0 0.40625)" href="#special-triangles-STIXGeneral-Regular-32" />
+    </g>
+   </g>
+   <g id="special-triangles-text_7">
+    
+    <g transform="translate(342.412918 199.513387) scale(0.13 -0.13)">
+     <use transform="translate(0 0.40625)" href="#special-triangles-STIXGeneral-Regular-31" />
+    </g>
+   </g>
+   <g id="special-triangles-text_8">
+    
+    <g transform="translate(416.777963 199.513387) scale(0.13 -0.13)">
+     <use transform="translate(0 0.40625)" href="#special-triangles-STIXGeneral-Regular-31" />
+    </g>
+   </g>
+   <g id="special-triangles-text_9">
+    
+    <g transform="translate(388.050994 124.31435) scale(0.13 -0.13)" fill="#3b7dd8">
+     <defs>
+      <path id="special-triangles-STIXGeneral-Regular-33" d="M 390 3264  L 288 3290  Q 435 3770 748 4048  Q 1062 4326 1542 4326  Q 1990 4326 2265 4083  Q 2541 3840 2541 3450  Q 2541 2925 1946 2566  Q 2298 2413 2477 2227  Q 2758 1914 2758 1402  Q 2758 890 2464 506  Q 2246 211 1840 60  Q 1434 -90 979 -90  Q 262 -90 262 275  Q 262 378 339 442  Q 416 506 525 506  Q 685 506 915 339  Q 1197 141 1466 141  Q 1818 141 2058 425  Q 2298 710 2298 1120  Q 2298 1856 1632 2048  Q 1434 2112 979 2112  L 979 2202  Q 1338 2323 1517 2432  Q 2035 2726 2035 3290  Q 2035 3610 1852 3776  Q 1670 3942 1344 3942  Q 768 3942 390 3264  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.703125)" href="#special-triangles-STIXGeneral-Regular-221a" />
+     <use transform="translate(105.299988 1.15625)" href="#special-triangles-STIXGeneral-Regular-33" />
+     <path d="M 92.799988 91.5  L 92.799988 97.75  L 167.799973 97.75  L 167.799973 91.5  L 92.799988 91.5  z " />
+    </g>
+   </g>
+   <g id="special-triangles-text_10">
+    
+    <g transform="translate(336.248117 160.888775) scale(0.105 -0.105)">
+     <defs>
+      <path id="special-triangles-STIXGeneral-Regular-36" d="M 2854 4378  L 2867 4275  Q 2112 4154 1606 3664  Q 1101 3174 973 2451  Q 1344 2739 1786 2739  Q 2349 2739 2672 2380  Q 2995 2022 2995 1402  Q 2995 774 2669 378  Q 2291 -90 1651 -90  Q 870 -90 518 557  Q 218 1107 218 1786  Q 218 2835 915 3552  Q 1312 3962 1731 4131  Q 2150 4301 2854 4378  z M 2419 1203  Q 2419 2445 1555 2445  Q 1235 2445 1024 2275  Q 813 2106 813 1702  Q 813 954 1046 522  Q 1280 90 1722 90  Q 2061 90 2240 394  Q 2419 698 2419 1203  z " transform="scale(0.015625)" />
+      <path id="special-triangles-STIXGeneral-Regular-30" d="M 3046 2112  Q 3046 1683 2963 1302  Q 2880 922 2717 602  Q 2554 282 2266 96  Q 1978 -90 1600 -90  Q 1210 -90 915 108  Q 621 307 461 640  Q 301 973 227 1350  Q 154 1728 154 2150  Q 154 2746 301 3222  Q 448 3699 790 4012  Q 1133 4326 1626 4326  Q 2253 4326 2649 3712  Q 3046 3098 3046 2112  z M 2432 2080  Q 2432 3091 2217 3625  Q 2003 4160 1587 4160  Q 1190 4160 979 3622  Q 768 3085 768 2106  Q 768 1120 979 598  Q 1190 77 1600 77  Q 2003 77 2217 598  Q 2432 1120 2432 2080  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.59375)" href="#special-triangles-STIXGeneral-Regular-36" />
+     <use transform="translate(49.999985 0.59375)" href="#special-triangles-STIXGeneral-Regular-30" />
+     <use transform="translate(111.651248 35.86875) scale(0.7)" href="#special-triangles-STIXGeneral-Regular-2218" />
+    </g>
+   </g>
+   <g id="special-triangles-text_11">
+    
+    <g transform="translate(361.166082 112.398987) scale(0.1 -0.1)">
+     <use transform="translate(0 0.40625)" href="#special-triangles-STIXGeneral-Regular-33" />
+     <use transform="translate(49.999985 0.40625)" href="#special-triangles-STIXGeneral-Regular-30" />
+     <use transform="translate(111.651248 35.68125) scale(0.7)" href="#special-triangles-STIXGeneral-Regular-2218" />
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="special-triangles-p3a096fe6b4">
+   <rect x="66.6" y="35.50597" width="174.596195" height="168.964059" />
+  </clipPath>
+  <clipPath id="special-triangles-pd3d060c330">
+   <rect x="278.734376" y="34.468197" width="200.785624" height="171.039605" />
+  </clipPath>
+ </defs>
+</svg></p>
+<p><em>图：边长 1 的等腰直角三角形，与沿高切开的边长 2 的等边三角形</em></p>
+<p>来源是两个三角形：边长 1 的等腰直角三角形（斜边 $\sqrt2$），和边长 2 的等边三角形沿高切开（直角边 $1$ 和 $\sqrt3$，斜边 $2$）。$\sin=\dfrac{\text{对边}}{\text{斜边}}$，$\cos=\dfrac{\text{邻边}}{\text{斜边}}$，$\tan=\dfrac{\text{对边}}{\text{邻边}}$。</p>
+<ul><li>$45^\circ$：$\sin=\cos=\dfrac{\sqrt2}2$，$\tan=1$。</li><li>$30^\circ$：$\sin=\dfrac12$，$\cos=\dfrac{\sqrt3}2$，$\tan=\dfrac{\sqrt3}3$。</li><li>$60^\circ$：$\sin=\dfrac{\sqrt3}2$，$\cos=\dfrac12$，$\tan=\sqrt3$。</li></ul>
+<p>记忆规律（来源是上面两个三角形）：$0^\circ,30^\circ,45^\circ,60^\circ,90^\circ$ 的 $\sin$ 依次是 $\dfrac{\sqrt0}2,\dfrac{\sqrt1}2,\dfrac{\sqrt2}2,\dfrac{\sqrt3}2,\dfrac{\sqrt4}2$，$\cos$ 倒过来排。验证：$\sin^260^\circ+\cos^260^\circ=\dfrac34+\dfrac14=1$。</p>
+</div>
+<div class="src">单元6，整理于 2026年10月26日</div>
+</article>
+</section>
+<section class="sec">
+<h3>诱导公式与周期</h3>
+<article class="kp" data-id="math-reduction" data-question-id="trig-003" data-type="method">
+<h4>象限、参考角与符号</h4>
+<div class="md">
+<p>$\sin,\cos$ 的周期是 $2\pi$（转一整圈回到同一点）；$\tan$ 的周期是 $\pi$（转半圈，分子分母同时变号，比值不变）。</p>
+<p>做法：1 找象限和参考角（与横轴的锐角夹角）；2 算参考角的函数值；3 按象限定符号。符号：第一象限 sin＋ cos＋；第二象限 sin＋ cos－；第三象限 sin－ cos－；第四象限 sin－ cos＋。</p>
+<ul><li>$\sin\dfrac{7\pi}6$：$210^\circ$，第三象限，参考角 $30^\circ$，$=-\sin30^\circ=-\dfrac12$。</li><li>$\cos\dfrac{5\pi}6$：$150^\circ$，第二象限，参考角 $30^\circ$，$\cos(180^\circ-30^\circ)=-\cos30^\circ=-\dfrac{\sqrt3}2$。</li><li>$\tan\dfrac{3\pi}4=\dfrac{\sin135^\circ}{\cos135^\circ}=\dfrac{\sqrt2/2}{-\sqrt2/2}=-1$。</li></ul>
+<p>写法提醒：括号里的角完整写在函数里，等号后才是结果。</p>
+</div>
+<div class="src">单元7，整理于 2026年10月26日</div>
+</article>
+</section>
+</section>
+<section class="chap">
+<h2>学习方法</h2>
+<section class="sec">
+<h3>错误与检查</h3>
+<article class="kp" data-id="math-errors" data-question-id="exp-001" data-type="pitfall">
+<h4>我的易错清单</h4>
+<div class="md">
+<ul><li>$16-3$ 写成 15：最后一步心算 → 代回原式检查 $15+3\ne16$。</li><li>$81^{3/4}$ 沿用了 16 的结果：没有重新找底数 → 写出 $3^4=81$ 再算。</li><li>$\ln(x-1)$ 要求 $x-1&gt;1$：真数条件记过严 → 先写“真数 $&gt;0$”再解不等式。</li><li>数列极限当成级数收敛 → 数列看单项，级数看部分和。</li><li>图像平移方向判反 → 用特征点代入，不靠口诀。</li></ul>
+</div>
+<div class="src">综合，整理于 2026年10月26日</div>
+</article>
+<article class="kp" data-id="math-fourstep" data-question-id="exp-001" data-type="method">
+<h4>每道题的四步</h4>
+<div class="md">
+<ol><li>意义：这条规则在描述什么关系？</li><li>执行：具体做哪几步，什么条件下能用？</li><li>条件整合：题目里的每个条件（范围、符号、单位）都进了判断吗？</li><li>验证：不重复刚才的计算，用另一条路径检查结果（代回、反运算、画图）。</li></ol>
+</div>
+<div class="src">综合，整理于 2026年10月26日</div>
+</article>
+</section>
+</section>
+<section class="chap">
+<h2>考纲公式速查</h2>
+<section class="sec">
+<h3>按章节的公式与例题</h3>
+<article class="kp" data-id="ref-limits" data-question-id="f-001" data-type="rule">
+<h4>两个重要极限与等价无穷小</h4>
+<div class="md">
+<p>$$\lim_{x\to0}\frac{\sin x}{x}=1,\qquad\lim_{x\to\infty}\left(1+\frac1x\right)^{x}=e$$</p>
+<p>当 $x\to0$ 时：$\sin x\sim x,\ \tan x\sim x,\ \arcsin x\sim x,\ \ln(1+x)\sim x,\ e^x-1\sim x,\ 1-\cos x\sim\dfrac{x^2}{2},\ (1+x)^a-1\sim ax$。</p>
+<p>例：$$\lim_{x\to0}\frac{e^x-1-x}{x^2}\overset{\text{洛}}{=}\lim_{x\to0}\frac{e^x-1}{2x}\overset{\text{洛}}{=}\lim_{x\to0}\frac{e^x}{2}=\frac12$$</p>
+</div>
+<div class="src">考纲速查，学到对应单元时对照使用，整理于 2026年10月26日</div>
+</article>
+<article class="kp" data-id="ref-lhopital" data-question-id="f-001" data-type="method">
+<h4>洛必达法则与未定式</h4>
+<div class="md">
+<p>未定式类型：$\dfrac00,\ \dfrac\infty\infty,\ 0\cdot\infty,\ \infty-\infty,\ 1^\infty,\ 0^0,\ \infty^0$。后三类先取对数：$$\lim u^v=\exp\!\Big(\lim v\ln u\Big)$$</p>
+<p>例：$$\lim_{x\to0^+}x^x=\exp\!\Big(\lim_{x\to0^+}x\ln x\Big)=e^0=1$$</p>
+<p>例：$$\lim_{x\to0}\frac{x-\sin x}{x^3}=\lim_{x\to0}\frac{1-\cos x}{3x^2}=\lim_{x\to0}\frac{\sin x}{6x}=\frac16$$</p>
+</div>
+<div class="src">考纲速查，学到对应单元时对照使用，整理于 2026年10月26日</div>
+</article>
+<article class="kp" data-id="ref-derivatives" data-question-id="f-001" data-type="rule">
+<h4>求导公式与法则</h4>
+<div class="md">
+<table><thead><tr><th>类型</th><th>公式</th></tr></thead><tbody><tr><td>基本公式</td><td>$(\sin x)&#x27;=\cos x,\ (\cos x)&#x27;=-\sin x,\ (\tan x)&#x27;=\sec^2x$</td></tr><tr><td>反三角</td><td>$(\arcsin x)&#x27;=\dfrac1{\sqrt{1-x^2}},\ (\arctan x)&#x27;=\dfrac1{1+x^2}$</td></tr><tr><td>指数对数</td><td>$(a^x)&#x27;=a^x\ln a,\ (\log_ax)&#x27;=\dfrac1{x\ln a}$</td></tr><tr><td>商法则</td><td>$\left(\dfrac uv\right)&#x27;=\dfrac{u&#x27;v-uv&#x27;}{v^2}$</td></tr><tr><td>链式法则</td><td>$\dfrac{dy}{dx}=\dfrac{dy}{du}\cdot\dfrac{du}{dx}$</td></tr><tr><td>参数方程</td><td>$\dfrac{dy}{dx}=\dfrac{y&#x27;(t)}{x&#x27;(t)},\ \dfrac{d^2y}{dx^2}=\dfrac{\frac{d}{dt}\left(\frac{y&#x27;(t)}{x&#x27;(t)}\right)}{x&#x27;(t)}$</td></tr></tbody></table>
+</div>
+<div class="src">考纲速查，学到对应单元时对照使用，整理于 2026年10月26日</div>
+</article>
+<article class="kp" data-id="ref-integrals" data-question-id="f-001" data-type="rule">
+<h4>积分公式与应用</h4>
+<div class="md">
+<p>$$\int x^a\,dx=\frac{x^{a+1}}{a+1}+C\ (a\ne-1),\qquad\int\frac{dx}{x}=\ln|x|+C,\qquad\int\frac{dx}{1+x^2}=\arctan x+C$$</p>
+<p>$$\int u\,dv=uv-\int v\,du,\qquad\int_a^bf(x)\,dx=F(b)-F(a),\qquad\frac{d}{dx}\int_a^{\varphi(x)}f(t)\,dt=f(\varphi(x))\,\varphi&#x27;(x)$$</p>
+<p>面积 $A=\displaystyle\int_a^b|f(x)-g(x)|\,dx$；绕 $x$ 轴旋转体积 $V=\pi\displaystyle\int_a^b\left[f(x)\right]^2dx$。</p>
+</div>
+<div class="src">考纲速查，学到对应单元时对照使用，整理于 2026年10月26日</div>
+</article>
+<article class="kp" data-id="ref-geometry" data-question-id="f-003" data-type="rule">
+<h4>空间解析几何</h4>
+<div class="md">
+<p>平面点法式：$A(x-x_0)+B(y-y_0)+C(z-z_0)=0$；点到平面距离 $d=\dfrac{|Ax_0+By_0+Cz_0+D|}{\sqrt{A^2+B^2+C^2}}$。</p>
+<p>直线对称式：$\dfrac{x-x_0}{m}=\dfrac{y-y_0}{n}=\dfrac{z-z_0}{p}$。向量积：$$\mathbf a\times\mathbf b=\begin{vmatrix}\mathbf i&amp;\mathbf j&amp;\mathbf k\\a_1&amp;a_2&amp;a_3\\b_1&amp;b_2&amp;b_3\end{vmatrix}$$</p>
+</div>
+<div class="src">考纲速查，学到对应单元时对照使用，整理于 2026年10月26日</div>
+</article>
+<article class="kp" data-id="ref-multivar" data-question-id="f-003" data-type="rule">
+<h4>多元微分与二重积分</h4>
+<div class="md">
+<p>隐函数：$F(x,y,z)=0\Rightarrow\dfrac{\partial z}{\partial x}=-\dfrac{F_x}{F_z},\ \dfrac{\partial z}{\partial y}=-\dfrac{F_y}{F_z}$。拉格朗日乘数法：$L(x,y,\lambda)=f(x,y)+\lambda\,\varphi(x,y)$。</p>
+<p>极坐标下的二重积分：$$\iint_Df(x,y)\,d\sigma=\int_{\alpha}^{\beta}d\theta\int_{r_1(\theta)}^{r_2(\theta)}f(r\cos\theta,\,r\sin\theta)\,r\,dr$$</p>
+<p>例：$$\iint_{x^2+y^2\le1}(x^2+y^2)\,d\sigma=\int_0^{2\pi}d\theta\int_0^1r^3\,dr=\frac{\pi}{2}$$</p>
+</div>
+<div class="src">考纲速查，学到对应单元时对照使用，整理于 2026年10月26日</div>
+</article>
+<article class="kp" data-id="ref-series" data-question-id="f-002" data-type="rule">
+<h4>级数与幂级数</h4>
+<div class="md">
+<p>比值法：$\rho=\lim\limits_{n\to\infty}\left|\dfrac{a_{n+1}}{a_n}\right|$，幂级数收敛半径 $R=\dfrac1\rho$。几何级数 $\displaystyle\sum_{n=0}^{\infty}aq^n$ 在 $|q|&lt;1$ 时收敛于 $\dfrac{a}{1-q}$；$p$ 级数 $\displaystyle\sum\dfrac1{n^p}$ 当且仅当 $p&gt;1$ 时收敛。</p>
+<p>$$e^x=\sum_{n=0}^{\infty}\frac{x^n}{n!},\qquad\sin x=\sum_{n=0}^{\infty}\frac{(-1)^n\,x^{2n+1}}{(2n+1)!},\qquad\cos x=\sum_{n=0}^{\infty}\frac{(-1)^n\,x^{2n}}{(2n)!}$$</p>
+<p>$$\ln(1+x)=\sum_{n=1}^{\infty}\frac{(-1)^{n-1}x^n}{n}\ (-1&lt;x\le1),\qquad\frac1{1-x}=\sum_{n=0}^{\infty}x^n\ (|x|&lt;1)$$</p>
+</div>
+<div class="src">考纲速查，学到对应单元时对照使用，整理于 2026年10月26日</div>
+</article>
+<article class="kp" data-id="ref-ode" data-question-id="f-001" data-type="rule">
+<h4>微分方程</h4>
+<div class="md">
+<p>一阶线性：$y&#x27;+P(x)y=Q(x)$ 的通解 $$y=e^{-\int P\,dx}\left(\int Q\,e^{\int P\,dx}\,dx+C\right)$$</p>
+<p>二阶常系数齐次 $y&#x27;&#x27;+py&#x27;+qy=0$，特征根 $r_1,r_2$：$$y=\begin{cases}C_1e^{r_1x}+C_2e^{r_2x},&amp;r_1\ne r_2\text{（实根）}\\(C_1+C_2x)\,e^{rx},&amp;r_1=r_2=r\\e^{\alpha x}\left(C_1\cos\beta x+C_2\sin\beta x\right),&amp;r=\alpha\pm i\beta\end{cases}$$</p>
+<p>非齐次 $f(x)=P_n(x)e^{\lambda x}$：特解设为 $y^*=x^k\,Q_n(x)\,e^{\lambda x}$，$k$ 等于 $\lambda$ 作为特征根的重数（0、1 或 2）。</p>
+</div>
+<div class="src">考纲速查，学到对应单元时对照使用，整理于 2026年10月26日</div>
+</article>
+<article class="kp" data-id="ref-linalg" data-question-id="f-004" data-type="rule">
+<h4>行列式、矩阵与线性方程组</h4>
+<div class="md">
+<p>$$\begin{vmatrix}a&amp;b\\c&amp;d\end{vmatrix}=ad-bc,\qquad\begin{pmatrix}a&amp;b\\c&amp;d\end{pmatrix}^{-1}=\frac1{ad-bc}\begin{pmatrix}d&amp;-b\\-c&amp;a\end{pmatrix}$$</p>
+<p>$|kA|=k^n|A|,\ |AB|=|A||B|,\ A^{-1}=\dfrac1{|A|}A^*$；克莱姆法则 $x_i=\dfrac{D_i}{D}$。基础解系含 $n-r(A)$ 个向量。</p>
+<p>例：解 $\begin{cases}x+y+z=3\\2x-y+z=2\\x+2y-z=2\end{cases}$，对增广矩阵做初等行变换：$$\left(\begin{array}{ccc|c}1&amp;1&amp;1&amp;3\\2&amp;-1&amp;1&amp;2\\1&amp;2&amp;-1&amp;2\end{array}\right)\xrightarrow[r_3-r_1]{r_2-2r_1}\left(\begin{array}{ccc|c}1&amp;1&amp;1&amp;3\\0&amp;-3&amp;-1&amp;-4\\0&amp;1&amp;-2&amp;-1\end{array}\right)$$继续化简得唯一解 $(x,y,z)=(1,1,1)$。验证：$2-1+1=2$，$1+2-1=2$。</p>
+</div>
+<div class="src">考纲速查，学到对应单元时对照使用，整理于 2026年10月26日</div>
+</article>
+</section>
+</section>
+</main>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<svg width="100%" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 532.8 237.6" role="img" aria-label="边长 1 的等腰直角三角形，与沿高切开的边长 2 的等边三角形">
+ <defs>
+  </defs>
+ <g id="special-triangles-figure_1">
+  <g id="special-triangles-patch_1">
+   <path d="M 0 237.6  L 532.8 237.6  L 532.8 0  L 0 0  L 0 237.6  z " fill="none" />
+  </g>
+  <g id="special-triangles-axes_1">
+   <g id="special-triangles-patch_2">
+    <path d="M 100.392812 170.677218  L 213.035518 170.677218  L 100.392812 58.034512  L 100.392812 170.677218  z " clip-path="url(#special-triangles-p3a096fe6b4)" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="miter" />
+   </g>
+   <g id="special-triangles-patch_3">
+    <path d="M 197.105434 154.747133  C 195.013514 156.839053 193.353999 159.322694 192.22186 162.055918  C 191.089721 164.789143 190.506977 167.718797 190.506977 170.677218  " clip-path="url(#special-triangles-p3a096fe6b4)" fill="none" stroke="currentColor" stroke-linejoin="miter" />
+   </g>
+   <g id="special-triangles-patch_4">
+    <path d="M 100.392812 80.563053  C 103.351233 80.563053 106.280887 79.980308 109.014111 78.84817  C 111.747336 77.716031 114.230977 76.056515 116.322896 73.964596  " clip-path="url(#special-triangles-p3a096fe6b4)" fill="none" stroke="currentColor" stroke-linejoin="miter" />
+   </g>
+   <g id="special-triangles-line2d_1">
+    <path d="M 100.392812 161.665801  L 109.404228 161.665801  L 109.404228 170.677218  " clip-path="url(#special-triangles-p3a096fe6b4)" fill="none" stroke="currentColor" stroke-linecap="square" />
+   </g>
+   <g id="special-triangles-text_1">
+    
+    <g transform="translate(153.464165 190.820082) scale(0.13 -0.13)">
+     <defs>
+      <path id="special-triangles-STIXGeneral-Regular-31" d="M 2522 0  L 755 0  L 755 96  Q 1107 115 1235 227  Q 1363 339 1363 608  L 1363 3482  Q 1363 3795 1171 3795  Q 1082 3795 883 3718  L 710 3654  L 710 3744  L 1856 4326  L 1914 4307  L 1914 486  Q 1914 275 2042 185  Q 2170 96 2522 96  L 2522 0  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.40625)" href="#special-triangles-STIXGeneral-Regular-31" />
+    </g>
+   </g>
+   <g id="special-triangles-text_2">
+    
+    <g transform="translate(84.881395 117.384458) scale(0.13 -0.13)">
+     <use transform="translate(0 0.40625)" href="#special-triangles-STIXGeneral-Regular-31" />
+    </g>
+   </g>
+   <g id="special-triangles-text_3">
+    
+    <g transform="translate(165.725581 101.964448) scale(0.13 -0.13)">
+     <defs>
+      <path id="special-triangles-STIXGeneral-Regular-221a" d="M 6163 6227  L 3104 -1658  L 2899 -1658  L 1606 1734  Q 1466 2112 1210 2112  Q 1011 2112 794 1914  L 717 2042  L 1715 2835  L 1837 2835  L 3142 -595  L 3168 -595  L 5818 6227  L 6163 6227  z " transform="scale(0.015625)" />
+      <path id="special-triangles-STIXGeneral-Regular-32" d="M 3034 877  L 2688 0  L 186 0  L 186 77  L 1325 1286  Q 1773 1754 1965 2144  Q 2157 2534 2157 2950  Q 2157 3379 1920 3616  Q 1683 3853 1267 3853  Q 922 3853 720 3673  Q 518 3494 326 3021  L 192 3053  Q 301 3648 630 3987  Q 960 4326 1523 4326  Q 2054 4326 2380 4006  Q 2707 3686 2707 3200  Q 2707 2477 1888 1613  L 832 486  L 2330 486  Q 2541 486 2665 569  Q 2790 653 2944 915  L 3034 877  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.703125)" href="#special-triangles-STIXGeneral-Regular-221a" />
+     <use transform="translate(105.299988 1.15625)" href="#special-triangles-STIXGeneral-Regular-32" />
+     <path d="M 92.799988 91.5  L 92.799988 97.75  L 167.799973 97.75  L 167.799973 91.5  L 92.799988 91.5  z " />
+    </g>
+   </g>
+   <g id="special-triangles-text_4">
+    
+    <g transform="translate(166.809498 156.033666) scale(0.105 -0.105)">
+     <defs>
+      <path id="special-triangles-STIXGeneral-Regular-34" d="M 3027 1069  L 2368 1069  L 2368 0  L 1869 0  L 1869 1069  L 77 1069  L 77 1478  L 2086 4326  L 2368 4326  L 2368 1478  L 3027 1478  L 3027 1069  z M 1869 1478  L 1869 3674  L 333 1478  L 1869 1478  z " transform="scale(0.015625)" />
+      <path id="special-triangles-STIXGeneral-Regular-35" d="M 2803 4358  L 2573 3814  Q 2534 3731 2400 3731  L 1158 3731  L 902 3187  Q 1606 3053 1920 2896  Q 2234 2739 2502 2368  Q 2726 2061 2726 1555  Q 2726 1094 2576 780  Q 2426 467 2099 224  Q 1664 -90 1011 -90  Q 646 -90 422 19  Q 198 128 198 307  Q 198 550 486 550  Q 717 550 960 352  Q 1210 147 1414 147  Q 1747 147 2012 480  Q 2278 813 2278 1229  Q 2278 1843 1850 2189  Q 1293 2637 486 2637  Q 410 2637 410 2688  L 416 2720  L 1114 4237  L 2438 4237  Q 2547 4237 2608 4269  Q 2669 4301 2746 4403  L 2803 4358  z " transform="scale(0.015625)" />
+      <path id="special-triangles-STIXGeneral-Regular-2218" d="M 1734 2224  Q 1984 1971 1984 1612  Q 1984 1254 1731 1001  Q 1478 749 1120 749  Q 755 749 505 1001  Q 256 1254 256 1626  Q 256 1984 509 2230  Q 762 2477 1133 2477  Q 1485 2477 1734 2224  z M 1434 1299  Q 1562 1427 1562 1612  Q 1562 1798 1434 1926  Q 1306 2054 1133 2054  Q 934 2054 806 1929  Q 678 1805 678 1626  Q 678 1427 803 1299  Q 928 1171 1120 1171  Q 1306 1171 1434 1299  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.203125)" href="#special-triangles-STIXGeneral-Regular-34" />
+     <use transform="translate(49.999985 0.203125)" href="#special-triangles-STIXGeneral-Regular-35" />
+     <use transform="translate(111.651248 35.478125) scale(0.7)" href="#special-triangles-STIXGeneral-Regular-2218" />
+    </g>
+   </g>
+   <g id="special-triangles-text_5">
+    
+    <g transform="translate(115.036364 98.585886) scale(0.105 -0.105)">
+     <use transform="translate(0 0.203125)" href="#special-triangles-STIXGeneral-Regular-34" />
+     <use transform="translate(49.999985 0.203125)" href="#special-triangles-STIXGeneral-Regular-35" />
+     <use transform="translate(111.651248 35.478125) scale(0.7)" href="#special-triangles-STIXGeneral-Regular-2218" />
+    </g>
+   </g>
+  </g>
+  <g id="special-triangles-axes_2">
+   <g id="special-triangles-patch_5">
+    <path d="M 308.480395 183.198289  L 457.210486 183.198289  L 382.84544 54.394251  L 308.480395 183.198289  z " clip-path="url(#special-triangles-pd3d060c330)" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="miter" />
+   </g>
+   <g id="special-triangles-patch_6">
+    <path d="M 334.508161 183.198289  C 334.508161 178.629802 333.305345 174.140832 331.021101 170.184406  C 328.736858 166.22798 325.450704 162.941826 321.494278 160.657582  " clip-path="url(#special-triangles-pd3d060c330)" fill="none" stroke="currentColor" stroke-linejoin="miter" />
+   </g>
+   <g id="special-triangles-patch_7">
+    <path d="M 369.831557 76.934958  C 371.80141 78.072253 373.911874 78.946436 376.108959 79.535143  C 378.306044 80.12385 380.570851 80.422017 382.84544 80.422017  " clip-path="url(#special-triangles-pd3d060c330)" fill="none" stroke="currentColor" stroke-linejoin="miter" />
+   </g>
+   <g id="special-triangles-line2d_2">
+    <path d="M 382.84544 183.198289  L 382.84544 54.394251  " clip-path="url(#special-triangles-pd3d060c330)" fill="none" stroke-dasharray="5.6,4.2" stroke-dashoffset="0" stroke="#3b7dd8" stroke-width="1.4" />
+   </g>
+   <g id="special-triangles-line2d_3">
+    <path d="M 382.84544 175.761784  L 390.281945 175.761784  L 390.281945 183.198289  " clip-path="url(#special-triangles-pd3d060c330)" fill="none" stroke="currentColor" stroke-linecap="square" />
+   </g>
+   <g id="special-triangles-text_6">
+    
+    <g transform="translate(330.239112 109.730089) scale(0.13 -0.13)">
+     <use transform="translate(0 0.40625)" href="#special-triangles-STIXGeneral-Regular-32" />
+    </g>
+   </g>
+   <g id="special-triangles-text_7">
+    
+    <g transform="translate(342.412918 199.513387) scale(0.13 -0.13)">
+     <use transform="translate(0 0.40625)" href="#special-triangles-STIXGeneral-Regular-31" />
+    </g>
+   </g>
+   <g id="special-triangles-text_8">
+    
+    <g transform="translate(416.777963 199.513387) scale(0.13 -0.13)">
+     <use transform="translate(0 0.40625)" href="#special-triangles-STIXGeneral-Regular-31" />
+    </g>
+   </g>
+   <g id="special-triangles-text_9">
+    
+    <g transform="translate(388.050994 124.31435) scale(0.13 -0.13)" fill="#3b7dd8">
+     <defs>
+      <path id="special-triangles-STIXGeneral-Regular-33" d="M 390 3264  L 288 3290  Q 435 3770 748 4048  Q 1062 4326 1542 4326  Q 1990 4326 2265 4083  Q 2541 3840 2541 3450  Q 2541 2925 1946 2566  Q 2298 2413 2477 2227  Q 2758 1914 2758 1402  Q 2758 890 2464 506  Q 2246 211 1840 60  Q 1434 -90 979 -90  Q 262 -90 262 275  Q 262 378 339 442  Q 416 506 525 506  Q 685 506 915 339  Q 1197 141 1466 141  Q 1818 141 2058 425  Q 2298 710 2298 1120  Q 2298 1856 1632 2048  Q 1434 2112 979 2112  L 979 2202  Q 1338 2323 1517 2432  Q 2035 2726 2035 3290  Q 2035 3610 1852 3776  Q 1670 3942 1344 3942  Q 768 3942 390 3264  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.703125)" href="#special-triangles-STIXGeneral-Regular-221a" />
+     <use transform="translate(105.299988 1.15625)" href="#special-triangles-STIXGeneral-Regular-33" />
+     <path d="M 92.799988 91.5  L 92.799988 97.75  L 167.799973 97.75  L 167.799973 91.5  L 92.799988 91.5  z " />
+    </g>
+   </g>
+   <g id="special-triangles-text_10">
+    
+    <g transform="translate(336.248117 160.888775) scale(0.105 -0.105)">
+     <defs>
+      <path id="special-triangles-STIXGeneral-Regular-36" d="M 2854 4378  L 2867 4275  Q 2112 4154 1606 3664  Q 1101 3174 973 2451  Q 1344 2739 1786 2739  Q 2349 2739 2672 2380  Q 2995 2022 2995 1402  Q 2995 774 2669 378  Q 2291 -90 1651 -90  Q 870 -90 518 557  Q 218 1107 218 1786  Q 218 2835 915 3552  Q 1312 3962 1731 4131  Q 2150 4301 2854 4378  z M 2419 1203  Q 2419 2445 1555 2445  Q 1235 2445 1024 2275  Q 813 2106 813 1702  Q 813 954 1046 522  Q 1280 90 1722 90  Q 2061 90 2240 394  Q 2419 698 2419 1203  z " transform="scale(0.015625)" />
+      <path id="special-triangles-STIXGeneral-Regular-30" d="M 3046 2112  Q 3046 1683 2963 1302  Q 2880 922 2717 602  Q 2554 282 2266 96  Q 1978 -90 1600 -90  Q 1210 -90 915 108  Q 621 307 461 640  Q 301 973 227 1350  Q 154 1728 154 2150  Q 154 2746 301 3222  Q 448 3699 790 4012  Q 1133 4326 1626 4326  Q 2253 4326 2649 3712  Q 3046 3098 3046 2112  z M 2432 2080  Q 2432 3091 2217 3625  Q 2003 4160 1587 4160  Q 1190 4160 979 3622  Q 768 3085 768 2106  Q 768 1120 979 598  Q 1190 77 1600 77  Q 2003 77 2217 598  Q 2432 1120 2432 2080  z " transform="scale(0.015625)" />
+     </defs>
+     <use transform="translate(0 0.59375)" href="#special-triangles-STIXGeneral-Regular-36" />
+     <use transform="translate(49.999985 0.59375)" href="#special-triangles-STIXGeneral-Regular-30" />
+     <use transform="translate(111.651248 35.86875) scale(0.7)" href="#special-triangles-STIXGeneral-Regular-2218" />
+    </g>
+   </g>
+   <g id="special-triangles-text_11">
+    
+    <g transform="translate(361.166082 112.398987) scale(0.1 -0.1)">
+     <use transform="translate(0 0.40625)" href="#special-triangles-STIXGeneral-Regular-33" />
+     <use transform="translate(49.999985 0.40625)" href="#special-triangles-STIXGeneral-Regular-30" />
+     <use transform="translate(111.651248 35.68125) scale(0.7)" href="#special-triangles-STIXGeneral-Regular-2218" />
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="special-triangles-p3a096fe6b4">
+   <rect x="66.6" y="35.50597" width="174.596195" height="168.964059" />
+  </clipPath>
+  <clipPath id="special-triangles-pd3d060c330">
+   <rect x="278.734376" y="34.468197" width="200.785624" height="171.039605" />
+  </clipPath>
+ </defs>
+</svg>

@@ -1,0 +1,1576 @@
+{
+ "schemaVersion": "2.1",
+ "deck": {
+  "id": "gaoshu-zhuanshengben",
+  "title": "高等数学（专升本）· 基础恢复",
+  "subject": "高等数学",
+  "language": "zh-CN",
+  "version": "0.1.0",
+  "description": "单元1–8 与考纲公式速查"
+ },
+ "assets": {
+  "exp-log-graph": {
+   "type": "image",
+   "src": "assets/images/exp-log-graph.svg",
+   "alt": "y=2ˣ、y=log₂x 与 y=x 的图像"
+  },
+  "sector-120": {
+   "type": "image",
+   "src": "assets/images/sector-120.svg",
+   "alt": "半径 3、圆心角 120° 的扇形"
+  },
+  "unit-circle-anim": {
+   "type": "image",
+   "src": "assets/images/unit-circle-anim.svg",
+   "alt": "动画：点绕单位圆转动，红线为 sin，蓝线为 cos"
+  },
+  "shift-log": {
+   "type": "image",
+   "src": "assets/images/shift-log.svg",
+   "alt": "log₂x、log₂(x−1)、log₂(x+2) 的图像"
+  }
+ },
+ "questions": [
+  {
+   "id": "exp-001",
+   "type": "single_choice",
+   "chapter": "第一章 指数与对数",
+   "tags": [
+    "对数"
+   ],
+   "difficulty": 1,
+   "content": [
+    {
+     "type": "text",
+     "text": "解方程 "
+    },
+    {
+     "type": "math",
+     "latex": "\\log_2(x+3)=4"
+    }
+   ],
+   "options": [
+    {
+     "key": "a",
+     "text": "7"
+    },
+    {
+     "key": "b",
+     "text": "13"
+    },
+    {
+     "key": "c",
+     "text": "11"
+    },
+    {
+     "key": "d",
+     "text": "19"
+    }
+   ],
+   "answer": {
+    "keys": [
+     "b"
+    ]
+   },
+   "explanation": [
+    {
+     "type": "math",
+     "latex": "2^4=x+3\\Rightarrow x=16-3=13",
+     "display": true
+    },
+    {
+     "type": "text",
+     "text": "验证：13+3=16=2⁴。"
+    }
+   ]
+  },
+  {
+   "id": "exp-002",
+   "type": "single_choice",
+   "chapter": "第一章 指数与对数",
+   "tags": [
+    "对数"
+   ],
+   "difficulty": 1,
+   "content": [
+    {
+     "type": "math",
+     "latex": "\\log_2 8+\\log_2\\frac14=\\ ?"
+    }
+   ],
+   "options": [
+    {
+     "key": "a",
+     "text": "1"
+    },
+    {
+     "key": "b",
+     "text": "5"
+    },
+    {
+     "key": "c",
+     "text": "−1"
+    },
+    {
+     "key": "d",
+     "text": "3"
+    }
+   ],
+   "answer": {
+    "keys": [
+     "a"
+    ]
+   },
+   "explanation": [
+    {
+     "type": "math",
+     "latex": "3+(-2)=1",
+     "display": true
+    },
+    {
+     "type": "text",
+     "text": "验证："
+    },
+    {
+     "type": "math",
+     "latex": "\\log_2\\!\\left(8\\times\\tfrac14\\right)=\\log_22=1"
+    }
+   ]
+  },
+  {
+   "id": "exp-003",
+   "type": "true_false",
+   "chapter": "第一章 指数与对数",
+   "tags": [
+    "易错"
+   ],
+   "difficulty": 1,
+   "content": [
+    {
+     "type": "text",
+     "text": "判断："
+    },
+    {
+     "type": "math",
+     "latex": "\\log_a(M+N)=\\log_aM+\\log_aN"
+    },
+    {
+     "type": "text",
+     "text": "。"
+    }
+   ],
+   "answer": {
+    "value": false
+   },
+   "explanation": [
+    {
+     "type": "text",
+     "text": "对数只有“乘变加”，没有“和的拆分”。反例："
+    },
+    {
+     "type": "math",
+     "latex": "\\log_2(4+4)=3\\ne4=\\log_24+\\log_24"
+    }
+   ]
+  },
+  {
+   "id": "exp-004",
+   "type": "multiple_choice",
+   "chapter": "第一章 指数与对数",
+   "tags": [
+    "图像"
+   ],
+   "difficulty": 2,
+   "content": [
+    {
+     "type": "text",
+     "text": "关于 "
+    },
+    {
+     "type": "math",
+     "latex": "y=\\log_ax\\ (a>1)"
+    },
+    {
+     "type": "text",
+     "text": " 的说法，正确的有："
+    }
+   ],
+   "options": [
+    {
+     "key": "a",
+     "text": "定义域是 x>0"
+    },
+    {
+     "key": "b",
+     "text": "图像过点 (1, 0)"
+    },
+    {
+     "key": "c",
+     "text": "在定义域内递减"
+    },
+    {
+     "key": "d",
+     "text": "值域是全体实数"
+    }
+   ],
+   "answer": {
+    "keys": [
+     "a",
+     "b",
+     "d"
+    ]
+   },
+   "explanation": [
+    {
+     "type": "text",
+     "text": "a>1 时对数函数递增；c 错。"
+    }
+   ]
+  },
+  {
+   "id": "exp-005",
+   "type": "fill_blank",
+   "chapter": "第一章 指数与对数",
+   "tags": [
+    "对数"
+   ],
+   "difficulty": 1,
+   "content": [
+    {
+     "type": "math",
+     "latex": "a^b=N\\iff\\log_{a}N="
+    },
+    {
+     "type": "blank",
+     "id": "1"
+    }
+   ],
+   "blanks": [
+    {
+     "id": "1",
+     "answers": [
+      "b"
+     ]
+    }
+   ],
+   "explanation": [
+    {
+     "type": "text",
+     "text": "底数^指数=真数，对数就是在问指数。"
+    }
+   ]
+  },
+  {
+   "id": "exp-006",
+   "type": "single_choice",
+   "chapter": "第一章 指数与对数",
+   "tags": [
+    "图像"
+   ],
+   "difficulty": 2,
+   "content": [
+    {
+     "type": "image",
+     "asset": "exp-log-graph",
+     "caption": "y=2ˣ 与 y=log₂x"
+    },
+    {
+     "type": "text",
+     "text": "图中两条曲线关于哪条直线对称？"
+    }
+   ],
+   "options": [
+    {
+     "key": "a",
+     "text": "x 轴"
+    },
+    {
+     "key": "b",
+     "text": "y 轴"
+    },
+    {
+     "key": "c",
+     "text": "y = x"
+    },
+    {
+     "key": "d",
+     "text": "y = −x"
+    }
+   ],
+   "answer": {
+    "keys": [
+     "c"
+    ]
+   },
+   "explanation": [
+    {
+     "type": "text",
+     "text": "(m, n) 在指数曲线上，(n, m) 就在对数曲线上。"
+    }
+   ]
+  },
+  {
+   "id": "exp-007",
+   "type": "single_choice",
+   "chapter": "第一章 指数与对数",
+   "tags": [
+    "单调性"
+   ],
+   "difficulty": 1,
+   "content": [
+    {
+     "type": "text",
+     "text": "比较大小："
+    }
+   ],
+   "options": [
+    {
+     "key": "a",
+     "content": [
+      {
+       "type": "math",
+       "latex": "2^{0.5}>2^{0.3}"
+      }
+     ]
+    },
+    {
+     "key": "b",
+     "content": [
+      {
+       "type": "math",
+       "latex": "2^{0.5}<2^{0.3}"
+      }
+     ]
+    },
+    {
+     "key": "c",
+     "content": [
+      {
+       "type": "math",
+       "latex": "2^{0.5}=2^{0.3}"
+      }
+     ]
+    },
+    {
+     "key": "d",
+     "text": "无法比较"
+    }
+   ],
+   "answer": {
+    "keys": [
+     "a"
+    ]
+   },
+   "explanation": [
+    {
+     "type": "text",
+     "text": "底数 2>1，指数函数递增，且 0.5>0.3。底数在 0 到 1 之间时结论相反。"
+    }
+   ]
+  },
+  {
+   "id": "dom-001",
+   "type": "single_choice",
+   "chapter": "第二章 定义域与分数指数",
+   "tags": [
+    "定义域"
+   ],
+   "difficulty": 2,
+   "content": [
+    {
+     "type": "text",
+     "text": "函数 "
+    },
+    {
+     "type": "math",
+     "latex": "f(x)=\\sqrt{4-x}+\\ln(x-1)"
+    },
+    {
+     "type": "text",
+     "text": " 的定义域是："
+    }
+   ],
+   "options": [
+    {
+     "key": "a",
+     "content": [
+      {
+       "type": "math",
+       "latex": "(1,4]"
+      }
+     ]
+    },
+    {
+     "key": "b",
+     "content": [
+      {
+       "type": "math",
+       "latex": "[1,4]"
+      }
+     ]
+    },
+    {
+     "key": "c",
+     "content": [
+      {
+       "type": "math",
+       "latex": "(1,4)"
+      }
+     ]
+    },
+    {
+     "key": "d",
+     "content": [
+      {
+       "type": "math",
+       "latex": "(-\\infty,4]"
+      }
+     ]
+    }
+   ],
+   "answer": {
+    "keys": [
+     "a"
+    ]
+   },
+   "explanation": [
+    {
+     "type": "math",
+     "latex": "4-x\\ge0\\Rightarrow x\\le4,\\qquad x-1>0\\Rightarrow x>1",
+     "display": true
+    },
+    {
+     "type": "text",
+     "text": "取交集得 (1, 4]。"
+    }
+   ]
+  },
+  {
+   "id": "frac-001",
+   "type": "single_choice",
+   "chapter": "第二章 定义域与分数指数",
+   "tags": [
+    "分数指数"
+   ],
+   "difficulty": 1,
+   "content": [
+    {
+     "type": "math",
+     "latex": "81^{3/4}=\\ ?"
+    }
+   ],
+   "options": [
+    {
+     "key": "a",
+     "text": "9"
+    },
+    {
+     "key": "b",
+     "text": "27"
+    },
+    {
+     "key": "c",
+     "text": "3"
+    },
+    {
+     "key": "d",
+     "text": "243"
+    }
+   ],
+   "answer": {
+    "keys": [
+     "b"
+    ]
+   },
+   "explanation": [
+    {
+     "type": "math",
+     "latex": "81^{3/4}=\\left(81^{1/4}\\right)^3=3^3=27",
+     "display": true
+    },
+    {
+     "type": "text",
+     "text": "因为 3⁴=81。"
+    }
+   ]
+  },
+  {
+   "id": "frac-002",
+   "type": "fill_blank",
+   "chapter": "第二章 定义域与分数指数",
+   "tags": [
+    "分数指数"
+   ],
+   "difficulty": 1,
+   "content": [
+    {
+     "type": "math",
+     "latex": "27^{2/3}="
+    },
+    {
+     "type": "blank",
+     "id": "1"
+    }
+   ],
+   "blanks": [
+    {
+     "id": "1",
+     "answers": [
+      "9"
+     ]
+    }
+   ],
+   "explanation": [
+    {
+     "type": "math",
+     "latex": "27^{2/3}=\\left(27^{1/3}\\right)^2=3^2=9"
+    }
+   ]
+  },
+  {
+   "id": "ser-001",
+   "type": "true_false",
+   "chapter": "第三章 数列与级数",
+   "tags": [
+    "级数"
+   ],
+   "difficulty": 2,
+   "content": [
+    {
+     "type": "text",
+     "text": "判断：若 "
+    },
+    {
+     "type": "math",
+     "latex": "a_n\\to0"
+    },
+    {
+     "type": "text",
+     "text": "，则级数 "
+    },
+    {
+     "type": "math",
+     "latex": "\\sum a_n"
+    },
+    {
+     "type": "text",
+     "text": " 一定收敛。"
+    }
+   ],
+   "answer": {
+    "value": false
+   },
+   "explanation": [
+    {
+     "type": "text",
+     "text": "反例：调和级数 "
+    },
+    {
+     "type": "math",
+     "latex": "\\sum_{n=1}^{\\infty}\\frac1n"
+    },
+    {
+     "type": "text",
+     "text": " 发散，但每项趋于 0。"
+    }
+   ]
+  },
+  {
+   "id": "ser-002",
+   "type": "single_choice",
+   "chapter": "第三章 数列与级数",
+   "tags": [
+    "级数"
+   ],
+   "difficulty": 1,
+   "content": [
+    {
+     "type": "text",
+     "text": "下列级数中收敛的是："
+    }
+   ],
+   "options": [
+    {
+     "key": "a",
+     "content": [
+      {
+       "type": "math",
+       "latex": "\\displaystyle\\sum_{n=1}^{\\infty}\\frac1n"
+      }
+     ]
+    },
+    {
+     "key": "b",
+     "content": [
+      {
+       "type": "math",
+       "latex": "\\displaystyle\\sum_{n=1}^{\\infty}\\frac1{n^2}"
+      }
+     ]
+    },
+    {
+     "key": "c",
+     "content": [
+      {
+       "type": "math",
+       "latex": "\\displaystyle\\sum_{n=1}^{\\infty}n"
+      }
+     ]
+    },
+    {
+     "key": "d",
+     "content": [
+      {
+       "type": "math",
+       "latex": "\\displaystyle\\sum_{n=1}^{\\infty}(-1)^n"
+      }
+     ]
+    }
+   ],
+   "answer": {
+    "keys": [
+     "b"
+    ]
+   },
+   "explanation": [
+    {
+     "type": "text",
+     "text": "p 级数当 p>1 时收敛，p=2。"
+    }
+   ]
+  },
+  {
+   "id": "rad-001",
+   "type": "fill_blank",
+   "chapter": "第四章 弧度与三角函数",
+   "tags": [
+    "弧度"
+   ],
+   "difficulty": 1,
+   "content": [
+    {
+     "type": "math",
+     "latex": "150^\\circ="
+    },
+    {
+     "type": "blank",
+     "id": "1"
+    },
+    {
+     "type": "text",
+     "text": " rad"
+    }
+   ],
+   "blanks": [
+    {
+     "id": "1",
+     "answers": [
+      "5π/6",
+      "5pi/6",
+      "\\frac{5\\pi}{6}",
+      "5π÷6"
+     ]
+    }
+   ],
+   "explanation": [
+    {
+     "type": "math",
+     "latex": "150\\times\\frac{\\pi}{180}=\\frac{5\\pi}{6}",
+     "display": true
+    }
+   ]
+  },
+  {
+   "id": "rad-002",
+   "type": "single_choice",
+   "chapter": "第四章 弧度与三角函数",
+   "tags": [
+    "扇形"
+   ],
+   "difficulty": 2,
+   "content": [
+    {
+     "type": "image",
+     "asset": "sector-120",
+     "caption": "半径 3、圆心角 120° 的扇形"
+    },
+    {
+     "type": "text",
+     "text": "半径 3、圆心角 120° 的扇形，弧长是："
+    }
+   ],
+   "options": [
+    {
+     "key": "a",
+     "text": "π"
+    },
+    {
+     "key": "b",
+     "text": "2π"
+    },
+    {
+     "key": "c",
+     "text": "3π"
+    },
+    {
+     "key": "d",
+     "text": "6π"
+    }
+   ],
+   "answer": {
+    "keys": [
+     "b"
+    ]
+   },
+   "explanation": [
+    {
+     "type": "math",
+     "latex": "\\theta=\\frac{2\\pi}{3},\\quad s=r\\theta=3\\cdot\\frac{2\\pi}{3}=2\\pi",
+     "display": true
+    },
+    {
+     "type": "text",
+     "text": "验证：整圆周长 6π 的 1/3。"
+    }
+   ]
+  },
+  {
+   "id": "rad-003",
+   "type": "short_answer",
+   "chapter": "第四章 弧度与三角函数",
+   "tags": [
+    "弧度"
+   ],
+   "difficulty": 2,
+   "content": [
+    {
+     "type": "text",
+     "text": "说明弧度的定义，并验证 "
+    },
+    {
+     "type": "math",
+     "latex": "180^\\circ=\\pi"
+    },
+    {
+     "type": "text",
+     "text": "。"
+    }
+   ],
+   "referenceAnswer": "弧度 θ = 弧长 s ÷ 半径 r。整圆弧长 2πr，所以整圆是 2π 弧度，半圆即 180° = π 弧度。",
+   "explanation": [
+    {
+     "type": "math",
+     "latex": "\\theta=\\frac sr,\\qquad 360^\\circ=\\frac{2\\pi r}{r}=2\\pi",
+     "display": true
+    }
+   ]
+  },
+  {
+   "id": "trig-001",
+   "type": "single_choice",
+   "chapter": "第四章 弧度与三角函数",
+   "tags": [
+    "常用角"
+   ],
+   "difficulty": 1,
+   "content": [
+    {
+     "type": "math",
+     "latex": "\\sin60^\\circ=\\ ?"
+    }
+   ],
+   "options": [
+    {
+     "key": "a",
+     "content": [
+      {
+       "type": "math",
+       "latex": "\\frac12"
+      }
+     ]
+    },
+    {
+     "key": "b",
+     "content": [
+      {
+       "type": "math",
+       "latex": "\\frac{\\sqrt2}{2}"
+      }
+     ]
+    },
+    {
+     "key": "c",
+     "content": [
+      {
+       "type": "math",
+       "latex": "\\frac{\\sqrt3}{2}"
+      }
+     ]
+    },
+    {
+     "key": "d",
+     "text": "1"
+    }
+   ],
+   "answer": {
+    "keys": [
+     "c"
+    ]
+   },
+   "explanation": [
+    {
+     "type": "text",
+     "text": "等边三角形沿高切开：对边 √3，斜边 2。"
+    }
+   ]
+  },
+  {
+   "id": "trig-002",
+   "type": "fill_blank",
+   "chapter": "第四章 弧度与三角函数",
+   "tags": [
+    "常用角"
+   ],
+   "difficulty": 1,
+   "content": [
+    {
+     "type": "math",
+     "latex": "\\tan30^\\circ="
+    },
+    {
+     "type": "blank",
+     "id": "1"
+    }
+   ],
+   "blanks": [
+    {
+     "id": "1",
+     "answers": [
+      "√3/3",
+      "1/√3",
+      "\\frac{\\sqrt3}{3}",
+      "√3÷3"
+     ]
+    }
+   ],
+   "explanation": [
+    {
+     "type": "math",
+     "latex": "\\tan30^\\circ=\\frac{\\sin30^\\circ}{\\cos30^\\circ}=\\frac{1/2}{\\sqrt3/2}=\\frac{\\sqrt3}{3}",
+     "display": true
+    }
+   ]
+  },
+  {
+   "id": "trig-003",
+   "type": "single_choice",
+   "chapter": "第四章 弧度与三角函数",
+   "tags": [
+    "诱导公式"
+   ],
+   "difficulty": 2,
+   "content": [
+    {
+     "type": "math",
+     "latex": "\\sin\\frac{7\\pi}{6}=\\ ?"
+    }
+   ],
+   "options": [
+    {
+     "key": "a",
+     "content": [
+      {
+       "type": "math",
+       "latex": "\\frac12"
+      }
+     ]
+    },
+    {
+     "key": "b",
+     "content": [
+      {
+       "type": "math",
+       "latex": "-\\frac12"
+      }
+     ]
+    },
+    {
+     "key": "c",
+     "content": [
+      {
+       "type": "math",
+       "latex": "\\frac{\\sqrt3}{2}"
+      }
+     ]
+    },
+    {
+     "key": "d",
+     "content": [
+      {
+       "type": "math",
+       "latex": "-\\frac{\\sqrt3}{2}"
+      }
+     ]
+    }
+   ],
+   "answer": {
+    "keys": [
+     "b"
+    ]
+   },
+   "explanation": [
+    {
+     "type": "text",
+     "text": "210°，第三象限，参考角 30°，sin 为负："
+    },
+    {
+     "type": "math",
+     "latex": "-\\sin30^\\circ=-\\tfrac12"
+    }
+   ]
+  },
+  {
+   "id": "trig-004",
+   "type": "single_choice",
+   "chapter": "第四章 弧度与三角函数",
+   "tags": [
+    "诱导公式"
+   ],
+   "difficulty": 2,
+   "content": [
+    {
+     "type": "math",
+     "latex": "\\cos\\frac{5\\pi}{6}=\\ ?"
+    }
+   ],
+   "options": [
+    {
+     "key": "a",
+     "content": [
+      {
+       "type": "math",
+       "latex": "\\frac{\\sqrt3}{2}"
+      }
+     ]
+    },
+    {
+     "key": "b",
+     "content": [
+      {
+       "type": "math",
+       "latex": "\\frac12"
+      }
+     ]
+    },
+    {
+     "key": "c",
+     "content": [
+      {
+       "type": "math",
+       "latex": "-\\frac12"
+      }
+     ]
+    },
+    {
+     "key": "d",
+     "content": [
+      {
+       "type": "math",
+       "latex": "-\\frac{\\sqrt3}{2}"
+      }
+     ]
+    }
+   ],
+   "answer": {
+    "keys": [
+     "d"
+    ]
+   },
+   "explanation": [
+    {
+     "type": "math",
+     "latex": "\\cos(180^\\circ-30^\\circ)=-\\cos30^\\circ=-\\frac{\\sqrt3}{2}",
+     "display": true
+    }
+   ]
+  },
+  {
+   "id": "trig-005",
+   "type": "multiple_choice",
+   "chapter": "第四章 弧度与三角函数",
+   "tags": [
+    "诱导公式"
+   ],
+   "difficulty": 2,
+   "content": [
+    {
+     "type": "text",
+     "text": "下列等式成立的有："
+    }
+   ],
+   "options": [
+    {
+     "key": "a",
+     "content": [
+      {
+       "type": "math",
+       "latex": "\\sin(\\pi-\\theta)=\\sin\\theta"
+      }
+     ]
+    },
+    {
+     "key": "b",
+     "content": [
+      {
+       "type": "math",
+       "latex": "\\cos(\\pi-\\theta)=\\cos\\theta"
+      }
+     ]
+    },
+    {
+     "key": "c",
+     "content": [
+      {
+       "type": "math",
+       "latex": "\\sin(-\\theta)=-\\sin\\theta"
+      }
+     ]
+    },
+    {
+     "key": "d",
+     "content": [
+      {
+       "type": "math",
+       "latex": "\\tan(\\theta+\\pi)=\\tan\\theta"
+      }
+     ]
+    }
+   ],
+   "answer": {
+    "keys": [
+     "a",
+     "c",
+     "d"
+    ]
+   },
+   "explanation": [
+    {
+     "type": "text",
+     "text": "b 错："
+    },
+    {
+     "type": "math",
+     "latex": "\\cos(\\pi-\\theta)=-\\cos\\theta"
+    },
+    {
+     "type": "text",
+     "text": "。"
+    }
+   ]
+  },
+  {
+   "id": "trig-006",
+   "type": "true_false",
+   "chapter": "第四章 弧度与三角函数",
+   "tags": [
+    "恒等式"
+   ],
+   "difficulty": 1,
+   "content": [
+    {
+     "type": "math",
+     "latex": "\\sin^2\\theta+\\cos^2\\theta=1"
+    },
+    {
+     "type": "text",
+     "text": " 对任意实数 θ 都成立。"
+    }
+   ],
+   "answer": {
+    "value": true
+   },
+   "explanation": [
+    {
+     "type": "text",
+     "text": "点 (cosθ, sinθ) 在单位圆上。"
+    }
+   ]
+  },
+  {
+   "id": "trig-007",
+   "type": "single_choice",
+   "chapter": "第四章 弧度与三角函数",
+   "tags": [
+    "单位圆"
+   ],
+   "difficulty": 1,
+   "content": [
+    {
+     "type": "image",
+     "asset": "unit-circle-anim",
+     "caption": "红线是点的高度，蓝线是横坐标"
+    },
+    {
+     "type": "text",
+     "text": "单位圆上角 θ 对应点的纵坐标等于："
+    }
+   ],
+   "options": [
+    {
+     "key": "a",
+     "text": "cos θ"
+    },
+    {
+     "key": "b",
+     "text": "sin θ"
+    },
+    {
+     "key": "c",
+     "text": "tan θ"
+    },
+    {
+     "key": "d",
+     "text": "1"
+    }
+   ],
+   "answer": {
+    "keys": [
+     "b"
+    ]
+   },
+   "explanation": [
+    {
+     "type": "text",
+     "text": "点的坐标是 (cos θ, sin θ)。"
+    }
+   ]
+  },
+  {
+   "id": "shift-001",
+   "type": "single_choice",
+   "chapter": "第五章 函数图像平移",
+   "tags": [
+    "平移",
+    "易错"
+   ],
+   "difficulty": 2,
+   "content": [
+    {
+     "type": "image",
+     "asset": "shift-log",
+     "caption": "三条对数曲线的平移"
+    },
+    {
+     "type": "text",
+     "text": "函数 "
+    },
+    {
+     "type": "math",
+     "latex": "y=\\log_2(x-1)"
+    },
+    {
+     "type": "text",
+     "text": " 的图像由 "
+    },
+    {
+     "type": "math",
+     "latex": "y=\\log_2x"
+    },
+    {
+     "type": "text",
+     "text": " 如何得到？"
+    }
+   ],
+   "options": [
+    {
+     "key": "a",
+     "text": "左移 1"
+    },
+    {
+     "key": "b",
+     "text": "右移 1"
+    },
+    {
+     "key": "c",
+     "text": "上移 1"
+    },
+    {
+     "key": "d",
+     "text": "下移 1"
+    }
+   ],
+   "answer": {
+    "keys": [
+     "b"
+    ]
+   },
+   "explanation": [
+    {
+     "type": "text",
+     "text": "特征点 (1, 0)：x−1=1，x=2，新点 (2, 0)，右移 1。"
+    }
+   ]
+  },
+  {
+   "id": "shift-002",
+   "type": "single_choice",
+   "chapter": "第五章 函数图像平移",
+   "tags": [
+    "平移",
+    "易错"
+   ],
+   "difficulty": 2,
+   "content": [
+    {
+     "type": "text",
+     "text": "函数 "
+    },
+    {
+     "type": "math",
+     "latex": "y=2^{x+1}"
+    },
+    {
+     "type": "text",
+     "text": " 的图像由 "
+    },
+    {
+     "type": "math",
+     "latex": "y=2^x"
+    },
+    {
+     "type": "text",
+     "text": " 如何得到？"
+    }
+   ],
+   "options": [
+    {
+     "key": "a",
+     "text": "左移 1"
+    },
+    {
+     "key": "b",
+     "text": "右移 1"
+    },
+    {
+     "key": "c",
+     "text": "上移 1"
+    },
+    {
+     "key": "d",
+     "text": "下移 1"
+    }
+   ],
+   "answer": {
+    "keys": [
+     "a"
+    ]
+   },
+   "explanation": [
+    {
+     "type": "text",
+     "text": "特征点 (0, 1)：x+1=0，x=−1，新点 (−1, 1)，左移 1。验证："
+    },
+    {
+     "type": "math",
+     "latex": "2^{-1+1}=1"
+    }
+   ]
+  },
+  {
+   "id": "shift-003",
+   "type": "fill_blank",
+   "chapter": "第五章 函数图像平移",
+   "tags": [
+    "平移"
+   ],
+   "difficulty": 2,
+   "content": [
+    {
+     "type": "math",
+     "latex": "y=\\log_2(x+2)"
+    },
+    {
+     "type": "text",
+     "text": " 的图像过点 ("
+    },
+    {
+     "type": "blank",
+     "id": "1"
+    },
+    {
+     "type": "text",
+     "text": "，0)。"
+    }
+   ],
+   "blanks": [
+    {
+     "id": "1",
+     "answers": [
+      "-1",
+      "−1"
+     ]
+    }
+   ],
+   "explanation": [
+    {
+     "type": "math",
+     "latex": "x+2=1\\Rightarrow x=-1",
+     "display": true
+    }
+   ]
+  },
+  {
+   "id": "shift-004",
+   "type": "essay",
+   "chapter": "第五章 函数图像平移",
+   "tags": [
+    "平移",
+    "综合"
+   ],
+   "difficulty": 3,
+   "content": [
+    {
+     "type": "text",
+     "text": "综合分析：用特征点法说明 "
+    },
+    {
+     "type": "math",
+     "latex": "y=\\log_2(x-1)"
+    },
+    {
+     "type": "text",
+     "text": " 与 "
+    },
+    {
+     "type": "math",
+     "latex": "y=\\log_2(x+2)"
+    },
+    {
+     "type": "text",
+     "text": " 相对于 "
+    },
+    {
+     "type": "math",
+     "latex": "y=\\log_2x"
+    },
+    {
+     "type": "text",
+     "text": " 的平移方向，并各给出一个代入验证。"
+    }
+   ],
+   "referenceAnswer": "取特征点 (1,0)。log₂(x−1)：令 x−1=1 得 x=2，新点 (2,0)，右移 1，验证 log₂(2−1)=0。log₂(x+2)：令 x+2=1 得 x=−1，新点 (−1,0)，左移 2，验证 log₂(−1+2)=0。结论：括号里 x−a 向右移 a，x+a 向左移 a，方向与符号相反。",
+   "explanation": [
+    {
+     "type": "text",
+     "text": "定义域也可验证：边界从 x>0 分别变为 x>1 和 x>−2。"
+    }
+   ]
+  },
+  {
+   "id": "f-001",
+   "type": "fill_blank",
+   "chapter": "第六章 考纲公式",
+   "tags": [
+    "极限",
+    "洛必达"
+   ],
+   "difficulty": 3,
+   "content": [
+    {
+     "type": "math",
+     "latex": "\\lim_{x\\to0}\\frac{x-\\sin x}{x^3}=",
+     "display": true
+    },
+    {
+     "type": "blank",
+     "id": "1"
+    }
+   ],
+   "blanks": [
+    {
+     "id": "1",
+     "answers": [
+      "1/6",
+      "\\frac16",
+      "\\frac{1}{6}"
+     ]
+    }
+   ],
+   "explanation": [
+    {
+     "type": "math",
+     "latex": "\\lim_{x\\to0}\\frac{1-\\cos x}{3x^2}=\\lim_{x\\to0}\\frac{\\sin x}{6x}=\\frac16",
+     "display": true
+    }
+   ]
+  },
+  {
+   "id": "f-002",
+   "type": "single_choice",
+   "chapter": "第六章 考纲公式",
+   "tags": [
+    "幂级数"
+   ],
+   "difficulty": 3,
+   "content": [
+    {
+     "type": "text",
+     "text": "幂级数 "
+    },
+    {
+     "type": "math",
+     "latex": "\\sum_{n=1}^{\\infty}\\frac{x^n}{n\\cdot2^n}"
+    },
+    {
+     "type": "text",
+     "text": " 的收敛半径是："
+    }
+   ],
+   "options": [
+    {
+     "key": "a",
+     "text": "2"
+    },
+    {
+     "key": "b",
+     "text": "1/2"
+    },
+    {
+     "key": "c",
+     "text": "1"
+    },
+    {
+     "key": "d",
+     "text": "+∞"
+    }
+   ],
+   "answer": {
+    "keys": [
+     "a"
+    ]
+   },
+   "explanation": [
+    {
+     "type": "math",
+     "latex": "\\rho=\\lim\\frac{n}{2(n+1)}=\\frac12,\\qquad R=\\frac1\\rho=2",
+     "display": true
+    }
+   ]
+  },
+  {
+   "id": "f-003",
+   "type": "fill_blank",
+   "chapter": "第六章 考纲公式",
+   "tags": [
+    "二重积分"
+   ],
+   "difficulty": 3,
+   "content": [
+    {
+     "type": "math",
+     "latex": "\\iint_{x^2+y^2\\le1}(x^2+y^2)\\,d\\sigma=",
+     "display": true
+    },
+    {
+     "type": "blank",
+     "id": "1"
+    }
+   ],
+   "blanks": [
+    {
+     "id": "1",
+     "answers": [
+      "π/2",
+      "pi/2",
+      "\\frac{\\pi}{2}"
+     ]
+    }
+   ],
+   "explanation": [
+    {
+     "type": "math",
+     "latex": "\\int_0^{2\\pi}d\\theta\\int_0^1r^3\\,dr=2\\pi\\cdot\\frac14=\\frac\\pi2",
+     "display": true
+    }
+   ]
+  },
+  {
+   "id": "f-004",
+   "type": "single_choice",
+   "chapter": "第六章 考纲公式",
+   "tags": [
+    "行列式"
+   ],
+   "difficulty": 2,
+   "content": [
+    {
+     "type": "text",
+     "text": "3 阶方阵 A 满足 |A|=2，则 |2A|="
+    }
+   ],
+   "options": [
+    {
+     "key": "a",
+     "text": "4"
+    },
+    {
+     "key": "b",
+     "text": "16"
+    },
+    {
+     "key": "c",
+     "text": "8"
+    },
+    {
+     "key": "d",
+     "text": "32"
+    }
+   ],
+   "answer": {
+    "keys": [
+     "b"
+    ]
+   },
+   "explanation": [
+    {
+     "type": "math",
+     "latex": "|kA|=k^n|A|=2^3\\times2=16",
+     "display": true
+    }
+   ]
+  },
+  {
+   "id": "f-005",
+   "type": "true_false",
+   "chapter": "第六章 考纲公式",
+   "tags": [
+    "级数"
+   ],
+   "difficulty": 2,
+   "content": [
+    {
+     "type": "text",
+     "text": "判断："
+    },
+    {
+     "type": "math",
+     "latex": "\\sin x"
+    },
+    {
+     "type": "text",
+     "text": " 的麦克劳林展开式只含 x 的奇次幂。"
+    }
+   ],
+   "answer": {
+    "value": true
+   },
+   "explanation": [
+    {
+     "type": "math",
+     "latex": "\\sin x=\\sum_{n=0}^{\\infty}\\frac{(-1)^nx^{2n+1}}{(2n+1)!}",
+     "display": true
+    }
+   ]
+  }
+ ]
+}
