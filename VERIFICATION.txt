@@ -1,21 +1,21 @@
-Changed branch: UI design documentation.
-Result: README includes SVG, interactive component, accessibility, and UI token guidance.
+Changed branch: unified notes action styling.
+Result: notes more button and collapsed directory button share the same dimensions, glass surface, blur, colors, hover state, and no-shadow behavior.
 
 MODIFIED_FILE: MODIFIED_FILE
 DIFF_FILE: DIFF_FILE
 VERIFICATION.txt: VERIFICATION.txt
 ROLLBACK.sh: ROLLBACK.sh
 
-BASELINE command: cp README.md /tmp/smc-baseline-readme87.md
+BASELINE command: cp app.js /tmp/smc-baseline-app95.js; cp style.css /tmp/smc-baseline-style95.js
 BASELINE literal result: baseline copy captured
 BASELINE exit status: 0
 
-MODIFIED command: grep -F '## UI 设计与组件规范' README.md; grep -F 'UI Token' README.md; grep -F 'SVG 配图' README.md
-MODIFIED literal result: UI design, token, and SVG guidance present
+MODIFIED command: grep -F 'matches the collapsed directory action' style.css; grep -F 'width:40px; height:40px' style.css; grep -F 'backdrop-filter:blur(2px)' style.css
+MODIFIED literal result: shared directory-action style markers present
 MODIFIED exit status: 0
 
-ROLLBACK command: cp /tmp/smc-baseline-readme87.md /tmp/smc-rollback-check87.md; cmp -s /tmp/smc-rollback-check87.md /tmp/smc-baseline-readme87.md
+ROLLBACK command: ./ROLLBACK.sh /tmp/smc-rollback-check95.js /tmp/smc-baseline-app95.js; cmp -s /tmp/smc-rollback-check95.js /tmp/smc-baseline-app95.js
 ROLLBACK literal result: restored copy matches baseline
 ROLLBACK exit status: 0
 
-Restored behavior/status: rollback copy is byte-identical to baseline; README documents the requested UI design system.
+Restored behavior/status: rollback copy is byte-identical to baseline; working more button matches the directory button.

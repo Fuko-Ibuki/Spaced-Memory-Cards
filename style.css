@@ -1769,3 +1769,57 @@ html[data-theme="dark"] .notes-toc .notes-toc-link.active{ background:#3a4858; b
 .note-rich .note-math .katex *{ font-family:var(--font-ui) !important; font-size:1em; }
 .note-rich .note-math{ line-height:inherit; }
 .note-rich .note-math[style*="display"]{ display:block; }
+/* Notes more menu follows the viewport like the reference floating action. */
+.notes-package-toolbar{ position:fixed; top:84px; right:20px; z-index:86; min-height:0; margin:0; pointer-events:none; }
+.notes-package-toolbar > span{ display:none; }
+.notes-more-btn{ pointer-events:auto; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); background:color-mix(in srgb,var(--bg-elevated) 78%,transparent); }
+.notes-more-menu{ pointer-events:auto; top:38px; }
+@media (max-width:640px){ .notes-package-toolbar{ top:70px; right:12px; } }
+.notes-more-btn{ width:68px; height:46px; border-radius:16px; font-size:18px; letter-spacing:4px; line-height:1; }
+.notes-more-menu{ top:54px; }
+@media (max-width:640px){ .notes-more-btn{ width:68px; height:46px; } }
+.notes-more-btn{ font-size:0; letter-spacing:0; }
+.notes-more-icon{ display:block; width:20px; height:20px; fill:currentColor; }
+.notes-more-btn{ width:36px; height:36px; border-radius:8px; padding:0; }
+.notes-more-menu{ top:44px; }
+.notes-more-icon{ width:20px; height:20px; }
+@media (max-width:640px){ .notes-more-btn{ width:36px; height:36px; } }
+/* Match ChatGPT-Web-UI .cgpt-icon-button: transparent at rest, surface only on interaction. */
+.notes-more-btn{
+  display:inline-flex; width:36px; height:36px; align-items:center; justify-content:center; flex:none;
+  padding:0; border:0; border-radius:8px; background:transparent; box-shadow:none;
+  color:var(--text); transition:background-color var(--dur-fast) var(--ease),opacity var(--dur-fast) var(--ease);
+  -webkit-backdrop-filter:none; backdrop-filter:none;
+}
+.notes-more-btn:hover,.notes-more-btn:active,.notes-more-btn[aria-expanded="true"]{ background:var(--bg-hover); box-shadow:none; }
+.notes-more-icon{ display:block; width:20px; height:20px; fill:currentColor; }
+/* Exact reference surface values for the floating more icon. */
+.notes-more-btn:hover,.notes-more-btn:active,.notes-more-btn[aria-expanded="true"],.notes-more-btn:focus-visible{ background:#0000000d; outline:none; }
+html[data-theme="dark"] .notes-more-btn:hover,html[data-theme="dark"] .notes-more-btn:active,html[data-theme="dark"] .notes-more-btn[aria-expanded="true"],html[data-theme="dark"] .notes-more-btn:focus-visible{ background:#ffffff14; }
+.notes-more-btn{
+  background:color-mix(in srgb,var(--bg-elevated) 72%,transparent);
+  -webkit-backdrop-filter:blur(16px) saturate(1.15);
+  backdrop-filter:blur(16px) saturate(1.15);
+}
+.notes-more-btn:hover,.notes-more-btn:active,.notes-more-btn[aria-expanded="true"],.notes-more-btn:focus-visible{
+  background:color-mix(in srgb,var(--bg-elevated) 82%,transparent);
+  box-shadow:none;
+}
+html[data-theme="dark"] .notes-more-btn{
+  background:color-mix(in srgb,var(--bg-elevated) 62%,transparent);
+}
+html[data-theme="dark"] .notes-more-btn:hover,html[data-theme="dark"] .notes-more-btn:active,html[data-theme="dark"] .notes-more-btn[aria-expanded="true"],html[data-theme="dark"] .notes-more-btn:focus-visible{
+  background:color-mix(in srgb,var(--bg-elevated) 74%,transparent);
+}
+/* More button matches the collapsed directory action exactly. */
+.notes-more-btn{
+  width:40px; height:40px; border-radius:10px; padding:0;
+  background:color-mix(in srgb,var(--bg-elevated) 65%,transparent);
+  color:var(--text-soft); box-shadow:none;
+  -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
+}
+.notes-more-btn:hover,.notes-more-btn:active,.notes-more-btn[aria-expanded="true"],.notes-more-btn:focus-visible{
+  background:var(--bg-hover); color:var(--text); box-shadow:none; outline:none;
+}
+.notes-more-menu{ top:48px; }
+@media (max-width:640px){ .notes-more-btn{ width:40px; height:40px; } }

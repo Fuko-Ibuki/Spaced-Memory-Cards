@@ -1,2 +1,2 @@
-Changed branch: UI design documentation.
-Result: README now documents SVG image guidance, semantic interactive component conventions, accessibility state attributes, and the existing visual design token system.
+Changed branch: unified notes action styling.
+Result: the floating more button now matches the collapsed directory action: 40x40px, 10px radius, translucent surface, 2px blur, same text colors, and no shadow.
