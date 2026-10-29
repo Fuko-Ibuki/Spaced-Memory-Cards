@@ -1,21 +1,21 @@
-Changed branch: unified notes action styling.
-Result: notes more button and collapsed directory button share the same dimensions, glass surface, blur, colors, hover state, and no-shadow behavior.
+Reverted branch: directory-button size coupling.
+Result: directory-button matching size was undone; formula Chinese/text uses the UI font instead of Song while formula size remains 1em relative to the note block.
 
 MODIFIED_FILE: MODIFIED_FILE
 DIFF_FILE: DIFF_FILE
 VERIFICATION.txt: VERIFICATION.txt
 ROLLBACK.sh: ROLLBACK.sh
 
-BASELINE command: cp app.js /tmp/smc-baseline-app95.js; cp style.css /tmp/smc-baseline-style95.js
+BASELINE command: cp app.js /tmp/smc-baseline-app96.js; cp style.css /tmp/smc-baseline-style96.js
 BASELINE literal result: baseline copy captured
 BASELINE exit status: 0
 
-MODIFIED command: grep -F 'matches the collapsed directory action' style.css; grep -F 'width:40px; height:40px' style.css; grep -F 'backdrop-filter:blur(2px)' style.css
-MODIFIED literal result: shared directory-action style markers present
+MODIFIED command: node --check app.js; grep -F 'Formula size follows' style.css; grep -F 'font-size:1em' style.css
+MODIFIED literal result: syntax passed; formula typography and reverted button markers present
 MODIFIED exit status: 0
 
-ROLLBACK command: ./ROLLBACK.sh /tmp/smc-rollback-check95.js /tmp/smc-baseline-app95.js; cmp -s /tmp/smc-rollback-check95.js /tmp/smc-baseline-app95.js
+ROLLBACK command: ./ROLLBACK.sh /tmp/smc-rollback-check96.js /tmp/smc-baseline-app96.js; cmp -s /tmp/smc-rollback-check96.js /tmp/smc-baseline-app96.js
 ROLLBACK literal result: restored copy matches baseline
 ROLLBACK exit status: 0
 
-Restored behavior/status: rollback copy is byte-identical to baseline; working more button matches the directory button.
+Restored behavior/status: rollback copy is byte-identical to baseline; working formulas follow note typography without forcing all math glyphs to UI font.

@@ -1823,3 +1823,13 @@ html[data-theme="dark"] .notes-more-btn:hover,html[data-theme="dark"] .notes-mor
 }
 .notes-more-menu{ top:48px; }
 @media (max-width:640px){ .notes-more-btn{ width:40px; height:40px; } }
+/* Revert the directory-button size coupling; keep the reference 36px more button. */
+.notes-more-btn{ width:36px; height:36px; border-radius:8px; }
+.notes-more-menu{ top:44px; }
+@media (max-width:640px){ .notes-more-btn{ width:36px; height:36px; } }
+/* Formula size follows the note block; only KaTeX text glyphs use the UI font. */
+.note-rich .note-math,
+.note-rich .note-math .katex{ font-size:1em; line-height:inherit; }
+.note-rich .note-math .katex .text,
+.note-rich .note-math .katex .mathrm,
+.note-rich .note-math .katex .mord.text{ font-family:var(--font-ui) !important; }
