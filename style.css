@@ -122,7 +122,7 @@ a{ color:inherit; }
   --dur-slow:.5s;
 
   /* Typography tokens: the global family can switch the UI and authored content together. */
-  --font-sans:"SMC HY QiHei Punctuation","SMC HY QiHei","SMC SF Pro",sans-serif;
+  --font-sans:"SMC SF Pro","SMC HY QiHei Punctuation","SMC HY QiHei",sans-serif;
   --font-serif:"SMC CJK Punctuation","SMC FZ New Book","SMC Minion",serif;
   --font-ui:var(--font-sans);
   --font-content:var(--font-serif);
@@ -1633,7 +1633,6 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
 .note-index{ flex:0 0 auto; color:var(--text-faint); font-family:var(--font-num); font-size:12px; font-style:italic; }
 .note-card-tools{ display:flex; align-items:center; gap:8px; flex:0 0 auto; }
 .note-highlight-btn{ display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; padding:4px; border:0; border-radius:7px; background:transparent; color:var(--text-faint); font-family:var(--font-symbol); font-size:18px; line-height:1; cursor:pointer; transition:color var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease); }
-.note-highlight-btn:hover,.note-highlight-btn:focus-visible{ color:var(--accent); background:var(--accent-glow); border-color:transparent; outline:none; transform:translateY(-1px); }
 .note-highlight-btn.on{ color:var(--accent); background:var(--accent-glow); border-color:transparent; }
 .note-bookmark-btn{ display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; padding:4px; border:0; border-radius:7px; background:transparent; color:var(--text-faint); cursor:pointer; transition:color var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease); }
 .note-bookmark-btn:hover{ color:var(--gold); background:var(--gold-bg); transform:translateY(-1px); }
