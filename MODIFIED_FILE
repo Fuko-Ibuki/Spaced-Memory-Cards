@@ -2117,3 +2117,12 @@ html[data-theme="light"] .note-rich mark.note-search-highlight{background:#ffe58
   .note-section-heading .note-section-description{font-size:11px;}
   .note-section-tools{gap:7px;}
 }
+/* Mobile notes hierarchy: keep document title and test action in the flow below the fixed navigation. */
+@media (max-width:640px){
+  .notes-document{padding-top:12px;}
+  .notes-document-heading{position:relative;z-index:30;display:flex;align-items:center;min-height:56px;margin:0 0 22px;padding:0 4px;overflow:visible;white-space:normal;}
+  .notes-document-heading .notes-document-title{display:block;flex:1 1 auto;min-width:0;overflow:visible;text-overflow:clip;white-space:normal;font-size:26px;}
+  .notes-heading-actions{display:flex;flex:0 0 auto;visibility:visible;opacity:1;overflow:visible;}
+  .notes-heading-actions .note-test-btn{display:inline-flex;visibility:visible;flex:0 0 auto;min-height:40px;padding:0 14px;}
+  .note-section:first-of-type{margin-top:12px;}
+}

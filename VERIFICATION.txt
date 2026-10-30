@@ -1178,3 +1178,16 @@ Undo formula comma-token expansion:
 - ROLLBACK exact command: cp style.css /tmp/smc-undo-comma-token-rollback.css && ./ROLLBACK.sh /tmp/smc-undo-comma-token-rollback.css && cmp -s /tmp/smc-undo-comma-token-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-undo-comma-token-rollback.css from MODIFIED_FILE snapshot; exit status: 0
 - ROLLBACK exit status: 0
 - Restored behavior/status: temporary copy equals MODIFIED_FILE; latest comma-token expansion is undone while earlier changes remain.
+
+Mobile heading and test action repair:
+- Changed branch/field: style.css / mobile `.notes-document-heading` hierarchy and `.note-test-btn` visibility.
+- Mobile notes now keeps the document-level title in normal flow below the fixed navigation and preserves the start-test action as a visible non-shrinking control; the first section heading follows it instead of consuming or covering the title/action row.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-mobile-heading-rollback.css && ./ROLLBACK.sh /tmp/smc-mobile-heading-rollback.css && cmp -s /tmp/smc-mobile-heading-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-mobile-heading-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; mobile heading hierarchy and test action remain visible below navigation.
