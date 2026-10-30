@@ -1191,3 +1191,29 @@ Mobile heading and test action repair:
 - ROLLBACK exact command: cp style.css /tmp/smc-mobile-heading-rollback.css && ./ROLLBACK.sh /tmp/smc-mobile-heading-rollback.css && cmp -s /tmp/smc-mobile-heading-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-mobile-heading-rollback.css from MODIFIED_FILE snapshot; exit status: 0
 - ROLLBACK exit status: 0
 - Restored behavior/status: temporary copy equals MODIFIED_FILE; mobile heading hierarchy and test action remain visible below navigation.
+
+Section spacing repair:
+- Changed branch/field: style.css / `.note-section + .note-section` margin.
+- Reduced the later 72px section gap to 30px so the next section heading follows the previous card without the oversized mobile blank area.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-section-gap-rollback.css && ./ROLLBACK.sh /tmp/smc-section-gap-rollback.css && cmp -s /tmp/smc-section-gap-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-section-gap-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; consecutive section spacing is 30px.
+
+Cloudflare SF Pro cache repair:
+- Changed branch/field: index.html and style.css / cache-busted SF Pro stylesheet and font URLs.
+- The deployed page now requests `style.css?v=20261030.1` and both SF Pro WOFF2 files with the same version query, forcing Cloudflare/browser caches to fetch the tracked SF Pro assets.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-cf-font-cache-rollback.css && ./ROLLBACK.sh /tmp/smc-cf-font-cache-rollback.css && cmp -s /tmp/smc-cf-font-cache-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-cf-font-cache-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; deployed asset URLs now bypass stale cache.

@@ -20,8 +20,8 @@
 @font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-600.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-600.ttf") format("truetype"); font-weight:600; font-style:normal; font-display:swap; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
 @font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-700.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-700.ttf") format("truetype"); font-weight:700; font-style:normal; font-display:swap; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
 @font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-800.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-800.ttf") format("truetype"); font-weight:800; font-style:normal; font-display:swap; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
-@font-face{ font-family:"SMC SF Pro"; src:url("./fonts/sf-pro/SF-Pro-Used.woff2") format("woff2"); font-weight:400 700; font-style:normal; font-display:swap; }
-@font-face{ font-family:"SMC SF Pro"; src:url("./fonts/sf-pro/SF-Pro-Italic-Used.woff2") format("woff2"); font-weight:400 700; font-style:italic; font-display:swap; }
+@font-face{ font-family:"SMC SF Pro"; src:url("./fonts/sf-pro/SF-Pro-Used.woff2?v=20261030.1") format("woff2"); font-weight:400 700; font-style:normal; font-display:swap; }
+@font-face{ font-family:"SMC SF Pro"; src:url("./fonts/sf-pro/SF-Pro-Italic-Used.woff2?v=20261030.1") format("woff2"); font-weight:400 700; font-style:italic; font-display:swap; }
 @font-face{ font-family:"SMC HY QiHei"; src:url("./fonts/hy-qihei/HYQiHei-300-Used.woff2") format("woff2"); font-weight:300; font-style:normal; font-display:swap; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
 /* UI punctuation follows HY QiHei; authored serif content keeps FZ FW筑紫A老明朝 punctuation. */
 @font-face{ font-family:"SMC HY QiHei Punctuation"; src:url("./fonts/hy-qihei/HYQiHei-300-Used.woff2") format("woff2"); font-weight:300; font-style:normal; font-display:swap; unicode-range:U+0021-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FF00-FF65; }
@@ -2046,7 +2046,7 @@ html[data-theme="light"] .note-rich mark.note-search-highlight{background:#ffe58
   .notes-heading-actions{margin-left:auto;}
 }
 /* Notes section sticky heading: a compact, solid bar directly below the global navigation. */
-.note-section + .note-section{margin-top:72px;}
+.note-section + .note-section{margin-top:30px;}
 .note-section-heading{
   position:sticky;
   /* Position is measured from the floating controls so their centers stay aligned. */
