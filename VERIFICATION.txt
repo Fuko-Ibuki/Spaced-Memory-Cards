@@ -497,3 +497,684 @@ TOC jump/collapse position repair:
 - ROLLBACK exact command: cp style.css /tmp/smc-toc-return-rollback.css && ./ROLLBACK.sh /tmp/smc-toc-return-rollback.css && cmp -s /tmp/smc-toc-return-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-toc-return-rollback.css from MODIFIED_FILE snapshot; exit status: 0
 - ROLLBACK exit status: 0
 - Restored behavior/status: temporary copy equals MODIFIED_FILE; current app.js retains the TOC position fix.
+
+Note-body paragraph spacing repair:
+- Changed branch/field: style.css / .note-rich p margin.
+- Removed paragraph before/after spacing so note body paragraphs share one continuous style; indentation and line-height remain unchanged.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js and style.css; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-body-paragraph-rollback.css && ./ROLLBACK.sh /tmp/smc-body-paragraph-rollback.css && cmp -s /tmp/smc-body-paragraph-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-body-paragraph-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live style.css remains changed and equals MODIFIED_FILE.
+
+Note-tag highlight button:
+- Changed branch/field: app.js / .note-card-tools markup and .note-highlight-btn click binding; style.css / .note-highlight-btn and .note-tag.is-highlighted.
+- Added the SF symbol 􀦇 button immediately left of each classification tag. Clicking toggles the button and tag highlight state with accessible label/pressed state.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js and style.css; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-highlight-button-rollback.css && ./ROLLBACK.sh /tmp/smc-highlight-button-rollback.css && cmp -s /tmp/smc-highlight-button-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-highlight-button-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live style.css remains changed and equals MODIFIED_FILE.
+
+Note-tag highlight button (verified):
+- Changed branch/field: app.js / .note-card-tools markup and .note-highlight-btn click binding; style.css / .note-highlight-btn and .note-tag.is-highlighted.
+- Added the SF symbol 􀦇 button immediately left of each classification tag. Clicking toggles the button and tag highlight state with accessible label/pressed state.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js and style.css; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-highlight-button-rollback.css && ./ROLLBACK.sh /tmp/smc-highlight-button-rollback.css && cmp -s /tmp/smc-highlight-button-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-highlight-button-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live style.css remains changed and equals MODIFIED_FILE.
+
+Highlight-button size alignment:
+- Changed branch/field: style.css / .note-highlight-btn box model.
+- Matched the highlight button to the favorite button: 30px square, 4px inner padding, no border, same rounded control footprint.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js and style.css; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-highlight-size-rollback.css && ./ROLLBACK.sh /tmp/smc-highlight-size-rollback.css && cmp -s /tmp/smc-highlight-size-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-highlight-size-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live style.css remains changed and equals MODIFIED_FILE.
+
+Selection highlight behavior repair:
+- Changed branch/field: app.js / note-highlight-btn selection capture and highlightSelectedNoteText; style.css / .note-user-highlight.
+- The button now applies a yellow mark to the selected text block inside the note body, rather than highlighting the classification tag. Selection is captured before the button receives focus and then wrapped in a mark element.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js and style.css; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-selection-highlight-rollback.css && ./ROLLBACK.sh /tmp/smc-selection-highlight-rollback.css && cmp -s /tmp/smc-selection-highlight-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-selection-highlight-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live style.css remains changed and equals MODIFIED_FILE.
+
+Persistent highlight-mode repair:
+- Changed branch/field: app.js / App.notesHighlightMode, STORAGE_KEYS.notesHighlights, selection toggle, and restoreNoteHighlights; style.css / .note-user-highlight.
+- The highlight button now enters/exits highlight mode. In mode, selecting body text applies yellow highlight; selecting an existing highlighted range removes it. Highlight text records persist in the notesHighlights store and restore when the notes view reopens.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js and style.css; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-highlight-mode-rollback.css && ./ROLLBACK.sh /tmp/smc-highlight-mode-rollback.css && cmp -s /tmp/smc-highlight-mode-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-highlight-mode-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live style.css remains changed and equals MODIFIED_FILE.
+
+Highlight-button yellow style:
+- Changed branch/field: style.css / .note-highlight-btn hover/focus/on state.
+- Matched the highlight mode button to the favorite button yellow treatment using --gold and --gold-bg.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js and style.css; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-highlight-yellow-rollback.css && ./ROLLBACK.sh /tmp/smc-highlight-yellow-rollback.css && cmp -s /tmp/smc-highlight-yellow-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-highlight-yellow-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live style.css remains changed and equals MODIFIED_FILE.
+
+Highlight-button green style:
+- Changed branch/field: style.css / .note-highlight-btn hover/focus/on state.
+- Restored the highlight mode button to the green accent treatment.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js and style.css; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-highlight-green-rollback.css && ./ROLLBACK.sh /tmp/smc-highlight-green-rollback.css && cmp -s /tmp/smc-highlight-green-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-highlight-green-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live style.css remains changed and equals MODIFIED_FILE.
+
+Highlight-button hover lift:
+- Changed branch/field: style.css / .note-highlight-btn transition and hover transform.
+- Added the same 1px upward hover motion as the favorite button.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js and style.css; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-highlight-hover-rollback.css && ./ROLLBACK.sh /tmp/smc-highlight-hover-rollback.css && cmp -s /tmp/smc-highlight-hover-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-highlight-hover-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live style.css remains changed and equals MODIFIED_FILE.
+
+Highlight layout error repair:
+- Changed branch/field: app.js / highlightSelectedNoteText block-boundary guard; style.css / .note-user-highlight display.
+- Prevented highlights from wrapping across multiple block paragraphs, which caused the note layout corruption. Highlight marks are explicitly inline.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js and style.css; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-highlight-layout-rollback.css && ./ROLLBACK.sh /tmp/smc-highlight-layout-rollback.css && cmp -s /tmp/smc-highlight-layout-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-highlight-layout-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live style.css remains changed and equals MODIFIED_FILE.
+
+Highlight cancellation persistence repair:
+- Changed branch/field: app.js / existing highlight removal persistence.
+- Captured the marked text before unwrapping it, so cancellation removes the exact stored highlight record and it does not return after refresh.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js and style.css; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-highlight-persist-rollback.css && ./ROLLBACK.sh /tmp/smc-highlight-persist-rollback.css && cmp -s /tmp/smc-highlight-persist-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-highlight-persist-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js retains persistence fix.
+
+Multi-highlight cancellation repair:
+- Changed branch/field: app.js / selection removal of note-user-highlight marks.
+- Cancellation now removes every highlighted mark intersecting the selected range and deletes all matching persisted text records, preventing a residual segment from returning after refresh.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js and style.css; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-highlight-multi-remove-rollback.css && ./ROLLBACK.sh /tmp/smc-highlight-multi-remove-rollback.css && cmp -s /tmp/smc-highlight-multi-remove-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-highlight-multi-remove-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js retains multi-highlight removal fix.
+
+Selection-before-button highlight repair:
+- Changed branch/field: app.js / note-highlight-btn pendingRange and toggleNoteSelectionHighlight.
+- With text already selected, clicking the highlight button now enters highlight mode and immediately highlights the selected block. The next click exits the mode; body selection continues to toggle highlight/remove highlight while mode is active.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-highlight-selection-click-rollback.css && ./ROLLBACK.sh /tmp/smc-highlight-selection-click-rollback.css && cmp -s /tmp/smc-highlight-selection-click-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-highlight-selection-click-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js remains changed and equals MODIFIED_FILE.
+
+Single active highlight block:
+- Changed branch/field: app.js / App.notesHighlightCardId and highlight mode synchronization.
+- Only the current note card's highlight button is enabled. Selecting another note body moves the active state to that card; other highlight buttons turn off while the mode remains active.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-single-highlight-mode-rollback.css && ./ROLLBACK.sh /tmp/smc-single-highlight-mode-rollback.css && cmp -s /tmp/smc-single-highlight-mode-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-single-highlight-mode-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js remains changed and equals MODIFIED_FILE.
+
+Highlight position persistence repair:
+- Changed branch/field: app.js / notesHighlights records now store exact body text offsets; restoreNoteHighlights resolves ranges by offset.
+- Refresh no longer highlights the first duplicate word. Each newly saved highlight retains its exact position in the note body; legacy string records fall back to the last matching occurrence.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-highlight-offset-rollback.css && ./ROLLBACK.sh /tmp/smc-highlight-offset-rollback.css && cmp -s /tmp/smc-highlight-offset-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-highlight-offset-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js remains changed and equals MODIFIED_FILE.
+
+Highlight-button order repair:
+- Changed branch/field: app.js / .note-card-tools markup order.
+- Moved the highlight button to immediately right of the favorite button; classification tag remains before the favorite button.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-highlight-order-rollback.css && ./ROLLBACK.sh /tmp/smc-highlight-order-rollback.css && cmp -s /tmp/smc-highlight-order-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-highlight-order-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js remains changed and equals MODIFIED_FILE.
+
+Highlight click capture repair:
+- Changed branch/field: app.js / note-highlight-btn pointerdown/mousedown selection capture and click fallback.
+- The selected range is captured before button focus and reused on click, with a selection fallback, so clicking the right-side highlight button immediately applies the highlight.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-highlight-click-rollback.css && ./ROLLBACK.sh /tmp/smc-highlight-click-rollback.css && cmp -s /tmp/smc-highlight-click-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-highlight-click-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js remains changed and equals MODIFIED_FILE.
+
+Long-selection highlight repair:
+- Changed branch/field: app.js / highlightSelectedNoteText.
+- Long selections spanning multiple paragraphs now split into inline marks per text node, avoiding invalid mark wrappers around block elements while applying highlight to the complete selected range.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-long-selection-rollback.css && ./ROLLBACK.sh /tmp/smc-long-selection-rollback.css && cmp -s /tmp/smc-long-selection-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-long-selection-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js remains changed and equals MODIFIED_FILE.
+
+Long-selection persistence alignment:
+- Changed branch/field: app.js / noteTextOffset and noteSelectedTextLength.
+- Persistent records now use text-node offsets and selected text-node length, so multi-paragraph highlights restore at their original range without paragraph-separator drift.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-long-selection-persist-rollback.css && ./ROLLBACK.sh /tmp/smc-long-selection-persist-rollback.css && cmp -s /tmp/smc-long-selection-persist-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-long-selection-persist-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js remains changed and equals MODIFIED_FILE.
+
+Long-selection final persistence ordering:
+- Changed branch/field: app.js / capture selected text-node length before DOM wrapping.
+- Offset and length are captured before inserting mark elements, preserving exact multi-paragraph restore coordinates.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-long-selection-final-rollback.css && ./ROLLBACK.sh /tmp/smc-long-selection-final-rollback.css && cmp -s /tmp/smc-long-selection-final-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-long-selection-final-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js remains changed and equals MODIFIED_FILE.
+
+Current-card-only highlight repair:
+- Changed branch/field: app.js / note-highlight-btn click range containment.
+- Clicking a card's highlight button now applies the pending selection only when both selection endpoints belong to that same card body; selections from other cards are left untouched.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-current-card-only-rollback.css && ./ROLLBACK.sh /tmp/smc-current-card-only-rollback.css && cmp -s /tmp/smc-current-card-only-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-current-card-only-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js remains changed and equals MODIFIED_FILE.
+
+Toggle-cancel repair:
+- Changed branch/field: app.js / note-highlight-btn same-card click flow.
+- Clicking the active block's highlight button now toggles the selected range first, then exits highlight mode; selecting the same highlighted content and clicking again removes its highlight and persistence record.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-current-toggle-rollback.css && ./ROLLBACK.sh /tmp/smc-current-toggle-rollback.css && cmp -s /tmp/smc-current-toggle-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-current-toggle-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js remains changed and equals MODIFIED_FILE.
+
+Persistence-cancel repair:
+- Changed branch/field: app.js / toggleNoteSelectionHighlight persistence removal.
+- Cancelling a selected highlighted segment now removes both split mark fragments and the original persisted long-range record, so refresh does not restore the cancelled highlight.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-current-persist-rollback.css && ./ROLLBACK.sh /tmp/smc-current-persist-rollback.css && cmp -s /tmp/smc-current-persist-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-current-persist-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js remains changed and equals MODIFIED_FILE.
+
+Persistence-cancel verification correction:
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-current-persist-rollback.css && ./ROLLBACK.sh /tmp/smc-current-persist-rollback.css && cmp -s /tmp/smc-current-persist-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-current-persist-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js contains persisted-record removal for split long selections.
+
+Formula highlight repair:
+- Changed branch/field: app.js / highlightSelectedNoteText formula handling.
+- A selected formula block is now wrapped as one complete highlight unit instead of fragmented character-level marks; surrounding text remains independently highlightable.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-formula-rollback.css && ./ROLLBACK.sh /tmp/smc-formula-rollback.css && cmp -s /tmp/smc-formula-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-formula-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js remains changed and equals MODIFIED_FILE.
+
+Paragraph-marker repair:
+- Changed branch/field: app.js / highlightSelectedNoteText text-node filtering.
+- Whitespace-only text nodes used by paragraph boundaries are excluded, so selection highlighting no longer creates yellow paragraph-marker bars; visible text and complete formulas remain highlightable.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-no-paragraph-marker-rollback.css && ./ROLLBACK.sh /tmp/smc-no-paragraph-marker-rollback.css && cmp -s /tmp/smc-no-paragraph-marker-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-no-paragraph-marker-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js remains changed and equals MODIFIED_FILE.
+
+Block-formula marker repair:
+- Changed branch/field: app.js and style.css / display formula highlight rendering.
+- Display formulas no longer get wrapped by an inline mark around a block element; the formula block receives the highlight class directly, preventing paragraph-marker bars while preserving whole-formula highlighting and cancellation.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-no-block-mark-rollback.css && ./ROLLBACK.sh /tmp/smc-no-block-mark-rollback.css && cmp -s /tmp/smc-no-block-mark-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-no-block-mark-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js and style.css retain the corrected block-formula behavior.
+
+Formula-range repair:
+- Changed branch/field: app.js and style.css / display formula highlight scope and cleanup.
+- Display formula highlighting now applies only to the rendered formula glyph area, not the full paragraph width; stale nested formula marks are removed before applying the whole-formula state.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-formula-range-rollback.css && ./ROLLBACK.sh /tmp/smc-formula-range-rollback.css && cmp -s /tmp/smc-formula-range-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-formula-range-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js and style.css retain corrected formula-range behavior.
+
+Persistence overlap repair:
+- Changed branch/field: app.js / toggleNoteSelectionHighlight cancellation record matching.
+- Cancellation now removes persisted records by exact selected-range offset overlap in addition to text matching, covering rendered formulas and split long selections so cancelled highlights do not return after refresh.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-persist-overlap-rollback.css && ./ROLLBACK.sh /tmp/smc-persist-overlap-rollback.css && cmp -s /tmp/smc-persist-overlap-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-persist-overlap-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js retains offset-overlap persistence removal.
+
+Persistence matching final repair:
+- Changed branch/field: app.js / cancellation normalized text and rendered-range length.
+- Cancellation now compares whitespace-normalized rendered formula/text content and uses the actual rendered selection length, preventing stale formula records from surviving and reappearing after refresh.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-persist-final-rollback.css && ./ROLLBACK.sh /tmp/smc-persist-final-rollback.css && cmp -s /tmp/smc-persist-final-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-persist-final-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js retains normalized persistence cancellation.
+
+Single-formula-highlight repair:
+- Changed branch/field: app.js / restoreNoteHighlights formula normalization.
+- On restore, nested formula marks are flattened and only the complete formula highlight remains; mixed partial and whole-formula highlighting is no longer shown together.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-formula-single-rollback.css && ./ROLLBACK.sh /tmp/smc-formula-single-rollback.css && cmp -s /tmp/smc-formula-single-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-formula-single-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js retains single whole-formula highlight restoration.
+
+Formula duplicate normalization final:
+- Changed branch/field: app.js / restoreNoteHighlights outer and nested formula mark cleanup.
+- Restore now removes both nested marks and an outer mark that wraps exactly the formula, then applies one whole-formula highlight state.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-formula-normalize-rollback.css && ./ROLLBACK.sh /tmp/smc-formula-normalize-rollback.css && cmp -s /tmp/smc-formula-normalize-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-formula-normalize-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js retains formula duplicate normalization.
+
+Formula cancellation cleanup:
+- Changed branch/field: app.js / toggleNoteSelectionHighlight formula cancellation.
+- Cancelling a selected highlighted formula now removes the formula-level highlight and every nested fragment inside that formula, preventing residual yellow pieces from remaining.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-formula-cancel-rollback.css && ./ROLLBACK.sh /tmp/smc-formula-cancel-rollback.css && cmp -s /tmp/smc-formula-cancel-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-formula-cancel-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live app.js retains full formula cancellation cleanup.
+
+Formula highlight spacing:
+- Changed branch/field: style.css / complete-formula highlight padding.
+- Increased inner spacing around highlighted formulas to 6px vertical and 10px horizontal with a 4px radius, so the yellow background no longer hugs the glyphs.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-formula-padding-rollback.css && ./ROLLBACK.sh /tmp/smc-formula-padding-rollback.css && cmp -s /tmp/smc-formula-padding-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-formula-padding-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; formula highlight spacing is updated.
+
+Mixed text-formula highlight repair:
+- Changed branch/field: app.js / text-node traversal during formula-aware highlighting.
+- Text traversal now excludes all text nodes inside `.note-math`, preventing formula internals from receiving fragmented marks when a selection mixes ordinary text and formulas; each intersected formula remains one complete highlight unit while surrounding text is highlighted independently.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-mixed-highlight-rollback.css && ./ROLLBACK.sh /tmp/smc-mixed-highlight-rollback.css && cmp -s /tmp/smc-mixed-highlight-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-mixed-highlight-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; mixed text/formula highlighting uses independent text and whole-formula units.
+
+Fraction highlight overflow repair:
+- Changed branch/field: style.css / highlighted formula line box.
+- Formula highlight now uses normal line-height and visible overflow with reduced vertical padding, keeping numerator and denominator fully visible instead of clipping the fraction.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-fraction-overflow-rollback.css && ./ROLLBACK.sh /tmp/smc-fraction-overflow-rollback.css && cmp -s /tmp/smc-fraction-overflow-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-fraction-overflow-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; formula fractions retain visible numerator and denominator.
+
+Fraction box repair:
+- Changed branch/field: style.css / formula highlight box geometry.
+- The highlight background now belongs to the `.note-math` wrapper rather than the inner KaTeX glyph box; inline formulas use content-sized inline blocks and display formulas use a content-sized centered block, preventing fraction numerator/denominator clipping.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-fraction-box-rollback.css && ./ROLLBACK.sh /tmp/smc-fraction-box-rollback.css && cmp -s /tmp/smc-fraction-box-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-fraction-box-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; formula fraction box no longer clips glyphs.
+
+Fraction line-height override:
+- Changed branch/field: style.css / highlighted formula line-height priority.
+- Applied an important normal line-height to the highlighted formula wrapper so the existing note formula line-height rule cannot collapse the fraction box and clip its numerator or denominator.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-fraction-important-rollback.css && ./ROLLBACK.sh /tmp/smc-fraction-important-rollback.css && cmp -s /tmp/smc-fraction-important-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-fraction-important-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; highlighted fraction line box uses normal priority line-height.
+
+Image zoom state repair:
+- Changed branch/field: app.js / image zoom button state restoration.
+- When an image is restored expanded after refresh, its upper-right control now restores the shrink icon, label, and title instead of defaulting to the enlarge state.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-image-zoom-state-rollback.css && ./ROLLBACK.sh /tmp/smc-image-zoom-state-rollback.css && cmp -s /tmp/smc-image-zoom-state-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-image-zoom-state-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; expanded images restore with shrink controls.
+
+Fraction highlight height repair:
+- Changed branch/field: style.css / highlighted fraction vertical box.
+- Increased vertical padding to 10px and set the nested KaTeX line-height to 1.25 with visible overflow, giving fraction numerators and denominators enough highlighted height.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-fraction-height-rollback.css && ./ROLLBACK.sh /tmp/smc-fraction-height-rollback.css && cmp -s /tmp/smc-fraction-height-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-fraction-height-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; formula highlight height has expanded fraction clearance.
+
+Fraction persistence and height repair:
+- Changed branch/field: app.js / highlightSelectedNoteText applied result; style.css / formula vertical padding.
+- Formula-only selections now count as successfully applied and are persisted, so refresh restores them; vertical padding is increased to 16px for complete fraction clearance.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js; input: current app.js; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-fraction-save-height-rollback.css && ./ROLLBACK.sh /tmp/smc-fraction-save-height-rollback.css && cmp -s /tmp/smc-fraction-save-height-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-fraction-save-height-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; formula-only highlight persistence and expanded fraction height are active.
+
+Fraction highlight min-height repair:
+- Changed branch/field: style.css / `.note-math.note-user-highlight` formula layout.
+- Formula highlights now use an inline flex box with `min-height:3.8em` and centered KaTeX content, so tall fractions receive a full-height yellow background rather than clipping the numerator or denominator.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-fraction-minheight-rollback.css && ./ROLLBACK.sh /tmp/smc-fraction-minheight-rollback.css && cmp -s /tmp/smc-fraction-minheight-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-fraction-minheight-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live style.css keeps full-height highlighted fraction layout.
+
+Formula vertical-centering repair:
+- Changed branch/field: style.css / block formula highlight layout.
+- Highlighted display formulas now use centered flex layout and remove KaTeX display margins, balancing top and bottom yellow clearance instead of leaving no top padding and excessive lower padding.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-fraction-center-rollback.css && ./ROLLBACK.sh /tmp/smc-fraction-center-rollback.css && cmp -s /tmp/smc-fraction-center-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-fraction-center-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; live formula highlight uses vertically centered display content.
+
+Immediate formula highlight repair:
+- Changed branch/field: app.js / highlightSelectedNoteText formula application.
+- Inline and display formulas now receive the complete formula highlight class directly at selection time; the previous temporary inline mark wrapper is no longer created, so fractions render in their final full-height style immediately without requiring refresh.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-formula-immediate-rollback.css && ./ROLLBACK.sh /tmp/smc-formula-immediate-rollback.css && cmp -s /tmp/smc-formula-immediate-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-formula-immediate-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; selected formulas immediately use the persisted whole-formula style.
+
+Immediate formula highlight repair correction:
+- Changed branch/field: app.js / highlightSelectedNoteText formula application.
+- Inline and display formulas now receive the complete formula highlight class directly at selection time; no temporary inline mark wrapper is created, so fractions render in their final full-height style immediately without requiring refresh.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-formula-immediate-rollback.css && ./ROLLBACK.sh /tmp/smc-formula-immediate-rollback.css && cmp -s /tmp/smc-formula-immediate-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-formula-immediate-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; selected formulas immediately use the full-height formula class.
+
+Formula punctuation-flow repair:
+- Changed branch/field: style.css / `.note-math.note-user-highlight` horizontal padding.
+- Removed horizontal padding from whole-formula highlights so a long inline formula does not consume extra line width and push the following Chinese punctuation onto a new hanging line; vertical fraction clearance remains unchanged.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-formula-punctuation-rollback.css && ./ROLLBACK.sh /tmp/smc-formula-punctuation-rollback.css && cmp -s /tmp/smc-formula-punctuation-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-formula-punctuation-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; highlighted formulas no longer add horizontal width before following punctuation.
+
+Cancel-refresh persistence repair:
+- Changed branch/field: app.js / toggleNoteSelectionHighlight persisted-record removal.
+- Cancellation now removes records by the selected highlighted formula/text content after whitespace normalization, in addition to range overlap; cancelling a formula or mixed selection therefore remains cancelled after refresh.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-cancel-refresh-rollback.css && ./ROLLBACK.sh /tmp/smc-cancel-refresh-rollback.css && cmp -s /tmp/smc-cancel-refresh-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-cancel-refresh-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; cancelled formula/text highlights remain absent after refresh.
+
+Formula comma segmentation:
+- Changed branch/field: app.js / formula rendering and highlight units.
+- Formula source is now split at ASCII and full-width commas before KaTeX rendering; each comma-separated formula segment becomes an independent `.note-math` unit, while commas remain unhighlighted separators.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-formula-comma-rollback.css && ./ROLLBACK.sh /tmp/smc-formula-comma-rollback.css && cmp -s /tmp/smc-formula-comma-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-formula-comma-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; comma-separated formulas highlight as independent units.
+
+Formula outer-highlight cleanup:
+- Changed branch/field: app.js / highlightSelectedNoteText pre-normalization.
+- Before applying comma-separated formula units, any stale outer `mark.note-user-highlight` containing formulas is unwrapped; each `.note-math` unit can then receive its own highlight state instead of the whole expression remaining one yellow block.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-formula-outer-clean-rollback.css && ./ROLLBACK.sh /tmp/smc-formula-outer-clean-rollback.css && cmp -s /tmp/smc-formula-outer-clean-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-formula-outer-clean-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; stale outer formula marks are removed before comma-unit highlighting.
+
+Formula separator visibility repair:
+- Changed branch/field: style.css / comma-separated formula highlight separation.
+- Added a 3px inline gap to each highlighted formula unit so adjacent comma-separated units render as visibly separate yellow blocks instead of visually merging into one continuous rectangle.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-formula-separator-rollback.css && ./ROLLBACK.sh /tmp/smc-formula-separator-rollback.css && cmp -s /tmp/smc-formula-separator-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-formula-separator-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; highlighted comma-separated units have visible separation.
+
+Formula comma render identity repair:
+- Changed branch/field: app.js / comma-separated formula rendering identity.
+- Each source-comma segment now stores its own `data-note-latex` identity as it is rendered into a separate `.note-math` node; selection logic therefore operates on independent formula nodes rather than a single serialized formula wrapper.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-formula-comma-render-rollback.css && ./ROLLBACK.sh /tmp/smc-formula-comma-render-rollback.css && cmp -s /tmp/smc-formula-comma-render-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-formula-comma-render-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; comma formula units retain independent render identities.
+
+Formula comma token repair:
+- Changed branch/field: app.js / LaTeX comma token segmentation.
+- Formula rendering now segments literal commas, Chinese commas, `\text{,}`, `\text{，}`, and TeX comma-spacing tokens (`\,`) into independent formula units; separator tokens remain outside highlight blocks.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-formula-comma-token-rollback.css && ./ROLLBACK.sh /tmp/smc-formula-comma-token-rollback.css && cmp -s /tmp/smc-formula-comma-token-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-formula-comma-token-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; supported TeX comma separators stay outside independent highlight units.
+
+Undo formula comma-token expansion:
+- Changed branch/field: app.js / formula comma token segmentation.
+- Reverted only the latest extended TeX separator token handling; formula rendering returns to splitting literal ASCII and full-width commas only.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-undo-comma-token-rollback.css && ./ROLLBACK.sh /tmp/smc-undo-comma-token-rollback.css && cmp -s /tmp/smc-undo-comma-token-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-undo-comma-token-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; latest comma-token expansion is undone while earlier changes remain.

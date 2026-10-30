@@ -1632,6 +1632,9 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
 [data-theme="dark"] .note-tag.t-concept{ --note-color:#A9B7C9; } [data-theme="dark"] .note-tag.t-rule{ --note-color:#7AA7FF; } [data-theme="dark"] .note-tag.t-method{ --note-color:#F2B84B; } [data-theme="dark"] .note-tag.t-contrast{ --note-color:#6FCF97; } [data-theme="dark"] .note-tag.t-pitfall{ --note-color:#FF8F80; } [data-theme="dark"] .note-tag.t-example{ --note-color:#E59BC1; } [data-theme="dark"] .note-tag.t-memo{ --note-color:#B69CFF; }
 .note-index{ flex:0 0 auto; color:var(--text-faint); font-family:var(--font-num); font-size:12px; font-style:italic; }
 .note-card-tools{ display:flex; align-items:center; gap:8px; flex:0 0 auto; }
+.note-highlight-btn{ display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; padding:4px; border:0; border-radius:7px; background:transparent; color:var(--text-faint); font-family:var(--font-symbol); font-size:18px; line-height:1; cursor:pointer; transition:color var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease); }
+.note-highlight-btn:hover,.note-highlight-btn:focus-visible{ color:var(--accent); background:var(--accent-glow); border-color:transparent; outline:none; transform:translateY(-1px); }
+.note-highlight-btn.on{ color:var(--accent); background:var(--accent-glow); border-color:transparent; }
 .note-bookmark-btn{ display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; padding:4px; border:0; border-radius:7px; background:transparent; color:var(--text-faint); cursor:pointer; transition:color var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease); }
 .note-bookmark-btn:hover{ color:var(--gold); background:var(--gold-bg); transform:translateY(-1px); }
 .note-bookmark-btn.on{ color:var(--gold); background:var(--gold-bg); }
@@ -1639,8 +1642,7 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
 .note-bookmark-btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
 .note-rich{ margin-top:14px; color:var(--text); font-family:"SMC CJK Punctuation","SMC FZ New Book","SMC Minion",serif; font-size:16px; line-height:1.9; letter-spacing:.01em; line-break:strict; word-break:normal; overflow-wrap:break-word; hanging-punctuation:first last allow-end; text-wrap:pretty; orphans:2; widows:2; }
 .note-rich :where(p,li,blockquote,h1,h2,h3,h4,h5,h6){ font-family:inherit; font-size:inherit; color:inherit; }
-.note-rich p{ margin:0 0 16px; text-indent:2em; }
-.note-rich p:last-child{ margin-bottom:0; }
+.note-rich p{ margin:0; text-indent:2em; }
 .note-rich > p,.note-rich .md > p{ text-indent:2em; }
 .note-rich :where(figure,figcaption,blockquote,li,pre) p{ text-indent:0; }
 .note-rich h5,.note-rich h6{ margin:16px 0 7px; color:var(--text); font-family:var(--font-ui); }
@@ -1915,6 +1917,14 @@ html[data-theme="light"] .note-rich :where(figure.note-image,figure:has(> img),f
 @media (max-width:640px){.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg)).is-expanded{width:100%;max-width:100%;}}
 @media (max-width:640px){.note-rich :where(> p.note-media-frame,> div.note-media-frame){width:100%;max-width:100%;margin:20px 0 24px;}.note-rich :where(> p.note-media-frame,> div.note-media-frame).is-expanded{width:100%;max-width:100%;}}
 /* Search navigation: keep the matched body text visibly marked after direct jump. */
+.note-rich mark.note-user-highlight{ display:inline; padding:0 1px; border-radius:2px; background:#ffe45c; color:inherit; }
+.note-rich .note-math.note-user-highlight{ display:block; color:inherit; }
+.note-rich .note-math.note-user-highlight{ display:inline-flex; box-sizing:border-box; min-height:3.8em; margin-inline:3px; padding:0; align-items:center; border-radius:4px; line-height:normal!important; overflow:visible; background:#ffe45c; color:inherit; vertical-align:middle; }
+.note-rich .note-math.note-user-highlight .katex{ display:inline-block; line-height:1.25!important; overflow:visible; }
+.note-rich div.note-math.note-user-highlight{ display:flex; width:max-content; max-width:100%; margin-left:auto; margin-right:auto; justify-content:center; align-items:center; }
+.note-rich .note-math.note-user-highlight .katex-display{ margin:0; }
+html[data-theme="dark"] .note-rich .note-math.note-user-highlight{ background:#f5c542; color:#1d2024; }
+html[data-theme="dark"] .note-rich mark.note-user-highlight{ background:#f5c542; color:#1d2024; }
 .note-rich mark.note-search-highlight{
   display:inline;
   padding:0 2px;

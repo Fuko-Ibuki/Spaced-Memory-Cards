@@ -16,7 +16,7 @@ const RATING_TO_PCT = { again:0, hard:50, good:80, easy:100 };
 const SELF_GRADE_FRACTION = { again:0, hard:1/3, good:2/3, easy:1 };
 const TIME_LIMIT_MAX_MINUTES = 240;
 const LEARNING_MODE_KEYS = ['flashcard','learn','test'];
-const STORAGE_KEYS = { settings:'settings', progress:'progress', lastDeck:'lastDeck', deckRegistry:'deckRegistry', activeSession:'activeSession', notesPackage:'notesPackage', notesBookmarks:'notesBookmarks', notesImageZoom:'notesImageZoom', notesScrollY:'notesScrollY', notesTocCollapsed:'notesTocCollapsed', currentView:'currentView', recordDetailId:'recordDetailId' };
+const STORAGE_KEYS = { settings:'settings', progress:'progress', lastDeck:'lastDeck', deckRegistry:'deckRegistry', activeSession:'activeSession', notesPackage:'notesPackage', notesBookmarks:'notesBookmarks', notesHighlights:'notesHighlights', notesImageZoom:'notesImageZoom', notesScrollY:'notesScrollY', notesTocCollapsed:'notesTocCollapsed', currentView:'currentView', recordDetailId:'recordDetailId' };
 const VIEW_CACHE_KEY = 'smc-current-view';
 const TYPOGRAPHY_CACHE_KEY = 'smc-typography';
 function cacheCurrentView(view){ try{ localStorage.setItem(VIEW_CACHE_KEY,view); }catch(e){} }
@@ -447,10 +447,16 @@ function sanitizeNoteHtml(element){
     while((match=mathPattern.exec(text))){
       if(match.index>last) frag.appendChild(document.createTextNode(text.slice(last,match.index)));
       const latex=match[1]||match[2]||match[3]||match[4]||''; const display=Boolean(match[1]||match[2]);
-      const span=document.createElement(display?'div':'span'); span.className='note-math';
-      try{ const katex=window.katex; span.innerHTML=katex&&katex.renderToString ? katex.renderToString(latex,{throwOnError:true,displayMode:display}) : Utils.escapeHtml(latex); }
-      catch(e){ span.textContent=latex; span.classList.add('math-error'); }
-      frag.appendChild(span); last=match.index+match[0].length;
+      const parts=latex.split(/([,，])/);
+      parts.forEach(part=>{
+        if(!part) return;
+        if(/^[,，]$/.test(part)){ frag.appendChild(document.createTextNode(part)); return; }
+        const span=document.createElement(display?'div':'span'); span.className='note-math'; span.dataset.noteLatex=part;
+        try{ const katex=window.katex; span.innerHTML=katex&&katex.renderToString ? katex.renderToString(part,{throwOnError:true,displayMode:display}) : Utils.escapeHtml(part); }
+        catch(e){ span.textContent=part; span.classList.add('math-error'); }
+        frag.appendChild(span);
+      });
+      last=match.index+match[0].length;
     }
     if(last<text.length) frag.appendChild(document.createTextNode(text.slice(last)));
     node.replaceWith(frag);
@@ -679,6 +685,9 @@ const App = {
   notesTocReturnY:0,
   notesTocCollapsed:!!(window.matchMedia && window.matchMedia('(max-width:760px)').matches),
   notesBookmarks:new Set(),
+  notesHighlights:{},
+  notesHighlightMode:false,
+  notesHighlightCardId:'',
   notesImageZoom:{},
   notesFilter:{subject:'all',type:'all',bookmarked:false,search:''}
 };
@@ -4107,7 +4116,7 @@ function renderNotesView(container){
   toc=visibleTocGroups.map(group=>`<details open class="notes-toc-chapter"><summary data-note-target="notes-section-${Utils.escapeHtml(group.sections[0]?.id||'')}">${Utils.escapeHtml(noteTocTitle(group.title))}</summary><div class="notes-toc-chapter-body">${group.sections.map(section=>`<details open class="notes-toc-section"><summary data-note-target="notes-section-${Utils.escapeHtml(section.id)}">${Utils.escapeHtml(noteTocTitle(section.title))}</summary><div class="notes-toc-section-body">${section.articles.map(article=>{ const starred=App.notesBookmarks.has(article.id); const bookmark=starred ? `<span class="notes-toc-bookmark on" data-note-bookmark="${Utils.escapeHtml(article.id)}" role="button" tabindex="0" title="取消收藏" aria-label="取消收藏：${Utils.escapeHtml(article.title)}" aria-pressed="true">${noteBookmarkIcon()}</span>` : ''; return `<button type="button" class="notes-toc-link" data-note-target="note-${Utils.escapeHtml(article.id)}">${bookmark}${Utils.escapeHtml(noteTocTitle(article.title))}</button>`; }).join('')}</div></details>`).join('')}</div></details>`).join('');
   const content=filteredSections.map(section=>{
     const sectionTestArticle=section.articles.find(article=>article.testConfig && isNoteArticleLinked(article));
-    return `<section class="note-section" id="notes-section-${Utils.escapeHtml(section.id)}"><header class="note-section-heading"><div><h2>${Utils.escapeHtml(section.title)}</h2><p class="note-section-description">${section.articles.length} 条${section.description?` ｜ ${Utils.escapeHtml(section.description)}`:''}</p></div><div class="note-section-tools">${sectionTestArticle?`<button type="button" class="btn btn-primary note-test-btn" data-note-test="${Utils.escapeHtml(sectionTestArticle.id)}" title="本节测试">本节测试</button>`:''}</div></header>${section.articles.map(article=>{ const starred=App.notesBookmarks.has(article.id); return `<article class="note-card" id="note-${Utils.escapeHtml(article.id)}"><header class="note-card-heading"><div><h3>${Utils.escapeHtml(article.title)}</h3></div><div class="note-card-tools">${noteTagHtml(article)}<button type="button" class="note-bookmark-btn ${starred?'on':''}" data-note-bookmark="${Utils.escapeHtml(article.id)}" title="${starred?'取消收藏':'收藏'}" aria-label="${starred?'取消收藏':'收藏'}：${Utils.escapeHtml(article.title)}" aria-pressed="${starred?'true':'false'}">${noteBookmarkIcon()}</button></div></header><div class="note-rich">${article.body}</div></article>`; }).join('')}</section>`;
+    return `<section class="note-section" id="notes-section-${Utils.escapeHtml(section.id)}"><header class="note-section-heading"><div><h2>${Utils.escapeHtml(section.title)}</h2><p class="note-section-description">${section.articles.length} 条${section.description?` ｜ ${Utils.escapeHtml(section.description)}`:''}</p></div><div class="note-section-tools">${sectionTestArticle?`<button type="button" class="btn btn-primary note-test-btn" data-note-test="${Utils.escapeHtml(sectionTestArticle.id)}" title="本节测试">本节测试</button>`:''}</div></header>${section.articles.map(article=>{ const starred=App.notesBookmarks.has(article.id); return `<article class="note-card" id="note-${Utils.escapeHtml(article.id)}"><header class="note-card-heading"><div><h3>${Utils.escapeHtml(article.title)}</h3></div><div class="note-card-tools">${noteTagHtml(article)}<button type="button" class="note-bookmark-btn ${starred?'on':''}" data-note-bookmark="${Utils.escapeHtml(article.id)}" title="${starred?'取消收藏':'收藏'}" aria-label="${starred?'取消收藏':'收藏'}：${Utils.escapeHtml(article.title)}" aria-pressed="${starred?'true':'false'}">${noteBookmarkIcon()}</button><button type="button" class="note-highlight-btn" title="高亮选中内容" aria-label="高亮选中内容" aria-pressed="false"><span aria-hidden="true">􀦇</span></button></div></header><div class="note-rich">${article.body}</div></article>`; }).join('')}</section>`;
   }).join('');
   const tocCollapsed=Boolean(App.notesTocCollapsed);
   const documentTitle=tocGroups[0]?.title || pack.title;
@@ -4119,10 +4128,13 @@ function renderNotesView(container){
   const filterLabel=activeFilterCount?`已筛选 ${activeFilterCount} 项`:'全部笔记';
   const notesFilterMenu=`<div class="notes-filter-menu"><button type="button" class="notes-filter-menu-all" data-notes-heading-filter-reset>全部笔记</button><strong>范围</strong><label class="notes-filter-check"><input type="checkbox" data-notes-heading-bookmarked ${notesFilter.bookmarked?'checked':''}><span>仅收藏内容</span></label><strong>笔记本（学科）</strong><div class="notes-filter-choice-list">${[['all','全部笔记本'],...subjects.map(subject=>[subject,subject])].map(([value,label])=>`<label class="notes-filter-check"><input type="radio" name="notes-subject" value="${Utils.escapeHtml(value)}" data-notes-heading-subject ${notesFilter.subject===value?'checked':''}><span>${Utils.escapeHtml(label)}</span></label>`).join('')}</div><strong>分类</strong><div class="notes-filter-choice-list"><label class="notes-filter-check"><input type="checkbox" data-notes-heading-types-all ${selectedTypes.length===types.length?'checked':''}><span>全部类型</span></label>${types.map(type=>`<label class="notes-filter-check"><input type="checkbox" value="${Utils.escapeHtml(type)}" data-notes-heading-type ${selectedTypes.includes(type)?'checked':''}><span>${Utils.escapeHtml(NOTE_TYPE_LABELS[type]||type)}</span></label>`).join('')}</div></div>`;
   container.innerHTML=`<div class="container notes-shell notes-has-package"><div class="notes-package-toolbar"><span>${Utils.escapeHtml(pack.subject||'')}</span><button type="button" class="notes-more-btn" aria-label="更多" aria-expanded="false"><svg class="notes-more-icon" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M4.166 8.501a1.499 1.499 0 1 1 0 2.998 1.499 1.499 0 0 1 0-2.998M10 8.501a1.499 1.499 0 1 1 0 2.998 1.499 1.499 0 0 1 0-2.998M15.833 8.501a1.5 1.5 0 1 1 0 2.999 1.5 1.5 0 0 1 0-2.999"></path></svg></button><div class="notes-more-menu" hidden><div class="notes-filter-group"><strong>筛选笔记本（学科）</strong>${[['all','全部笔记本'],...subjects.map(subject=>[subject,subject])].map(([value,label])=>`<button type="button" class="${notesFilter.subject===value?'active':''}" data-notes-filter-subject="${Utils.escapeHtml(value)}">${Utils.escapeHtml(label)}</button>`).join('')}</div><div class="notes-filter-group"><strong>筛选类型</strong>${[['all','全部类型'],...types.map(type=>[type,NOTE_TYPE_LABELS[type]||type])].map(([value,label])=>`<button type="button" class="${notesFilter.type===value?'active':''}" data-notes-filter-type="${Utils.escapeHtml(value)}">${Utils.escapeHtml(label)}</button>`).join('')}</div><button type="button" class="${notesFilter.bookmarked?'active':''}" data-notes-filter-bookmarked="true">${notesFilter.bookmarked?'显示全部':'仅显示收藏'}</button></div></div><div class="notes-layout${tocCollapsed?' toc-collapsed':''}"><aside class="notes-toc${tocCollapsed?' collapsed':''}" aria-label="笔记目录"><div class="notes-toc-head"><h2>目录</h2><button type="button" class="notes-toc-action" aria-label="${tocCollapsed?'展开目录':'收起目录'}" title="${tocCollapsed?'展开目录':'收起目录'}" aria-expanded="${tocCollapsed?'false':'true'}"><svg data-no-autosize="true" aria-hidden="true" class="Icon-X4VkKC" focusable="false" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M14.5 2.877a3.665 3.665 0 0 1 3.665 3.665v6.917a3.665 3.665 0 0 1-3.665 3.665h-9a3.665 3.665 0 0 1-3.665-3.665V6.542A3.665 3.665 0 0 1 5.5 2.877zM8.165 15.794H14.5a2.335 2.335 0 0 0 2.335-2.335V6.542A2.335 2.335 0 0 0 14.5 4.207H8.165zM5.5 4.207a2.335 2.335 0 0 0-2.335 2.335v6.917A2.335 2.335 0 0 0 5.5 15.794h1.335V4.207z"></path></svg></button></div><div class="notes-toc-body">${toc}</div></aside><main class="notes-document"><header class="notes-document-heading"><h1 class="notes-document-title">${Utils.escapeHtml(documentTitle)}</h1><div class="notes-heading-actions">${chapterTestArticle?`<button type="button" class="btn btn-primary note-test-btn" data-note-test="${Utils.escapeHtml(chapterTestArticle.id)}" title="开始测试">开始测试</button>`:''}</div></header>${content}</main></div></div>`;
+  restoreNoteHighlights(container);
   container.querySelectorAll('.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg))').forEach(figure=>{
     const card=figure.closest('.note-card'); figure.dataset.imageZoomKey=`${card?.id||'notes'}:${[...container.querySelectorAll('.note-card')].indexOf(card)}:${[...card?.querySelectorAll('figure,img,svg')||[]].indexOf(figure)}`;
     const zoom=document.createElement('button'); zoom.type='button'; zoom.className='note-image-zoom'; zoom.setAttribute('aria-label','放大图片'); zoom.title='放大图片'; zoom.innerHTML='<span aria-hidden="true">􀊬</span>';
-    if(App.notesImageZoom[figure.dataset.imageZoomKey]) figure.classList.add('is-expanded');
+    const figureExpanded=Boolean(App.notesImageZoom[figure.dataset.imageZoomKey]);
+    if(figureExpanded) figure.classList.add('is-expanded');
+    zoom.setAttribute('aria-label',figureExpanded?'缩小图片':'放大图片'); zoom.title=figureExpanded?'缩小图片':'放大图片'; zoom.innerHTML=`<span aria-hidden="true">${figureExpanded?'􀊭':'􀊬'}</span>`;
     zoom.onclick=event=>{ event.preventDefault(); event.stopPropagation(); const expanded=figure.classList.toggle('is-expanded'); App.notesImageZoom[figure.dataset.imageZoomKey]=expanded; Store.setJSON(STORAGE_KEYS.notesImageZoom,App.notesImageZoom); zoom.setAttribute('aria-label',expanded?'还原图片':'放大图片'); zoom.title=expanded?'还原图片':'放大图片'; zoom.innerHTML=`<span aria-hidden="true">${expanded?'􀊭':'􀊬'}</span>`; };
     figure.appendChild(zoom);
   });
@@ -4132,7 +4144,9 @@ function renderNotesView(container){
     if(media.querySelector('.note-image-zoom')) return;
     media.classList.add('note-media-frame');
     const zoom=document.createElement('button'); zoom.type='button'; zoom.className='note-image-zoom'; zoom.setAttribute('aria-label','放大图片'); zoom.title='放大图片'; zoom.innerHTML='<span aria-hidden="true">􀊬</span>';
-    if(App.notesImageZoom[media.dataset.imageZoomKey]) media.classList.add('is-expanded');
+    const mediaExpanded=Boolean(App.notesImageZoom[media.dataset.imageZoomKey]);
+    if(mediaExpanded) media.classList.add('is-expanded');
+    zoom.setAttribute('aria-label',mediaExpanded?'缩小图片':'放大图片'); zoom.title=mediaExpanded?'缩小图片':'放大图片'; zoom.innerHTML=`<span aria-hidden="true">${mediaExpanded?'􀊭':'􀊬'}</span>`;
     zoom.onclick=event=>{ event.preventDefault(); event.stopPropagation(); const expanded=media.classList.toggle('is-expanded'); App.notesImageZoom[media.dataset.imageZoomKey]=expanded; Store.setJSON(STORAGE_KEYS.notesImageZoom,App.notesImageZoom); zoom.setAttribute('aria-label',expanded?'还原图片':'放大图片'); zoom.title=expanded?'还原图片':'放大图片'; zoom.innerHTML=`<span aria-hidden="true">${expanded?'􀊭':'􀊬'}</span>`; };
     media.appendChild(zoom);
   });
@@ -4175,7 +4189,25 @@ function renderNotesView(container){
   const collapseMobileToc=()=>{ if(!window.matchMedia?.('(max-width:760px)').matches||tocBox.classList.contains('collapsed')) return; App.notesTocReturnY=Math.max(0,window.scrollY); App.notesTocCollapsed=true; Store.setJSON(STORAGE_KEYS.notesTocCollapsed,true); notesLayout.classList.add('toc-collapsed'); tocBox.classList.add('collapsed'); tocAction.setAttribute('aria-expanded','false'); tocAction.setAttribute('aria-label','展开目录'); tocAction.title='展开目录'; };
   if (notesLayout&&tocBox){ let touchStart=null; tocBox.addEventListener('touchmove',event=>event.stopPropagation(),{passive:true}); notesLayout.addEventListener('click',event=>{ if(!tocBox.contains(event.target)) collapseMobileToc(); }); notesLayout.addEventListener('touchstart',event=>{ if(event.target.closest?.('.notes-document')){ const point=event.touches[0]; touchStart={x:point.clientX,y:point.clientY}; } else touchStart=null; },{passive:true,capture:true}); notesLayout.addEventListener('touchend',event=>{ if(!touchStart) return; const point=event.changedTouches[0]; if(Math.hypot(point.clientX-touchStart.x,point.clientY-touchStart.y)>12) collapseMobileToc(); touchStart=null; },{passive:true,capture:true}); }
   const clearNotesBtn=container.querySelector('#notes-clear-btn');
-  if (clearNotesBtn) clearNotesBtn.onclick=()=>confirmModal('清空笔记？','这会删除已导入的 HTML 笔记包和收藏，不影响题库和学习记录。',async()=>{ await Store.remove(STORAGE_KEYS.notesPackage); await Store.remove(STORAGE_KEYS.notesBookmarks); await Store.remove(STORAGE_KEYS.notesScrollY); App.notesPackage=null; App.notesScrollY=0; App.notesBookmarks=new Set(); toast('已清空笔记',{icon:'🗑️'}); render(); },{danger:true,confirmLabel:'清空'});
+  if (clearNotesBtn) clearNotesBtn.onclick=()=>confirmModal('清空笔记？','这会删除已导入的 HTML 笔记包和收藏，不影响题库和学习记录。',async()=>{ await Store.remove(STORAGE_KEYS.notesPackage); await Store.remove(STORAGE_KEYS.notesBookmarks); await Store.remove(STORAGE_KEYS.notesHighlights); await Store.remove(STORAGE_KEYS.notesScrollY); App.notesPackage=null; App.notesScrollY=0; App.notesBookmarks=new Set(); App.notesHighlights={}; toast('已清空笔记',{icon:'🗑️'}); render(); },{danger:true,confirmLabel:'清空'});
+  const highlightButtons=container.querySelectorAll('.note-highlight-btn');
+  const syncHighlightMode=()=>highlightButtons.forEach(btn=>{ const on=App.notesHighlightMode && btn.closest('.note-card')?.id===App.notesHighlightCardId; btn.classList.toggle('on',on); btn.setAttribute('aria-pressed',String(on)); btn.title=on?'退出高亮模式':'高亮选中内容'; btn.setAttribute('aria-label',btn.title); });
+  highlightButtons.forEach(btn=>{
+    let pendingRange=null;
+    const captureHighlightRange=event=>{ const selection=window.getSelection(); if(selection?.rangeCount&&!selection.isCollapsed){ pendingRange=selection.getRangeAt(0).cloneRange(); event.preventDefault(); } };
+    btn.onpointerdown=captureHighlightRange;
+    btn.onmousedown=captureHighlightRange;
+    btn.onclick=event=>{ event.preventDefault(); event.stopPropagation(); const card=btn.closest('.note-card'), cardId=card?.id||'', cardBody=card?.querySelector('.note-rich'); const sameCard=App.notesHighlightMode&&App.notesHighlightCardId===cardId; const range=pendingRange||(()=>{ const selection=window.getSelection(); return selection?.rangeCount&&!selection.isCollapsed?selection.getRangeAt(0).cloneRange():null; })(); if(range&&cardBody){ const start=range.startContainer.nodeType===Node.ELEMENT_NODE?range.startContainer:range.startContainer.parentElement; const end=range.endContainer.nodeType===Node.ELEMENT_NODE?range.endContainer:range.endContainer.parentElement; if(cardBody.contains(start)&&cardBody.contains(end)) toggleNoteSelectionHighlight(cardBody,range); } if(sameCard){ App.notesHighlightMode=false; App.notesHighlightCardId=''; }else{ App.notesHighlightMode=true; App.notesHighlightCardId=cardId; } pendingRange=null; syncHighlightMode(); };
+  });
+  syncHighlightMode();
+  container.querySelectorAll('.note-rich').forEach(body=>body.onmouseup=()=>{
+    if(!App.notesHighlightMode) return;
+    App.notesHighlightCardId=body.closest('.note-card')?.id||'';
+    syncHighlightMode();
+    const selection=window.getSelection();
+    if(!selection?.rangeCount || selection.isCollapsed) return;
+    toggleNoteSelectionHighlight(body,selection.getRangeAt(0));
+  });
   container.querySelectorAll('[data-note-bookmark]').forEach(bindNotesBookmarkControl);
   container.querySelectorAll('[data-note-test]').forEach(btn=>btn.onclick=event=>{ event.preventDefault(); event.stopPropagation(); startNoteTest(btn.dataset.noteTest); });
   container.querySelectorAll('[data-note-target]').forEach(link=>link.onclick=(event)=>{ event.preventDefault(); event.stopPropagation(); clearPendingNotesTocBookmarks(); const target=document.getElementById(link.dataset.noteTarget); if(target) window.scrollTo({top:Math.max(0, target.getBoundingClientRect().top + window.scrollY - 90), behavior:'auto'}); });
@@ -4225,6 +4257,97 @@ async function toggleNotesBookmark(id, button){
   requestAnimationFrame(()=>{ alignNotesTocToActive(); alignNotesTocToItem(id); });
   const tocLink=[...document.querySelectorAll('.notes-toc-link')].find(link=>link.dataset.noteTarget===`note-${id}`);
   if (tocLink){ const marker=tocLink.querySelector('.notes-toc-bookmark'); if (on&&!marker){ const next=document.createElement('span'); next.className='notes-toc-bookmark on'; next.dataset.noteBookmark=id; next.setAttribute('role','button'); next.tabIndex=0; next.title='取消收藏'; next.setAttribute('aria-label',`取消收藏：${tocLink.textContent.trim()}`); next.setAttribute('aria-pressed','true'); next.innerHTML=noteBookmarkIcon(); bindNotesBookmarkControl(next); tocLink.prepend(next); } else if (on&&marker){ marker.classList.add('on'); marker.removeAttribute('data-note-pending-cancel'); marker.setAttribute('aria-pressed','true'); marker.setAttribute('title','取消收藏'); } else if (!on&&marker){ if (fromToc){ marker.classList.remove('on'); marker.dataset.notePendingCancel='true'; marker.setAttribute('aria-pressed','false'); marker.setAttribute('title','收藏'); } else marker.remove(); } }
+}
+function noteRangeAtTextOffset(root,start,length){
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+  let node,offset=0;
+  while(node=walker.nextNode()){
+    const end=offset+node.nodeValue.length;
+    if(start>=offset&&start<=end){
+      const range=document.createRange(); range.setStart(node,Math.max(0,start-offset));
+      let endNode=node,endOffset=Math.min(node.nodeValue.length,Math.max(0,start-offset)+length),remaining=length-(endOffset-(start-offset));
+      while(remaining>0&&(endNode=walker.nextNode())){ const take=Math.min(endNode.nodeValue.length,remaining); endOffset=take; remaining-=take; }
+      if(remaining<=0){ range.setEnd(endNode,endOffset); return range; }
+    }
+    offset=end;
+  }
+  return null;
+}
+function noteTextOffset(root,container,offset){ const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT); let node,total=0; while(node=walker.nextNode()){ if(node===container) return total+offset; total+=node.nodeValue.length; } return total; }
+function noteSelectedTextLength(root,range){ const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT); let node,total=0; while(node=walker.nextNode()){ try{ if(!range.intersectsNode(node)) continue; let start=node===range.startContainer?range.startOffset:0, end=node===range.endContainer?range.endOffset:node.nodeValue.length; if(end>start) total+=end-start; }catch(error){} } return total; }
+function restoreNoteHighlights(container){
+  Object.entries(App.notesHighlights||{}).forEach(([id,records])=>{
+    const root=container.querySelector(`#note-${CSS.escape(id)} .note-rich`); if(!root) return;
+    (Array.isArray(records)?records:[]).forEach(record=>{
+      const text=typeof record==='string'?record:String(record?.text||''); if(!text) return;
+      let range=Number.isFinite(record?.offset)?noteRangeAtTextOffset(root,record.offset,Number.isFinite(record?.length)?record.length:text.length):null;
+      if(!range){ const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT); let node; while(node=walker.nextNode()){ const index=node.nodeValue.lastIndexOf(text); if(index>=0&&!node.parentElement?.closest('mark.note-user-highlight')){ range=document.createRange(); range.setStart(node,index); range.setEnd(node,index+text.length); break; } } }
+      if(range) highlightSelectedNoteText(range);
+    });
+    root.querySelectorAll('.note-math').forEach(formula=>{ const marks=formula.querySelectorAll('mark.note-user-highlight'); const outer=formula.parentElement?.closest('mark.note-user-highlight'); if(!marks.length&&!outer) return; marks.forEach(mark=>mark.replaceWith(...mark.childNodes)); if(outer&&outer.textContent.trim()===formula.textContent.trim()) outer.replaceWith(formula); formula.classList.add('note-user-highlight'); });
+  });
+}
+function highlightSelectedNoteText(range){
+  if(!range || range.collapsed) return false;
+  const startRoot=range.startContainer.nodeType===Node.ELEMENT_NODE ? range.startContainer : range.startContainer.parentElement;
+  const endRoot=range.endContainer.nodeType===Node.ELEMENT_NODE ? range.endContainer : range.endContainer.parentElement;
+  const startBody=startRoot?.closest('.note-rich'), endBody=endRoot?.closest('.note-rich');
+  if(!startBody || startBody!==endBody) return false;
+  startBody.querySelectorAll('mark.note-user-highlight').forEach(mark=>{ if(mark.querySelector('.note-math')) mark.replaceWith(...mark.childNodes); });
+  const formulaNodes=[...startBody.querySelectorAll('.note-math')].filter(formula=>{ try{return range.intersectsNode(formula)&&!formula.closest('mark.note-user-highlight');}catch(error){return false;} });
+  for(let i=formulaNodes.length-1;i>=0;i--){
+    const formula=formulaNodes[i];
+    formula.querySelectorAll('mark.note-user-highlight').forEach(mark=>mark.replaceWith(...mark.childNodes));
+    formula.classList.add('note-user-highlight');
+  }
+  const walker=document.createTreeWalker(startBody,NodeFilter.SHOW_TEXT);
+  const nodes=[]; let node;
+  while(node=walker.nextNode()){
+    if(!node.nodeValue.trim()) continue;
+    if(node.parentElement?.closest('mark.note-user-highlight,.note-math')) continue;
+    try{ if(range.intersectsNode(node)) nodes.push(node); }catch(error){}
+  }
+  let applied=formulaNodes.length>0;
+  for(let i=nodes.length-1;i>=0;i--){
+    const textNode=nodes[i], length=textNode.nodeValue.length;
+    let start=0,end=length;
+    if(textNode===range.startContainer) start=range.startOffset;
+    if(textNode===range.endContainer) end=range.endOffset;
+    if(end<=start) continue;
+    const subrange=document.createRange(); subrange.setStart(textNode,start); subrange.setEnd(textNode,end);
+    const mark=document.createElement('mark'); mark.className='note-user-highlight';
+    try{ mark.appendChild(subrange.extractContents()); subrange.insertNode(mark); applied=true; }catch(error){}
+  }
+  if(applied) window.getSelection()?.removeAllRanges();
+  return applied;
+}
+function toggleNoteSelectionHighlight(body,range){
+  if(!body||!range||range.collapsed) return false;
+  const start=range.startContainer.nodeType===Node.ELEMENT_NODE?range.startContainer:range.startContainer.parentElement;
+  const end=range.endContainer.nodeType===Node.ELEMENT_NODE?range.endContainer:range.endContainer.parentElement;
+  if(!body.contains(start)||!body.contains(end)) return false;
+  const selectedMarks=[...body.querySelectorAll('mark.note-user-highlight,.note-math.note-user-highlight')].filter(mark=>{ try{return range.intersectsNode(mark);}catch(error){return false;} });
+  const selectedFormulas=selectedMarks.filter(node=>node.classList.contains('note-math'));
+  selectedFormulas.forEach(formula=>formula.querySelectorAll('mark.note-user-highlight').forEach(mark=>{ if(!selectedMarks.includes(mark)) selectedMarks.push(mark); }));
+  const card=body.closest('.note-card'), id=card?.id?.replace(/^note-/,'');
+  if(selectedMarks.length){
+    const removedTexts=selectedMarks.map(mark=>mark.textContent||'');
+    const selectedText=range.toString();
+    const normalizedSelected=selectedText.replace(/\s+/g,'');
+    const normalizedMarks=removedTexts.map(text=>String(text||'').replace(/\s+/g,''));
+    const cancelOffset=noteTextOffset(body,range.startContainer,range.startOffset), cancelLength=selectedText.length, cancelEnd=cancelOffset+cancelLength;
+    selectedMarks.forEach(mark=>{ if(mark.classList.contains('note-math')) mark.classList.remove('note-user-highlight'); else mark.replaceWith(...mark.childNodes); });
+    if(id){ App.notesHighlights[id]=(App.notesHighlights[id]||[]).filter(record=>{ const text=typeof record==='string'?record:String(record?.text||''); const offset=Number(record?.offset), length=Number(record?.length), end=offset+length; const overlaps=Number.isFinite(offset)&&Number.isFinite(length)&&cancelLength>0&&offset<cancelEnd&&end>cancelOffset; const normalizedText=text.replace(/\s+/g,''); const textMatches=removedTexts.includes(text)||normalizedMarks.some(markText=>markText&& (markText.includes(normalizedText)||normalizedText.includes(markText)))||normalizedSelected.includes(normalizedText)||normalizedText.includes(normalizedSelected); return !overlaps && (!text || !textMatches); }); Store.setJSON(STORAGE_KEYS.notesHighlights,App.notesHighlights); }
+    window.getSelection()?.removeAllRanges();
+    return true;
+  }
+  const selectedText=range.toString();
+  if(!selectedText.trim()) return false;
+  const startOffset=noteTextOffset(body,range.startContainer,range.startOffset);
+  const selectedLength=noteSelectedTextLength(body,range);
+  if(!highlightSelectedNoteText(range)) return false;
+  if(id){ App.notesHighlights[id]=[...(App.notesHighlights[id]||[]),{text:selectedText,offset:startOffset,length:selectedLength}]; Store.setJSON(STORAGE_KEYS.notesHighlights,App.notesHighlights); }
+  return true;
 }
 function highlightNoteSearchMatch(target,query){
   const root=target?.querySelector('.note-rich')||target;
@@ -4611,6 +4734,7 @@ async function initApp(){
     const savedTocCollapsed = await Store.getJSON(STORAGE_KEYS.notesTocCollapsed, null);
     if (typeof savedTocCollapsed === 'boolean') App.notesTocCollapsed = savedTocCollapsed;
     App.notesBookmarks = new Set(await Store.getJSON(STORAGE_KEYS.notesBookmarks, []));
+    App.notesHighlights = await Store.getJSON(STORAGE_KEYS.notesHighlights, {});
     App.notesImageZoom = await Store.getJSON(STORAGE_KEYS.notesImageZoom, {});
     applyTheme();
     if (window.matchMedia){

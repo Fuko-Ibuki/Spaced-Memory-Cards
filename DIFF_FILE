@@ -1,808 +1,251 @@
-diff --git a/ROLLBACK.sh b/ROLLBACK.sh
-index 7cbc9cb..7d44df9 100755
---- a/ROLLBACK.sh
-+++ b/ROLLBACK.sh
-@@ -1,4 +1,7 @@
- #!/bin/sh
- set -eu
--cp MODIFIED_FILE app.js
--printf "%s\\n" "rollback restored app.js from MODIFIED_FILE snapshot"
-+TARGET=${1:-style.css}
-+cp MODIFIED_FILE "$TARGET"
-+node --check app.js
-+rg -Fq 'margin:26px auto 30px' "$TARGET"
-+printf '%s\n' "rollback restored $TARGET from MODIFIED_FILE snapshot"
 diff --git a/app.js b/app.js
-index 325aff0..ed014d8 100644
+index ed014d8..9f2829d 100644
 --- a/app.js
 +++ b/app.js
 @@ -16,7 +16,7 @@ const RATING_TO_PCT = { again:0, hard:50, good:80, easy:100 };
  const SELF_GRADE_FRACTION = { again:0, hard:1/3, good:2/3, easy:1 };
  const TIME_LIMIT_MAX_MINUTES = 240;
  const LEARNING_MODE_KEYS = ['flashcard','learn','test'];
--const STORAGE_KEYS = { settings:'settings', progress:'progress', lastDeck:'lastDeck', deckRegistry:'deckRegistry', activeSession:'activeSession', notesPackage:'notesPackage', notesBookmarks:'notesBookmarks', notesScrollY:'notesScrollY', notesTocCollapsed:'notesTocCollapsed', currentView:'currentView', recordDetailId:'recordDetailId' };
-+const STORAGE_KEYS = { settings:'settings', progress:'progress', lastDeck:'lastDeck', deckRegistry:'deckRegistry', activeSession:'activeSession', notesPackage:'notesPackage', notesBookmarks:'notesBookmarks', notesImageZoom:'notesImageZoom', notesScrollY:'notesScrollY', notesTocCollapsed:'notesTocCollapsed', currentView:'currentView', recordDetailId:'recordDetailId' };
+-const STORAGE_KEYS = { settings:'settings', progress:'progress', lastDeck:'lastDeck', deckRegistry:'deckRegistry', activeSession:'activeSession', notesPackage:'notesPackage', notesBookmarks:'notesBookmarks', notesImageZoom:'notesImageZoom', notesScrollY:'notesScrollY', notesTocCollapsed:'notesTocCollapsed', currentView:'currentView', recordDetailId:'recordDetailId' };
++const STORAGE_KEYS = { settings:'settings', progress:'progress', lastDeck:'lastDeck', deckRegistry:'deckRegistry', activeSession:'activeSession', notesPackage:'notesPackage', notesBookmarks:'notesBookmarks', notesHighlights:'notesHighlights', notesImageZoom:'notesImageZoom', notesScrollY:'notesScrollY', notesTocCollapsed:'notesTocCollapsed', currentView:'currentView', recordDetailId:'recordDetailId' };
  const VIEW_CACHE_KEY = 'smc-current-view';
  const TYPOGRAPHY_CACHE_KEY = 'smc-typography';
  function cacheCurrentView(view){ try{ localStorage.setItem(VIEW_CACHE_KEY,view); }catch(e){} }
-@@ -266,6 +266,16 @@ function renderMathFallback(latex){
-   t=t.replace(/_\{([^}]+)\}/g,'<sub>$1</sub>').replace(/_([A-Za-z0-9]+)/g,'<sub>$1</sub>');
-   return `<span class=\"math-fallback-render\">${t}</span>`;
- }
-+function renderQuestionFormula(value){
-+  const latex=String(value||'');
-+  if(!/[\\^_]/.test(latex)) return Utils.escapeHtml(cleanDeckText(latex));
-+  try{
-+    const katex=(window.katex&&typeof window.katex.renderToString==='function') ? window.katex : (window.katex&&window.katex.default);
-+    return katex&&typeof katex.renderToString==='function'
-+      ? katex.renderToString(latex,{throwOnError:true,displayMode:false})
-+      : renderMathFallback(latex);
-+  }catch(e){ return renderMathFallback(latex); }
-+}
- function renderRichContent(blocks, assets){
-   return normalizeContent(blocks).map(block=>{
-     if (block.type==='text') return Utils.escapeHtml(cleanDeckText(block.text||''));
-@@ -288,7 +298,7 @@ function renderRichContent(blocks, assets){
-     return '';
-   }).join('');
- }
--function renderOptionContent(option){ return option.content ? renderRichContent(option.content, App.deck&&App.deck.assets) : Utils.escapeHtml(option.text||''); }
-+function renderOptionContent(option){ return option.content ? renderRichContent(option.content, App.deck&&App.deck.assets) : renderQuestionFormula(option.text||''); }
- function adaptDeckV2(raw){
-   if (!raw || !Array.isArray(raw.questions)) return raw;
-   const schemaMajor=raw.schemaVersion==null ? '2' : String(raw.schemaVersion).split('.')[0];
-@@ -538,8 +548,8 @@ async function handleNotesHtmlFile(file){
-     const pack=parseNotesHtmlPackage(text,name);
-     const existing=App.notesPackage;
-     const seen=new Set((existing?.sections||[]).flatMap(section=>(section.articles||[]).map(article=>`${article.questionId||article.id}|${article.title}|${article.body}`)));
--    const fresh=pack.sections.map(section=>({...section, articles:(section.articles||[]).filter(article=>{ const key=`${article.questionId||article.id}|${article.title}|${article.body}`; if(seen.has(key)) return false; seen.add(key); return true; })})).filter(section=>section.articles.length);
--    const merged=existing ? {...existing, subject:existing.subject||pack.subject, sourceName:[existing.sourceName,pack.sourceName].filter(Boolean).join(', '), importedAt:Date.now(), sections:[...(existing.sections||[]),...fresh], totalArticles:(existing.totalArticles||0)+fresh.reduce((n,section)=>n+section.articles.length,0)} : pack;
-+    const fresh=pack.sections.map(section=>({...section, sourceTimestamp:pack.importedAt, sourceSubject:pack.subject||'', articles:(section.articles||[]).filter(article=>{ const key=`${article.questionId||article.id}|${article.title}|${article.body}`; if(seen.has(key)) return false; seen.add(key); return true; })})).filter(section=>section.articles.length);
-+    const merged=existing ? {...existing, subject:existing.subject||pack.subject, sourceName:[existing.sourceName,pack.sourceName].filter(Boolean).join(', '), importedAt:Date.now(), sections:[...(existing.sections||[]).map(section=>({...section,sourceTimestamp:section.sourceTimestamp||existing.importedAt||0})),...fresh].sort((a,b)=>(a.sourceTimestamp||0)-(b.sourceTimestamp||0)), totalArticles:(existing.totalArticles||0)+fresh.reduce((n,section)=>n+section.articles.length,0)} : {...pack,sections:pack.sections.map(section=>({...section,sourceTimestamp:pack.importedAt}))};
-     await Store.setJSON(STORAGE_KEYS.notesPackage,merged);
-     App.notesPackage=merged; App.view='notes'; render();
-     toast(`已导入「${pack.title}」，新增 ${fresh.reduce((n,section)=>n+section.articles.length,0)} 条笔记`, {icon:'📖'});
-@@ -668,7 +678,9 @@ const App = {
-   notesScrollY:0,
+@@ -447,10 +447,16 @@ function sanitizeNoteHtml(element){
+     while((match=mathPattern.exec(text))){
+       if(match.index>last) frag.appendChild(document.createTextNode(text.slice(last,match.index)));
+       const latex=match[1]||match[2]||match[3]||match[4]||''; const display=Boolean(match[1]||match[2]);
+-      const span=document.createElement(display?'div':'span'); span.className='note-math';
+-      try{ const katex=window.katex; span.innerHTML=katex&&katex.renderToString ? katex.renderToString(latex,{throwOnError:true,displayMode:display}) : Utils.escapeHtml(latex); }
+-      catch(e){ span.textContent=latex; span.classList.add('math-error'); }
+-      frag.appendChild(span); last=match.index+match[0].length;
++      const parts=latex.split(/([,，])/);
++      parts.forEach(part=>{
++        if(!part) return;
++        if(/^[,，]$/.test(part)){ frag.appendChild(document.createTextNode(part)); return; }
++        const span=document.createElement(display?'div':'span'); span.className='note-math'; span.dataset.noteLatex=part;
++        try{ const katex=window.katex; span.innerHTML=katex&&katex.renderToString ? katex.renderToString(part,{throwOnError:true,displayMode:display}) : Utils.escapeHtml(part); }
++        catch(e){ span.textContent=part; span.classList.add('math-error'); }
++        frag.appendChild(span);
++      });
++      last=match.index+match[0].length;
+     }
+     if(last<text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+     node.replaceWith(frag);
+@@ -679,6 +685,9 @@ const App = {
    notesTocReturnY:0,
    notesTocCollapsed:!!(window.matchMedia && window.matchMedia('(max-width:760px)').matches),
--  notesBookmarks:new Set()
-+  notesBookmarks:new Set(),
-+  notesImageZoom:{},
-+  notesFilter:{subject:'all',type:'all',bookmarked:false,search:''}
+   notesBookmarks:new Set(),
++  notesHighlights:{},
++  notesHighlightMode:false,
++  notesHighlightCardId:'',
+   notesImageZoom:{},
+   notesFilter:{subject:'all',type:'all',bookmarked:false,search:''}
  };
- 
- function defaultModeSettings(){
-@@ -2867,10 +2879,16 @@ function renderInteractiveFace(sess, card){
-         actions = `<div class="qcard-actions"><button type="button" class="btn btn-secondary self-eval-btn" id="self-eval-btn">自评</button>${tabBtn}<button type="button" class="btn btn-primary" id="confirm-btn">确认 <span class="kbd">⏎</span></button></div>`;
-       }
-     } else {
--      const parts = Utils.escapeHtml(card.question).split(/_{2,}/);
-       const inputCls = sess.revealed ? (manualAnswerMatchesReference(card, sess.userTextAnswer) ? 'correct' : 'wrong') : '';
-       const inputHtml = `<span class="blank-wrap" style="--blank-chars:${blankInputChars(sess.userTextAnswer||'')}"><input type="text" class="qcard-blank-input ${inputCls}" id="blank-input" value="${Utils.escapeHtml(sess.userTextAnswer||'')}" ${sess.revealed?'disabled':''} placeholder="" autocomplete="off" autocapitalize="off" spellcheck="false"><span class="blank-underline"></span></span>`;
--      body = `<div class="qcard-question">${parts.join(inputHtml)}</div>`;
-+      const questionHtml = Array.isArray(card.content) && card.content.length
-+        ? card.content.map(block=>{
-+            if (block.type==='blank') return inputHtml;
-+            if (block.type==='text') return Utils.escapeHtml(cleanDeckText(block.text||''));
-+            return renderRichContent([block], App.deck&&App.deck.assets);
-+          }).join('')
-+        : Utils.escapeHtml(card.question).split(/_{2,}/).join(inputHtml);
-+      body = `<div class="qcard-question">${questionHtml}</div>`;
-       if (!sess.revealed){
-         actions = `<div class="qcard-actions"><button type="button" class="btn btn-secondary self-eval-btn" id="self-eval-btn">自评</button><button type="button" class="btn btn-primary" id="confirm-btn">确认 <span class="kbd">⏎</span></button></div>`;
-       }
-@@ -3484,7 +3502,7 @@ function renderBrowseView(container){
- 
-   container.className = 'view-pad has-fixed-previewbar fade-in';
-   container.innerHTML = `
--    <div class="container" style="max-width:1120px;">
-+    <div class="container setup-container browse-container">
-       <div class="browse-topbar">
-         ${showAnswerControl ? `<div class="browse-answer-fixed">
-           <div class="label" style="font-size:13px;">显示答案</div>
-@@ -3646,12 +3664,12 @@ function detailScoreText(detail){
- function renderInlineFillQuestion(q, showAns){
-   let i = 0;
-   const answers = q.answers || [];
--  const renderText = text=>Utils.escapeHtml(text||'').replace(/_{2,}/g, ()=>{
--    const ans = answers[i] != null ? answers[i] : answers[answers.length-1];
--    i++;
--    if (!showAns) return '<span class="browse-blank-line" aria-hidden="true"></span>';
--    return `<span class="browse-inline-answer">${Utils.escapeHtml(String(ans||'').split('/')[0])}</span>`;
--  });
-+  const renderText = text=>String(text||'').split(/_{2,}/g).map((part,index)=>{
-+    if(index===0) return renderQuestionFormula(part);
-+    const ans = answers[i] != null ? answers[i] : answers[answers.length-1]; i++;
-+    const blank=!showAns ? '<span class="browse-blank-line" aria-hidden="true"></span>' : `<span class="browse-inline-answer">${Utils.escapeHtml(String(ans||'').split('/')[0])}</span>`;
-+    return blank + renderQuestionFormula(part);
-+  }).join('');
-   if (Array.isArray(q.content) && q.content.length){
-     return normalizeContent(q.content).map(block=>{
-       if (block.type==='text') return renderText(block.text);
-@@ -3702,7 +3720,7 @@ function renderPreviewQuestion(q, num, opts={}){
-   if (!bodyHtml && showAns && detail && detail.correctAnswer){
-     bodyHtml = `<div class="browse-answer">${Utils.escapeHtml(detail.correctAnswer)}</div>`;
-   }
--  const qText = q.type==='fillInTheBlank' ? renderInlineFillQuestion(q, showAns) : (q.content ? renderRichContent(q.content, App.deck&&App.deck.assets) : Utils.escapeHtml(q.question));
-+  const qText = q.type==='fillInTheBlank' ? renderInlineFillQuestion(q, showAns) : (q.content ? renderRichContent(q.content, App.deck&&App.deck.assets) : renderQuestionFormula(q.question));
-   const statusBadge = detail ? detailState.badges.map(s=>`<span class="preview-status ${s}">${previewStatusLabel(s, opts.mode)}</span>`).join('') : '';
-   return `<div class="browse-q ${detail?'with-status status-'+status:''}" id="${idPrefix}-${q.uid}">
-     <div class="preview-q-head">
-@@ -4068,16 +4086,92 @@ function renderNotesView(container){
-     if(!group){ group={title,sections:[]}; tocGroups.push(group); }
-     group.sections.push(section);
-   });
--  const toc=tocGroups.map(group=>`<details open class="notes-toc-chapter"><summary data-note-target="notes-section-${Utils.escapeHtml(group.sections[0]?.id||'')}">${Utils.escapeHtml(noteTocTitle(group.title))}</summary><div class="notes-toc-chapter-body">${group.sections.map(section=>`<details open class="notes-toc-section"><summary data-note-target="notes-section-${Utils.escapeHtml(section.id)}">${Utils.escapeHtml(noteTocTitle(section.title))}</summary><div class="notes-toc-section-body">${section.articles.map(article=>{ const starred=App.notesBookmarks.has(article.id); const bookmark=starred ? `<span class="notes-toc-bookmark on" data-note-bookmark="${Utils.escapeHtml(article.id)}" role="button" tabindex="0" title="取消收藏" aria-label="取消收藏：${Utils.escapeHtml(article.title)}" aria-pressed="true">${noteBookmarkIcon()}</span>` : ''; return `<button type="button" class="notes-toc-link" data-note-target="note-${Utils.escapeHtml(article.id)}">${bookmark}${Utils.escapeHtml(noteTocTitle(article.title))}</button>`; }).join('')}</div></details>`).join('')}</div></details>`).join('');
--  const content=pack.sections.map(section=>`<section class="note-section" id="notes-section-${Utils.escapeHtml(section.id)}"><header class="note-section-heading"><div><h2>${Utils.escapeHtml(section.title)}</h2><p class="note-section-description">${section.articles.length} 条${section.description?` ｜ ${Utils.escapeHtml(section.description)}`:''}</p></div><div class="note-section-tools">${section.articles.find(isNoteArticleLinked)?`<button type="button" class="btn btn-primary note-test-btn" data-note-test="${Utils.escapeHtml(section.articles.find(isNoteArticleLinked).id)}" title="开始测试">开始测试</button>`:''}</div></header>${section.articles.map(article=>{ const starred=App.notesBookmarks.has(article.id); return `<article class="note-card" id="note-${Utils.escapeHtml(article.id)}"><header class="note-card-heading"><div><h3>${Utils.escapeHtml(article.title)}</h3></div><div class="note-card-tools">${noteTagHtml(article)}<button type="button" class="note-bookmark-btn ${starred?'on':''}" data-note-bookmark="${Utils.escapeHtml(article.id)}" title="${starred?'取消收藏':'收藏'}" aria-label="${starred?'取消收藏':'收藏'}：${Utils.escapeHtml(article.title)}" aria-pressed="${starred?'true':'false'}">${noteBookmarkIcon()}</button></div></header><div class="note-rich">${article.body}</div></article>`; }).join('')}</section>`).join('');
-+  let toc='';
-+  const notesFilter=App.notesFilter||{subject:'all',type:'all',bookmarked:false,search:''};
-+  const subjects=[...new Set((pack.sections||[]).map(section=>section.sourceSubject||pack.subject).filter(Boolean))];
-+  const types=[...new Set((pack.sections||[]).flatMap(section=>(section.articles||[]).map(article=>article.type||'concept')))];
-+  const selectedTypes=Array.isArray(notesFilter.type)?notesFilter.type:(notesFilter.type==='all'||!notesFilter.type?types:[notesFilter.type]);
-+  const query=(notesFilter.search||'').trim().toLocaleLowerCase();
-+  /*
-+   * 暂时注释：笔记页面筛选逻辑。
-+   * 恢复筛选时，将下方全量 sections 替换回原来的 subject/type/bookmarked/search 条件。
-+   */
-+  const filteredSections=(pack.sections||[]).map(section=>({...section,articles:[...(section.articles||[])]}));
-+  const visibleTocGroups=[];
-+  filteredSections.forEach(section=>{
-+    const title=section.chapterTitle||'笔记';
-+    let group=visibleTocGroups.find(item=>item.title===title);
-+    if(!group){ group={title,sections:[]}; visibleTocGroups.push(group); }
-+    group.sections.push(section);
-+  });
-+  toc=visibleTocGroups.map(group=>`<details open class="notes-toc-chapter"><summary data-note-target="notes-section-${Utils.escapeHtml(group.sections[0]?.id||'')}">${Utils.escapeHtml(noteTocTitle(group.title))}</summary><div class="notes-toc-chapter-body">${group.sections.map(section=>`<details open class="notes-toc-section"><summary data-note-target="notes-section-${Utils.escapeHtml(section.id)}">${Utils.escapeHtml(noteTocTitle(section.title))}</summary><div class="notes-toc-section-body">${section.articles.map(article=>{ const starred=App.notesBookmarks.has(article.id); const bookmark=starred ? `<span class="notes-toc-bookmark on" data-note-bookmark="${Utils.escapeHtml(article.id)}" role="button" tabindex="0" title="取消收藏" aria-label="取消收藏：${Utils.escapeHtml(article.title)}" aria-pressed="true">${noteBookmarkIcon()}</span>` : ''; return `<button type="button" class="notes-toc-link" data-note-target="note-${Utils.escapeHtml(article.id)}">${bookmark}${Utils.escapeHtml(noteTocTitle(article.title))}</button>`; }).join('')}</div></details>`).join('')}</div></details>`).join('');
-+  const content=filteredSections.map(section=>{
-+    const sectionTestArticle=section.articles.find(article=>article.testConfig && isNoteArticleLinked(article));
-+    return `<section class="note-section" id="notes-section-${Utils.escapeHtml(section.id)}"><header class="note-section-heading"><div><h2>${Utils.escapeHtml(section.title)}</h2><p class="note-section-description">${section.articles.length} 条${section.description?` ｜ ${Utils.escapeHtml(section.description)}`:''}</p></div><div class="note-section-tools">${sectionTestArticle?`<button type="button" class="btn btn-primary note-test-btn" data-note-test="${Utils.escapeHtml(sectionTestArticle.id)}" title="本节测试">本节测试</button>`:''}</div></header>${section.articles.map(article=>{ const starred=App.notesBookmarks.has(article.id); return `<article class="note-card" id="note-${Utils.escapeHtml(article.id)}"><header class="note-card-heading"><div><h3>${Utils.escapeHtml(article.title)}</h3></div><div class="note-card-tools">${noteTagHtml(article)}<button type="button" class="note-bookmark-btn ${starred?'on':''}" data-note-bookmark="${Utils.escapeHtml(article.id)}" title="${starred?'取消收藏':'收藏'}" aria-label="${starred?'取消收藏':'收藏'}：${Utils.escapeHtml(article.title)}" aria-pressed="${starred?'true':'false'}">${noteBookmarkIcon()}</button></div></header><div class="note-rich">${article.body}</div></article>`; }).join('')}</section>`;
-+  }).join('');
+@@ -4107,7 +4116,7 @@ function renderNotesView(container){
+   toc=visibleTocGroups.map(group=>`<details open class="notes-toc-chapter"><summary data-note-target="notes-section-${Utils.escapeHtml(group.sections[0]?.id||'')}">${Utils.escapeHtml(noteTocTitle(group.title))}</summary><div class="notes-toc-chapter-body">${group.sections.map(section=>`<details open class="notes-toc-section"><summary data-note-target="notes-section-${Utils.escapeHtml(section.id)}">${Utils.escapeHtml(noteTocTitle(section.title))}</summary><div class="notes-toc-section-body">${section.articles.map(article=>{ const starred=App.notesBookmarks.has(article.id); const bookmark=starred ? `<span class="notes-toc-bookmark on" data-note-bookmark="${Utils.escapeHtml(article.id)}" role="button" tabindex="0" title="取消收藏" aria-label="取消收藏：${Utils.escapeHtml(article.title)}" aria-pressed="true">${noteBookmarkIcon()}</span>` : ''; return `<button type="button" class="notes-toc-link" data-note-target="note-${Utils.escapeHtml(article.id)}">${bookmark}${Utils.escapeHtml(noteTocTitle(article.title))}</button>`; }).join('')}</div></details>`).join('')}</div></details>`).join('');
+   const content=filteredSections.map(section=>{
+     const sectionTestArticle=section.articles.find(article=>article.testConfig && isNoteArticleLinked(article));
+-    return `<section class="note-section" id="notes-section-${Utils.escapeHtml(section.id)}"><header class="note-section-heading"><div><h2>${Utils.escapeHtml(section.title)}</h2><p class="note-section-description">${section.articles.length} 条${section.description?` ｜ ${Utils.escapeHtml(section.description)}`:''}</p></div><div class="note-section-tools">${sectionTestArticle?`<button type="button" class="btn btn-primary note-test-btn" data-note-test="${Utils.escapeHtml(sectionTestArticle.id)}" title="本节测试">本节测试</button>`:''}</div></header>${section.articles.map(article=>{ const starred=App.notesBookmarks.has(article.id); return `<article class="note-card" id="note-${Utils.escapeHtml(article.id)}"><header class="note-card-heading"><div><h3>${Utils.escapeHtml(article.title)}</h3></div><div class="note-card-tools">${noteTagHtml(article)}<button type="button" class="note-bookmark-btn ${starred?'on':''}" data-note-bookmark="${Utils.escapeHtml(article.id)}" title="${starred?'取消收藏':'收藏'}" aria-label="${starred?'取消收藏':'收藏'}：${Utils.escapeHtml(article.title)}" aria-pressed="${starred?'true':'false'}">${noteBookmarkIcon()}</button></div></header><div class="note-rich">${article.body}</div></article>`; }).join('')}</section>`;
++    return `<section class="note-section" id="notes-section-${Utils.escapeHtml(section.id)}"><header class="note-section-heading"><div><h2>${Utils.escapeHtml(section.title)}</h2><p class="note-section-description">${section.articles.length} 条${section.description?` ｜ ${Utils.escapeHtml(section.description)}`:''}</p></div><div class="note-section-tools">${sectionTestArticle?`<button type="button" class="btn btn-primary note-test-btn" data-note-test="${Utils.escapeHtml(sectionTestArticle.id)}" title="本节测试">本节测试</button>`:''}</div></header>${section.articles.map(article=>{ const starred=App.notesBookmarks.has(article.id); return `<article class="note-card" id="note-${Utils.escapeHtml(article.id)}"><header class="note-card-heading"><div><h3>${Utils.escapeHtml(article.title)}</h3></div><div class="note-card-tools">${noteTagHtml(article)}<button type="button" class="note-bookmark-btn ${starred?'on':''}" data-note-bookmark="${Utils.escapeHtml(article.id)}" title="${starred?'取消收藏':'收藏'}" aria-label="${starred?'取消收藏':'收藏'}：${Utils.escapeHtml(article.title)}" aria-pressed="${starred?'true':'false'}">${noteBookmarkIcon()}</button><button type="button" class="note-highlight-btn" title="高亮选中内容" aria-label="高亮选中内容" aria-pressed="false"><span aria-hidden="true">􀦇</span></button></div></header><div class="note-rich">${article.body}</div></article>`; }).join('')}</section>`;
+   }).join('');
    const tocCollapsed=Boolean(App.notesTocCollapsed);
--  container.innerHTML=`<div class="container notes-shell notes-has-package"><div class="notes-package-toolbar"><span>${Utils.escapeHtml(pack.subject||'')}</span><button type="button" class="notes-more-btn" aria-label="更多" aria-expanded="false"><svg class="notes-more-icon" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M4.166 8.501a1.499 1.499 0 1 1 0 2.998 1.499 1.499 0 0 1 0-2.998M10 8.501a1.499 1.499 0 1 1 0 2.998 1.499 1.499 0 0 1 0-2.998M15.833 8.501a1.5 1.5 0 1 1 0 2.999 1.5 1.5 0 0 1 0-2.999"></path></svg></button><div class="notes-more-menu" hidden><button type="button" data-notes-filter="all">全部学科</button></div></div><div class="notes-layout${tocCollapsed?' toc-collapsed':''}"><aside class="notes-toc${tocCollapsed?' collapsed':''}" aria-label="笔记目录"><div class="notes-toc-head"><h2>目录</h2><button type="button" class="notes-toc-action" aria-label="${tocCollapsed?'展开目录':'收起目录'}" title="${tocCollapsed?'展开目录':'收起目录'}" aria-expanded="${tocCollapsed?'false':'true'}"><svg data-no-autosize="true" aria-hidden="true" class="Icon-X4VkKC" focusable="false" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M14.5 2.877a3.665 3.665 0 0 1 3.665 3.665v6.917a3.665 3.665 0 0 1-3.665 3.665h-9a3.665 3.665 0 0 1-3.665-3.665V6.542A3.665 3.665 0 0 1 5.5 2.877zM8.165 15.794H14.5a2.335 2.335 0 0 0 2.335-2.335V6.542A2.335 2.335 0 0 0 14.5 4.207H8.165zM5.5 4.207a2.335 2.335 0 0 0-2.335 2.335v6.917A2.335 2.335 0 0 0 5.5 15.794h1.335V4.207z"></path></svg></button></div><div class="notes-toc-body">${toc}</div></aside><main class="notes-document">${content}</main></div></div>`;
--  const moreBtn=container.querySelector('.notes-more-btn'), moreMenu=container.querySelector('.notes-more-menu'); if(moreBtn&&moreMenu){ moreBtn.onclick=event=>{event.stopPropagation(); moreMenu.hidden=!moreMenu.hidden; moreBtn.setAttribute('aria-expanded',String(!moreMenu.hidden));}; }
-+  const documentTitle=tocGroups[0]?.title || pack.title;
-+  const chapterArticles=filteredSections.flatMap(section=>section.articles||[]);
-+  const hasSectionTest=chapterArticles.some(article=>article.testConfig && isNoteArticleLinked(article));
-+  const chapterTestArticle=hasSectionTest ? null : chapterArticles.find(isNoteArticleLinked);
-+  const typeFilterCount=selectedTypes.length===types.length?0:Math.max(1,selectedTypes.length);
-+  const activeFilterCount=(notesFilter.subject==='all'?0:1)+(notesFilter.bookmarked?1:0)+typeFilterCount;
-+  const filterLabel=activeFilterCount?`已筛选 ${activeFilterCount} 项`:'全部笔记';
-+  const notesFilterMenu=`<div class="notes-filter-menu"><button type="button" class="notes-filter-menu-all" data-notes-heading-filter-reset>全部笔记</button><strong>范围</strong><label class="notes-filter-check"><input type="checkbox" data-notes-heading-bookmarked ${notesFilter.bookmarked?'checked':''}><span>仅收藏内容</span></label><strong>笔记本（学科）</strong><div class="notes-filter-choice-list">${[['all','全部笔记本'],...subjects.map(subject=>[subject,subject])].map(([value,label])=>`<label class="notes-filter-check"><input type="radio" name="notes-subject" value="${Utils.escapeHtml(value)}" data-notes-heading-subject ${notesFilter.subject===value?'checked':''}><span>${Utils.escapeHtml(label)}</span></label>`).join('')}</div><strong>分类</strong><div class="notes-filter-choice-list"><label class="notes-filter-check"><input type="checkbox" data-notes-heading-types-all ${selectedTypes.length===types.length?'checked':''}><span>全部类型</span></label>${types.map(type=>`<label class="notes-filter-check"><input type="checkbox" value="${Utils.escapeHtml(type)}" data-notes-heading-type ${selectedTypes.includes(type)?'checked':''}><span>${Utils.escapeHtml(NOTE_TYPE_LABELS[type]||type)}</span></label>`).join('')}</div></div>`;
-+  container.innerHTML=`<div class="container notes-shell notes-has-package"><div class="notes-package-toolbar"><span>${Utils.escapeHtml(pack.subject||'')}</span><button type="button" class="notes-more-btn" aria-label="更多" aria-expanded="false"><svg class="notes-more-icon" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M4.166 8.501a1.499 1.499 0 1 1 0 2.998 1.499 1.499 0 0 1 0-2.998M10 8.501a1.499 1.499 0 1 1 0 2.998 1.499 1.499 0 0 1 0-2.998M15.833 8.501a1.5 1.5 0 1 1 0 2.999 1.5 1.5 0 0 1 0-2.999"></path></svg></button><div class="notes-more-menu" hidden><div class="notes-filter-group"><strong>筛选笔记本（学科）</strong>${[['all','全部笔记本'],...subjects.map(subject=>[subject,subject])].map(([value,label])=>`<button type="button" class="${notesFilter.subject===value?'active':''}" data-notes-filter-subject="${Utils.escapeHtml(value)}">${Utils.escapeHtml(label)}</button>`).join('')}</div><div class="notes-filter-group"><strong>筛选类型</strong>${[['all','全部类型'],...types.map(type=>[type,NOTE_TYPE_LABELS[type]||type])].map(([value,label])=>`<button type="button" class="${notesFilter.type===value?'active':''}" data-notes-filter-type="${Utils.escapeHtml(value)}">${Utils.escapeHtml(label)}</button>`).join('')}</div><button type="button" class="${notesFilter.bookmarked?'active':''}" data-notes-filter-bookmarked="true">${notesFilter.bookmarked?'显示全部':'仅显示收藏'}</button></div></div><div class="notes-layout${tocCollapsed?' toc-collapsed':''}"><aside class="notes-toc${tocCollapsed?' collapsed':''}" aria-label="笔记目录"><div class="notes-toc-head"><h2>目录</h2><button type="button" class="notes-toc-action" aria-label="${tocCollapsed?'展开目录':'收起目录'}" title="${tocCollapsed?'展开目录':'收起目录'}" aria-expanded="${tocCollapsed?'false':'true'}"><svg data-no-autosize="true" aria-hidden="true" class="Icon-X4VkKC" focusable="false" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M14.5 2.877a3.665 3.665 0 0 1 3.665 3.665v6.917a3.665 3.665 0 0 1-3.665 3.665h-9a3.665 3.665 0 0 1-3.665-3.665V6.542A3.665 3.665 0 0 1 5.5 2.877zM8.165 15.794H14.5a2.335 2.335 0 0 0 2.335-2.335V6.542A2.335 2.335 0 0 0 14.5 4.207H8.165zM5.5 4.207a2.335 2.335 0 0 0-2.335 2.335v6.917A2.335 2.335 0 0 0 5.5 15.794h1.335V4.207z"></path></svg></button></div><div class="notes-toc-body">${toc}</div></aside><main class="notes-document"><header class="notes-document-heading"><h1 class="notes-document-title">${Utils.escapeHtml(documentTitle)}</h1><div class="notes-heading-actions">${chapterTestArticle?`<button type="button" class="btn btn-primary note-test-btn" data-note-test="${Utils.escapeHtml(chapterTestArticle.id)}" title="开始测试">开始测试</button>`:''}</div></header>${content}</main></div></div>`;
-+  container.querySelectorAll('.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg))').forEach(figure=>{
-+    const card=figure.closest('.note-card'); figure.dataset.imageZoomKey=`${card?.id||'notes'}:${[...container.querySelectorAll('.note-card')].indexOf(card)}:${[...card?.querySelectorAll('figure,img,svg')||[]].indexOf(figure)}`;
-+    const zoom=document.createElement('button'); zoom.type='button'; zoom.className='note-image-zoom'; zoom.setAttribute('aria-label','放大图片'); zoom.title='放大图片'; zoom.innerHTML='<span aria-hidden="true">􀊬</span>';
-+    if(App.notesImageZoom[figure.dataset.imageZoomKey]) figure.classList.add('is-expanded');
-+    zoom.onclick=event=>{ event.preventDefault(); event.stopPropagation(); const expanded=figure.classList.toggle('is-expanded'); App.notesImageZoom[figure.dataset.imageZoomKey]=expanded; Store.setJSON(STORAGE_KEYS.notesImageZoom,App.notesImageZoom); zoom.setAttribute('aria-label',expanded?'还原图片':'放大图片'); zoom.title=expanded?'还原图片':'放大图片'; zoom.innerHTML=`<span aria-hidden="true">${expanded?'􀊭':'􀊬'}</span>`; };
-+    figure.appendChild(zoom);
-+  });
-+  container.querySelectorAll('.note-rich > p,.note-rich > div').forEach(media=>{
-+    if(!media.querySelector(':scope > img,:scope > svg')) return;
-+    const card=media.closest('.note-card'); media.dataset.imageZoomKey=`${card?.id||'notes'}:${[...container.querySelectorAll('.note-card')].indexOf(card)}:${[...card?.querySelectorAll('p,div,img,svg')||[]].indexOf(media)}`;
-+    if(media.querySelector('.note-image-zoom')) return;
-+    media.classList.add('note-media-frame');
-+    const zoom=document.createElement('button'); zoom.type='button'; zoom.className='note-image-zoom'; zoom.setAttribute('aria-label','放大图片'); zoom.title='放大图片'; zoom.innerHTML='<span aria-hidden="true">􀊬</span>';
-+    if(App.notesImageZoom[media.dataset.imageZoomKey]) media.classList.add('is-expanded');
-+    zoom.onclick=event=>{ event.preventDefault(); event.stopPropagation(); const expanded=media.classList.toggle('is-expanded'); App.notesImageZoom[media.dataset.imageZoomKey]=expanded; Store.setJSON(STORAGE_KEYS.notesImageZoom,App.notesImageZoom); zoom.setAttribute('aria-label',expanded?'还原图片':'放大图片'); zoom.title=expanded?'还原图片':'放大图片'; zoom.innerHTML=`<span aria-hidden="true">${expanded?'􀊭':'􀊬'}</span>`; };
-+    media.appendChild(zoom);
-+  });
-+  container.querySelectorAll('.note-rich .note-image-zoom').forEach(zoom=>{
-+    zoom.onclick=event=>{
-+      event.preventDefault(); event.stopPropagation();
-+      const media=zoom.closest('figure,.note-media-frame'); if(!media) return;
-+    const expanded=media.classList.toggle('is-expanded');
-+      App.notesImageZoom[media.dataset.imageZoomKey]=expanded; Store.setJSON(STORAGE_KEYS.notesImageZoom,App.notesImageZoom);
-+      zoom.setAttribute('aria-label',expanded?'还原图片':'放大图片');
-+      zoom.title=expanded?'还原图片':'放大图片';
-+      zoom.innerHTML=`<span aria-hidden="true">${expanded?'􀊭':'􀊬'}</span>`;
-+    };
-+  });
-+  container.insertAdjacentHTML('afterbegin','<div class="notes-drag-overlay" aria-hidden="true"><div class="notes-drag-frame"><strong>松手以导入</strong><span>导入 HTML 笔记并合并内容</span></div></div>');
-+  bindNotesPageDrop(container);
-+  const moreBtn=container.querySelector('.notes-more-btn'), moreMenu=container.querySelector('.notes-more-menu'); if(moreBtn&&moreMenu){
-+    moreMenu.innerHTML='<div class="notes-menu-actions"><button type="button" data-menu-import>导入笔记</button><button type="button" data-menu-search>搜索</button></div><div class="notes-menu-detail" hidden></div>';
-+    moreMenu.style.width='max-content';
-+    moreBtn.onclick=event=>{event.stopPropagation(); moreMenu.hidden=!moreMenu.hidden; moreBtn.setAttribute('aria-expanded',String(!moreMenu.hidden));};
-+    const detail=moreMenu.querySelector('.notes-menu-detail');
-+    moreMenu.querySelector('[data-menu-import]').onclick=()=>{const input=document.createElement('input');input.type='file';input.accept='.html,.htm,text/html';input.onchange=e=>{if(e.target.files[0]) handleNotesHtmlFile(e.target.files[0]);};input.click();};
-+    moreMenu.querySelector('[data-menu-search]').onclick=()=>{moreMenu.hidden=true;moreBtn.setAttribute('aria-expanded','false');openNotesSearchModal();};
-+  }
-+  container.querySelectorAll('[data-notes-filter-subject]').forEach(btn=>btn.onclick=()=>{App.notesFilter={...notesFilter,subject:btn.dataset.notesFilterSubject};render();});
-+  const resetNotesHeadingFilter=()=>{App.notesFilter={...notesFilter,subject:'all',type:types,bookmarked:false,search:''};render();};
-+  container.querySelectorAll('[data-notes-heading-filter-reset]').forEach(btn=>btn.onclick=resetNotesHeadingFilter);
-+  const favoriteToggle=container.querySelector('[data-notes-heading-bookmarked]'); if(favoriteToggle) favoriteToggle.onchange=()=>{App.notesFilter={...notesFilter,bookmarked:favoriteToggle.checked};render();};
-+  container.querySelectorAll('[data-notes-heading-subject]').forEach(input=>input.onchange=()=>{App.notesFilter={...notesFilter,subject:input.value};render();});
-+  const allTypesToggle=container.querySelector('[data-notes-heading-types-all]'); if(allTypesToggle) allTypesToggle.onchange=()=>{App.notesFilter={...notesFilter,type:allTypesToggle.checked?types:[]};render();};
-+  container.querySelectorAll('[data-notes-heading-type]').forEach(input=>input.onchange=()=>{const next=new Set(selectedTypes); input.checked?next.add(input.value):next.delete(input.value); App.notesFilter={...notesFilter,type:[...next]};render();});
-+
-+  container.querySelectorAll('[data-notes-filter-type]').forEach(btn=>btn.onclick=()=>{App.notesFilter={...notesFilter,type:btn.dataset.notesFilterType};render();});
-+  const bookmarkFilter=container.querySelector('[data-notes-filter-bookmarked]'); if(bookmarkFilter) bookmarkFilter.onclick=()=>{App.notesFilter={...notesFilter,bookmarked:!notesFilter.bookmarked};render();};
-   const reimport=container.querySelector('#notes-reimport-btn'), input=container.querySelector('#notes-reimport-input');
-   if (reimport&&input) reimport.onclick=()=>input.click();
-   if (input) input.onchange=e=>{ if(e.target.files[0]) handleNotesHtmlFile(e.target.files[0]); e.target.value=''; };
-   const notesLayout=container.querySelector('.notes-layout'), tocBox=container.querySelector('.notes-toc'), tocAction=container.querySelector('.notes-toc-action');
--  if (notesLayout&&tocBox&&tocAction) tocAction.onclick=()=>{ const opening=tocBox.classList.contains('collapsed'); if(opening) App.notesTocReturnY=Math.max(0,window.scrollY); const returnY=opening ? App.notesTocReturnY : Math.max(0,App.notesTocReturnY||App.notesScrollY||window.scrollY); App.notesTocCollapsed=!opening; Store.setJSON(STORAGE_KEYS.notesTocCollapsed,App.notesTocCollapsed); notesLayout.classList.toggle('toc-collapsed',App.notesTocCollapsed); tocBox.classList.toggle('collapsed',App.notesTocCollapsed); tocAction.setAttribute('aria-expanded',String(!App.notesTocCollapsed)); const label=App.notesTocCollapsed?'展开目录':'收起目录'; tocAction.setAttribute('aria-label',label); tocAction.title=label; if(!opening) requestAnimationFrame(()=>requestAnimationFrame(()=>{ alignNotesTocToActive(); window.scrollTo({top:returnY,behavior:'auto'}); })); };
-+  if (notesLayout&&tocBox&&tocAction) tocAction.onclick=()=>{ const opening=tocBox.classList.contains('collapsed'); if(opening) App.notesTocReturnY=Math.max(0,window.scrollY); const returnY=opening ? App.notesTocReturnY : Math.max(0,window.scrollY); App.notesTocCollapsed=!opening; Store.setJSON(STORAGE_KEYS.notesTocCollapsed,App.notesTocCollapsed); notesLayout.classList.toggle('toc-collapsed',App.notesTocCollapsed); tocBox.classList.toggle('collapsed',App.notesTocCollapsed); tocAction.setAttribute('aria-expanded',String(!App.notesTocCollapsed)); const label=App.notesTocCollapsed?'展开目录':'收起目录'; tocAction.setAttribute('aria-label',label); tocAction.title=label; requestAnimationFrame(()=>{ updateNotesHeadingClearance(); if(!opening) requestAnimationFrame(()=>{ alignNotesTocToActive(); window.scrollTo({top:returnY,behavior:'auto'}); }); }); };
+   const documentTitle=tocGroups[0]?.title || pack.title;
+@@ -4119,10 +4128,13 @@ function renderNotesView(container){
+   const filterLabel=activeFilterCount?`已筛选 ${activeFilterCount} 项`:'全部笔记';
+   const notesFilterMenu=`<div class="notes-filter-menu"><button type="button" class="notes-filter-menu-all" data-notes-heading-filter-reset>全部笔记</button><strong>范围</strong><label class="notes-filter-check"><input type="checkbox" data-notes-heading-bookmarked ${notesFilter.bookmarked?'checked':''}><span>仅收藏内容</span></label><strong>笔记本（学科）</strong><div class="notes-filter-choice-list">${[['all','全部笔记本'],...subjects.map(subject=>[subject,subject])].map(([value,label])=>`<label class="notes-filter-check"><input type="radio" name="notes-subject" value="${Utils.escapeHtml(value)}" data-notes-heading-subject ${notesFilter.subject===value?'checked':''}><span>${Utils.escapeHtml(label)}</span></label>`).join('')}</div><strong>分类</strong><div class="notes-filter-choice-list"><label class="notes-filter-check"><input type="checkbox" data-notes-heading-types-all ${selectedTypes.length===types.length?'checked':''}><span>全部类型</span></label>${types.map(type=>`<label class="notes-filter-check"><input type="checkbox" value="${Utils.escapeHtml(type)}" data-notes-heading-type ${selectedTypes.includes(type)?'checked':''}><span>${Utils.escapeHtml(NOTE_TYPE_LABELS[type]||type)}</span></label>`).join('')}</div></div>`;
+   container.innerHTML=`<div class="container notes-shell notes-has-package"><div class="notes-package-toolbar"><span>${Utils.escapeHtml(pack.subject||'')}</span><button type="button" class="notes-more-btn" aria-label="更多" aria-expanded="false"><svg class="notes-more-icon" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M4.166 8.501a1.499 1.499 0 1 1 0 2.998 1.499 1.499 0 0 1 0-2.998M10 8.501a1.499 1.499 0 1 1 0 2.998 1.499 1.499 0 0 1 0-2.998M15.833 8.501a1.5 1.5 0 1 1 0 2.999 1.5 1.5 0 0 1 0-2.999"></path></svg></button><div class="notes-more-menu" hidden><div class="notes-filter-group"><strong>筛选笔记本（学科）</strong>${[['all','全部笔记本'],...subjects.map(subject=>[subject,subject])].map(([value,label])=>`<button type="button" class="${notesFilter.subject===value?'active':''}" data-notes-filter-subject="${Utils.escapeHtml(value)}">${Utils.escapeHtml(label)}</button>`).join('')}</div><div class="notes-filter-group"><strong>筛选类型</strong>${[['all','全部类型'],...types.map(type=>[type,NOTE_TYPE_LABELS[type]||type])].map(([value,label])=>`<button type="button" class="${notesFilter.type===value?'active':''}" data-notes-filter-type="${Utils.escapeHtml(value)}">${Utils.escapeHtml(label)}</button>`).join('')}</div><button type="button" class="${notesFilter.bookmarked?'active':''}" data-notes-filter-bookmarked="true">${notesFilter.bookmarked?'显示全部':'仅显示收藏'}</button></div></div><div class="notes-layout${tocCollapsed?' toc-collapsed':''}"><aside class="notes-toc${tocCollapsed?' collapsed':''}" aria-label="笔记目录"><div class="notes-toc-head"><h2>目录</h2><button type="button" class="notes-toc-action" aria-label="${tocCollapsed?'展开目录':'收起目录'}" title="${tocCollapsed?'展开目录':'收起目录'}" aria-expanded="${tocCollapsed?'false':'true'}"><svg data-no-autosize="true" aria-hidden="true" class="Icon-X4VkKC" focusable="false" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M14.5 2.877a3.665 3.665 0 0 1 3.665 3.665v6.917a3.665 3.665 0 0 1-3.665 3.665h-9a3.665 3.665 0 0 1-3.665-3.665V6.542A3.665 3.665 0 0 1 5.5 2.877zM8.165 15.794H14.5a2.335 2.335 0 0 0 2.335-2.335V6.542A2.335 2.335 0 0 0 14.5 4.207H8.165zM5.5 4.207a2.335 2.335 0 0 0-2.335 2.335v6.917A2.335 2.335 0 0 0 5.5 15.794h1.335V4.207z"></path></svg></button></div><div class="notes-toc-body">${toc}</div></aside><main class="notes-document"><header class="notes-document-heading"><h1 class="notes-document-title">${Utils.escapeHtml(documentTitle)}</h1><div class="notes-heading-actions">${chapterTestArticle?`<button type="button" class="btn btn-primary note-test-btn" data-note-test="${Utils.escapeHtml(chapterTestArticle.id)}" title="开始测试">开始测试</button>`:''}</div></header>${content}</main></div></div>`;
++  restoreNoteHighlights(container);
+   container.querySelectorAll('.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg))').forEach(figure=>{
+     const card=figure.closest('.note-card'); figure.dataset.imageZoomKey=`${card?.id||'notes'}:${[...container.querySelectorAll('.note-card')].indexOf(card)}:${[...card?.querySelectorAll('figure,img,svg')||[]].indexOf(figure)}`;
+     const zoom=document.createElement('button'); zoom.type='button'; zoom.className='note-image-zoom'; zoom.setAttribute('aria-label','放大图片'); zoom.title='放大图片'; zoom.innerHTML='<span aria-hidden="true">􀊬</span>';
+-    if(App.notesImageZoom[figure.dataset.imageZoomKey]) figure.classList.add('is-expanded');
++    const figureExpanded=Boolean(App.notesImageZoom[figure.dataset.imageZoomKey]);
++    if(figureExpanded) figure.classList.add('is-expanded');
++    zoom.setAttribute('aria-label',figureExpanded?'缩小图片':'放大图片'); zoom.title=figureExpanded?'缩小图片':'放大图片'; zoom.innerHTML=`<span aria-hidden="true">${figureExpanded?'􀊭':'􀊬'}</span>`;
+     zoom.onclick=event=>{ event.preventDefault(); event.stopPropagation(); const expanded=figure.classList.toggle('is-expanded'); App.notesImageZoom[figure.dataset.imageZoomKey]=expanded; Store.setJSON(STORAGE_KEYS.notesImageZoom,App.notesImageZoom); zoom.setAttribute('aria-label',expanded?'还原图片':'放大图片'); zoom.title=expanded?'还原图片':'放大图片'; zoom.innerHTML=`<span aria-hidden="true">${expanded?'􀊭':'􀊬'}</span>`; };
+     figure.appendChild(zoom);
+   });
+@@ -4132,7 +4144,9 @@ function renderNotesView(container){
+     if(media.querySelector('.note-image-zoom')) return;
+     media.classList.add('note-media-frame');
+     const zoom=document.createElement('button'); zoom.type='button'; zoom.className='note-image-zoom'; zoom.setAttribute('aria-label','放大图片'); zoom.title='放大图片'; zoom.innerHTML='<span aria-hidden="true">􀊬</span>';
+-    if(App.notesImageZoom[media.dataset.imageZoomKey]) media.classList.add('is-expanded');
++    const mediaExpanded=Boolean(App.notesImageZoom[media.dataset.imageZoomKey]);
++    if(mediaExpanded) media.classList.add('is-expanded');
++    zoom.setAttribute('aria-label',mediaExpanded?'缩小图片':'放大图片'); zoom.title=mediaExpanded?'缩小图片':'放大图片'; zoom.innerHTML=`<span aria-hidden="true">${mediaExpanded?'􀊭':'􀊬'}</span>`;
+     zoom.onclick=event=>{ event.preventDefault(); event.stopPropagation(); const expanded=media.classList.toggle('is-expanded'); App.notesImageZoom[media.dataset.imageZoomKey]=expanded; Store.setJSON(STORAGE_KEYS.notesImageZoom,App.notesImageZoom); zoom.setAttribute('aria-label',expanded?'还原图片':'放大图片'); zoom.title=expanded?'还原图片':'放大图片'; zoom.innerHTML=`<span aria-hidden="true">${expanded?'􀊭':'􀊬'}</span>`; };
+     media.appendChild(zoom);
+   });
+@@ -4175,7 +4189,25 @@ function renderNotesView(container){
    const collapseMobileToc=()=>{ if(!window.matchMedia?.('(max-width:760px)').matches||tocBox.classList.contains('collapsed')) return; App.notesTocReturnY=Math.max(0,window.scrollY); App.notesTocCollapsed=true; Store.setJSON(STORAGE_KEYS.notesTocCollapsed,true); notesLayout.classList.add('toc-collapsed'); tocBox.classList.add('collapsed'); tocAction.setAttribute('aria-expanded','false'); tocAction.setAttribute('aria-label','展开目录'); tocAction.title='展开目录'; };
    if (notesLayout&&tocBox){ let touchStart=null; tocBox.addEventListener('touchmove',event=>event.stopPropagation(),{passive:true}); notesLayout.addEventListener('click',event=>{ if(!tocBox.contains(event.target)) collapseMobileToc(); }); notesLayout.addEventListener('touchstart',event=>{ if(event.target.closest?.('.notes-document')){ const point=event.touches[0]; touchStart={x:point.clientX,y:point.clientY}; } else touchStart=null; },{passive:true,capture:true}); notesLayout.addEventListener('touchend',event=>{ if(!touchStart) return; const point=event.changedTouches[0]; if(Math.hypot(point.clientX-touchStart.x,point.clientY-touchStart.y)>12) collapseMobileToc(); touchStart=null; },{passive:true,capture:true}); }
    const clearNotesBtn=container.querySelector('#notes-clear-btn');
-@@ -4095,10 +4189,22 @@ function clearPendingNotesTocBookmarks(exceptId=''){ document.querySelectorAll('
- function updateNotesHeadingClearance(){
-   const layout=document.querySelector('.notes-layout'), button=document.querySelector('.notes-toc.collapsed .notes-toc-action'), more=document.querySelector('.notes-more-btn');
-   if(!layout) return;
--  if(!button){ layout.querySelectorAll('.note-section-heading.needs-toc-clearance').forEach(heading=>heading.classList.remove('needs-toc-clearance')); }
--  if(button){ const buttonRect=button.getBoundingClientRect(); layout.querySelectorAll('.note-section-heading').forEach(heading=>{ const rect=heading.getBoundingClientRect(); heading.classList.toggle('needs-toc-clearance', buttonRect.right>rect.left && buttonRect.left<rect.right && buttonRect.bottom>rect.top && buttonRect.top<rect.bottom); }); }
-+  // Keep the fixed section title on the same vertical centerline as the floating directory/more controls.
-+  const topnav=document.getElementById('topnav');
-+  const navHeight=topnav && getComputedStyle(topnav).display!=='none' ? Math.ceil(topnav.getBoundingClientRect().height) : 0;
-+  const stickyHeading=layout.querySelector('.note-section-heading');
-+  const referenceControl=button||more;
-+  const referenceRect=referenceControl?.getBoundingClientRect();
-+  const headingHeight=Math.ceil(stickyHeading?.getBoundingClientRect().height||52);
-+  const controlAlignedTop=referenceRect ? Math.round(referenceRect.top+(referenceRect.height-headingHeight)/2) : navHeight;
-+  const stickyTopPx=Math.max(navHeight,controlAlignedTop);
-+  const stickyTop=`${stickyTopPx}px`;
-+  if(layout.style.getPropertyValue('--notes-sticky-top')!==stickyTop) layout.style.setProperty('--notes-sticky-top',stickyTop);
-+  const headings=layout.querySelectorAll('.note-section-heading,.notes-document-heading');
-+  if(!button){ headings.forEach(heading=>heading.classList.remove('needs-toc-clearance')); }
-+  if(button){ const buttonRect=button.getBoundingClientRect(); headings.forEach(heading=>{ const rect=heading.getBoundingClientRect(); heading.classList.toggle('needs-toc-clearance', buttonRect.right>rect.left && buttonRect.left<rect.right && buttonRect.bottom>rect.top && buttonRect.top<rect.bottom); }); }
-   const moreRect=more?.getBoundingClientRect();
--  layout.querySelectorAll('.note-section-heading').forEach(heading=>{ const rect=heading.getBoundingClientRect(); const overlap=!!moreRect && moreRect.right>rect.left && moreRect.left<rect.right && moreRect.bottom>rect.top && moreRect.top<rect.bottom; heading.classList.toggle('needs-more-clearance',overlap); });
-+  headings.forEach(heading=>{ const rect=heading.getBoundingClientRect(); const overlap=!!moreRect && moreRect.right>rect.left && moreRect.left<rect.right && moreRect.bottom>rect.top && moreRect.top<rect.bottom; heading.classList.toggle('needs-more-clearance',overlap); });
- }
- if (!window.__smcNotesClearanceBound){
-   window.__smcNotesClearanceBound=true;
-@@ -4120,6 +4226,91 @@ async function toggleNotesBookmark(id, button){
+-  if (clearNotesBtn) clearNotesBtn.onclick=()=>confirmModal('清空笔记？','这会删除已导入的 HTML 笔记包和收藏，不影响题库和学习记录。',async()=>{ await Store.remove(STORAGE_KEYS.notesPackage); await Store.remove(STORAGE_KEYS.notesBookmarks); await Store.remove(STORAGE_KEYS.notesScrollY); App.notesPackage=null; App.notesScrollY=0; App.notesBookmarks=new Set(); toast('已清空笔记',{icon:'🗑️'}); render(); },{danger:true,confirmLabel:'清空'});
++  if (clearNotesBtn) clearNotesBtn.onclick=()=>confirmModal('清空笔记？','这会删除已导入的 HTML 笔记包和收藏，不影响题库和学习记录。',async()=>{ await Store.remove(STORAGE_KEYS.notesPackage); await Store.remove(STORAGE_KEYS.notesBookmarks); await Store.remove(STORAGE_KEYS.notesHighlights); await Store.remove(STORAGE_KEYS.notesScrollY); App.notesPackage=null; App.notesScrollY=0; App.notesBookmarks=new Set(); App.notesHighlights={}; toast('已清空笔记',{icon:'🗑️'}); render(); },{danger:true,confirmLabel:'清空'});
++  const highlightButtons=container.querySelectorAll('.note-highlight-btn');
++  const syncHighlightMode=()=>highlightButtons.forEach(btn=>{ const on=App.notesHighlightMode && btn.closest('.note-card')?.id===App.notesHighlightCardId; btn.classList.toggle('on',on); btn.setAttribute('aria-pressed',String(on)); btn.title=on?'退出高亮模式':'高亮选中内容'; btn.setAttribute('aria-label',btn.title); });
++  highlightButtons.forEach(btn=>{
++    let pendingRange=null;
++    const captureHighlightRange=event=>{ const selection=window.getSelection(); if(selection?.rangeCount&&!selection.isCollapsed){ pendingRange=selection.getRangeAt(0).cloneRange(); event.preventDefault(); } };
++    btn.onpointerdown=captureHighlightRange;
++    btn.onmousedown=captureHighlightRange;
++    btn.onclick=event=>{ event.preventDefault(); event.stopPropagation(); const card=btn.closest('.note-card'), cardId=card?.id||'', cardBody=card?.querySelector('.note-rich'); const sameCard=App.notesHighlightMode&&App.notesHighlightCardId===cardId; const range=pendingRange||(()=>{ const selection=window.getSelection(); return selection?.rangeCount&&!selection.isCollapsed?selection.getRangeAt(0).cloneRange():null; })(); if(range&&cardBody){ const start=range.startContainer.nodeType===Node.ELEMENT_NODE?range.startContainer:range.startContainer.parentElement; const end=range.endContainer.nodeType===Node.ELEMENT_NODE?range.endContainer:range.endContainer.parentElement; if(cardBody.contains(start)&&cardBody.contains(end)) toggleNoteSelectionHighlight(cardBody,range); } if(sameCard){ App.notesHighlightMode=false; App.notesHighlightCardId=''; }else{ App.notesHighlightMode=true; App.notesHighlightCardId=cardId; } pendingRange=null; syncHighlightMode(); };
++  });
++  syncHighlightMode();
++  container.querySelectorAll('.note-rich').forEach(body=>body.onmouseup=()=>{
++    if(!App.notesHighlightMode) return;
++    App.notesHighlightCardId=body.closest('.note-card')?.id||'';
++    syncHighlightMode();
++    const selection=window.getSelection();
++    if(!selection?.rangeCount || selection.isCollapsed) return;
++    toggleNoteSelectionHighlight(body,selection.getRangeAt(0));
++  });
+   container.querySelectorAll('[data-note-bookmark]').forEach(bindNotesBookmarkControl);
+   container.querySelectorAll('[data-note-test]').forEach(btn=>btn.onclick=event=>{ event.preventDefault(); event.stopPropagation(); startNoteTest(btn.dataset.noteTest); });
+   container.querySelectorAll('[data-note-target]').forEach(link=>link.onclick=(event)=>{ event.preventDefault(); event.stopPropagation(); clearPendingNotesTocBookmarks(); const target=document.getElementById(link.dataset.noteTarget); if(target) window.scrollTo({top:Math.max(0, target.getBoundingClientRect().top + window.scrollY - 90), behavior:'auto'}); });
+@@ -4226,6 +4258,97 @@ async function toggleNotesBookmark(id, button){
    const tocLink=[...document.querySelectorAll('.notes-toc-link')].find(link=>link.dataset.noteTarget===`note-${id}`);
    if (tocLink){ const marker=tocLink.querySelector('.notes-toc-bookmark'); if (on&&!marker){ const next=document.createElement('span'); next.className='notes-toc-bookmark on'; next.dataset.noteBookmark=id; next.setAttribute('role','button'); next.tabIndex=0; next.title='取消收藏'; next.setAttribute('aria-label',`取消收藏：${tocLink.textContent.trim()}`); next.setAttribute('aria-pressed','true'); next.innerHTML=noteBookmarkIcon(); bindNotesBookmarkControl(next); tocLink.prepend(next); } else if (on&&marker){ marker.classList.add('on'); marker.removeAttribute('data-note-pending-cancel'); marker.setAttribute('aria-pressed','true'); marker.setAttribute('title','取消收藏'); } else if (!on&&marker){ if (fromToc){ marker.classList.remove('on'); marker.dataset.notePendingCancel='true'; marker.setAttribute('aria-pressed','false'); marker.setAttribute('title','收藏'); } else marker.remove(); } }
  }
-+function highlightNoteSearchMatch(target,query){
-+  const root=target?.querySelector('.note-rich')||target;
-+  if(!root) return;
-+  root.querySelectorAll('.note-search-highlight').forEach(mark=>mark.replaceWith(document.createTextNode(mark.textContent||'')));
-+  const value=String(query||'').trim();
-+  if(!value) return;
-+  const escaped=value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-+  const matcher=new RegExp(escaped,'ig');
++function noteRangeAtTextOffset(root,start,length){
 +  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
-+  const nodes=[];
-+  let node;
++  let node,offset=0;
 +  while(node=walker.nextNode()){
-+    if(node.parentElement?.closest('mark,code,pre,.note-card-actions')) continue;
-+    matcher.lastIndex=0;
-+    if(matcher.test(node.nodeValue||'')) nodes.push(node);
++    const end=offset+node.nodeValue.length;
++    if(start>=offset&&start<=end){
++      const range=document.createRange(); range.setStart(node,Math.max(0,start-offset));
++      let endNode=node,endOffset=Math.min(node.nodeValue.length,Math.max(0,start-offset)+length),remaining=length-(endOffset-(start-offset));
++      while(remaining>0&&(endNode=walker.nextNode())){ const take=Math.min(endNode.nodeValue.length,remaining); endOffset=take; remaining-=take; }
++      if(remaining<=0){ range.setEnd(endNode,endOffset); return range; }
++    }
++    offset=end;
 +  }
-+  nodes.forEach(textNode=>{
-+    const fragment=document.createDocumentFragment();
-+    const text=textNode.nodeValue||'';
-+    let last=0;
-+    matcher.lastIndex=0;
-+    text.replace(matcher,(match,offset)=>{
-+      fragment.append(text.slice(last,offset));
-+      const mark=document.createElement('mark');
-+      mark.className='note-search-highlight';
-+      mark.textContent=match;
-+      fragment.append(mark);
-+      last=offset+match.length;
-+      return match;
++  return null;
++}
++function noteTextOffset(root,container,offset){ const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT); let node,total=0; while(node=walker.nextNode()){ if(node===container) return total+offset; total+=node.nodeValue.length; } return total; }
++function noteSelectedTextLength(root,range){ const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT); let node,total=0; while(node=walker.nextNode()){ try{ if(!range.intersectsNode(node)) continue; let start=node===range.startContainer?range.startOffset:0, end=node===range.endContainer?range.endOffset:node.nodeValue.length; if(end>start) total+=end-start; }catch(error){} } return total; }
++function restoreNoteHighlights(container){
++  Object.entries(App.notesHighlights||{}).forEach(([id,records])=>{
++    const root=container.querySelector(`#note-${CSS.escape(id)} .note-rich`); if(!root) return;
++    (Array.isArray(records)?records:[]).forEach(record=>{
++      const text=typeof record==='string'?record:String(record?.text||''); if(!text) return;
++      let range=Number.isFinite(record?.offset)?noteRangeAtTextOffset(root,record.offset,Number.isFinite(record?.length)?record.length:text.length):null;
++      if(!range){ const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT); let node; while(node=walker.nextNode()){ const index=node.nodeValue.lastIndexOf(text); if(index>=0&&!node.parentElement?.closest('mark.note-user-highlight')){ range=document.createRange(); range.setStart(node,index); range.setEnd(node,index+text.length); break; } } }
++      if(range) highlightSelectedNoteText(range);
 +    });
-+    fragment.append(text.slice(last));
-+    textNode.replaceWith(fragment);
-+    matcher.lastIndex=0;
++    root.querySelectorAll('.note-math').forEach(formula=>{ const marks=formula.querySelectorAll('mark.note-user-highlight'); const outer=formula.parentElement?.closest('mark.note-user-highlight'); if(!marks.length&&!outer) return; marks.forEach(mark=>mark.replaceWith(...mark.childNodes)); if(outer&&outer.textContent.trim()===formula.textContent.trim()) outer.replaceWith(formula); formula.classList.add('note-user-highlight'); });
 +  });
-+  const first=root.querySelector('.note-search-highlight');
-+  if(first){
-+    first.scrollIntoView({block:'center',inline:'nearest',behavior:'auto'});
-+    target.classList.add('note-search-target-highlight');
-+    window.setTimeout(()=>{
-+      target.classList.remove('note-search-target-highlight');
-+      root.querySelectorAll('.note-search-highlight').forEach(mark=>mark.replaceWith(document.createTextNode(mark.textContent||'')));
-+    },3200);
++}
++function highlightSelectedNoteText(range){
++  if(!range || range.collapsed) return false;
++  const startRoot=range.startContainer.nodeType===Node.ELEMENT_NODE ? range.startContainer : range.startContainer.parentElement;
++  const endRoot=range.endContainer.nodeType===Node.ELEMENT_NODE ? range.endContainer : range.endContainer.parentElement;
++  const startBody=startRoot?.closest('.note-rich'), endBody=endRoot?.closest('.note-rich');
++  if(!startBody || startBody!==endBody) return false;
++  startBody.querySelectorAll('mark.note-user-highlight').forEach(mark=>{ if(mark.querySelector('.note-math')) mark.replaceWith(...mark.childNodes); });
++  const formulaNodes=[...startBody.querySelectorAll('.note-math')].filter(formula=>{ try{return range.intersectsNode(formula)&&!formula.closest('mark.note-user-highlight');}catch(error){return false;} });
++  for(let i=formulaNodes.length-1;i>=0;i--){
++    const formula=formulaNodes[i];
++    formula.querySelectorAll('mark.note-user-highlight').forEach(mark=>mark.replaceWith(...mark.childNodes));
++    formula.classList.add('note-user-highlight');
 +  }
++  const walker=document.createTreeWalker(startBody,NodeFilter.SHOW_TEXT);
++  const nodes=[]; let node;
++  while(node=walker.nextNode()){
++    if(!node.nodeValue.trim()) continue;
++    if(node.parentElement?.closest('mark.note-user-highlight,.note-math')) continue;
++    try{ if(range.intersectsNode(node)) nodes.push(node); }catch(error){}
++  }
++  let applied=formulaNodes.length>0;
++  for(let i=nodes.length-1;i>=0;i--){
++    const textNode=nodes[i], length=textNode.nodeValue.length;
++    let start=0,end=length;
++    if(textNode===range.startContainer) start=range.startOffset;
++    if(textNode===range.endContainer) end=range.endOffset;
++    if(end<=start) continue;
++    const subrange=document.createRange(); subrange.setStart(textNode,start); subrange.setEnd(textNode,end);
++    const mark=document.createElement('mark'); mark.className='note-user-highlight';
++    try{ mark.appendChild(subrange.extractContents()); subrange.insertNode(mark); applied=true; }catch(error){}
++  }
++  if(applied) window.getSelection()?.removeAllRanges();
++  return applied;
 +}
-+
-+function openNotesSearchModal(){
-+  const root=document.getElementById('modal-root'); if(!root) return;
-+  const current=App.notesFilter?.search||'';
-+  const rows=()=>{const q=(root.querySelector('[data-notes-modal-search]')?.value||'').trim().toLocaleLowerCase(); if(!q) return []; return (App.notesPackage?.sections||[]).flatMap(section=>(section.articles||[]).map(article=>({article,section}))).filter(({article})=>`${article.title} ${article.body}`.toLocaleLowerCase().includes(q)).slice(0,20);};
-+  root.innerHTML=`<div class="modal-overlay notes-search-overlay" id="modal-overlay"><div class="modal-box notes-search-modal" role="dialog" aria-modal="true" aria-labelledby="notes-search-title"><button type="button" class="notes-filter-close" aria-label="关闭">􀆄</button><h3 id="notes-search-title">搜索笔记</h3><div class="notes-search-field"><span aria-hidden="true">􀊫</span><input type="search" autofocus placeholder="搜索笔记标题或内容" value="${Utils.escapeHtml(current)}" data-notes-modal-search></div><div class="notes-search-results" data-notes-search-results></div></div></div>`;
-+  const input=root.querySelector('[data-notes-modal-search]'); const results=root.querySelector('[data-notes-search-results]');
-+  const paint=()=>{const found=rows(); results.innerHTML=found.map(({article,section})=>{const body=String(article.body||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim(); const lowerBody=body.toLocaleLowerCase(); const matchAt=lowerBody.indexOf((input.value||'').trim().toLocaleLowerCase()); const snippetStart=matchAt>48?matchAt-48:0; const snippet=body.length>120?`${snippetStart?'…':''}${body.slice(snippetStart,snippetStart+120)}${snippetStart+120<body.length?'…':''}`:body; return `<button type="button" class="notes-search-result" data-notes-search-target="${Utils.escapeHtml(article.id)}"><strong>${Utils.escapeHtml(article.title)}</strong><span>${Utils.escapeHtml(snippet)}</span><small>${Utils.escapeHtml(section.title)}</small></button>`;}).join(''); results.querySelectorAll('[data-notes-search-target]').forEach(btn=>btn.onclick=()=>{const id=btn.dataset.notesSearchTarget;const q=input.value.trim();closeModal();const jump=()=>{const target=document.getElementById(`note-${id}`);if(!target){App.notesFilter={...App.notesFilter,subject:'all',type:'all',bookmarked:false,search:''};render();requestAnimationFrame(()=>requestAnimationFrame(jump));return;} window.scrollTo({top:Math.max(0,target.getBoundingClientRect().top+window.scrollY-90),behavior:'auto'});if(q) requestAnimationFrame(()=>highlightNoteSearchMatch(target,q));};requestAnimationFrame(jump);});};
-+  input.addEventListener('input',event=>{event.stopPropagation(); paint();}); paint();
-+  root.querySelector('.notes-filter-close').onclick=closeModal; root.querySelector('.notes-search-overlay').onclick=event=>{if(event.target===event.currentTarget) closeModal();}; requestAnimationFrame(()=>input.focus());
++function toggleNoteSelectionHighlight(body,range){
++  if(!body||!range||range.collapsed) return false;
++  const start=range.startContainer.nodeType===Node.ELEMENT_NODE?range.startContainer:range.startContainer.parentElement;
++  const end=range.endContainer.nodeType===Node.ELEMENT_NODE?range.endContainer:range.endContainer.parentElement;
++  if(!body.contains(start)||!body.contains(end)) return false;
++  const selectedMarks=[...body.querySelectorAll('mark.note-user-highlight,.note-math.note-user-highlight')].filter(mark=>{ try{return range.intersectsNode(mark);}catch(error){return false;} });
++  const selectedFormulas=selectedMarks.filter(node=>node.classList.contains('note-math'));
++  selectedFormulas.forEach(formula=>formula.querySelectorAll('mark.note-user-highlight').forEach(mark=>{ if(!selectedMarks.includes(mark)) selectedMarks.push(mark); }));
++  const card=body.closest('.note-card'), id=card?.id?.replace(/^note-/,'');
++  if(selectedMarks.length){
++    const removedTexts=selectedMarks.map(mark=>mark.textContent||'');
++    const selectedText=range.toString();
++    const normalizedSelected=selectedText.replace(/\s+/g,'');
++    const normalizedMarks=removedTexts.map(text=>String(text||'').replace(/\s+/g,''));
++    const cancelOffset=noteTextOffset(body,range.startContainer,range.startOffset), cancelLength=selectedText.length, cancelEnd=cancelOffset+cancelLength;
++    selectedMarks.forEach(mark=>{ if(mark.classList.contains('note-math')) mark.classList.remove('note-user-highlight'); else mark.replaceWith(...mark.childNodes); });
++    if(id){ App.notesHighlights[id]=(App.notesHighlights[id]||[]).filter(record=>{ const text=typeof record==='string'?record:String(record?.text||''); const offset=Number(record?.offset), length=Number(record?.length), end=offset+length; const overlaps=Number.isFinite(offset)&&Number.isFinite(length)&&cancelLength>0&&offset<cancelEnd&&end>cancelOffset; const normalizedText=text.replace(/\s+/g,''); const textMatches=removedTexts.includes(text)||normalizedMarks.some(markText=>markText&& (markText.includes(normalizedText)||normalizedText.includes(markText)))||normalizedSelected.includes(normalizedText)||normalizedText.includes(normalizedSelected); return !overlaps && (!text || !textMatches); }); Store.setJSON(STORAGE_KEYS.notesHighlights,App.notesHighlights); }
++    window.getSelection()?.removeAllRanges();
++    return true;
++  }
++  const selectedText=range.toString();
++  if(!selectedText.trim()) return false;
++  const startOffset=noteTextOffset(body,range.startContainer,range.startOffset);
++  const selectedLength=noteSelectedTextLength(body,range);
++  if(!highlightSelectedNoteText(range)) return false;
++  if(id){ App.notesHighlights[id]=[...(App.notesHighlights[id]||[]),{text:selectedText,offset:startOffset,length:selectedLength}]; Store.setJSON(STORAGE_KEYS.notesHighlights,App.notesHighlights); }
++  return true;
 +}
-+function openNotesFilterModal(subjects,types){
-+  const root=document.getElementById('modal-root'); if(!root) return;
-+  const filter=App.notesFilter||{subject:'all',type:'all',bookmarked:false,search:''};
-+  const button=(kind,value,label,active)=>`<button type="button" class="notes-filter-choice${active?' active':''}" data-modal-filter-${kind}="${Utils.escapeHtml(value)}">${Utils.escapeHtml(label)}</button>`;
-+  root.innerHTML=`<div class="modal-overlay notes-filter-overlay" id="modal-overlay"><div class="modal-box notes-filter-modal" role="dialog" aria-modal="true" aria-labelledby="notes-filter-title"><button type="button" class="notes-filter-close" aria-label="关闭">􀆄</button><h3 id="notes-filter-title">更多</h3><div class="notes-more-actions"><button type="button" data-modal-open-import>导入笔记</button><button type="button" data-modal-open-filter>筛选</button><button type="button" data-modal-open-search>搜索</button></div><button type="button" class="notes-filter-import" data-modal-import-notes>导入笔记</button><input class="hidden-input" type="file" accept=".html,.htm,text/html" data-modal-notes-input><div class="notes-filter-search"><input type="search" placeholder="搜索笔记标题或内容" value="${Utils.escapeHtml(filter.search||'')}" data-modal-notes-search><button type="button" data-modal-search-apply>搜索</button></div><div class="notes-filter-section"><h4>笔记本（学科）</h4><div class="notes-filter-choices">${button('subject','all','全部笔记本',filter.subject==='all')}${subjects.map(value=>button('subject',value,value,filter.subject===value)).join('')}</div></div><div class="notes-filter-section"><h4>类型</h4><div class="notes-filter-choices">${button('type','all','全部类型',filter.type==='all')}${types.map(value=>button('type',value,NOTE_TYPE_LABELS[value]||value,filter.type===value)).join('')}</div></div><button type="button" class="notes-filter-favorite${filter.bookmarked?' active':''}" data-modal-filter-bookmarked="true">${filter.bookmarked?'仅显示收藏（已启用）':'仅显示收藏'}</button></div></div>`;
-+  root.querySelector('.notes-more-actions')?.remove(); root.querySelector('.notes-filter-import')?.remove(); root.querySelector('.notes-filter-search')?.remove(); root.querySelectorAll('.notes-filter-section,.notes-filter-favorite').forEach(el=>el.classList.add('is-visible')); const favoriteFilter=root.querySelector('.notes-filter-favorite'); const firstSection=root.querySelector('.notes-filter-section'); if(favoriteFilter&&firstSection) firstSection.parentNode.insertBefore(favoriteFilter,firstSection);
-+  root.querySelector('.notes-filter-close').onclick=closeModal;
-+  const filterOpen=root.querySelector('[data-modal-open-filter]'), searchOpen=root.querySelector('[data-modal-open-search]'); if(filterOpen) filterOpen.onclick=()=>{root.querySelectorAll('.notes-filter-section,.notes-filter-favorite').forEach(el=>el.classList.add('is-visible'));}; if(searchOpen) searchOpen.onclick=()=>{root.querySelector('.notes-filter-search').classList.add('is-visible');root.querySelector('[data-modal-notes-search]').focus();};
-+  const searchInput=root.querySelector('[data-modal-notes-search]'); const searchApply=root.querySelector('[data-modal-search-apply]'); if(searchApply) searchApply.onclick=()=>{App.notesFilter={...filter,search:searchInput.value};closeModal();render();};
-+  const importButton=root.querySelector('[data-modal-import-notes]'), importInput=root.querySelector('[data-modal-notes-input]');
-+  const importOpen=root.querySelector('[data-modal-open-import]'); if(importOpen&&importInput) importOpen.onclick=()=>importInput.click();
-+  if(importButton&&importInput){ importButton.onclick=()=>importInput.click(); importInput.onchange=event=>{const file=event.target.files?.[0]; if(file){closeModal();handleNotesHtmlFile(file);} event.target.value='';}; }
-+  root.querySelectorAll('[data-modal-filter-subject]').forEach(btn=>btn.onclick=()=>{App.notesFilter={...filter,subject:btn.dataset.modalFilterSubject};closeModal();render();});
-+  root.querySelectorAll('[data-modal-filter-type]').forEach(btn=>btn.onclick=()=>{App.notesFilter={...filter,type:btn.dataset.modalFilterType};closeModal();render();});
-+  const fav=root.querySelector('[data-modal-filter-bookmarked]'); if(fav) fav.onclick=()=>{App.notesFilter={...filter,bookmarked:!filter.bookmarked};closeModal();render();};
-+  root.querySelector('.notes-filter-overlay').onclick=e=>{if(e.target===e.currentTarget) closeModal();};
-+}
-+function bindNotesPageDrop(container){
-+  if (window.__smcNotesPageDropCleanup) window.__smcNotesPageDropCleanup();
-+  const overlay=container.querySelector('.notes-drag-overlay');
-+  if(!overlay) return;
-+  let depth=0;
-+  const isHtmlFile=file=>/\.html?$/i.test(file?.name||'') || file?.type==='text/html';
-+  const hasFiles=e=>Array.from(e.dataTransfer?.types||[]).includes('Files') || !!e.dataTransfer?.files?.length;
-+  const enter=e=>{ if(!hasFiles(e)) return; e.preventDefault(); e.stopPropagation(); depth++; container.classList.add('notes-dragging'); overlay.setAttribute('aria-hidden','false'); };
-+  const leave=e=>{ if(!hasFiles(e)) return; e.preventDefault(); e.stopPropagation(); depth=Math.max(0,depth-1); if(depth===0){ container.classList.remove('notes-dragging'); overlay.setAttribute('aria-hidden','true'); } };
-+  const drop=e=>{ if(!hasFiles(e)) return; e.preventDefault(); e.stopPropagation(); depth=0; container.classList.remove('notes-dragging'); overlay.setAttribute('aria-hidden','true'); const file=e.dataTransfer.files?.[0]; if(isHtmlFile(file)) handleNotesHtmlFile(file); else toast('请导入 HTML 笔记文件',{icon:'⚠️'}); };
-+  window.addEventListener('dragenter',enter); window.addEventListener('dragover',enter); window.addEventListener('dragleave',leave); window.addEventListener('drop',drop);
-+  window.__smcNotesPageDropCleanup=()=>{ window.removeEventListener('dragenter',enter); window.removeEventListener('dragover',enter); window.removeEventListener('dragleave',leave); window.removeEventListener('drop',drop); container.classList.remove('notes-dragging'); };
-+}
- function bindNotesImport(container){
-   const dz=container.querySelector('#notes-dropzone'), input=container.querySelector('#notes-file-input');
-   if (!dz||!input) return;
-@@ -4420,6 +4611,7 @@ async function initApp(){
+ function highlightNoteSearchMatch(target,query){
+   const root=target?.querySelector('.note-rich')||target;
+   if(!root) return;
+@@ -4611,6 +4734,7 @@ async function initApp(){
      const savedTocCollapsed = await Store.getJSON(STORAGE_KEYS.notesTocCollapsed, null);
      if (typeof savedTocCollapsed === 'boolean') App.notesTocCollapsed = savedTocCollapsed;
      App.notesBookmarks = new Set(await Store.getJSON(STORAGE_KEYS.notesBookmarks, []));
-+    App.notesImageZoom = await Store.getJSON(STORAGE_KEYS.notesImageZoom, {});
++    App.notesHighlights = await Store.getJSON(STORAGE_KEYS.notesHighlights, {});
+     App.notesImageZoom = await Store.getJSON(STORAGE_KEYS.notesImageZoom, {});
      applyTheme();
      if (window.matchMedia){
-       const mq = window.matchMedia('(prefers-color-scheme: dark)');
 diff --git a/style.css b/style.css
-index c5131e2..1be3837 100644
+index 1be3837..89da5fd 100644
 --- a/style.css
 +++ b/style.css
-@@ -65,7 +65,7 @@ a{ color:inherit; }
-    1. 设计令牌 (Design Tokens)
-    ============================================================ */
- :root{
--  /* -- 明快主题基调（多邻国式活力绿 + 卡其绿暗纸面） -- */
-+  /* -- 深色主题基调（中性深灰纸面） -- */
-   --bg:#12161b;
-   --bg-elevated:#1a2029;
-   --bg-soft:#212832;
-@@ -73,12 +73,12 @@ a{ color:inherit; }
-   --border:#2e3640;
-   --border-soft:#242b34;
- 
--  --paper:#2a3326;
--  --paper-alt:#3a422f;
--  --paper-line:#6a7656;
--  --ink:#f4f7e8;
--  --ink-soft:#d2d9b7;
--  --ink-faint:#9aa57d;
-+  --paper:#20262e;
-+  --paper-alt:#272e37;
-+  --paper-line:#414b57;
-+  --ink:#eef1f3;
-+  --ink-soft:#b8c0c9;
-+  --ink-faint:#89939e;
-   --surface-lift-1:rgba(255,255,255,.07);
-   --surface-lift-2:rgba(255,255,255,.13);
- 
-@@ -476,7 +476,8 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
-    ============================================================ */
- .container{ max-width:880px; margin:0 auto; width:100%; padding:0 20px; }
- /* 学习设置的控件布局可横向展开；文本内容仍使用通用 880px 文本流。 */
--.setup-container{ max-width:1180px; }
-+.setup-container{ max-width:880px; }
-+.browse-container{ max-width:880px; }
- .panel{
-   background:var(--bg-elevated);
-   border:1px solid var(--border-soft);
-@@ -590,8 +591,9 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
- .deck-info-card > div{ min-width:0; }
- .deck-info-card h2{ font-size:19px; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
- .deck-info-card p{ margin:4px 0 0; font-size:12.5px; color:var(--ink-soft); line-height:1.6; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
--.deck-actions{ display:flex; align-items:center; gap:12px; margin-left:auto; flex-shrink:0; }
--.deck-info-card #browse-deck-btn,.deck-info-card #setup-notes-btn,.deck-info-card .swap{ margin-left:0; }
-+.deck-info-card .deck-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-left:auto;flex:0 0 auto;}
-+.deck-info-card #browse-deck-btn{ margin-left:0; }
-+.deck-info-card .swap{ margin-left:12px; }
- .deck-switcher{
-   display:flex; flex-wrap:wrap; gap:8px; margin:-12px 0 24px; max-height:92px; overflow-y:auto; padding-right:2px;
- }
-@@ -1390,8 +1392,6 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
-   .deck-info-card{ flex-wrap:wrap; gap:12px; }
-   .deck-info-card > div{ flex:1 1 calc(100% - 52px); }
-   .deck-info-card #browse-deck-btn,.deck-info-card .swap{ flex:1 1 calc(50% - 6px); margin-left:0; }
--  .deck-info-card .deck-actions{ width:100%; gap:8px; }
--  .deck-info-card .deck-actions > .btn{ flex:1 1 0; min-width:0; }
-   .self-grade-grid{ grid-template-columns:repeat(2,1fr); }
-   .browse-topbar{
-     display:flex;
-@@ -1509,8 +1509,8 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
- 
- /* Question-bank v2 rich content */
- .question-media{ margin:14px 0; }
--.question-image{ max-width:100%; }
--.question-image img{ display:block; width:auto; max-width:100%; max-height:420px; border:1px solid var(--border); border-radius:12px; background:var(--paper); }
-+.question-image{ display:flex; flex-direction:column; align-items:center; max-width:100%; margin:14px auto; }
-+.question-image img{ display:block; width:auto; max-width:100%; max-height:420px; margin:0 auto; border:1px solid var(--border); border-radius:12px; background:var(--paper); }
- .question-image figcaption{ margin-top:6px; color:var(--text-faint); font-size:.85em; }
- .question-audio{ display:flex; flex-direction:column; gap:6px; max-width:100%; }
- .question-audio audio{ width:min(100%,420px); }
-@@ -1611,6 +1611,12 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
- .notes-toc-bookmark.on .note-bookmark-icon{ fill:currentColor; }
- .notes-toc-link:hover,.notes-toc-link:focus-visible{ background:var(--bg-soft); color:var(--text); }
- .notes-document{ min-width:0; width:calc(100% - 262px); max-width:880px; margin-left:262px; transition:transform .24s var(--ease); }
-+.notes-document-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 22px;min-height:56px;}
-+.notes-document-title{margin:0;color:var(--text);font-size:26px;line-height:1.35;text-align:left;}
-+.notes-document-heading .notes-document-title{margin:0;}
-+.notes-document-heading.needs-more-clearance{padding-right:52px;}
-+.notes-document-heading.needs-toc-clearance{padding-left:48px;}
-+@media (max-width:640px){.notes-document-heading.needs-more-clearance{padding-right:44px;}.notes-document-heading.needs-toc-clearance{padding-left:40px;}}
- .note-section + .note-section{ margin-top:30px; }
- .note-section-heading{ display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid var(--border-soft); }
- .note-section-heading h2{ margin:0; color:var(--text); font-size:19px; line-height:1.4; }
-@@ -1631,10 +1637,12 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
+@@ -1632,6 +1632,9 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
+ [data-theme="dark"] .note-tag.t-concept{ --note-color:#A9B7C9; } [data-theme="dark"] .note-tag.t-rule{ --note-color:#7AA7FF; } [data-theme="dark"] .note-tag.t-method{ --note-color:#F2B84B; } [data-theme="dark"] .note-tag.t-contrast{ --note-color:#6FCF97; } [data-theme="dark"] .note-tag.t-pitfall{ --note-color:#FF8F80; } [data-theme="dark"] .note-tag.t-example{ --note-color:#E59BC1; } [data-theme="dark"] .note-tag.t-memo{ --note-color:#B69CFF; }
+ .note-index{ flex:0 0 auto; color:var(--text-faint); font-family:var(--font-num); font-size:12px; font-style:italic; }
+ .note-card-tools{ display:flex; align-items:center; gap:8px; flex:0 0 auto; }
++.note-highlight-btn{ display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; padding:4px; border:0; border-radius:7px; background:transparent; color:var(--text-faint); font-family:var(--font-symbol); font-size:18px; line-height:1; cursor:pointer; transition:color var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease); }
++.note-highlight-btn:hover,.note-highlight-btn:focus-visible{ color:var(--accent); background:var(--accent-glow); border-color:transparent; outline:none; transform:translateY(-1px); }
++.note-highlight-btn.on{ color:var(--accent); background:var(--accent-glow); border-color:transparent; }
+ .note-bookmark-btn{ display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; padding:4px; border:0; border-radius:7px; background:transparent; color:var(--text-faint); cursor:pointer; transition:color var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease); }
+ .note-bookmark-btn:hover{ color:var(--gold); background:var(--gold-bg); transform:translateY(-1px); }
  .note-bookmark-btn.on{ color:var(--gold); background:var(--gold-bg); }
- .note-bookmark-btn.on .note-bookmark-icon{ fill:currentColor; }
+@@ -1639,8 +1642,7 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
  .note-bookmark-btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
--.note-rich{ margin-top:14px; color:var(--text); font-family:var(--font-ui); font-size:16px; line-height:1.6; overflow-wrap:anywhere; }
-+.note-rich{ margin-top:14px; color:var(--text); font-family:"SMC CJK Punctuation","SMC FZ New Book","SMC Minion",serif; font-size:16px; line-height:1.9; letter-spacing:.01em; line-break:strict; word-break:normal; overflow-wrap:break-word; hanging-punctuation:first last allow-end; text-wrap:pretty; orphans:2; widows:2; }
+ .note-rich{ margin-top:14px; color:var(--text); font-family:"SMC CJK Punctuation","SMC FZ New Book","SMC Minion",serif; font-size:16px; line-height:1.9; letter-spacing:.01em; line-break:strict; word-break:normal; overflow-wrap:break-word; hanging-punctuation:first last allow-end; text-wrap:pretty; orphans:2; widows:2; }
  .note-rich :where(p,li,blockquote,h1,h2,h3,h4,h5,h6){ font-family:inherit; font-size:inherit; color:inherit; }
--.note-rich p{ margin:0 0 11px; }
-+.note-rich p{ margin:0 0 16px; text-indent:2em; }
- .note-rich p:last-child{ margin-bottom:0; }
-+.note-rich > p,.note-rich .md > p{ text-indent:2em; }
-+.note-rich :where(figure,figcaption,blockquote,li,pre) p{ text-indent:0; }
+-.note-rich p{ margin:0 0 16px; text-indent:2em; }
+-.note-rich p:last-child{ margin-bottom:0; }
++.note-rich p{ margin:0; text-indent:2em; }
+ .note-rich > p,.note-rich .md > p{ text-indent:2em; }
+ .note-rich :where(figure,figcaption,blockquote,li,pre) p{ text-indent:0; }
  .note-rich h5,.note-rich h6{ margin:16px 0 7px; color:var(--text); font-family:var(--font-ui); }
- .note-rich ul,.note-rich ol{ margin:8px 0 12px; padding-left:1.5em; }
- .note-rich li + li{ margin-top:4px; }
-@@ -1766,6 +1774,9 @@ html[data-theme="dark"] .notes-toc .notes-toc-link.active{ background:#3a4858; b
- }
- .dropzone.dragover .dz-hint{ font-size:0; color:var(--accent); font-weight:600; }
- .dropzone.dragover .dz-hint::after{ content:'松手以导入'; font-size:13px; }
-+.note-rich .note-math{ font-size:1em; }
-+.note-rich .note-math{ line-height:inherit; }
-+.note-rich .note-math[style*="display"]{ display:block; }
- /* Notes more menu follows the viewport like the reference floating action. */
- .notes-package-toolbar{ position:fixed; top:84px; right:20px; z-index:86; min-height:0; margin:0; pointer-events:none; }
- .notes-package-toolbar > span{ display:none; }
-@@ -1824,68 +1835,275 @@ html[data-theme="dark"] .notes-more-btn:hover,html[data-theme="dark"] .notes-mor
- .notes-more-btn{ width:36px; height:36px; border-radius:8px; }
- .notes-more-menu{ top:44px; }
- @media (max-width:640px){ .notes-more-btn{ width:36px; height:36px; } }
--/* Keep the first section test entry clear of the fixed More action. */
--.notes-document > .note-section:first-child .note-section-heading{padding-right:88px;}
--@media (max-width:640px){.notes-document > .note-section:first-child .note-section-heading{padding-right:76px;}}
--/* Keep the test entry close to the More action with one compact gap. */
--.notes-document > .note-section:first-child .note-section-heading{padding-right:0;}
--.notes-document > .note-section:first-child .note-section-tools{margin-right:48px;}
--@media (max-width:640px){.notes-document > .note-section:first-child .note-section-tools{margin-right:44px;}}
--/* All section test entries keep the same compact clearance from the floating More action. */
--.note-section-tools{margin-right:48px;}
--@media (max-width:640px){.note-section-tools{margin-right:44px;}}
--/* Dynamic push: reserve space only while a section heading overlaps More. */
--.note-section-tools{margin-right:0;}
--.notes-document > .note-section:first-child .note-section-tools{margin-right:0;}
--.note-section-heading.needs-more-clearance .note-section-tools{margin-right:48px;}
--@media (max-width:640px){.note-section-heading.needs-more-clearance .note-section-tools{margin-right:44px;}}
--/* Make the dynamic push visible even when the heading flex row is tight. */
--.note-section-heading.needs-more-clearance{padding-right:52px;}
--.note-section-heading.needs-more-clearance .note-section-tools{flex-shrink:0;margin-right:0;}
--@media (max-width:640px){.note-section-heading.needs-more-clearance{padding-right:48px;}}
--/* The fixed More action overlays the document start; reserve its footprint there. */
--.notes-document > .note-section:first-child .note-section-heading{padding-right:52px;}
--.notes-document > .note-section:first-child .note-section-tools{flex-shrink:0;margin-right:0;}
--@media (max-width:640px){.notes-document > .note-section:first-child .note-section-heading{padding-right:48px;}}
--/* Note media frame: bounded default width, responsive height, and readable caption. */
--.note-rich :where(figure.note-image, figure:has(> img), figure:has(> svg)){box-sizing:border-box;width:min(100%,720px);min-width:min(280px,100%);margin:14px 0 16px;padding:10px 10px 8px;border:1px solid var(--border-soft);border-radius:12px;background:var(--bg-soft);overflow:hidden;}
--.note-rich :where(figure.note-image, figure:has(> img), figure:has(> svg)) > :where(img,svg){display:block;width:100%;max-width:100%;height:auto;min-height:140px;object-fit:contain;border:0;border-radius:6px;background:var(--bg-elevated);}
--.note-rich :where(figure.note-image, figure:has(> img), figure:has(> svg)) figcaption{margin:8px 2px 0;color:var(--text-faint);font-size:.85em;line-height:1.45;text-align:center;}
--@media (max-width:640px){.note-rich :where(figure.note-image, figure:has(> img), figure:has(> svg)){min-width:100%;padding:8px 8px 7px;}.note-rich :where(figure.note-image, figure:has(> img), figure:has(> svg)) > :where(img,svg){min-height:110px;}}
--/* Note image frames use half the text-flow width and allow text wrap. */
--.note-rich :where(figure.note-image, figure:has(> img), figure:has(> svg)){width:50%;min-width:0;max-width:50%;float:left;clear:left;margin:8px 18px 12px 0;}
--.note-rich :where(figure.note-image, figure:has(> img), figure:has(> svg)) > :where(img,svg){min-height:0;}
--.note-rich::after{content:"";display:block;clear:both;}
--@media (max-width:640px){.note-rich :where(figure.note-image, figure:has(> img), figure:has(> svg)){width:100%;max-width:100%;float:none;clear:none;margin:10px 0 14px;}}
--/* Note illustrations sit on the right so the text stream wraps on the left. */
--.note-rich :where(figure.note-image, figure:has(> img), figure:has(> svg)){float:right;clear:right;margin:8px 0 12px 18px;}
--@media (max-width:640px){.note-rich :where(figure.note-image, figure:has(> img), figure:has(> svg)){float:none;clear:none;margin:10px 0 14px;}}
--/* Inline imported SVG/IMG illustrations also use the half-width right-wrap rule. */
--.note-rich :where(> img,> svg, p > img,p > svg,div > img,div > svg){box-sizing:border-box;width:50%;max-width:50%;height:auto;min-height:0;float:right;clear:right;margin:8px 0 12px 18px;padding:10px;border:1px solid var(--border-soft);border-radius:12px;background:var(--bg-soft);object-fit:contain;}
--@media (max-width:640px){.note-rich :where(> img,> svg, p > img,p > svg,div > img,div > svg){width:100%;max-width:100%;float:none;clear:none;margin:10px 0 14px;padding:8px;}}
--/* Images are centered by default; wrapping is opt-in with .float-right. */
--.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg),> img,> svg,p > img,p > svg,div > img,div > svg){float:none;clear:none;width:min(100%,720px);max-width:100%;min-width:0;margin:14px auto 16px;}
--.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg),> img,> svg,p > img,p > svg,div > img,div > svg).float-right,
--.note-rich .float-right :where(img,svg){float:right;clear:right;width:50%;max-width:50%;margin:8px 0 12px 18px;}
--@media (max-width:640px){.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg),> img,> svg,p > img,p > svg,div > img,div > svg).float-right,.note-rich .float-right :where(img,svg){float:none;clear:none;width:100%;max-width:100%;margin:10px 0 14px;}}
--/* Default image frame width is half of the text flow; centered, no wrap. */
--.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg),> img,> svg,p > img,p > svg,div > img,div > svg){width:50%;max-width:50%;margin:14px auto 16px;float:none;clear:none;}
--@media (max-width:640px){.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg),> img,> svg,p > img,p > svg,div > img,div > svg){width:100%;max-width:100%;margin:10px 0 14px;}}
--/* Inline SVG typography/theme rules: fixed text size, theme-aware black/white only. */
--.note-rich svg :where(text,tspan){font-size:16px!important;}
--.note-rich svg :where([data-theme-color="bw"]){fill:currentColor;stroke:currentColor;}
--.note-rich svg :where([fill="#000"],[fill="#000000"],[fill="black"],[fill="rgb(0, 0, 0)"]){fill:var(--text)!important;}
--.note-rich svg :where([stroke="#000"],[stroke="#000000"],[stroke="black"],[stroke="rgb(0, 0, 0)"]){stroke:var(--text)!important;}
--.note-rich svg :where([fill="#fff"],[fill="#ffffff"],[fill="white"],[fill="rgb(255, 255, 255)"]){fill:var(--bg-elevated)!important;}
--.note-rich svg :where([stroke="#fff"],[stroke="#ffffff"],[stroke="white"],[stroke="rgb(255, 255, 255)"]){stroke:var(--bg-elevated)!important;}
--/* Theme-aware SVG text: also cover inline style attributes and default black fill. */
--.note-rich svg :where(text,tspan):not([fill]):not([style*="fill"]){fill:currentColor!important;}
--.note-rich svg :where(text,tspan)[style*="#000"],.note-rich svg :where(text,tspan)[style*="black"]{fill:var(--text)!important;}
--.note-rich svg :where(text,tspan)[style*="#fff"],.note-rich svg :where(text,tspan)[style*="white"]{fill:var(--bg-elevated)!important;}
--/* Force the SVG currentColor source to the application theme. */
--.note-rich svg{color:var(--text)!important;}
--.note-rich svg[fill="#000"],.note-rich svg[fill="#000000"],.note-rich svg[fill="black"],.note-rich svg[style*="#000"],.note-rich svg[style*="black"]{fill:var(--text)!important;}
--.note-rich svg[fill="#fff"],.note-rich svg[fill="#ffffff"],.note-rich svg[fill="white"],.note-rich svg[style*="#fff"],.note-rich svg[style*="white"]{fill:var(--bg-elevated)!important;}
--.math-fallback-render{display:inline-block;font-family:var(--font-serif,serif);font-style:normal;white-space:nowrap;}
--.math-fallback-render sup,.math-fallback-render sub{font-size:.68em;line-height:0;position:relative;vertical-align:baseline;}
--.math-fallback-render sup{top:-.5em}.math-fallback-render sub{bottom:-.15em}.math-log{white-space:nowrap;}
-+.notes-filter-group{padding:4px 0 6px;border-bottom:1px solid var(--border-soft);margin-bottom:4px}.notes-filter-group strong{display:block;padding:5px 9px;color:var(--text-faint);font-size:11px}.notes-more-menu button.active{background:var(--accent-glow);color:var(--accent)}
-+.notes-filter-overlay{z-index:180;background:rgba(8,12,16,.48);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}.notes-filter-modal{position:relative;width:min(520px,calc(100vw - 32px));padding:24px;border:1px solid var(--border);border-radius:18px;background:var(--bg-elevated);box-shadow:var(--shadow-pop)}.notes-filter-modal h3{margin:0 0 20px;font-size:20px}.notes-filter-close{position:absolute;top:12px;right:14px;border:0;background:transparent;color:var(--text-faint);font-size:25px;line-height:1;cursor:pointer}.notes-filter-section{padding:14px 0;border-top:1px solid var(--border-soft)}.notes-filter-section h4{margin:0 0 10px;color:var(--text-faint);font-size:12px}.notes-filter-choices{display:flex;flex-wrap:wrap;gap:8px}.notes-filter-choice,.notes-filter-favorite{border:1px solid var(--border);border-radius:10px;padding:8px 12px;background:var(--bg-soft);color:var(--text-soft);cursor:pointer}.notes-filter-choice.active,.notes-filter-favorite.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent)}.notes-filter-favorite{margin-top:16px;width:100%;text-align:left}
-+.notes-search-modal>.notes-filter-close{color:var(--text-soft)!important;background:var(--bg-hover)!important;}
-+.notes-search-modal>.notes-filter-close:hover,.notes-search-modal>.notes-filter-close:focus-visible{color:var(--text-soft)!important;}
-+.notes-filter-import{width:100%;margin:0 0 14px;padding:10px 12px;border:1px solid var(--accent);border-radius:10px;background:var(--accent);color:var(--on-accent);font-weight:700;cursor:pointer}.notes-filter-import:hover{filter:brightness(1.06)}
-+/* Formula size follows the note block; KaTeX controls its mathematical glyph fonts. */
-+.note-rich .note-math,
-+.note-rich .note-math .katex{ font-size:1em; line-height:inherit; }
-+.notes-drag-overlay{position:fixed;inset:0;z-index:140;display:flex;align-items:center;justify-content:center;visibility:hidden;opacity:0;pointer-events:none;background:rgba(10,14,18,.42);backdrop-filter:blur(10px) saturate(.8);-webkit-backdrop-filter:blur(10px) saturate(.8);transition:opacity .16s ease,visibility .16s ease}
-+.notes-drag-frame{min-width:min(420px,calc(100vw - 48px));padding:34px 40px;border:2px dashed var(--accent);border-radius:18px;background:var(--bg-elevated);box-shadow:0 0 0 9999px rgba(10,14,18,.08),0 12px 40px rgba(0,0,0,.2);text-align:center;color:var(--text)}
-+.notes-drag-frame strong,.notes-drag-frame span{display:block}.notes-drag-frame strong{font-size:22px}.notes-drag-frame span{margin-top:8px;color:var(--text-soft);font-size:13px}
-+.view-pad.notes-dragging > :not(.notes-drag-overlay){filter:blur(5px)}.view-pad.notes-dragging .notes-drag-overlay{visibility:visible;opacity:1;pointer-events:auto}
-+/* Note media frame: centered half-width by default, with a consistent caption. */
-+.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg)){box-sizing:border-box;width:50%;max-width:50%;margin:26px auto 30px;padding:10px;border:1px solid var(--border-soft);border-radius:12px;background:var(--bg-elevated);overflow:visible;transition:width .2s ease,max-width .2s ease;}
-+.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg)) > :where(img,svg){display:block;width:100%;max-width:100%;height:auto;min-height:0;margin:0;border:0;border-radius:6px;background:var(--bg-elevated);}
-+.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg)) figcaption{margin:12px 2px 2px;padding-top:9px;border-top:1px solid var(--border-soft);color:var(--text-faint);font-size:.9em;line-height:1.6;font-style:italic;text-align:left;}
-+.note-rich :where(> img,> svg,p > img,p > svg,div > img,div > svg){display:block;box-sizing:border-box;width:50%;max-width:50%;height:auto;margin:26px auto 30px;padding:10px;border:1px solid var(--border-soft);border-radius:12px;background:var(--bg-elevated);}
-+html[data-theme="light"] .note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg),> img,> svg,p > img,p > svg,div > img,div > svg){background:#fff;}
-+@media (max-width:640px){.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg),> img,> svg,p > img,p > svg,div > img,div > svg){width:100%;max-width:100%;margin:20px 0 24px;}}
-+/* Inline and display formulas follow the note body size; CJK formula text uses the note font. */
-+.note-rich .note-math{font-size:16px!important;line-height:1.9!important;font-family:var(--font-serif)!important;}
-+.note-rich .note-math .katex,.note-rich .note-math .katex-display .katex{font-size:16px!important;line-height:inherit!important;}
-+.note-rich .note-math .katex .cjk_fallback,.note-rich .note-math .katex .text,.note-rich .note-math .katex .mathrm{font-family:"SMC CJK Punctuation","SMC FZ New Book","SMC Minion",serif!important;font-size:1em!important;}
-+/* Captions sit below the image, centered, upright, and one step smaller than body text. */
-+.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg)) figcaption{margin:0 2px 0;padding:0;border:0;color:var(--text);font-size:.9em;line-height:1.6;font-style:normal!important;text-align:center;}
-+.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg)) figcaption *{font-style:normal!important;}
-+/* Imported HTML often places the caption in the paragraph immediately after the SVG/IMG. */
-+.note-rich p:has(> svg,> img){margin:0;}
-+.note-rich p:has(> svg,> img) + p{margin:0 0 30px;color:var(--text);font-size:.9em;line-height:1.6;font-style:normal!important;text-align:center;text-indent:0;}
-+.note-rich p:has(> svg,> img) + p *{font-style:normal!important;}
-+/* Directory and More controls share the same floating glass-button treatment. */
-+.notes-toc.collapsed .notes-toc-action,.notes-more-btn{box-sizing:border-box;width:40px;height:40px;padding:0;border:0;border-radius:10px;background:color-mix(in srgb,var(--bg-elevated) 65%,transparent);color:var(--text-soft);box-shadow:none;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);}
-+.notes-toc.collapsed .notes-toc-action,.notes-more-btn{display:inline-flex;align-items:center;justify-content:center;}
-+.notes-toc.collapsed .notes-toc-action:hover,.notes-toc.collapsed .notes-toc-action:focus-visible,.notes-more-btn:hover,.notes-more-btn:active,.notes-more-btn[aria-expanded="true"],.notes-more-btn:focus-visible{background:var(--bg-hover);color:var(--text);outline:none;}
-+.notes-more-icon{width:20px;height:20px;display:block;fill:currentColor;}
-+.notes-menu-actions{display:grid;grid-template-columns:max-content;align-items:stretch;width:max-content;}
-+.notes-more-menu .notes-menu-actions button{width:100%;min-width:0;box-sizing:border-box;}
-+.notes-more-menu{width:max-content;min-width:0;}
-+.notes-filter-search{display:flex;gap:8px;margin:0 0 14px}.notes-filter-search input{flex:1;min-width:0;border:1px solid var(--border);border-radius:10px;padding:9px 11px;background:var(--bg-soft);color:var(--text);font:inherit}.notes-filter-search button{border:0;border-radius:10px;padding:0 14px;background:var(--accent);color:var(--on-accent);font-weight:700;cursor:pointer}
-+.notes-more-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 14px}.notes-more-actions button{border:1px solid var(--border);border-radius:10px;padding:10px 8px;background:var(--bg-soft);color:var(--text);font-weight:700;cursor:pointer}.notes-more-actions button:hover{border-color:var(--accent);background:var(--accent-glow);color:var(--accent)}.notes-filter-modal>.notes-filter-import{display:none}.notes-filter-modal>.notes-filter-search,.notes-filter-modal>.notes-filter-section,.notes-filter-modal>.notes-filter-favorite{display:none}.notes-filter-modal>.notes-filter-search.is-visible,.notes-filter-modal>.notes-filter-section.is-visible,.notes-filter-modal>.notes-filter-favorite.is-visible{display:block}
-+.notes-menu-actions{display:flex;flex-direction:column;gap:4px}.notes-menu-actions button,.notes-menu-detail button{display:block;width:100%;padding:8px 10px;border:0;border-radius:7px;background:transparent;color:var(--text);text-align:left;cursor:pointer}.notes-menu-actions button:hover,.notes-menu-detail button:hover{background:var(--bg-soft)}.notes-menu-detail{margin-top:6px;border-top:1px solid var(--border-soft);padding-top:5px}.notes-menu-search{display:flex;gap:6px}.notes-menu-search input{width:150px;box-sizing:border-box;border:1px solid var(--border);border-radius:7px;padding:7px;background:var(--bg-soft);color:var(--text)}.notes-menu-search button{width:auto!important;white-space:nowrap}.notes-more-menu{min-width:210px}
-+.notes-menu-actions{align-items:flex-start}.notes-menu-actions button{width:max-content;min-width:0;}
-+.notes-more-menu{box-sizing:border-box;display:flex;width:fit-content;min-width:0;max-width:calc(100vw - 32px);flex-direction:column;gap:2px;padding:6px;border:0;border-radius:16px;background:var(--bg-elevated);box-shadow:0 8px 18px rgba(15,23,42,.2);}
-+.notes-more-menu[hidden]{display:none;}
-+.notes-more-menu button{height:36px;min-height:36px;padding:6px 12px;border-radius:10px;color:var(--text);font-size:14px;line-height:24px;text-align:left;white-space:nowrap;}
-+.notes-more-menu button:hover,.notes-more-menu button.active{background:color-mix(in srgb,var(--text) 6%,transparent);}
-+.notes-document-heading{position:relative;display:flex;align-items:center;gap:10px;}
-+.notes-document-heading .notes-document-title{margin-right:auto;}
-+.notes-heading-filter{flex:0 0 auto;height:36px;padding:0 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg-soft);color:var(--text-soft);font:inherit;cursor:pointer;}
-+.notes-heading-filter:hover,.notes-heading-filter.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent);}
-+.notes-heading-filter-menu{position:absolute;top:calc(100% + 8px);right:0;z-index:60;display:flex;flex-direction:column;gap:7px;width:230px;padding:10px;border:1px solid var(--border);border-radius:14px;background:var(--bg-elevated);box-shadow:var(--shadow-pop);}
-+.notes-heading-filter-menu[hidden]{display:none;}
-+.notes-heading-filter-menu strong{padding:4px 6px;color:var(--text-faint);font-size:11px;font-weight:600;}
-+.notes-heading-filter-menu button{width:100%;padding:8px 10px;border:0;border-radius:8px;background:transparent;color:var(--text);font:inherit;text-align:left;cursor:pointer;}
-+.notes-heading-filter-menu button:hover,.notes-heading-filter-menu button.active{background:var(--accent-glow);color:var(--accent);}
-+.notes-heading-filter-choices{display:flex;flex-direction:column;gap:2px;}
-+.notes-search-overlay{z-index:180;background:rgba(8,12,16,.48);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
-+.notes-search-modal{position:relative;width:min(766px,calc(100vw - 24px));height:460px;box-sizing:border-box;padding:0;border:1px solid var(--border);border-radius:16px;background:#30363b;box-shadow:var(--shadow-pop);overflow:hidden;}
-+.notes-search-modal h3{display:none;}
-+.notes-search-field{display:flex;align-items:center;gap:8px;height:64px;box-sizing:border-box;padding:20px 16px 20px 24px;border:0;border-bottom:1px solid transparent;border-radius:0;background:transparent;color:var(--text-faint);}
-+.notes-search-field>span{font-family:var(--font-symbol);font-size:18px;}
-+.notes-search-field input{flex:1;min-width:0;min-height:36px;border:0;outline:0;background:transparent;color:var(--text);font:inherit;font-size:16px;}
-+.notes-search-results{display:flex;flex-direction:column;gap:4px;margin:0;padding:0 14px 14px;max-height:396px;overflow:auto;}
-+.notes-search-result{display:flex;flex-direction:column;gap:2px;width:100%;padding:10px 12px;border:0;border-radius:10px;background:transparent;color:var(--text);text-align:left;cursor:pointer;}
-+.notes-search-result:hover{background:var(--bg-hover);}.notes-search-result strong{font-size:14px;}.notes-search-result span{display:block;overflow:hidden;color:var(--text);font-size:13px;line-height:1.5;text-overflow:ellipsis;white-space:nowrap;}.notes-search-result small{color:var(--text-faint);font-size:11px;}.notes-search-empty{margin:8px 4px;color:var(--text-faint);font-size:13px;}.note-search-highlight{padding:0 2px;border-radius:3px;background:#f5c542;color:#1d2024;}
-+.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg)){position:relative;}
-+.note-image-zoom{position:absolute;top:8px;right:8px;z-index:2;width:32px;height:32px;padding:0;border:1px solid color-mix(in srgb,var(--border) 72%,transparent);border-radius:9px;background:color-mix(in srgb,var(--bg-elevated) 82%,transparent);color:var(--text-soft);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",sans-serif;font-size:20px;line-height:1;cursor:pointer;opacity:.82;box-shadow:var(--shadow-soft);}
-+.note-image-zoom:hover,.note-image-zoom:focus-visible{background:var(--bg-hover);color:var(--text);opacity:1;outline:none;}
-+.note-media-frame{position:relative!important;}
-+.note-media-frame>.note-image-zoom{position:absolute;top:8px;right:8px;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;margin:0;padding:0;z-index:20;}
-+.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg)).is-expanded{width:calc(100% - 20px);max-width:calc(100% - 20px);}
-+.note-rich :where(> p.note-media-frame,> div.note-media-frame){position:relative;box-sizing:border-box;width:50%;max-width:50%;margin:26px auto 30px;padding:10px;border:1px solid var(--border-soft);border-radius:12px;background:var(--bg-elevated);}
-+.note-rich>p.note-media-frame,.note-rich>div.note-media-frame{position:relative;box-sizing:border-box;width:50%;max-width:50%;margin:26px auto 30px;padding:10px;border:1px solid var(--border-soft);border-radius:12px;background:var(--bg-elevated);transition:width .2s ease,max-width .2s ease;}
-+.note-rich>p.note-media-frame>img,.note-rich>p.note-media-frame>svg,.note-rich>div.note-media-frame>img,.note-rich>div.note-media-frame>svg{display:block;width:100%;max-width:100%;height:auto;margin:0;padding:0;border:0;border-radius:6px;background:transparent;}
-+.note-rich :where(> p.note-media-frame,> div.note-media-frame)>:where(img,svg){display:block;width:100%;max-width:100%;height:auto;margin:0;padding:0;border:0;border-radius:6px;background:var(--bg-elevated);}
-+.note-rich :where(> p.note-media-frame,> div.note-media-frame).is-expanded{width:calc(100% - 20px);max-width:calc(100% - 20px);}
-+.note-rich>p.note-media-frame.is-expanded,.note-rich>div.note-media-frame.is-expanded{width:calc(100% - 20px);max-width:calc(100% - 20px);}
-+@media (max-width:640px){.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg)).is-expanded{width:100%;max-width:100%;}}
-+@media (max-width:640px){.note-rich :where(> p.note-media-frame,> div.note-media-frame){width:100%;max-width:100%;margin:20px 0 24px;}.note-rich :where(> p.note-media-frame,> div.note-media-frame).is-expanded{width:100%;max-width:100%;}}
-+/* Search navigation: keep the matched body text visibly marked after direct jump. */
-+.note-rich mark.note-search-highlight{
-+  display:inline;
-+  padding:0 2px;
-+  border-radius:3px;
-+  background:#f5c542!important;
-+  color:#1d2024!important;
-+  box-shadow:0 0 0 2px rgba(245,197,66,.28);
-+  font-style:inherit;
-+}
-+.note-rich mark.note-search-highlight{border-radius:2px;background:#fff09a!important;color:inherit!important;font-weight:400;padding:0;text-shadow:.25px 0 currentColor,-.25px 0 currentColor;}
-+.note-search-target-highlight .note-search-highlight{animation:note-search-text-pulse 3.2s ease-out;}
-+@keyframes note-search-text-pulse{0%,65%{background:#fff09a!important}100%{background:transparent!important}}
-+/* Light theme parity for the migrated search surface and body match marker. */
-+html[data-theme="light"] .notes-search-modal{background:var(--bg-elevated);border-color:var(--border);}
-+html[data-theme="light"] .notes-search-field{color:var(--text-faint);}
-+html[data-theme="light"] .notes-search-field input{color:var(--text);}
-+html[data-theme="light"] .notes-search-result{color:var(--text);}
-+html[data-theme="light"] .notes-search-result span{color:var(--text-soft);}
-+html[data-theme="light"] .notes-search-result:hover{background:var(--bg-hover);}
-+html[data-theme="light"] .notes-search-modal>.notes-filter-close{color:var(--text-soft)!important;background:var(--bg-soft)!important;}
-+html[data-theme="light"] .note-rich mark.note-search-highlight{background:#ffe58a!important;color:#20252b!important;text-shadow:none;}
-+/* Search dialog: half the viewport, bounded by the desktop width and the existing minimum. */
-+.notes-search-modal{width:clamp(520px,50vw,766px);max-width:calc(100vw - 24px);}
-+/* Search close control: centered icon with a rounded hover surface. */
-+.notes-search-modal>.notes-filter-close{
-+  display:grid;
-+  width:36px;
-+  height:36px;
-+  box-sizing:border-box;
-+  place-items:center;
-+  padding:0;
-+  border-radius:9999px;
-+  line-height:1;
-+  text-align:center;
-+}
-+.notes-search-modal>.notes-filter-close:hover,
-+.notes-search-modal>.notes-filter-close:focus-visible{
-+  background:var(--bg-hover)!important;
-+  color:var(--text)!important;
-+  outline:none;
-+}
-+/* Close hover surface is a rounded rectangle, not a circle. */
-+.notes-search-modal>.notes-filter-close{border-radius:10px;}
-+/* Align the close control to the vertical center of the 64px search header. */
-+.notes-search-modal>.notes-filter-close{top:14px;}
-+/* Keep the close glyph optically centered inside its rounded rectangle. */
-+.notes-search-modal>.notes-filter-close{align-items:center;justify-items:center;font-size:28px;line-height:36px;}
-+.notes-search-modal>.notes-filter-close{font-family:var(--font-symbol);font-style:normal;font-weight:400;}
-+.notes-search-modal>.notes-filter-close{font-size:20px;}
-+.notes-search-modal>.notes-filter-close{font-size:16px;}
-+/* Browse-all preview filters stay on one horizontal line. */
-+.browse-filter-pack{flex-wrap:nowrap;white-space:nowrap;}
-+.browse-filter-line{flex:0 0 auto;}
-+@media (max-width:900px){.browse-filter-pack{max-width:100%;overflow-x:auto;scrollbar-width:none;}.browse-filter-pack::-webkit-scrollbar{display:none;}}
-+/* Notes-page heading controls stay on one line like the whole-paper preview. */
-+.notes-document-heading{flex-wrap:nowrap;white-space:nowrap;}
-+.notes-document-heading .notes-document-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-+.notes-heading-filter,.notes-document-heading .note-test-btn{flex:0 0 auto;white-space:nowrap;}
-+@media (max-width:640px){.notes-document-heading{gap:8px;overflow-x:auto;scrollbar-width:none;}.notes-document-heading::-webkit-scrollbar{display:none;}}
-+/* Notes filter follows the whole-paper filter pattern: label, summary trigger, and explicit reset. */
-+.notes-heading-filter-pack{position:relative;display:flex;align-items:center;gap:8px;flex:0 0 auto;min-width:0;}
-+.notes-heading-filter-label{color:var(--text-faint);font-size:12px;font-weight:700;white-space:nowrap;}
-+.notes-heading-filter{display:inline-flex;align-items:center;gap:9px;justify-content:space-between;min-width:132px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-+.notes-heading-filter .chev{margin-left:auto;font-size:12px;color:var(--text-faint);transform:rotate(-90deg);}
-+.notes-heading-filter[aria-expanded="true"] .chev{transform:none;}
-+.notes-heading-filter-clear{height:36px;flex:0 0 auto;padding:0 12px;border:1px solid var(--border);border-radius:var(--radius-pill);background:var(--bg-soft);color:var(--text-soft);font:inherit;font-size:12.5px;font-weight:800;white-space:nowrap;cursor:pointer;}
-+.notes-heading-filter-clear:hover{border-color:var(--accent);background:var(--accent-glow);color:var(--accent);}
-+.notes-heading-filter-menu{right:auto;left:0;width:min(320px,calc(100vw - 32px));max-height:min(420px,calc(100vh - 130px));overflow:auto;padding:12px;gap:9px;}
-+.notes-heading-filter-menu strong{padding:7px 8px 2px;}
-+.notes-heading-filter-menu button{min-height:36px;padding:8px 10px;}
-+.notes-heading-filter-favorite{border:1px solid var(--border)!important;background:var(--bg-soft)!important;}
-+.notes-heading-filter-favorite.active{border-color:var(--accent)!important;background:var(--accent-glow)!important;color:var(--accent)!important;}
-+@media (max-width:640px){.notes-heading-filter-label{display:none;}.notes-heading-filter{min-width:112px;max-width:150px;}.notes-heading-filter-clear{padding:0 10px;}.notes-heading-filter-pack{gap:6px;}}
-+/* Redesigned notes filters use the same compact dropdown grammar as whole-paper chapter filters. */
-+.notes-document-filter-line{flex:0 0 auto;min-width:0;}
-+.notes-filter-dropdown{position:relative;}
-+.notes-filter-dropdown summary{list-style:none;display:flex;align-items:center;gap:8px;min-width:142px;border:1px solid var(--border);border-radius:var(--radius-pill);padding:8px 12px;background:var(--bg-soft);color:var(--text-soft);font-size:12.5px;font-weight:800;cursor:pointer;}
-+.notes-filter-dropdown summary::-webkit-details-marker{display:none;}
-+.notes-filter-dropdown summary>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-+.notes-filter-dropdown summary .chev{margin-left:auto;color:var(--text-faint);font-size:inherit;transform:rotate(-90deg);}
-+.notes-filter-dropdown[open] summary{border-color:var(--accent);background:var(--accent-glow);color:var(--text);}
-+.notes-filter-dropdown[open] summary .chev{transform:none;}
-+.notes-filter-menu{position:absolute;top:calc(100% + 8px);left:0;z-index:70;width:min(320px,calc(100vw - 32px));max-height:min(420px,calc(100vh - 130px));overflow:auto;border:1px solid var(--border);border-radius:18px;padding:8px;background:var(--bg-elevated);box-shadow:var(--shadow-pop);}
-+.notes-filter-menu-all{width:100%;margin-bottom:7px;border:0;border-radius:var(--radius-pill);padding:9px 12px;background:var(--accent);color:var(--on-accent);font:inherit;font-size:12px;font-weight:800;cursor:pointer;}
-+.notes-filter-menu strong{display:block;padding:8px 10px 3px;color:var(--text-faint);font-size:11px;font-weight:700;}
-+.notes-filter-choice-list{display:flex;flex-direction:column;gap:2px;}
-+.notes-filter-check{display:flex;align-items:center;gap:9px;border-radius:12px;padding:9px 10px;color:var(--text-soft);font-size:12.5px;font-weight:700;cursor:pointer;}
-+.notes-filter-check:hover{background:var(--bg-soft);color:var(--text);}
-+.notes-filter-check input{width:16px;height:16px;margin:0;flex:0 0 auto;accent-color:var(--accent);}
-+.notes-filter-check span{min-width:0;overflow-wrap:anywhere;word-break:break-word;}
-+@media (max-width:640px){.notes-document-filter-line .chapter-clear-btn{padding:8px 10px;}.notes-filter-dropdown summary{min-width:116px;}}
-+/* Refined notes heading: title stays independent while filter and test form one right-aligned action group. */
-+.notes-document-heading{display:flex;align-items:center;gap:20px;min-width:0;}
-+.notes-document-heading .notes-document-title{flex:1 1 auto;min-width:0;margin-right:0;}
-+.notes-heading-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex:0 0 auto;min-width:0;}
-+.notes-document-filter-line{display:flex;align-items:center;gap:8px;flex:0 0 auto;white-space:nowrap;}
-+.notes-document-filter-line>span{color:var(--text-faint);font-size:12px;font-weight:700;}
-+.notes-filter-dropdown{position:relative;flex:0 0 auto;}
-+.notes-filter-dropdown>summary{height:36px;box-sizing:border-box;min-width:142px;max-width:220px;padding:0 12px;border:1px solid var(--border);border-radius:var(--radius-pill);background:var(--bg-soft);color:var(--text-soft);}
-+.notes-filter-dropdown>summary.active,.notes-filter-dropdown[open]>summary{border-color:var(--accent);background:var(--accent-glow);color:var(--text);}
-+.notes-filter-dropdown>summary .chev{margin-left:auto;transition:transform .16s ease;}
-+.notes-filter-dropdown[open]>summary .chev{transform:none;}
-+.notes-heading-actions .note-test-btn{flex:0 0 auto;min-height:36px;padding:0 16px;border-radius:var(--radius-pill);white-space:nowrap;}
-+.notes-heading-actions .chapter-clear-btn{height:36px;padding:0 12px;}
-+.notes-filter-menu{top:calc(100% + 10px);right:0;left:auto;width:300px;max-height:min(440px,calc(100vh - 150px));padding:10px;border-radius:16px;}
-+.notes-filter-menu-all{margin-bottom:8px;}
-+.notes-filter-menu strong{padding:9px 10px 4px;}
-+.notes-filter-check{min-height:34px;box-sizing:border-box;padding:7px 10px;border-radius:9px;font-size:12.5px;}
-+.notes-filter-check input{accent-color:var(--accent);}
-+@media (max-width:760px){
-+  .notes-document-heading{align-items:flex-start;gap:10px;}
-+  .notes-heading-actions{gap:8px;}
-+  .notes-document-filter-line>span{display:none;}
-+  .notes-filter-dropdown>summary{min-width:126px;}
-+}
-+@media (max-width:560px){
-+  .notes-document-heading{overflow-x:auto;scrollbar-width:none;}
-+  .notes-document-heading::-webkit-scrollbar{display:none;}
-+  .notes-heading-actions{margin-left:auto;}
-+}
-+/* Notes section sticky heading: a compact, solid bar directly below the global navigation. */
-+.note-section + .note-section{margin-top:72px;}
-+.note-section-heading{
-+  position:sticky;
-+  /* Position is measured from the floating controls so their centers stay aligned. */
-+  top:var(--notes-sticky-top, 0px);
-+  z-index:25;
-+  display:flex;
-+  align-items:center;
-+  justify-content:space-between;
-+  gap:14px;
-+  min-height:52px;
-+  box-sizing:border-box;
-+  margin:0 0 12px;
-+  padding:0;
-+  background:var(--bg);
-+  border-bottom:1px solid var(--border-soft);
-+  box-shadow:none;
-+  backdrop-filter:none;
-+  -webkit-backdrop-filter:none;
-+}
-+/* Keep the floating directory control above the seamless fill layer. */
-+.notes-toc.collapsed{z-index:86;}
-+.note-section-heading::before{
-+  content:'';
-+  position:fixed;
-+  top:0;
-+  right:0;
-+  left:0;
-+  height:var(--notes-sticky-top, 0px);
-+  z-index:0;
-+  background:var(--bg);
-+  pointer-events:none;
-+}
-+.note-section-heading>div:first-child{
-+  position:relative;
-+  z-index:1;
-+  display:flex;
-+  flex:1 1 auto;
-+  min-width:0;
-+  height:52px;
-+  align-items:center;
-+  gap:14px;
-+}
-+.note-section-heading>div:first-child>h2{flex:0 0 auto;margin:0;}
-+.note-section-heading .note-section-description{
-+  min-width:0;
-+  margin:0;
-+  overflow:hidden;
-+  color:var(--text-faint);
-+  text-overflow:ellipsis;
-+  white-space:nowrap;
-+}
-+.note-section-tools{
-+  display:flex;
-+  flex:0 0 auto;
-+  align-self:stretch;
-+  align-items:center;
-+  justify-content:center;
-+  min-height:52px;
-+}
-+.note-section-tools .btn{box-sizing:border-box;margin:0;}
-+@media (max-width:760px){
-+  .note-section-heading{top:var(--notes-sticky-top, 0px);min-height:48px;}
-+  .note-section-heading>div:first-child,.note-section-tools{height:48px;min-height:48px;}
-+}
-+@media (max-width:640px){
-+  .note-section-heading{gap:10px;}
-+  .note-section-heading>div:first-child{gap:10px;}
-+  .note-section-heading .note-section-description{font-size:11px;}
-+  .note-section-tools{gap:7px;}
-+}
+@@ -1915,6 +1917,14 @@ html[data-theme="light"] .note-rich :where(figure.note-image,figure:has(> img),f
+ @media (max-width:640px){.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg)).is-expanded{width:100%;max-width:100%;}}
+ @media (max-width:640px){.note-rich :where(> p.note-media-frame,> div.note-media-frame){width:100%;max-width:100%;margin:20px 0 24px;}.note-rich :where(> p.note-media-frame,> div.note-media-frame).is-expanded{width:100%;max-width:100%;}}
+ /* Search navigation: keep the matched body text visibly marked after direct jump. */
++.note-rich mark.note-user-highlight{ display:inline; padding:0 1px; border-radius:2px; background:#ffe45c; color:inherit; }
++.note-rich .note-math.note-user-highlight{ display:block; color:inherit; }
++.note-rich .note-math.note-user-highlight{ display:inline-flex; box-sizing:border-box; min-height:3.8em; margin-inline:3px; padding:0; align-items:center; border-radius:4px; line-height:normal!important; overflow:visible; background:#ffe45c; color:inherit; vertical-align:middle; }
++.note-rich .note-math.note-user-highlight .katex{ display:inline-block; line-height:1.25!important; overflow:visible; }
++.note-rich div.note-math.note-user-highlight{ display:flex; width:max-content; max-width:100%; margin-left:auto; margin-right:auto; justify-content:center; align-items:center; }
++.note-rich .note-math.note-user-highlight .katex-display{ margin:0; }
++html[data-theme="dark"] .note-rich .note-math.note-user-highlight{ background:#f5c542; color:#1d2024; }
++html[data-theme="dark"] .note-rich mark.note-user-highlight{ background:#f5c542; color:#1d2024; }
+ .note-rich mark.note-search-highlight{
+   display:inline;
+   padding:0 2px;
