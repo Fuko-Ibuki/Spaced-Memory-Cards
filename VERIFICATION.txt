@@ -1230,3 +1230,29 @@ SF Pro local font and highlight hover repair:
 - ROLLBACK exact command: cp style.css /tmp/smc-sfpro-local-rollback.css && ./ROLLBACK.sh /tmp/smc-sfpro-local-rollback.css && cmp -s /tmp/smc-sfpro-local-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-sfpro-local-rollback.css from MODIFIED_FILE snapshot; exit status: 0
 - ROLLBACK exit status: 0
 - Restored behavior/status: temporary copy equals MODIFIED_FILE; local SF Pro is prioritized and highlight hover has no visual transform.
+
+Mobile image and formula repair:
+- Changed branch/field: app.js / mobile image default expansion and note formula rendering.
+- On viewports at or below 640px, note images default to expanded unless the user explicitly stored a collapsed state; the image control still toggles and persists the choice. Note formulas now render KaTeX with `throwOnError:false`, avoiding raw LaTeX fallback blocks when one command is unsupported and preserving the rendered formula output on mobile.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-mobile-formula-image-rollback.css && ./ROLLBACK.sh /tmp/smc-mobile-formula-image-rollback.css && cmp -s /tmp/smc-mobile-formula-image-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-mobile-formula-image-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; mobile image default expansion and non-throwing formula rendering are active.
+
+Drag-import overlay dismissal repair:
+- Changed branch/field: app.js / notes drag overlay lifecycle.
+- The “松手以导入” overlay now hides immediately when the drag event has no file payload, and it resets on dragleave, drop, dragend, and view cleanup so an empty/stale import popup cannot remain visible.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-drag-overlay-rollback.css && ./ROLLBACK.sh /tmp/smc-drag-overlay-rollback.css && cmp -s /tmp/smc-drag-overlay-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-drag-overlay-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; stale/empty drag import overlay is cleared.
