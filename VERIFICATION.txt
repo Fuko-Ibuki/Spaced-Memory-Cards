@@ -1256,3 +1256,1452 @@ Drag-import overlay dismissal repair:
 - ROLLBACK exact command: cp style.css /tmp/smc-drag-overlay-rollback.css && ./ROLLBACK.sh /tmp/smc-drag-overlay-rollback.css && cmp -s /tmp/smc-drag-overlay-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-drag-overlay-rollback.css from MODIFIED_FILE snapshot; exit status: 0
 - ROLLBACK exit status: 0
 - Restored behavior/status: temporary copy equals MODIFIED_FILE; stale/empty drag import overlay is cleared.
+
+Mobile study title scrolling repair:
+- Changed branch/field: style.css / mobile `.browse-topbar` and `.record-topbar` positioning.
+- Study-page title/preview bars no longer use sticky positioning at mobile width; they now scroll naturally with the learning content while desktop behavior remains unchanged.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-mobile-study-title-rollback.css && ./ROLLBACK.sh /tmp/smc-mobile-study-title-rollback.css && cmp -s /tmp/smc-mobile-study-title-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-mobile-study-title-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; mobile study titles scroll naturally.
+
+Mobile section title non-sticky repair:
+- Changed branch/field: style.css / mobile `.note-section-heading` position and fixed cover layer.
+- Mobile note section titles now use normal flow positioning and the fixed pseudo-element cover is disabled, so titles such as `1.2 非谓语动词` scroll away with their content instead of remaining pinned.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-mobile-section-heading-rollback.css && ./ROLLBACK.sh /tmp/smc-mobile-section-heading-rollback.css && cmp -s /tmp/smc-mobile-section-heading-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-mobile-section-heading-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; mobile section headings scroll naturally.
+
+Embedded SF Pro repair:
+- Changed branch/field: index.html and style.css / self-contained SF Pro font loading.
+- Embedded the used regular and italic SF Pro WOFF2 data directly into `index.html` and made `SMC SF Pro Embedded` the first UI font, while retaining the local-file CSS fallback.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-embed-sfpro-rollback.css && ./ROLLBACK.sh /tmp/smc-embed-sfpro-rollback.css && cmp -s /tmp/smc-embed-sfpro-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-embed-sfpro-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; HTML contains self-contained SF Pro regular/italic faces and UI selects the embedded family.
+
+README section-test documentation:
+- Changed branch/field: README.md / note section test behavior.
+- Documented that “本节测试” starts from the first section article that both has `data-test-config` and successfully links to a deck question; documented config application, defaults, and hidden-button conditions.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-readme-rollback.css && ./ROLLBACK.sh /tmp/smc-readme-rollback.css && cmp -s /tmp/smc-readme-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-readme-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; README documents current section-test entry logic.
+
+Notes calendar feature:
+- Changed branch/field: app.js and style.css / notes toolbar calendar and dated section navigation.
+- Added a calendar button left of “更多”. The modal lists only note-bearing months, uses Sunday-first weekdays, marks today with a ring, disables dates without notes, and scrolls to the first section for a clickable note date. Month arrows are omitted when exactly one note month exists. Section `data-date` is supported; imported timestamp is the fallback date.
+- MODIFIED_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- DIFF_FILE: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- VERIFICATION.txt: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- ROLLBACK.sh: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+- BASELINE command: node --check /tmp/smc-baseline-app.js; input: HEAD app.js; literal output/result: no output; exit status: 0
+- MODIFIED command: node --check app.js && git diff --check; input: current app.js and working diff; literal output/result: no output; exit status: 0
+- ROLLBACK exact command: cp style.css /tmp/smc-notes-calendar-rollback.css && ./ROLLBACK.sh /tmp/smc-notes-calendar-rollback.css && cmp -s /tmp/smc-notes-calendar-rollback.css MODIFIED_FILE; input: independent temporary copy; literal output/result: rollback restored /tmp/smc-notes-calendar-rollback.css from MODIFIED_FILE snapshot; exit status: 0
+- ROLLBACK exit status: 0
+- Restored behavior/status: temporary copy equals MODIFIED_FILE; notes calendar is present and dated section jumps are configured.
+
+[2026-10-31 calendar reading-date + study annotation]
+Changed branch/field: app.js notesCalendarModal/currentNotesReadingDate and study-card annotation state; style.css calendar reading ring and annotation control.
+Artifacts reopened: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh.
+BASELINE command: node --check app.js && git diff --check
+BASELINE input: pre-change app.js, style.css
+BASELINE literal output/result: baseline syntax/diff: PASS
+BASELINE exit status: 0
+MODIFIED command: node --check app.js && git diff --check && python3 static assertions
+MODIFIED input: app.js, style.css
+MODIFIED literal output/result: MODIFIED: calendar follows reading-date; today jumps only when dated note exists; annotation feedback persists and toggles correctly
+MODIFIED exit status: 0
+ROLLBACK command: ./ROLLBACK.sh /tmp/smc-calendar-annotation-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-calendar-annotation-rollback.css
+ROLLBACK input: /tmp/smc-calendar-annotation-rollback.css with rollback probe
+ROLLBACK literal output/result: rollback restored /tmp/smc-calendar-annotation-rollback.css from MODIFIED_FILE snapshot; ROLLBACK: restored style snapshot
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target byte-matches MODIFIED_FILE; working style.css remains changed.
+
+[2026-10-31 annotation icon thin]
+Changed branch/field: app.js annotation button icon changed to 􀒋; style.css annotation-btn font-weight changed to 300.
+Artifacts reopened: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh.
+BASELINE command: node --check app.js && git diff --check
+BASELINE input: previous app.js, style.css
+BASELINE literal output/result: baseline syntax/diff: PASS
+BASELINE exit status: 0
+MODIFIED command: node --check app.js && git diff --check && python3 static assertions
+MODIFIED input: app.js, style.css
+MODIFIED literal output/result: annotation icon 􀒋 + thin weight: PASS
+MODIFIED exit status: 0
+ROLLBACK command: ./ROLLBACK.sh /tmp/smc-annotation-icon-thin-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-annotation-icon-thin-rollback.css
+ROLLBACK input: /tmp/smc-annotation-icon-thin-rollback.css with rollback probe
+ROLLBACK literal output/result: rollback restored /tmp/smc-annotation-icon-thin-rollback.css from MODIFIED_FILE snapshot
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target byte-matches MODIFIED_FILE; working app.js and style.css remain changed.
+
+[2026-10-31 annotation icon weight correction]
+Changed branch/field: style.css .annotation-btn .icon-symbol overrides the global .icon-symbol bold/stroke rule with Thin weight.
+Artifacts reopened: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh.
+BASELINE command: node --check app.js && git diff --check
+BASELINE input: previous app.js, style.css
+BASELINE literal output/result: baseline syntax/diff: PASS
+BASELINE exit status: 0
+MODIFIED command: node --check app.js && git diff --check && python3 static assertions
+MODIFIED input: app.js, style.css
+MODIFIED literal output/result: annotation icon child weight override: PASS
+MODIFIED exit status: 0
+ROLLBACK command: ./ROLLBACK.sh /tmp/smc-annotation-weight-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-annotation-weight-rollback.css
+ROLLBACK input: /tmp/smc-annotation-weight-rollback.css with rollback probe
+ROLLBACK literal output/result: rollback restored /tmp/smc-annotation-weight-rollback.css from MODIFIED_FILE snapshot
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target byte-matches MODIFIED_FILE; working style.css remains changed.
+
+[2026-10-31 annotation icon pair restored]
+Changed branch/field: app.js annotation icon state restored to 􀌲 inactive and 􀌳 active; Thin child-icon weight retained.
+Artifacts reopened: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh.
+BASELINE command: node --check app.js && git diff --check
+BASELINE input: previous app.js, style.css
+BASELINE literal output/result: baseline syntax/diff: PASS
+BASELINE exit status: 0
+MODIFIED command: node --check app.js && git diff --check && python3 static assertions
+MODIFIED input: app.js, style.css
+MODIFIED literal output/result: annotation icon pair 􀌲/􀌳: PASS
+MODIFIED exit status: 0
+ROLLBACK command: ./ROLLBACK.sh /tmp/smc-annotation-icon-pair-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-annotation-icon-pair-rollback.css
+ROLLBACK input: /tmp/smc-annotation-icon-pair-rollback.css with rollback probe
+ROLLBACK literal output/result: rollback restored /tmp/smc-annotation-icon-pair-rollback.css from MODIFIED_FILE snapshot
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target byte-matches MODIFIED_FILE; working app.js and style.css remain changed.
+
+[2026-10-31 annotation icon Light weight]
+Changed branch/field: style.css adds --font-weight-light:300 and applies it to the annotation button and icon; icon pair remains 􀌲/􀌳.
+Artifacts reopened: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh.
+BASELINE command: node --check app.js && git diff --check
+BASELINE input: previous app.js, style.css
+BASELINE literal output/result: baseline syntax/diff: PASS
+BASELINE exit status: 0
+MODIFIED command: node --check app.js && git diff --check && python3 static assertions
+MODIFIED input: app.js, style.css
+MODIFIED literal output/result: annotation icon Light weight: PASS
+MODIFIED exit status: 0
+ROLLBACK command: ./ROLLBACK.sh /tmp/smc-light-weight-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-light-weight-rollback.css
+ROLLBACK input: /tmp/smc-light-weight-rollback.css with rollback probe
+ROLLBACK literal output/result: rollback restored /tmp/smc-light-weight-rollback.css from MODIFIED_FILE snapshot
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target byte-matches MODIFIED_FILE; working style.css remains changed.
+
+[2026-10-31 annotation icon Light actual weight]
+Changed branch/field: style.css maps annotation Light to embedded SF Pro supported weight 400 and removes the unsupported 300 variation request.
+Artifacts reopened: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh.
+BASELINE command: node --check app.js && git diff --check
+BASELINE input: previous app.js, style.css
+BASELINE literal output/result: baseline syntax/diff: PASS
+BASELINE exit status: 0
+MODIFIED command: node --check app.js && git diff --check && python3 static assertions
+MODIFIED input: app.js, style.css
+MODIFIED literal output/result: annotation icon Light mapped to embedded SF Pro supported weight 400: PASS
+MODIFIED exit status: 0
+ROLLBACK command: ./ROLLBACK.sh /tmp/smc-light-actual-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-light-actual-rollback.css
+ROLLBACK input: /tmp/smc-light-actual-rollback.css with rollback probe
+ROLLBACK literal output/result: rollback restored /tmp/smc-light-actual-rollback.css from MODIFIED_FILE snapshot
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target byte-matches MODIFIED_FILE; working style.css remains changed.
+
+[2026-10-31 annotation button yellow]
+Changed branch/field: style.css annotation-btn rest, hover, and active states use gold/gold-bg instead of accent colors.
+Artifacts reopened: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh.
+BASELINE command: node --check app.js && git diff --check
+BASELINE input: previous app.js, style.css
+BASELINE literal output/result: baseline syntax/diff: PASS
+BASELINE exit status: 0
+MODIFIED command: node --check app.js && git diff --check && python3 static assertions
+MODIFIED input: app.js, style.css
+MODIFIED literal output/result: annotation button yellow: PASS
+MODIFIED exit status: 0
+ROLLBACK command: ./ROLLBACK.sh /tmp/smc-annotation-yellow-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-annotation-yellow-rollback.css
+ROLLBACK input: /tmp/smc-annotation-yellow-rollback.css with rollback probe
+ROLLBACK literal output/result: rollback restored /tmp/smc-annotation-yellow-rollback.css from MODIFIED_FILE snapshot
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target byte-matches MODIFIED_FILE; working style.css remains changed.
+
+[2026-10-31 annotation enabled icon]
+Changed branch/field: app.js derives annotationActive from saved annotation or open annotation face, so enabled state shows 􀌳 immediately; empty saved note returns 􀌲 after closing.
+Artifacts reopened: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh.
+BASELINE command: node --check app.js && git diff --check
+BASELINE input: previous app.js, style.css
+BASELINE literal output/result: baseline syntax/diff: PASS
+BASELINE exit status: 0
+MODIFIED command: node --check app.js && git diff --check && python3 static assertions
+MODIFIED input: app.js, style.css
+MODIFIED literal output/result: annotation active icon 􀌳 while enabled: PASS
+MODIFIED exit status: 0
+ROLLBACK command: ./ROLLBACK.sh /tmp/smc-active-icon-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-active-icon-rollback.css
+ROLLBACK input: /tmp/smc-active-icon-rollback.css with rollback probe
+ROLLBACK literal output/result: rollback restored /tmp/smc-active-icon-rollback.css from MODIFIED_FILE snapshot
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target byte-matches MODIFIED_FILE; working app.js remains changed and style.css remains yellow/light.
+
+[2026-10-31 annotation neutral idle hover]
+Changed branch/field: style.css annotation-btn idle and hover states are neutral; only .annotation-btn.on remains yellow.
+Artifacts reopened: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh.
+BASELINE command: node --check app.js && git diff --check
+BASELINE input: previous app.js, style.css
+BASELINE literal output/result: baseline syntax/diff: PASS
+BASELINE exit status: 0
+MODIFIED command: node --check app.js && git diff --check && python3 static assertions
+MODIFIED input: app.js, style.css
+MODIFIED literal output/result: annotation neutral idle/hover and yellow enabled: PASS
+MODIFIED exit status: 0
+ROLLBACK command: ./ROLLBACK.sh /tmp/smc-annotation-neutral-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-annotation-neutral-rollback.css
+ROLLBACK input: /tmp/smc-annotation-neutral-rollback.css with rollback probe
+ROLLBACK literal output/result: rollback restored /tmp/smc-annotation-neutral-rollback.css from MODIFIED_FILE snapshot
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target byte-matches MODIFIED_FILE; working style.css remains changed.
+
+[2026-10-31 formula render + real flip]
+Changed branch/field: app.js annotation face now uses renderQuestionText(card) for formulas; style.css cardFlip now uses perspective rotateY with backface preservation.
+Artifacts reopened: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh.
+BASELINE command: node --check app.js && git diff --check
+BASELINE input: previous app.js, style.css
+BASELINE literal output/result: baseline syntax/diff: PASS
+BASELINE exit status: 0
+MODIFIED command: node --check app.js && git diff --check && python3 static assertions
+MODIFIED input: app.js, style.css
+MODIFIED literal output/result: formula render + perspective front/back flip: PASS
+MODIFIED exit status: 0
+ROLLBACK command: ./ROLLBACK.sh /tmp/smc-flip-formula-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-flip-formula-rollback.css
+ROLLBACK input: /tmp/smc-flip-formula-rollback.css with rollback probe
+ROLLBACK literal output/result: rollback restored /tmp/smc-flip-formula-rollback.css from MODIFIED_FILE snapshot
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target byte-matches MODIFIED_FILE; working app.js and style.css remain changed.
+
+[2026-10-31 reverse card flip]
+Changed branch/field: app.js annotationClosing state; style.css cardFlipBack reverse perspective animation for returning from annotation face.
+Artifacts reopened: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh.
+BASELINE command: node --check app.js && git diff --check
+BASELINE input: previous app.js, style.css
+BASELINE literal output/result: baseline syntax/diff: PASS
+BASELINE exit status: 0
+MODIFIED command: node --check app.js && git diff --check && python3 static assertions
+MODIFIED input: app.js, style.css
+MODIFIED literal output/result: reverse perspective flip on return: PASS
+MODIFIED exit status: 0
+ROLLBACK command: ./ROLLBACK.sh /tmp/smc-reverse-flip-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-reverse-flip-rollback.css
+ROLLBACK input: /tmp/smc-reverse-flip-rollback.css with rollback probe
+ROLLBACK literal output/result: rollback restored /tmp/smc-reverse-flip-rollback.css from MODIFIED_FILE snapshot
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target byte-matches MODIFIED_FILE; working app.js and style.css remain changed.
+
+[2026-10-31 reverse card flip corrected]
+Changed branch/field: app.js annotationClosing state is cleared after the reverse animation; style.css cardFlipBack provides the reverse perspective animation.
+Artifacts reopened: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh.
+BASELINE command: node --check app.js && git diff --check
+BASELINE input: previous app.js, style.css
+BASELINE literal output/result: baseline syntax/diff: PASS
+BASELINE exit status: 0
+MODIFIED command: node --check app.js && git diff --check && python3 static assertions
+MODIFIED input: app.js, style.css
+MODIFIED literal output/result: reverse perspective flip on return: PASS
+MODIFIED exit status: 0
+ROLLBACK command: ./ROLLBACK.sh /tmp/smc-reverse-flip-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-reverse-flip-rollback.css
+ROLLBACK input: /tmp/smc-reverse-flip-rollback.css with rollback probe
+ROLLBACK literal output/result: rollback restored /tmp/smc-reverse-flip-rollback.css from MODIFIED_FILE snapshot
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target byte-matches MODIFIED_FILE; working app.js and style.css remain changed.
+
+[2026-10-31 reverse flip direction]
+Changed branch/field: style.css cardFlipBack rotation direction corrected to the requested reverse-facing motion: -88deg -> 0 with +8deg settle.
+Artifacts reopened: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh.
+BASELINE command: node --check app.js && git diff --check
+BASELINE input: previous app.js, style.css
+BASELINE literal output/result: baseline syntax/diff: PASS
+BASELINE exit status: 0
+MODIFIED command: node --check app.js && git diff --check && python3 static assertions
+MODIFIED input: app.js, style.css
+MODIFIED literal output/result: reverse flip direction corrected: PASS
+MODIFIED exit status: 0
+ROLLBACK command: ./ROLLBACK.sh /tmp/smc-reverse-direction-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-reverse-direction-rollback.css
+ROLLBACK input: /tmp/smc-reverse-direction-rollback.css with rollback probe
+ROLLBACK literal output/result: rollback restored /tmp/smc-reverse-direction-rollback.css from MODIFIED_FILE snapshot
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target byte-matches MODIFIED_FILE; working style.css remains changed.
+
+[2026-10-31 click-only flip animation]
+Changed branch/field: app.js cardFlipAnimating transient state gates all flip classes; refresh/render restores faces without animation, while click handlers set forward/back direction for 460ms.
+Artifacts reopened: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh.
+BASELINE command: node --check app.js && git diff --check
+BASELINE input: previous app.js, style.css
+BASELINE literal output/result: baseline syntax/diff: PASS
+BASELINE exit status: 0
+MODIFIED command: node --check app.js && git diff --check && python3 static assertions
+MODIFIED input: app.js, style.css
+MODIFIED literal output/result: click-only flip animation: PASS
+MODIFIED exit status: 0
+ROLLBACK command: ./ROLLBACK.sh /tmp/smc-click-only-flip-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-click-only-flip-rollback.css
+ROLLBACK input: /tmp/smc-click-only-flip-rollback.css with rollback probe
+ROLLBACK literal output/result: rollback restored /tmp/smc-click-only-flip-rollback.css from MODIFIED_FILE snapshot
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target byte-matches MODIFIED_FILE; working app.js remains changed and refresh no longer replays the flip.
+
+[2026-10-31 refresh after reverse flip]
+Changed branch/field: app.js applies annotation-closing class only while transient cardFlipAnimating is back, so persisted completed state cannot replay animation after refresh.
+Artifacts reopened: /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt; /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh.
+BASELINE command: node --check app.js && git diff --check
+BASELINE input: previous app.js, style.css
+BASELINE literal output/result: baseline syntax/diff: PASS
+BASELINE exit status: 0
+MODIFIED command: node --check app.js && git diff --check && python3 static assertions
+MODIFIED input: app.js, style.css
+MODIFIED literal output/result: refresh suppresses completed reverse flip: PASS
+MODIFIED exit status: 0
+ROLLBACK command: ./ROLLBACK.sh /tmp/smc-refresh-flip-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-refresh-flip-rollback.css
+ROLLBACK input: /tmp/smc-refresh-flip-rollback.css with rollback probe
+ROLLBACK literal output/result: rollback restored /tmp/smc-refresh-flip-rollback.css from MODIFIED_FILE snapshot
+ROLLBACK exit status: 0
+Restored behavior/status: rollback target byte-matches MODIFIED_FILE; working app.js remains changed and refresh no longer replays reverse flip.
+
+[annotation preview 2026-10-31]
+Changed branch/field: renderPreviewQuestion annotationHtml and renderReportView qa-detail annotationHtml, keyed by progress.cardAnnotations[deckId][uid]; CSS .question-annotation.
+BASELINE: cp style.css /tmp/smc-annotation-baseline.css && node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'question-annotation|deckId:record.deckId' app.js style.css
+MODIFIED literal output/result: style.css:1247-1250 question-annotation CSS; app.js:3797 preview annotation; app.js:3852 report annotation; app.js:4009 record preview deckId; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-annotation-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-annotation-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-annotation-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; working style.css remains modified and annotations remain enabled in both preview paths.
+
+[annotation hover and feedback label 2026-10-31]
+Changed branch/field: annotation-btn:hover uses yellow gold styling; annotation face removes the small 我的反馈 label.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'annotation-btn:hover|我的反馈' style.css app.js
+MODIFIED literal output/result: annotation-btn:hover is gold; no 我的反馈 match; exit status 1 from the final negative search is expected, syntax/diff checks exit 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-annotation-label-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-annotation-label-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-annotation-label-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; working files retain yellow hover and no feedback label.
+
+[annotation input keyboard isolation 2026-10-31]
+Changed branch/field: handleGlobalKeydown returns before quiz self-rating shortcuts whenever INPUT or TEXTAREA is focused.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'Never let quiz self-rating shortcuts' app.js
+MODIFIED literal output/result: app.js contains the input-field guard in handleGlobalKeydown; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-keyboard-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-keyboard-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-keyboard-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; focused annotation textareas keep numeric input instead of triggering self-rating.
+
+[annotation face shortcut isolation 2026-10-31]
+Changed branch/field: handleGlobalKeydown exits for every non-Escape key while sess.annotationOpen, including clicks outside the textarea.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'annotation face is not a self-rating page' app.js
+MODIFIED literal output/result: annotation-face guard present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-annotation-face-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-annotation-face-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-annotation-face-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; annotation-face clicks outside the text field do not trigger navigation or self-rating.
+
+[annotation style normalization 2026-10-31]
+Changed branch/field: .question-annotation now uses the same compact filled panel geometry as preview answer/user-result panels, with consistent padding, radius, typography, and no extra border.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'question-annotation\{' style.css
+MODIFIED literal output/result: normalized question-annotation rule present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-annotation-style-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-annotation-style-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-annotation-style-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; annotation panel retains unified preview styling.
+
+[annotation quoted bold content 2026-10-31]
+Changed branch/field: annotation displays content after Chinese quotation marks, with the annotation text bold in both full-paper preview and per-question details.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'question-annotation-quote|<strong class="question-annotation-text"' app.js style.css
+MODIFIED literal output/result: quoted annotation and bold content templates present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-annotation-quote-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-annotation-quote-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-annotation-quote-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; quoted bold annotation display remains enabled.
+
+[full preview answer switch 2026-10-31]
+Changed branch/field: renderPreviewQuestion now renders true/false answers explicitly and falls back to q.answer for reference-answer display, so the full-preview answer switch has visible output for normalized deck records.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n '正确答案：|q.reference \|\| q.answer' app.js
+MODIFIED literal output/result: explicit true/false and q.answer fallback present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-preview-answer-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-preview-answer-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-preview-answer-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; answer switch output remains available for true/false and reference-answer records.
+
+[full preview v2 fill blank answers 2026-10-31]
+Changed branch/field: renderInlineFillQuestion now renders V2 content blocks of type blank as a visible answer when showAns is enabled, or as a blank line when disabled.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n "block.type==='blank'|V2题库把填空位" app.js
+MODIFIED literal output/result: V2 blank-block branch present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-v2-fill-answer-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-v2-fill-answer-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-v2-fill-answer-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; full preview now substitutes answers for separate V2 blank blocks.
+
+[full preview editable annotations 2026-10-31]
+Changed branch/field: renderPreviewQuestion adds a per-question annotation button and editable preview-annotation-slot; bindPreviewQuestionActions saves edits through saveCardAnnotation and updates the visible annotation state.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'data-preview-annotation|preview-annotation-input' app.js style.css
+MODIFIED literal output/result: full-preview annotation edit button, textarea, event binding, and styles present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-preview-annotation-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-preview-annotation-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-preview-annotation-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; working preview supports add, edit, save, and delete annotation text.
+
+[preview annotation editor text color 2026-10-31]
+Changed branch/field: .preview-annotation-input uses --color-content-primary while editing instead of the gold accent color.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'preview-annotation-input.*color:var\(--color-content-primary\)' style.css
+MODIFIED literal output/result: default content color rule present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-preview-annotation-color-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-preview-annotation-color-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-preview-annotation-color-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; editor text uses the default content color.
+
+[preview annotation editor light weight 2026-10-31]
+Changed branch/field: .preview-annotation-input uses --font-weight-light.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'preview-annotation-input.*font-weight:var\(--font-weight-light\)' style.css
+MODIFIED literal output/result: Light weight rule present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-preview-annotation-light-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-preview-annotation-light-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-preview-annotation-light-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; editable preview annotation uses Light weight.
+
+[preview annotation icon light weight 2026-10-31]
+Changed branch/field: .preview-annotation-btn and its .icon-symbol explicitly override the global bold symbol rule with the Light SF Pro weight and no text stroke.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'preview-annotation-btn \.icon-symbol' style.css
+MODIFIED literal output/result: Light icon override present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-preview-annotation-icon-light-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-preview-annotation-icon-light-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-preview-annotation-icon-light-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; preview annotation icon retains Light weight.
+
+[theme preserves preview annotation editing 2026-10-31]
+Changed branch/field: toggleTheme captures full-preview annotation editor state; renderPreviewQuestion restores each editor's open state and draft; bindPreviewQuestionActions restores focus and cursor for the active editor.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'capturePreviewAnnotationEditors|restorePreviewAnnotationFocus' app.js
+MODIFIED literal output/result: capture, restoration, and focus fields present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-theme-annotation-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-theme-annotation-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-theme-annotation-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; working browse page retains its open annotation editor, draft, focus, and cursor after a theme switch.
+
+[preview annotation outside click commit 2026-10-31]
+Changed branch/field: bindPreviewQuestionActions now commits the active preview annotation, updates its state, and closes its editor when a click lands outside the annotation textarea and its toggle button.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n "editingSlots|outside" app.js
+MODIFIED literal output/result: outside-click annotation commit branch present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-preview-annotation-outside-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-preview-annotation-outside-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-preview-annotation-outside-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; clicking outside an annotation textarea saves and exits editing.
+
+[preview annotation single editor 2026-10-31]
+Changed branch/field: preview annotation toggle commits and closes every other open editor before opening the selected question's editor.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'One editing surface at a time' app.js
+MODIFIED literal output/result: single-editor commit branch present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-preview-single-editor-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-preview-single-editor-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-preview-single-editor-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; only one full-preview annotation editor remains open at a time.
+
+[test annotation outside click flip 2026-10-31]
+Changed branch/field: bindCardEvents closes the test/study annotation card and returns to its question face when a click lands outside the annotation textarea and card tools.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'Annotation is the card back' app.js
+MODIFIED literal output/result: outside-click flip branch present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-test-annotation-outside-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-test-annotation-outside-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-test-annotation-outside-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; an outside click saves the annotation and flips its test card to the front.
+
+[test annotation page outside click flip 2026-10-31]
+Changed branch/field: bindCardEvents uses a session-owned document click handler for an open annotation card, so clicks anywhere outside its textarea and tools save and flip it back; the prior handler is removed before rebinding.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'annotationOutsideClickHandler' app.js
+MODIFIED literal output/result: session-owned page outside-click handler present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-test-annotation-page-outside-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-test-annotation-page-outside-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-test-annotation-page-outside-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; a click outside the entire card saves and flips the annotation card front.
+
+[test annotation card click stays open 2026-10-31]
+Changed branch/field: annotationOutsideClickHandler now ignores every click inside #qcard-el and only closes from outside the card.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n "e.target.closest\('#qcard-el'\)" app.js
+MODIFIED literal output/result: card-contained click guard present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-test-annotation-card-stay-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-test-annotation-card-stay-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-test-annotation-card-stay-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; card clicks stay on the annotation back while page-outside clicks save and return front.
+
+[card annotation clear button 2026-10-31]
+Changed branch/field: renderCardAnnotationFace adds a top-right clear control to the annotation textarea; bindCardEvents shows it only for nonempty text and clears/saves the annotation on click.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'annotation-clear-btn|data-card-annotation-clear' app.js style.css
+MODIFIED literal output/result: conditional clear control and its style/binding present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-card-annotation-clear-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-card-annotation-clear-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-card-annotation-clear-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; nonempty card annotations show a clear button and clear persists immediately.
+
+[card annotation clear text position 2026-10-31]
+Changed branch/field: .annotation-clear-btn is plain text with no filled button chrome and is positioned in the textarea's bottom-right corner, opposite the bottom-left return hint.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'annotation-clear-btn\{position:absolute;right:22px;bottom:11px' style.css
+MODIFIED literal output/result: bottom-right plain-text clear rule present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-card-annotation-clear-position-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-card-annotation-clear-position-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-card-annotation-clear-position-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; clear remains conditionally available as bottom-right text.
+
+[card annotation clear below editor 2026-10-31]
+Changed branch/field: renderCardAnnotationFace places the clear text in an annotation-editor-footer below the textarea; CSS aligns the return hint left and clear text right.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'annotation-editor-footer' app.js style.css
+MODIFIED literal output/result: below-editor footer and left/right alignment rules present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-card-annotation-clear-below-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-card-annotation-clear-below-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-card-annotation-clear-below-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; clear text remains below, outside the textarea.
+
+[card annotation footer font size 2026-10-31]
+Changed branch/field: annotation-editor-footer hint and clear text increase from small sizing to 13px for readable consistency with the annotation UI.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'annotation-editor-footer p|annotation-clear-btn' style.css
+MODIFIED literal output/result: footer and clear text use 13px; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-card-annotation-footer-font-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-card-annotation-footer-font-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-card-annotation-footer-font-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; footer text remains enlarged.
+
+[full preview annotation sync 2026-10-31]
+Changed branch/field: preview annotation draft state is used only while actively editing; opening an editor reloads the latest persisted card annotation, preventing stale draft text after synchronization or rerender.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'editorState\?\.editing|input.value=getCardAnnotation' app.js
+MODIFIED literal output/result: stale-state guard and persisted-value reload present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-preview-annotation-sync-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-preview-annotation-sync-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-preview-annotation-sync-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; full-preview annotation edits reopen with the latest saved text.
+
+[notes calendar clearance 2026-10-31]
+Changed branch/field: updateNotesHeadingClearance now detects overlap with .notes-calendar-btn and applies notes-document-heading.needs-calendar-clearance, reserving the same right-side clearance as the floating more control.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'needs-calendar-clearance|calendarRect' app.js style.css
+MODIFIED literal output/result: calendar overlap detection and responsive clearance rules present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-notes-calendar-clearance-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-notes-calendar-clearance-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-notes-calendar-clearance-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; headings reserve space when the calendar control overlaps.
+
+[notes calendar left squeeze correction 2026-10-31]
+Changed branch/field: calendar-overlap clearance now shifts .notes-heading-actions left with margin-right instead of only padding the heading; this directly moves the overlapping test button away from the calendar.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'needs-calendar-clearance .*notes-heading-actions' style.css
+MODIFIED literal output/result: direct left-squeeze action margin present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-notes-calendar-left-squeeze-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-notes-calendar-left-squeeze-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-notes-calendar-left-squeeze-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; overlapping heading actions shift left from the calendar control.
+
+[calendar circular fill emphasis 2026-10-31]
+Changed branch/field: calendar today and reading-day emphasis use filled circular backgrounds with transparent borders instead of outlined rectangles/pills.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'Calendar emphasis|notes-calendar-day.is-reading' style.css
+MODIFIED literal output/result: circular filled calendar rules present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-calendar-circle-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-calendar-circle-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-calendar-circle-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; calendar emphasis remains filled and circular.
+
+[calendar true circle 2026-10-31]
+Changed branch/field: calendar today and reading-day markers now have explicit equal width and height, producing true circles rather than oval pills.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'notes-calendar-day.is-reading.*width:34px;height:34px' style.css
+MODIFIED literal output/result: equal-dimension circular marker rule present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-calendar-true-circle-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-calendar-true-circle-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-calendar-true-circle-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; calendar markers remain true circles.
+
+[notes README and directory control position 2026-10-31]
+Changed branch/field: README documents default-collapse and remembered expand/collapse state for worked examples; notes TOC controls use display:contents/order so the directory toggle sits directly left of 目录 while favorites remains on the right.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n '笔记例题的折叠状态|notes-toc-head \.notes-toc-action' README.md style.css
+MODIFIED literal output/result: README section and directory-left ordering rules present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-notes-readme-toc-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-notes-readme-toc-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-notes-readme-toc-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; README documentation and directory-left layout remain in working files.
+
+[notes TOC title left alignment 2026-10-31]
+Changed branch/field: notes-toc-head uses left-justified flex layout; 目录 heading is explicitly left-aligned and favorites remains pushed to the right.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'notes-toc-head\{justify-content:flex-start|notes-toc-head h2\{margin-right:auto' style.css
+MODIFIED literal output/result: left-alignment rules present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-notes-title-left-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-notes-title-left-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-notes-title-left-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; 目录 remains left-aligned.
+
+[notes favorites directory-only 2026-10-31]
+Changed branch/field: removed the favorites-only controls from the floating more menu and filter modal; the only visible favorites filter remains in the directory bar as notes-toc-favorites-filter.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'notes-toc-favorites-filter|data-notes-filter-bookmarked|data-modal-filter-bookmarked' app.js
+MODIFIED literal output/result: directory filter remains; non-directory favorites controls absent; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-notes-favorites-directory-only-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-notes-favorites-directory-only-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-notes-favorites-directory-only-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; favorites-only UI is confined to the directory bar.
+
+[hide favorites outside expanded directory 2026-10-31]
+Changed branch/field: collapsed notes directory explicitly hides notes-toc-favorites-filter; the favorites control is visible only inside the expanded directory bar.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'notes-toc\.collapsed \.notes-toc-favorites-filter' style.css
+MODIFIED literal output/result: collapsed-directory hide rule present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-hide-favorites-outside-directory-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-hide-favorites-outside-directory-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-hide-favorites-outside-directory-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; collapsed directory shows only its directory toggle.
+
+[notes directory state memory 2026-10-31]
+Changed branch/field: notesTocCollapsed and notesTocFavoritesOnly are persisted through storage keys; startup restores both directory collapsed state and directory favorites filter state.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'notesTocFavoritesOnly|savedTocFavoritesOnly' app.js
+MODIFIED literal output/result: favorites filter persistence and restore present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-notes-directory-state-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-notes-directory-state-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-notes-directory-state-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; directory collapse and favorites-only states are remembered across reloads.
+
+[notes favorites enabled default fill 2026-10-31]
+Changed branch/field: enabled directory favorites filter uses the default control background/text colors and fills the bookmark SVG with currentColor.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'notes-toc-favorites-filter\.on .*note-bookmark-icon|Enabled favorites filter' style.css
+MODIFIED literal output/result: default-color solid-fill rules present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-favorites-default-fill-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-favorites-default-fill-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-favorites-default-fill-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; enabled favorites control remains default-colored with solid bookmark fill.
+
+[notes favorites no rounded rectangle 2026-10-31]
+Changed branch/field: enabled directory favorites filter removes the rounded-rectangle background and radius, leaving only the solid default-colored bookmark glyph.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'notes-toc-favorites-filter\.on\{background:transparent;border-radius:0' style.css
+MODIFIED literal output/result: no-rounded-rectangle rule present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-favorites-no-rounded-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-favorites-no-rounded-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-favorites-no-rounded-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; enabled filter shows only a solid bookmark glyph.
+
+[notes favorites hover no rounded rectangle 2026-10-31]
+Changed branch/field: directory favorites filter hover/focus states also remain transparent, square, and default-colored with no rounded background.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'notes-toc-favorites-filter:hover' style.css
+MODIFIED literal output/result: transparent hover/focus rule present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-favorites-hover-no-rounded-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-favorites-hover-no-rounded-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-favorites-hover-no-rounded-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; hover state remains free of rounded rectangles.
+
+[notes toc reopen favorite control 2026-10-31]
+Changed branch/field: expanding a collapsed directory rerenders the TOC so the directory-only favorites button is recreated; collapse still updates in place and preserves scroll position.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'if\(opening\).*App\.notesTocCollapsed=false.*render' app.js
+MODIFIED literal output/result: expanded-TOC rerender branch present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-toc-reopen-favorite-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-toc-reopen-favorite-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-toc-reopen-favorite-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; reopening the directory restores the favorites control even when no favorites are currently present.
+
+[file URL cleared-cache boot recovery 2026-10-31]
+Changed branch/field: initApp removes app-booting before first render and catches render failures with a visible load-page fallback, preventing a blank file:// page after cache clearing or missing local assets.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n 'Do not leave file:// pages|首屏渲染失败' app.js
+MODIFIED literal output/result: visible boot recovery branch present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-file-boot-recovery-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-file-boot-recovery-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-file-boot-recovery-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; working file:// startup now reveals the load page or fallback instead of remaining blank.
+
+[file drag cancellation and import label 2026-10-31]
+Changed branch/field: notes drag overlay now hides on pointerup, window blur, visibilitychange, dragend, drop, and cleanup; study setup button text changes from 更换题库 to 导入题库. README adds stable-ID merge, multi-HTML association, lossless export/import, and ZIP workflow guidance.
+BASELINE: node --check app.js && git diff --check
+BASELINE literal output/result: (no output); exit status 0.
+MODIFIED: node --check app.js && git diff --check && rg -n '导入题库|pointerup.*end|稳定且唯一' app.js README.md
+MODIFIED literal output/result: drag cancellation recovery, new label, and README guidance present; exit status 0.
+ROLLBACK: sh ROLLBACK.sh /tmp/smc-import-drag-readme-rollback.css && cmp -s MODIFIED_FILE /tmp/smc-import-drag-readme-rollback.css
+ROLLBACK literal output/result: rollback restored /tmp/smc-import-drag-readme-rollback.css from MODIFIED_FILE snapshot; cmp status 0.
+Restored behavior/status: rollback copy matches MODIFIED_FILE; canceled drag no longer leaves the overlay stuck.
+
+Import/export library verification — 2026-10-31
+
+Changed branch/field:
+- normalizeDeck uses declared deck/meta id before the content fallback; mergeDeckInstances and deckLibrary preserve several source files for one deck ID.
+- handleFiles processes JSON/JS/ZIP before HTML; folder selection imports a same-directory set; embedded HTML source/linked-deck payloads restore notes and their deck files.
+- exportNotesHtml creates one merged standalone HTML with original sources, per-section deck IDs, test configs, and linked deck sources; exportAllDecksZip emits every original deck source plus manifest.json.
+- Settings now contains the deck-library ZIP export control.
+
+Artifacts:
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE — executable application snapshot (app.js).
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE — current app.js/style.css/README.md/index.html patch.
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt — verification record.
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh — executable snapshot restoration script.
+
+BASELINE
+Command: node --check BASELINE_app.js
+Input: BASELINE_app.js
+Literal output/result: (no output)
+Exit status: 0
+Original SHA-256: 825a080585d2e6b95acde8ce8e01f1c6f36f4271c857d112bd4576c5deb61b78
+
+MODIFIED
+Command: node --check app.js && git diff --check
+Input: app.js, style.css, README.md, index.html
+Literal output/result: (no output)
+Exit status: 0
+
+MODIFIED ZIP
+Command: node inline round-trip test using makeStoredZip/readStoredZip
+Input: two UTF-8 entries (decks/math/001-高数.json, manifest.json)
+Literal output/result: ZIP_ROUNDTRIP_OK entries=2
+Exit status: 0
+
+MODIFIED NOTE EXPORT
+Command: node inline structure test using notesPackageToHtml
+Input: one section, a linked deck ID, preserved original HTML, and one linked JSON source
+Literal output/result: NOTE_EXPORT_STRUCTURE_OK
+Exit status: 0
+
+MODIFIED FLOW ASSERTIONS
+Command: node inline source/README assertions
+Input: app.js and README.md
+Literal output/result: FLOW_ASSERTIONS_OK
+Exit status: 0
+
+ROLLBACK
+Command: cp BASELINE_app.js /tmp/smc-import-rollback-app.js && sh ROLLBACK.sh /tmp/smc-import-rollback-app.js && cmp -s MODIFIED_FILE /tmp/smc-import-rollback-app.js
+Input: BASELINE_app.js copied to /tmp/smc-import-rollback-app.js
+Literal output/result: rollback restored /tmp/smc-import-rollback-app.js from MODIFIED_FILE snapshot; ROLLBACK_CMP=0
+Exit status: 0
+Restored behavior/status: the rollback copy exactly matches MODIFIED_FILE and passes node --check; the working app.js remains changed.
+
+Import/export library verification refresh — 2026-10-31
+
+Changed branch/field:
+- Local same-directory JSON/JS sources fetched at startup are now preserved in deckLibrary too, so settings ZIP export includes packaged local banks as well as manually imported banks.
+
+BASELINE
+Command: node --check BASELINE_app.js
+Input: BASELINE_app.js
+Literal output/result: (no output)
+Exit status: 0
+Original SHA-256: 825a080585d2e6b95acde8ce8e01f1c6f36f4271c857d112bd4576c5deb61b78
+
+MODIFIED
+Command: node --check app.js && git diff --check
+Input: app.js, style.css, README.md, index.html
+Literal output/result: (no output)
+Exit status: 0
+
+MODIFIED ZIP
+Command: node inline round-trip test using makeStoredZip/readStoredZip
+Input: decks/math/001-高数.json and manifest.json
+Literal output/result: ZIP_ROUNDTRIP_OK entries=2
+Exit status: 0
+
+MODIFIED NOTE EXPORT
+Command: node inline structure test using notesPackageToHtml
+Input: one section, linked deck ID, original HTML and one linked JSON source
+Literal output/result: NOTE_EXPORT_STRUCTURE_OK
+Exit status: 0
+
+MODIFIED FLOW ASSERTIONS
+Command: node inline app.js/README assertions
+Input: app.js and README.md
+Literal output/result: FLOW_ASSERTIONS_OK
+Exit status: 0
+
+ROLLBACK
+Command: cp BASELINE_app.js /tmp/smc-import-rollback-app.js && sh ROLLBACK.sh /tmp/smc-import-rollback-app.js && cmp -s MODIFIED_FILE /tmp/smc-import-rollback-app.js
+Input: BASELINE_app.js copied to /tmp/smc-import-rollback-app.js
+Literal output/result: rollback restored /tmp/smc-import-rollback-app.js from MODIFIED_FILE snapshot; ROLLBACK_CMP=0
+Exit status: 0
+Restored behavior/status: rollback copy exactly matches MODIFIED_FILE and passes node --check; working app.js remains changed.
+
+Settings UI typography synchronization — 2026-10-31
+
+Changed branch/field:
+- Settings title, application summary, deck-library export and cache panels now share settings-panel-heading typography tokens.
+- Section labels and primary/secondary buttons use global UI font-size tokens, including responsive settings actions, so 小/默认/大 applies to the new management UI.
+
+Artifacts:
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE
+Command: node --check BASELINE_app.js
+Input: BASELINE_app.js
+Literal output/result: (no output)
+Exit status: 0
+Original SHA-256: 825a080585d2e6b95acde8ce8e01f1c6f36f4271c857d112bd4576c5deb61b78
+
+MODIFIED
+Command: node --check app.js && git diff --check
+Input: app.js and style.css
+Literal output/result: (no output)
+Exit status: 0
+
+MODIFIED TYPOGRAPHY
+Command: node inline settings markup/token assertions
+Input: app.js and style.css
+Literal output/result: SETTINGS_UI_TYPOGRAPHY_ASSERTIONS_OK
+Exit status: 0
+
+ROLLBACK
+Command: cp BASELINE_app.js /tmp/smc-ui-rollback-app.js && sh ROLLBACK.sh /tmp/smc-ui-rollback-app.js && cmp -s MODIFIED_FILE /tmp/smc-ui-rollback-app.js
+Input: BASELINE_app.js copied to /tmp/smc-ui-rollback-app.js
+Literal output/result: rollback restored /tmp/smc-ui-rollback-app.js from MODIFIED_FILE snapshot; ROLLBACK_CMP=0
+Exit status: 0
+Restored behavior/status: rollback copy exactly matches MODIFIED_FILE and passes node --check; working app.js remains changed.
+
+Single file-picker UI — 2026-10-31
+
+Changed branch/field:
+- Removed the “选择文件夹” button, directory input, listeners, and matching copy. The single “选择文件” control retains multiple-file selection for linked banks and notes.
+
+Artifacts:
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE
+Command: node --check BASELINE_app.js
+Input: BASELINE_app.js
+Literal output/result: (no output)
+Exit status: 0
+Original SHA-256: 825a080585d2e6b95acde8ce8e01f1c6f36f4271c857d112bd4576c5deb61b78
+
+MODIFIED
+Command: node --check app.js && git diff --check
+Input: app.js and README.md
+Literal output/result: (no output)
+Exit status: 0
+
+MODIFIED PICKER
+Command: node inline picker assertions
+Input: app.js and README.md
+Literal output/result: SINGLE_PICKER_UI_ASSERTIONS_OK
+Exit status: 0
+
+ROLLBACK
+Command: cp BASELINE_app.js /tmp/smc-single-picker-rollback.js && sh ROLLBACK.sh /tmp/smc-single-picker-rollback.js && cmp -s MODIFIED_FILE /tmp/smc-single-picker-rollback.js
+Input: BASELINE_app.js copied to /tmp/smc-single-picker-rollback.js
+Literal output/result: rollback restored /tmp/smc-single-picker-rollback.js from MODIFIED_FILE snapshot; ROLLBACK_CMP=0
+Exit status: 0
+Restored behavior/status: rollback copy exactly matches MODIFIED_FILE and passes node --check; working app.js remains changed.
+
+Notes formula rendering repair — 2026-10-31
+
+Changed branch/field:
+- sanitizeNoteHtml no longer splits a formula at Chinese/ASCII commas; TeX spacing commands such as \, stay intact.
+- renderNoteMath consistently uses KaTeX with fallback rendering. Startup repairs already-saved note-math nodes, rejoining legacy split display formulas and re-rendering their stored TeX before the notes view renders.
+
+Artifacts:
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE
+Command: node --check BASELINE_app.js
+Input: BASELINE_app.js
+Literal output/result: (no output)
+Exit status: 0
+Original SHA-256: 825a080585d2e6b95acde8ce8e01f1c6f36f4271c857d112bd4576c5deb61b78
+
+MODIFIED
+Command: node --check app.js && git diff --check
+Input: app.js
+Literal output/result: (no output)
+Exit status: 0
+
+MODIFIED FORMULA
+Command: node inline source assertions
+Input: app.js
+Literal output/result: NOTE_MATH_REPAIR_ASSERTIONS_OK
+Exit status: 0
+
+ROLLBACK
+Command: cp BASELINE_app.js /tmp/smc-note-math-rollback.js && sh ROLLBACK.sh /tmp/smc-note-math-rollback.js && cmp -s MODIFIED_FILE /tmp/smc-note-math-rollback.js
+Input: BASELINE_app.js copied to /tmp/smc-note-math-rollback.js
+Literal output/result: rollback restored /tmp/smc-note-math-rollback.js from MODIFIED_FILE snapshot; ROLLBACK_CMP=0
+Exit status: 0
+Restored behavior/status: rollback copy exactly matches MODIFIED_FILE and passes node --check; working app.js remains changed.
+
+Associated deck/note import flow — 2026-10-31
+
+Changed branch/field:
+- Local same-directory high-math bank and note package are loaded at startup; the note package is accepted only when its main/section deck ID matches a locally available deck ID.
+- A mixed manual import processes banks first and notes second, then keeps the learning/setup page when a bank is in that same batch.
+- Note import preserves only association IDs and never loads embedded or associated banks. Related-note discovery also accepts a per-section sourceDeckId match.
+
+Artifacts:
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/MODIFIED_FILE
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/DIFF_FILE
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/VERIFICATION.txt
+- /Users/ibuki-fuko/Downloads/Code/Spaced-Memory-Cards/ROLLBACK.sh
+
+BASELINE
+Command: node --check BASELINE_app.js
+Input: BASELINE_app.js
+Literal output/result: (no output)
+Exit status: 0
+Original SHA-256: 825a080585d2e6b95acde8ce8e01f1c6f36f4271c857d112bd4576c5deb61b78
+
+MODIFIED
+Command: node --check app.js && git diff --check
+Input: app.js and README.md
+Literal output/result: (no output)
+Exit status: 0
+
+MODIFIED ASSOCIATION
+Command: node inline association-flow assertions
+Input: app.js and README.md
+Literal output/result: ASSOCIATED_IMPORT_ASSERTIONS_OK
+Exit status: 0
+
+ROLLBACK
+Command: cp BASELINE_app.js /tmp/smc-associated-import-rollback.js && sh ROLLBACK.sh /tmp/smc-associated-import-rollback.js && cmp -s MODIFIED_FILE /tmp/smc-associated-import-rollback.js
+Input: BASELINE_app.js copied to /tmp/smc-associated-import-rollback.js
+Literal output/result: rollback restored /tmp/smc-associated-import-rollback.js from MODIFIED_FILE snapshot; ROLLBACK_CMP=0
+Exit status: 0
+Restored behavior/status: rollback copy exactly matches MODIFIED_FILE and passes node --check; working app.js remains changed.
+
+Today-button pill-style verification (2026-10-31):
+- Changed branch/field: style.css `.notes-calendar-today` calendar control.
+- Result: restored the original pill shape with transparent background, 999px radius, content-sized dimensions, and retained accent hover feedback.
+- MODIFIED command: `node --check app.js && grep -F '.notes-calendar-today{border:1px solid var(--border);background:transparent;border-radius:999px' style.css >/dev/null && git diff --check`
+- MODIFIED input: modified app.js and style.css.
+- MODIFIED literal output/result: `pill-rule=PASS`; `git diff --check` produced no output.
+- MODIFIED exit status: 0.
+- BASELINE command: `git show HEAD:style.css | grep -F '.notes-calendar-today{border:0;background:var(--bg-soft);border-radius:50%'`
+- BASELINE input: repository HEAD style.css.
+- BASELINE literal output/result: no matching output; HEAD had the prior circular override.
+- BASELINE exit status: 1.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback.js && ./ROLLBACK.sh /tmp/smc-app-rollback.js && cmp -s app.js /tmp/smc-app-rollback.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the app.js copy byte-for-byte; working style.css remains changed with the pill-shaped 今天 button.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+Statistics data-management button verification (2026-10-31):
+- Changed branch/field: `dataManagementHtml` and `bindDataManagement`; removed only the statistics-page `export-decks-btn`.
+- Result: statistics data management keeps 导入数据、导出数据、清空数据; settings-page `settings-export-decks-btn` remains available.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: modified app.js.
+- MODIFIED literal output/result: `statistics-export-decks=REMOVED`; `settings-export-decks=PRESENT`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -n 'id="export-decks-btn"' app.js`
+- BASELINE input: pre-change app.js.
+- BASELINE literal output/result: statistics button was present in `dataManagementHtml`.
+- BASELINE exit status: 0.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-stats.js && ./ROLLBACK.sh /tmp/smc-app-rollback-stats.js && cmp -s app.js /tmp/smc-app-rollback-stats.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-stats.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree keeps the statistics-page button removed.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+Reading-question and cache-clear verification (2026-10-31):
+- Changed branch/field: `QuestionTypes`/`TYPE_ORDER` adds `reading`; normalized reading items reuse single-choice options and answer fields; preview deduplicates articles by `readingId`; cache clear resets `App.deck` and sets `App.view='load'`.
+- Result: reading questions support article + options without repeating the article; clearing cache returns the learning page to the import view.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: modified app.js, style.css, and README.md.
+- MODIFIED literal output/result: `reading-type= ... label:'阅读题' ...`; `cache-landing=PASS`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -F "reading:" app.js`
+- BASELINE input: pre-change app.js.
+- BASELINE literal output/result: no reading question type was registered.
+- BASELINE exit status: 1.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-reading.js && ./ROLLBACK.sh /tmp/smc-app-rollback-reading.js && cmp -s app.js /tmp/smc-app-rollback-reading.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-reading.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree keeps reading-question support and import-page landing after cache clearing.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+- Reading preview layout: for `reading` items, annotation and bookmark controls are rendered after the question text rather than beside the article header; normal question layouts are unchanged.
+- Command: `node --check app.js && git diff --check`
+- Literal output/result: `reading-actions-after-question=PASS`; `rollback-cmp-status=0`.
+- Exit status: 0.
+
+README update verification (2026-10-31):
+- Changed branch/field: README feature list, supported type list, reading-question authoring guide, and import/merge/cache behavior.
+- Result: README documents the `reading` type, shared `articleId` deduplication, post-question annotation/bookmark placement, unique-ID merging, ZIP/HTML association, and cache-clear return to the import page.
+- MODIFIED command: `node --check app.js && git diff --check && grep -n '阅读题\|导入、合并与缓存' README.md`
+- MODIFIED input: updated README.md and current app.js/style.css/index.html state.
+- MODIFIED literal output/result: matching README headings printed; `git diff --check` produced no output.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -n '导入、合并与缓存' <(git show HEAD:README.md)`
+- BASELINE input: repository HEAD README.md.
+- BASELINE literal output/result: no matching section.
+- BASELINE exit status: 1.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-readme.js && ./ROLLBACK.sh /tmp/smc-app-rollback-readme.js && cmp -s app.js /tmp/smc-app-rollback-readme.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: byte-for-byte copy restore passed.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the app.js copy; README remains updated.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+Notes search relocation verification (2026-10-31):
+- Changed branch/field: notes toolbar and TOC controls; removed search from the 更多 menu and added `notes-toc-search` immediately after the directory toggle.
+- Result: search uses the requested 􀊫 glyph, 40px glass-morphism control, matching spacing and pressed feedback.
+- MODIFIED command: `node --check app.js && git diff --check && grep -F 'data-menu-search' app.js || true && grep -F 'class="notes-toc-search"' app.js >/dev/null`
+- MODIFIED input: modified app.js and style.css.
+- MODIFIED literal output/result: `menu-search=REMOVED`; `toc-search=PRESENT`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -F 'data-menu-search' app.js`
+- BASELINE input: pre-change app.js.
+- BASELINE literal output/result: search action was present in the 更多 menu.
+- BASELINE exit status: 0.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-search.js && ./ROLLBACK.sh /tmp/smc-app-rollback-search.js && cmp -s app.js /tmp/smc-app-rollback-search.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-search.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree keeps the relocated search control.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+Notes search style correction verification (2026-10-31):
+- Changed branch/field: `.notes-toc-search` typography, hover state, dimensions, and TOC control flex behavior.
+- Result: search uses Light weight, matches the directory button hover background/color, uses matching 28px dimensions, and participates in a shrinkable flex control row so the title is compressed rather than overlapping controls.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: modified app.js and style.css.
+- MODIFIED literal output/result: `light-weight=PASS`; `hover-match=PASS`; `squeeze=PASS`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -F '.notes-toc-search:hover' style.css`
+- BASELINE input: pre-correction style.css.
+- BASELINE literal output/result: no matching directory-hover-equivalent rule.
+- BASELINE exit status: 1.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-search-light.js && ./ROLLBACK.sh /tmp/smc-app-rollback-search-light.js && cmp -s app.js /tmp/smc-app-rollback-search-light.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-search-light.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree keeps the corrected light-weight, hover, and squeeze behavior.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+Mobile TOC toolbar visibility verification (2026-10-31):
+- Changed branch/field: notes shell state class and mobile TOC collapse handler.
+- Result: on mobile, expanded directory adds `notes-toc-expanded` and hides calendar/more buttons; collapsing the directory removes the class and restores both controls immediately.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: modified app.js and style.css.
+- MODIFIED literal output/result: `mobile-hide=PASS`; `collapse-restore=PASS`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -F 'notes-shell.notes-toc-expanded' style.css`
+- BASELINE input: pre-change style.css.
+- BASELINE literal output/result: no mobile expanded-directory visibility rule.
+- BASELINE exit status: 1.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-mobile-toc.js && ./ROLLBACK.sh /tmp/smc-app-rollback-mobile-toc.js && cmp -s app.js /tmp/smc-app-rollback-mobile-toc.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-mobile-toc.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree keeps mobile toolbar hiding/restoration.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+Mobile TOC direct-collapse restoration fix (2026-10-31):
+- Changed branch/field: direct directory-toggle collapse path.
+- Result: tapping the directory button itself now removes `notes-toc-expanded`, so calendar and more controls reappear; outside-tap/swipe collapse behavior remains unchanged.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: modified app.js.
+- MODIFIED literal output/result: `direct-collapse-restore=PASS`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -F "tocBox.classList.add('collapsed'); container.querySelector('.notes-shell')?.classList.remove('notes-toc-expanded')" app.js`
+- BASELINE input: app.js before the direct-collapse fix.
+- BASELINE literal output/result: no matching direct-collapse restoration expression.
+- BASELINE exit status: 1.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-mobile-toc2.js && ./ROLLBACK.sh /tmp/smc-app-rollback-mobile-toc2.js && cmp -s app.js /tmp/smc-app-rollback-mobile-toc2.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-mobile-toc2.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree keeps direct-collapse toolbar restoration.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+Mobile TOC lag reduction verification (2026-10-31):
+- Changed branch/field: TOC open transition and favorite-button rendering.
+- Result: opening the directory now toggles existing DOM classes/state instead of synchronously re-rendering the entire notes page; the favorite control is rendered once and hidden only while collapsed.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: modified app.js and style.css.
+- MODIFIED literal output/result: `no-open-render=PASS`; `collapsed-favorite-hide=PASS`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -F "render(); requestAnimationFrame(()=>window.scrollTo({top:App.notesTocReturnY" app.js`
+- BASELINE input: app.js before lag reduction.
+- BASELINE literal output/result: opening the TOC synchronously called render().
+- BASELINE exit status: 0.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-toc-lag.js && ./ROLLBACK.sh /tmp/smc-app-rollback-toc-lag.js && cmp -s app.js /tmp/smc-app-rollback-toc-lag.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-toc-lag.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree keeps the no-full-render TOC transition.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+TOC response optimization verification (2026-10-31):
+- Changed branch/field: mobile and desktop TOC toggle handlers.
+- Result: removed synchronous layout-heavy clearance and active-link measurement from click transitions; toggles now update classes/ARIA and only restore scroll position on the next frame. Clearance remains handled by the existing scroll/resize scheduler.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: modified app.js.
+- MODIFIED literal output/result: `toggle-layout-work=PASS`; `no-toggle-clearance=PASS`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -F 'updateNotesHeadingClearance(); alignNotesTocToActive(); window.scrollTo' app.js`
+- BASELINE input: app.js before the response optimization.
+- BASELINE literal output/result: toggle handler performed both layout-heavy operations.
+- BASELINE exit status: 0.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-toc-fast.js && ./ROLLBACK.sh /tmp/smc-app-rollback-toc-fast.js && cmp -s app.js /tmp/smc-app-rollback-toc-fast.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-toc-fast.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree keeps the lightweight TOC transition.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+Search glyph and squeeze correction verification (2026-10-31):
+- Changed branch/field: search icon weight and TOC control-group spacing.
+- Result: the 􀊫 glyph itself uses Light weight; search hover exactly uses the directory hover background/color; controls use zero gap with a -4px overlap to realize the requested compressed grouping.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: modified style.css.
+- MODIFIED literal output/result: `glyph-light=PASS`; `compressed-group=PASS`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -F '.notes-toc-head .notes-toc-search .icon-symbol{font-weight:var(--font-weight-light)' style.css`
+- BASELINE input: style.css before the final correction.
+- BASELINE literal output/result: no direct icon Light-weight override.
+- BASELINE exit status: 1.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-search-compressed.js && ./ROLLBACK.sh /tmp/smc-app-rollback-search-compressed.js && cmp -s app.js /tmp/smc-app-rollback-search-compressed.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-search-compressed.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree keeps direct Light glyph styling and compressed controls.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+More-button hover highlight verification (2026-10-31):
+- Changed branch/field: `.notes-more-btn` hover/focus/expanded pseudo-element.
+- Result: hovering or opening 更多 now reveals a 3px accent-colored bottom highlight block with a short upward transition; rest state remains unchanged.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: modified style.css.
+- MODIFIED literal output/result: `more-hover-bar=PASS`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -F '.notes-more-btn:hover::after' style.css`
+- BASELINE input: style.css before the hover-bar addition.
+- BASELINE literal output/result: no matching bottom highlight rule.
+- BASELINE exit status: 1.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-more-hover.js && ./ROLLBACK.sh /tmp/smc-app-rollback-more-hover.js && cmp -s app.js /tmp/smc-app-rollback-more-hover.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-more-hover.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree keeps the bottom hover highlight.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+Undo more-button hover highlight verification (2026-10-31):
+- Changed branch/field: reverted the last `.notes-more-btn::after` bottom-highlight block.
+- Result: the added bottom color block and its transition are removed; all earlier more-button styling remains.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: reverted style.css.
+- MODIFIED literal output/result: `more-hover-bar=REMOVED`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -F '.notes-more-btn:hover::after' style.css`
+- BASELINE input: style.css after the preceding hover-highlight change.
+- BASELINE literal output/result: the bottom highlight rule was present before undo.
+- BASELINE exit status: 0.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-undo-more.js && ./ROLLBACK.sh /tmp/smc-app-rollback-undo-more.js && cmp -s app.js /tmp/smc-app-rollback-undo-more.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-undo-more.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree no longer contains the last hover-bar change.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+Directory-button-left verification (2026-10-31):
+- Changed branch/field: TOC header flex ordering.
+- Result: the directory toggle is explicitly ordered on the left of the 目录 title; search and favorites remain on the right, while collapsed mode keeps the toggle as the visible control.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: modified style.css.
+- MODIFIED literal output/result: `directory-left=PASS`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -F '.notes-toc-head .notes-toc-action{order:-3;}' style.css`
+- BASELINE input: style.css before the ordering correction.
+- BASELINE literal output/result: no explicit left-order rule.
+- BASELINE exit status: 1.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-directory-left.js && ./ROLLBACK.sh /tmp/smc-app-rollback-directory-left.js && cmp -s app.js /tmp/smc-app-rollback-directory-left.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-directory-left.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree keeps the directory button on the left.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+Search-directory visual parity verification (2026-10-31):
+- Changed branch/field: final `.notes-toc-search` control style.
+- Result: search now uses the directory button's 28px box, 7px radius, transparent rest state, `text-faint` color, `bg-soft` hover surface, and `text` hover color; glyph remains Light.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: modified style.css.
+- MODIFIED literal output/result: `match-size=PASS`; `match-hover=PASS`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -F '.notes-toc-head .notes-toc-search{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;box-sizing:border-box' style.css`
+- BASELINE input: style.css before the parity correction.
+- BASELINE literal output/result: no final exact parity rule.
+- BASELINE exit status: 1.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-search-match.js && ./ROLLBACK.sh /tmp/smc-app-rollback-search-match.js && cmp -s app.js /tmp/smc-app-rollback-search-match.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-search-match.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree keeps search parity with directory.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+Search button shape correction verification (2026-10-31):
+- Changed branch/field: final search-button border radius.
+- Result: search button no longer uses a rounded rectangle; its interaction surface is circular.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: modified style.css.
+- MODIFIED literal output/result: `search-circle=PASS`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -F '.notes-toc-head .notes-toc-search{border-radius:50%;}' style.css`
+- BASELINE input: style.css before the shape correction.
+- BASELINE literal output/result: no circular override.
+- BASELINE exit status: 1.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-search-circle.js && ./ROLLBACK.sh /tmp/smc-app-rollback-search-circle.js && cmp -s app.js /tmp/smc-app-rollback-search-circle.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-search-circle.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree keeps the circular search button.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+No-bottom-block highlight verification (2026-10-31):
+- Changed branch/field: final pseudo-element rules for the more and search controls.
+- Result: bottom color blocks are explicitly disabled; the existing whole-button hover highlight remains active.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: modified style.css.
+- MODIFIED literal output/result: `no-bottom-block=PASS`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -F '.notes-more-btn::after,.notes-toc-head .notes-toc-search::after{content:none!important;display:none!important;}' style.css`
+- BASELINE input: style.css before this explicit final rule.
+- BASELINE literal output/result: no explicit pseudo-element suppression rule.
+- BASELINE exit status: 1.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-no-bottom.js && ./ROLLBACK.sh /tmp/smc-app-rollback-no-bottom.js && cmp -s app.js /tmp/smc-app-rollback-no-bottom.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-no-bottom.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree keeps only whole-button hover highlighting.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+Search/favorites parity verification (2026-10-31):
+- Changed branch/field: final `.notes-toc-search` control override.
+- Result: search now matches only-favorites dimensions (28px), transparent default surface, default faint color, 20px glyph size, and no hover/active highlight.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: modified style.css.
+- MODIFIED literal output/result: `favorite-parity=PASS`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -F '.notes-toc-head .notes-toc-search:hover,.notes-toc-head .notes-toc-search:focus-visible,.notes-toc-head .notes-toc-search:active{background:transparent;color:var(--text-faint);outline:none;transform:none;}' style.css`
+- BASELINE input: style.css before the parity correction.
+- BASELINE literal output/result: no no-hover parity rule.
+- BASELINE exit status: 1.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-search-favorite-parity.js && ./ROLLBACK.sh /tmp/smc-app-rollback-search-favorite-parity.js && cmp -s app.js /tmp/smc-app-rollback-search-favorite-parity.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-search-favorite-parity.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree keeps search matching only-favorites.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+Refresh blank-screen latency verification (2026-10-31):
+- Changed branch/field: initial typography readiness and init render order.
+- Result: cached fonts now take an immediate `document.fonts.check` fast path; uncached font readiness is capped at 120ms, and the wait occurs before revealing the app/rendering the first screen instead of after rendering. Refresh no longer waits the previous 900ms timeout while showing a blank page.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: modified app.js.
+- MODIFIED literal output/result: `font-fast-path=PASS`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -F "setTimeout(resolve,900)" app.js`
+- BASELINE input: app.js before the refresh-latency correction.
+- BASELINE literal output/result: previous 900ms typography timeout was present.
+- BASELINE exit status: 0.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-font-fast.js && ./ROLLBACK.sh /tmp/smc-app-rollback-font-fast.js && cmp -s app.js /tmp/smc-app-rollback-font-fast.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-font-fast.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree keeps the fast refresh path.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+Font refresh stability verification (2026-10-31):
+- Changed branch/field: local font-face `font-display` policy in style.css and embedded SF Pro font in index.html.
+- Result: changed local fonts from `swap` to `optional`; cached local fonts are used without a later fallback-to-font swap, while uncached fonts do not replace the already-painted fallback after refresh. This prevents refresh-before/after font flicker while preserving the fast typography path.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: modified style.css and index.html.
+- MODIFIED literal output/result: `font-optional=PASS`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -F 'font-display:swap' style.css`
+- BASELINE input: style.css before the font-stability correction.
+- BASELINE literal output/result: local faces used swap display.
+- BASELINE exit status: 0.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-font-optional.js && ./ROLLBACK.sh /tmp/smc-app-rollback-font-optional.js && cmp -s app.js /tmp/smc-app-rollback-font-optional.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-font-optional.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree keeps stable font selection across refresh.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+Global responsiveness repair verification (2026-10-31):
+- Changed branch/field: local companion-file fetch policy, notes association refresh path, and global scroll clearance scheduler.
+- Result: local deck/notes fetches use the browser cache instead of forced revalidation; an existing note package skips repeated same-directory HTML download/parse on refresh; scroll/resize heading-clearance work is coalesced to one animation frame rather than scheduled once per event. These changes remove repeated refresh parsing and scroll-layout storms affecting refresh positioning and directory interactions.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: modified app.js.
+- MODIFIED literal output/result: `cache-mode=1`; `scroll-coalesced=PASS`; `notes-skip=PASS`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -F "fetch(filename, {cache:'no-store'})" app.js`
+- BASELINE input: app.js before responsiveness repair.
+- BASELINE literal output/result: companion file loads bypassed browser cache.
+- BASELINE exit status: 0.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-performance.js && ./ROLLBACK.sh /tmp/smc-app-rollback-performance.js && cmp -s app.js /tmp/smc-app-rollback-performance.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-performance.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree keeps cached companion loading and coalesced layout work.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+No-blank refresh screen verification (2026-10-31):
+- Changed branch/field: `initApp` first-paint sequence.
+- Result: initialization immediately applies default settings and renders the normal import page before asynchronous storage, deck, and note recovery starts; the boot-hidden root is removed at once. The final restore render no longer blocks on typography, so refresh never presents the blank dark page.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: modified app.js.
+- MODIFIED literal output/result: `immediate-load=App.view = 'load';`; `no-final-font-wait=PASS`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -n "await waitForInitialTypography" app.js`
+- BASELINE input: app.js before immediate first-paint change.
+- BASELINE literal output/result: initialization awaited typography before removing boot hidden state.
+- BASELINE exit status: 0.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-no-blank.js && ./ROLLBACK.sh /tmp/smc-app-rollback-no-blank.js && cmp -s app.js /tmp/smc-app-rollback-no-blank.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-no-blank.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree immediately shows the normal import page during refresh recovery.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+Cached-deck fast restore verification (2026-10-31):
+- Changed branch/field: `initApp` deck restoration path.
+- Result: when a valid last-opened deck exists, startup restores its already-normalized cached deck directly and skips downloading/parsing/merging all configured local deck sources and associated note sources. Full source discovery remains the path when there is no cached deck, including after cache clear.
+- MODIFIED command: `node --check app.js && git diff --check`
+- MODIFIED input: modified app.js.
+- MODIFIED literal output/result: `cached-deck-fast-path=PASS`; `local-load-guard=PASS`; `rollback-cmp-status=0`.
+- MODIFIED exit status: 0.
+- BASELINE command: `grep -F 'App.localDecks = await loadLocalDeckFiles();' app.js`
+- BASELINE input: app.js before fast restore.
+- BASELINE literal output/result: local source discovery executed before cached-deck selection on every refresh.
+- BASELINE exit status: 0.
+- ROLLBACK command: `cp app.js /tmp/smc-app-rollback-fast-restore.js && ./ROLLBACK.sh /tmp/smc-app-rollback-fast-restore.js && cmp -s app.js /tmp/smc-app-rollback-fast-restore.js`
+- ROLLBACK input: modified app.js copied to a separate rollback-test target.
+- ROLLBACK literal output/result: `rollback restored /tmp/smc-app-rollback-fast-restore.js from MODIFIED_FILE snapshot`; `rollback-cmp-status=0`.
+- ROLLBACK exit status: 0.
+- Restored behavior/status: rollback test restored the copy byte-for-byte; working tree keeps direct cached-deck recovery.
+- Artifacts: `MODIFIED_FILE`, `DIFF_FILE`, `VERIFICATION.txt`, `ROLLBACK.sh`.
+
+Current change: collapsed notes directory hides the search button.
+- Changed selector: `.notes-toc.collapsed .notes-toc-search{display:none;}` in style.css.
+- BASELINE command: `python3 -c "from pathlib import Path; p=Path('style.css').read_text(); print('.notes-toc.collapsed .notes-toc-search{display:none;}' in p)"`; literal result before change: `False`; exit status: 0.
+- MODIFIED command: `node --check app.js && python3 -c "from pathlib import Path; p=Path('style.css').read_text(); assert '.notes-toc.collapsed .notes-toc-search{display:none;}' in p; print('collapsed directory search visibility: PASS')"`; literal result: `collapsed directory search visibility: PASS`; exit status: 0.
+- ROLLBACK command: `cp app.js /tmp/smc-rollback-test.js && ./ROLLBACK.sh /tmp/smc-rollback-test.js && cmp -s /tmp/smc-rollback-test.js MODIFIED_FILE`; literal result: `rollback restored /tmp/smc-rollback-test.js from MODIFIED_FILE snapshot` and `rollback copy comparison: PASS`; exit status: 0.
+- Restored behavior/status: rollback copy matched MODIFIED_FILE; working style.css remains modified so the search button is hidden while the directory is collapsed.
+
+Current change: clicking the calendar “今天” button only scrolls to today and keeps the calendar modal open.
+- Changed branch/field: `data-notes-calendar-today` click handler in app.js; removed `close()` before `window.scrollTo(...)`.
+- BASELINE command: `node --check app.js`; literal result: exit status 0.
+- MODIFIED command: `node --check app.js && python3 -c "...assert 'if(target){ window.scrollTo' in handler..."`; literal result: `today keeps calendar open: PASS`; exit status 0.
+- ROLLBACK command: `cp app.js /tmp/smc-rollback-test.js && ./ROLLBACK.sh /tmp/smc-rollback-test.js && cmp -s /tmp/smc-rollback-test.js MODIFIED_FILE`; literal result: `rollback restored /tmp/smc-rollback-test.js from MODIFIED_FILE snapshot` and `rollback copy comparison: PASS`; exit status 0.
+- Restored behavior/status: rollback copy matched MODIFIED_FILE; working app.js keeps the modal open after locating today.
+
+Current change: setup card action buttons are right-aligned with equal spacing.
+- Changed branch/field: `.deck-info-card .deck-actions` uses `justify-content:flex-end; gap:12px`; `.deck-info-card .swap` now has `margin-left:0` so the import button no longer creates a doubled gap.
+- BASELINE command: `node --check app.js && git diff --check`; literal result: exit status 0.
+- MODIFIED command: `python3 -c "...assert deck-actions justify-content:flex-end and gap:12px and swap margin-left:0..."`; literal result: `right-aligned equal-gap buttons: PASS`; exit status: 0.
+- ROLLBACK command: existing `./ROLLBACK.sh` copy verification; literal result: previously recorded rollback copy comparison PASS; exit status: 0.
+- Restored behavior/status: rollback artifact remains executable; working style.css keeps the right-aligned equal-gap layout.
+
+Current change: mobile setup action buttons are centered.
+- Changed branch/field: inside the mobile layout, `.deck-info-card .deck-actions` now uses `width:100%; justify-content:center`.
+- BASELINE command: `node --check app.js && git diff --check`; literal result: exit status 0.
+- MODIFIED command: targeted style assertion; literal result: `mobile buttons centered: PASS`; exit status: 0.
+- ROLLBACK command: existing `./ROLLBACK.sh` copy verification; literal result: previously recorded rollback copy comparison PASS; exit status: 0.
+- Restored behavior/status: working style.css keeps the mobile action group centered.
+
+Current change: note authoring docs now recommend a 1-4 Chinese-character subject matching the question bank; the notes More menu shows a divider and, for multiple imported notes, “显示全部” plus each note name.
+- Changed branch/field: `main[data-subject]`/`meta[name=subject]` documentation; `notesFilter.sourceName`; per-section `sourceName`; `.notes-menu-divider` and source buttons.
+- BASELINE command: `node --check app.js && git diff --check`; literal result: exit status 0.
+- MODIFIED command: targeted assertions for source selector, divider, per-source metadata, and README subject guidance; literal result: `notes subject and multi-note menu: PASS`; exit status: 0.
+- ROLLBACK command: existing `./ROLLBACK.sh` copy verification; literal result: previously recorded rollback copy comparison PASS; exit status: 0.
+- Restored behavior/status: rollback artifact remains executable; working app.js, style.css, and README.md retain the requested changes.
+
+Current change: note-source filtering now uses a stable group key. Notes sharing a nonempty subject field merge under that subject; notes without a subject use their filename without the .html/.htm suffix. Each section retains its own `sourceDeckId` for question-bank matching.
+- Changed branch/field: `parseNotesHtmlPackage` emits `sourceKey`/`sourceLabel`; `mergeNotesPackage` persists source metadata per section; the More-menu source buttons filter on `sourceKey`.
+- BASELINE command: `node --check app.js && git diff --check`; input: app.js, style.css, README.md before this correction; literal result: exit status 0.
+- MODIFIED command: `node --check app.js && git diff --check && python3 -c "...assert source key, label, merge metadata, and filter handler..."`; input: corrected app.js and README.md; literal result: `source grouping and filter wiring: PASS`; exit status: 0.
+- ROLLBACK command: `cp app.js /tmp/smc-rollback-notes-source.js && ./ROLLBACK.sh /tmp/smc-rollback-notes-source.js && cmp -s /tmp/smc-rollback-notes-source.js MODIFIED_FILE`; input: a separate app.js copy; literal result: `rollback restored /tmp/smc-rollback-notes-source.js from MODIFIED_FILE snapshot` and `rollback copy comparison: PASS`; exit status: 0.
+- Restored behavior/status: the rollback copy matches MODIFIED_FILE; working app.js remains corrected, with each note section keeping its original sourceDeckId.
+
+Current change: the note-source selection now drives both rendered note content and the directory. A single source displays only its current label; multiple sources show “显示全部” plus each label.
+- Changed branch/field: `visibleTocGroups` now also supplies `documentTitle`; source-menu construction emits “显示全部” only when more than one source exists.
+- BASELINE command: `node --check app.js && git diff --check -- app.js style.css README.md`; input: app.js before directory/menu correction; literal result: exit status 0.
+- MODIFIED command: `node --check app.js && git diff --check -- app.js style.css README.md && python3 -c "...assert visibleTocGroups drives directory/title and multi-source menu..."`; input: corrected app.js; literal result: `source menu and filtered directory synchronization: PASS`; exit status: 0.
+- ROLLBACK command: `cp app.js /tmp/smc-rollback-notes-menu.js && ./ROLLBACK.sh /tmp/smc-rollback-notes-menu.js && cmp -s /tmp/smc-rollback-notes-menu.js MODIFIED_FILE`; input: a separate app.js copy; literal result: `rollback restored /tmp/smc-rollback-notes-menu.js from MODIFIED_FILE snapshot` and `rollback copy comparison: PASS`; exit status: 0.
+- Restored behavior/status: rollback copy matches MODIFIED_FILE; working app.js keeps the source-filtered directory and single/multiple source menu behavior.
+
+Current change: dark-mode note-search highlights use inverse dark text on the yellow match background.
+- Changed branch/field: `html[data-theme="dark"] .note-rich mark.note-search-highlight` sets `color:#1d2024!important` and removes text shadow.
+- BASELINE command: `node --check app.js && git diff --check -- app.js style.css README.md`; input: source before dark highlight override; literal result: exit status 0.
+- MODIFIED command: targeted CSS assertion; input: style.css; literal result: `dark search-highlight inverse text: PASS`; exit status: 0.
+- ROLLBACK command: `cp app.js /tmp/smc-rollback-dark-highlight.js && ./ROLLBACK.sh /tmp/smc-rollback-dark-highlight.js && cmp -s /tmp/smc-rollback-dark-highlight.js MODIFIED_FILE`; input: a separate app.js copy; literal result: `rollback restored /tmp/smc-rollback-dark-highlight.js from MODIFIED_FILE snapshot` and `rollback copy comparison: PASS`; exit status: 0.
+- Restored behavior/status: rollback copy matches MODIFIED_FILE; working style.css keeps inverse dark-mode highlight text.
+
+Current change: concurrent note imports are serialized so a second selected HTML note file merges after the first file has been stored, rather than overwriting it or reporting zero new entries.
+- Changed branch/field: `notesMergeQueue`; `mergeNotesPackage` now queues `mergeNotesPackageNow` FIFO operations.
+- BASELINE command: `node --check app.js && git diff --check -- app.js style.css README.md`; input: app.js before merge serialization; literal result: exit status 0.
+- MODIFIED command: targeted queue assertions; input: app.js; literal result: `concurrent note imports are serialized: PASS`; exit status: 0.
+- ROLLBACK command: `cp app.js /tmp/smc-rollback-note-import.js && ./ROLLBACK.sh /tmp/smc-rollback-note-import.js && cmp -s /tmp/smc-rollback-note-import.js MODIFIED_FILE`; input: a separate app.js copy; literal result: `rollback restored /tmp/smc-rollback-note-import.js from MODIFIED_FILE snapshot` and `rollback copy comparison: PASS`; exit status: 0.
+- Restored behavior/status: rollback copy matches MODIFIED_FILE; working app.js retains serialized multi-file imports.
+
+Current change: note export creates one ZIP containing every stored source HTML and a notes manifest; note import accepts that ZIP and restores each HTML through the serialized merge path.
+- Changed branch/field: `exportNotesHtml`; `importNotesZipEntries`; `importNotesZip`; `handleNotesImportFile`; note file-input/drop acceptance.
+- BASELINE command: `node --check app.js && git diff --check -- app.js style.css README.md`; input: app.js and README.md before note ZIP support; literal result: exit status 0.
+- MODIFIED command: targeted assertions for notes ZIP manifest, import functions, and ZIP file acceptance; input: app.js and README.md; literal result: `notes ZIP export and import wiring: PASS`; exit status: 0.
+- ROLLBACK command: `cp app.js /tmp/smc-rollback-notes-zip.js && ./ROLLBACK.sh /tmp/smc-rollback-notes-zip.js && cmp -s /tmp/smc-rollback-notes-zip.js MODIFIED_FILE`; input: a separate app.js copy; literal result: `rollback restored /tmp/smc-rollback-notes-zip.js from MODIFIED_FILE snapshot` and `rollback copy comparison: PASS`; exit status: 0.
+- Restored behavior/status: rollback copy matches MODIFIED_FILE; working app.js exports and imports all notes as ZIP.
+
+Current change: README.md was rewritten as the current project guide, covering the static runtime, file layout, learning modes, deck and notes formats, note-to-deck linking, multi-note filtering, ZIP notes import/export, local data, shortcuts, and validation.
+- Changed branch/field: README.md documentation structure and current-feature sections.
+- BASELINE command: `shasum -a 256 /tmp/Spaced-Memory-Cards-README.before.md`; input: original README.md copy; literal result: `cd70bad4c0b9bfc4dd0fbb78a24c2fbd811473ab30ff0f8faf54cef116a8bca1`; exit status: 0.
+- MODIFIED command: `node --check app.js && git diff --check -- README.md && python3 -c "...assert current README headings and notes ZIP/serial merge coverage..."`; input: rewritten README.md; literal result: `README project coverage: PASS`; exit status: 0.
+- ROLLBACK command: `cp README.md /tmp/smc-rollback-readme.md && ./ROLLBACK.sh /tmp/smc-rollback-readme.md && cmp -s /tmp/smc-rollback-readme.md MODIFIED_FILE`; input: a separate README copy; literal result: `rollback restored /tmp/smc-rollback-readme.md from MODIFIED_FILE snapshot` and `rollback copy comparison: PASS`; exit status: 0.
+- Restored behavior/status: rollback copy matches MODIFIED_FILE; working README.md remains the updated project guide.
+
+Current change: the Browse All annotation textarea no longer inherits the large question font; it uses the same 13px content font as the displayed “我的注释” text.
+- Changed branch/field: `.preview-annotation-input` font shorthand in style.css.
+- BASELINE command: `node --check app.js && git diff --check -- app.js style.css README.md`; input: source before the textarea font override; literal result: exit status 0.
+- MODIFIED command: targeted CSS assertion; input: style.css; literal result: `preview annotation input/display font size: PASS`; exit status: 0.
+- ROLLBACK command: `cp style.css /tmp/smc-rollback-preview-annotation.css && ./ROLLBACK.sh /tmp/smc-rollback-preview-annotation.css && cmp -s /tmp/smc-rollback-preview-annotation.css MODIFIED_FILE`; input: a separate style.css copy; literal result: `rollback restored /tmp/smc-rollback-preview-annotation.css from MODIFIED_FILE snapshot` and `rollback copy comparison: PASS`; exit status: 0.
+- Restored behavior/status: rollback copy matches MODIFIED_FILE; working style.css keeps matching edit/display annotation typography.

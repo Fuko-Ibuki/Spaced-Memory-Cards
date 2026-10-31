@@ -1,199 +1,117 @@
 # Spaced Memory Cards
 
-一个无需构建、可离线运行的中文间隔重复学习卡片应用。支持闪卡复习、即时反馈学习和模拟测试，并允许导入自己的 JSON 题库。
+一个无需构建、可离线运行的中文学习应用：导入题库与结构化笔记，在闪卡、学习、测试和浏览整卷之间切换，并将学习进度保存在浏览器本地。
 
-## 功能
+## 功能概览
 
-- 闪卡模式：翻面查看答案，使用 Again / Hard / Good / Easy 自评，并按间隔重复安排后续复习。
-- 学习模式：答题后立即反馈；答错的客观题会重新排入当前队列。
-- 测试模式：完成整轮后统一判分，适合模拟考试和阶段性检查。
-- 支持填空、单选、多选、判断、简答和综合分析六类题型。
-- 按章节、题型、错题本和复习本筛选题目，支持自定义题量和模拟考试抽题。
-- 统计仪表盘：查看学习轮次、逐题记录、连续学习天数、错题和复习进度。
-- 数据导入/导出：备份并恢复设置、学习记录、错题本、复习本和间隔重复进度。
-- 深色 / 浅色主题，适配桌面端和移动端，并提供键盘操作。
+- **三种学习模式**：闪卡（Again / Hard / Good / Easy 间隔重复）、学习（即时反馈与错题重排）、测试（完成后统一判分）。
+- **题库能力**：支持填空、单选、阅读、多选、判断、简答和综合分析；可按章节、题型、错题本、复习本与数量抽题。
+- **笔记能力**：导入 HTML / HTM 笔记或本应用导出的笔记 ZIP；提供目录、搜索、高亮、收藏、图片放大、日历与章节测试入口。
+- **多笔记管理**：同一学科的笔记合并显示；没有学科字段时按无后缀文件名区分；菜单可切换全部或单个来源，正文与目录同步筛选。
+- **关联学习**：笔记可通过题目 ID、笔记 ID 或标题关联题库；章节可携带测试配置并直接开始测试。
+- **数据与界面**：本地保存设置、进度、题库库、笔记、注释和高亮；支持深浅主题、桌面端与移动端、键盘操作。
 
 ## 快速开始
 
-本项目是静态 HTML，直接打开 `index.html` 即可使用。也可以在项目目录启动本地静态服务器：
+本项目是静态网页。建议从项目根目录启动本地服务器：
 
 ```bash
 python3 -m http.server 8000
 ```
 
-然后访问 <http://localhost:8000>。首次进入时可选择“新手教程示例题库”体验完整流程，也可在题库页面拖入自己的 `.json` 文件。
+访问 <http://localhost:8000>，然后：
 
-## 编写规范导航
+1. 在学习页导入 `.json`、兼容 `.js`、题库 ZIP、HTML 笔记或笔记 ZIP。
+2. 选择题库、学习模式和题目范围。
+3. 在“笔记”页导入、搜索、切换或导出笔记。
 
-- [题库 JSON 基础格式](#题库-json-格式)：题库元数据、题目结构与字段约束。
-- [题型与富媒体块](#题型)：题型、公式、图片、音频和填空块的写法。
-- [笔记 HTML 与题库关联](#必须与建议)：标题层级、学科、`data-question-id`、测试配置及入口显示规则。
-- [图片框与题注](#图片框与题注规范)：图片尺寸、段前段后距、题注样式与绕排写法。
-- [SVG 字体与颜色](#svg-字体与颜色规范)：固定字号、颜色及黑白主题切换规则。
+直接打开 `index.html` 也可运行；使用本地服务器更适合加载同目录资源和相对路径媒体。
 
-编写时建议按“[题库 JSON](#题库-json-格式) → [笔记关联](#必须与建议) → [图片与题注](#图片框与题注规范) → [SVG 规范](#svg-字体与颜色规范)”顺序检查；公式写法同时参见[富媒体内容](#富媒体内容)中的 `math` 块和[笔记关联规范](#必须与建议)中的 LaTeX 说明。
+## 项目结构
 
-## 题库 JSON 格式
+```text
+.
+├── index.html              # 静态入口
+├── app.js                  # 应用状态、导入、学习、笔记与存储逻辑
+├── style.css               # 深浅主题、桌面端与移动端样式
+├── MEDIA_V2_SAMPLE.json    # 富媒体 v2 题库示例
+├── 高数题库.json            # 本地示例题库
+├── 高数笔记.html            # 本地示例笔记
+├── 英语.html                # 本地示例笔记
+├── fonts/                  # 浏览器使用的字体资源
+└── vendor/katex/           # 离线公式渲染资源（发布时需保留）
+```
 
-新题库统一使用 **SMC Deck v2.1**：一个 `.json` 文件、一个 `questions` 数组、每题显式声明 `type`。新建、分享与版本管理都应使用该格式。
+## 题库格式
+
+新题库建议使用 JSON v2 格式。`deck.id` 应稳定且唯一；题目 `id` 在同一题库中也应唯一。
 
 ```json
 {
   "deck": {
-    "id": "physics-basics",
-    "title": "力学基础",
-    "subject": "物理",
-    "language": "zh-CN",
-    "version": "1.0.0",
-    "description": "牛顿定律复习"
-  },
-  "assets": {
-    "force-diagram": {
-      "type": "image",
-      "src": "assets/force-diagram.svg",
-      "alt": "物体受力图"
-    },
-    "word-audio": {
-      "type": "audio",
-      "src": "assets/word.mp3",
-      "transcript": "photosynthesis"
-    }
+    "id": "math-basics",
+    "title": "数学基础",
+    "subject": "数学",
+    "version": "1.0.0"
   },
   "questions": [
     {
-      "id": "force-001",
+      "id": "math-001",
       "type": "single_choice",
-      "chapter": "第一章：牛顿定律",
-      "tags": ["公式", "基础"],
-      "difficulty": 2,
-      "content": [
-        { "type": "text", "text": "根据牛顿第二定律 " },
-        { "type": "math", "latex": "F=m a", "display": true },
-        { "type": "image", "asset": "force-diagram", "caption": "受力示意图" },
-        { "type": "text", "text": "若 F=6 N、m=2 kg，加速度是？" }
-      ],
-      "options": [
-        { "key": "a", "text": "2 m/s²" },
-        { "key": "b", "content": [{ "type": "math", "latex": "3\\,\\mathrm{m/s^2}" }] }
-      ],
-      "answer": { "keys": ["b"] },
-      "explanation": [{ "type": "math", "latex": "a=F/m=3\\,\\mathrm{m/s^2}", "display": true }]
+      "chapter": "第一章",
+      "question": "1 + 1 = ?",
+      "options": ["1", "2", "3", "4"],
+      "answer": "B",
+      "explanation": "1 + 1 = 2"
     }
   ]
 }
 ```
 
-### 顶层字段
+### 支持的题型
 
-| 字段 | 要求 | 说明 |
-| --- | --- | --- |
-| `schemaVersion` | 可选，填写时使用 `"2.1"` | 格式版本；省略时按当前 v2 规范解析。 |
-| `deck` | 必填 | 题库元数据；`id`、`title` 推荐固定保存。 |
-| `assets` | 可选 | 图片、音频等可复用资源表。 |
-| `questions` | 必填，非空数组 | 题目列表；`id` 在一个题库中必须唯一。 |
-
-### 题型
-
-`type` 仅使用：`single_choice`、`multiple_choice`、`true_false`、`fill_blank`、`short_answer`、`essay`。
-
-- 选择题的每个选项必须有唯一 `key`；`answer.keys` 只引用 key，不能引用字母、下标或选项文字。
-- 判断题使用 `answer: { "value": true }` 或 `false`。
-- 填空题在 `content` 内使用 `{ "type": "blank", "id": "1" }`，并用 `blanks` 按相同 ID 声明可接受答案。
-- 简答题与论述题使用 `referenceAnswer`；可选 `rubric` 记录评分标准。
-
-### 题库编写建议
-
-- 题目 `id` 在同一题库内保持唯一、稳定，便于学习记录持续关联。
-- 填空题题干使用三个下划线 `___` 表示一个填空位置；不要写 Markdown 粗体标记 `**___**`，也不要混入 HTML 实体。答案放在 `blanks[].answers`（v2）或 `answers`（旧格式）中。
-- 普通文本直接写 JSON 字符串；引号使用弯引号“……”或‘……’，不要用未清洗的直引号。
-- 公式使用 `math` 内容块并填写原始 LaTeX；反斜杠必须按 JSON 规则转义，例如 `"latex": "\\frac{a}{b}"`。
-- 图片必须提供 `alt`，音频建议提供 `transcript`；资源路径相对于题库文件所在目录。
-- 选择题为每个选项提供稳定的 `key`，正确答案只引用 `answer.keys`，不要依赖选项显示顺序。
-- 新题库使用 JSON；JS 仅用于兼容旧题库，导入后建议转换并导出 JSON。
-- 块内不要滥用 Markdown 粗体；仅突出真正需要强调的关键词，避免整段或连续多句加粗。
-- 块内不要滥用 Emoji；仅在必要时用于提示或分类，正文优先使用清晰的文字和统一的标记。
-
-### 富媒体内容
-
-题库中的公式、图片和音频统一使用内容块；笔记 HTML 中的公式与配图则遵循[图片框与题注规范](#图片框与题注规范)和 [SVG 字体与颜色规范](#svg-字体与颜色规范)。
-
-`content`、选择题的 `options[].content` 与 `explanation` 都可由下列块组成：
-
-| 块类型 | 必填字段 | 说明 |
-| --- | --- | --- |
-| `text` | `text` | 普通文本。 |
-| `math` | `latex` | LaTex 公式；`display: true` 显示为独立公式块。公式由离线 KaTeX 渲染。 |
-| `image` | `asset` 或 `src` | 图片；必须提供 `alt`。 |
-| `audio` | `asset` 或 `src` | 音频播放器；可选 `transcript`。 |
-| `blank` | `id` | 填空输入位置。 |
-| `lineBreak` | 无 | 强制换行。 |
-
-资源 `src` 可使用相对路径、HTTPS URL 或合规的 Base64 Data URL。图片支持 PNG、JPEG、WebP、GIF、SVG；音频支持 MP3、M4A、OGG、WAV、WebM。推荐目录：
-
-```text
-my-deck/
-├── deck.json
-└── assets/
-    ├── images/
-    └── audio/
-```
-
-完整可导入示例见 [`MEDIA_V2_SAMPLE.json`](MEDIA_V2_SAMPLE.json)。
-
-### 旧格式与 JavaScript 兼容策略
-
-**不建议立即删除运行时的 JS 兼容层。** 当前仓库仍有同目录旧版 `.js` 题库，并且已有用户题库可能依赖它；直接移除会造成存量题库无法加载。
-
-但应立即停止把 JS 作为公开格式：新建、文档、示例和分享只使用 `.json`。JS/旧版六数组格式仅作为迁移兼容输入；迁移后请导出并维护 v2.1 JSON。下一次破坏性主版本可删除 JS 执行器，同时将内置题库迁移为 JSON。
-
-#### 旧版 `.js` 题库说明
-
-导入器目前兼容 CommonJS / UMD 导出和裸对象表达式。最小 CommonJS 示例：
-
-```js
-module.exports = {
-  meta: { title: '旧版题库' },
-  singleChoice: [
-    { id: 1, question: '1 + 1 = ?', options: ['1', '2'], answer: 'B' }
-  ]
-};
-```
-
-`.js` 文件会在浏览器中执行，**仅导入可信来源**。它适合读取历史题库，不应用于新建题库；请将其转换为 `.json` 后再编辑、分享或发布。旧版字段为六个按题型分组的数组：`fillInTheBlank`、`singleChoice`、`multipleChoice`、`trueFalse`、`shortAnswer`、`essay`。
-
-| 阶段 | 行为 |
+| `type` | 说明 |
 | --- | --- |
-| 当前 | JSON v2.1 为唯一推荐格式；保留 `.js` / 旧格式导入以迁移存量题库。 |
-| 下个小版本 | UI 对 JS 导入显示“旧格式兼容”提示，并提供转换/导出 v2.1 JSON。 |
-| 下个破坏性主版本 | 删除 `.js` 执行与裸对象求值，仅接收 JSON。 |
+| `fill_blank` | 填空题；题干使用 `___`，答案使用 `answers` 或 v2 `blanks[].answers`。 |
+| `single_choice` | 单选题。 |
+| `reading` | 阅读题；与单选题相同，并支持 `article` / `passage` 与 `articleId`。 |
+| `multiple_choice` | 多选题。 |
+| `true_false` | 判断题。 |
+| `short_answer` | 简答题。 |
+| `essay` | 综合分析题。 |
 
-## 笔记 HTML 编写规范
+题目可使用 `content`、`options[].content` 与 `explanation` 内容块。支持 `text`、`math`、`image`、`audio`、`blank` 和 `lineBreak`；公式 LaTeX 在 JSON 内需转义反斜杠，例如 `"\\frac{a}{b}"`。完整示例见 [`MEDIA_V2_SAMPLE.json`](MEDIA_V2_SAMPLE.json)。
 
-笔记导入支持 `.html` / `.htm` 文件。导入器只读取正文结构，并会排除脚本、样式、表单、嵌入内容和不安全链接。
+### 兼容输入
 
-### 推荐结构
+- 推荐新建、分享和维护使用 `.json`。
+- 仍兼容历史 `.js` / CommonJS / UMD 题库以及旧字段格式；`.js` 会在浏览器中执行，只导入可信来源。
+- 题库 ZIP 为本应用导出的未压缩 ZIP，可恢复其中的 JSON / JS 来源文件。
+
+## 笔记格式与题库关联
+
+笔记支持 `.html`、`.htm`，也支持本应用导出的笔记 ZIP。导入器只读取约定正文结构，过滤脚本、样式、表单、内联事件和不安全链接。
 
 ```html
 <!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
-  <meta name="subject" content="英语">
-  <title>英语语法笔记</title>
+  <meta name="subject" content="数学">
+  <title>函数笔记</title>
 </head>
 <body>
-  <main data-subject="英语">
-    <h1>英语语法笔记</h1>
+  <main data-subject="数学" data-deck-id="math-basics">
+    <h1>函数笔记</h1>
     <section class="chap">
-      <h2>语法体系</h2>
-      <section class="sec">
-        <h3>五大基本句型</h3>
-        <article class="kp" data-id="grammar-svo" data-question-id="q-001" data-test-config='{"timeLimitEnabled":true,"timeLimitMinutes":15}'>
-          <h4>主语、谓语与宾语</h4>
-          <div class="md">
-            <p>这里是笔记正文，<strong>重点内容</strong>可以使用加粗。</p>
-          </div>
-          <div class="src">来源说明（可选）</div>
+      <h2>第一章</h2>
+      <section class="sec" data-deck-id="math-basics">
+        <h3>函数概念</h3>
+        <article class="kp" data-id="math-function" data-question-id="math-001"
+          data-type="concept" data-test-config='{"questionLimit":10}'>
+          <h4>函数的定义</h4>
+          <div class="md"><p>笔记正文。</p></div>
+          <div class="src">来源（可选）</div>
         </article>
       </section>
     </section>
@@ -202,199 +120,57 @@ module.exports = {
 </html>
 ```
 
-### 笔记与题库关联示例
+### 结构与字段
 
-题库：
+- 使用 `main > section.chap > section.sec > article.kp` 组织内容；每个 `article.kp` 必须包含 `.md` 正文。
+- 标题使用 `h1`、`h2`、`h3`、`h4`；小节说明使用 `.desc`，来源使用 `.src`。
+- 建议填写 1～4 个汉字的学科：`main[data-subject]` 或 `<meta name="subject">`，并与题库 `deck.subject` 保持一致。
+- `data-deck-id` 可写在 `main` 或 `section.sec`，用于选择关联题库。
+- `data-question-id` 优先关联 `questions[].id`；随后依次尝试笔记 `data-id` 和笔记标题与题干的完全匹配。
+- `data-type` 支持 `rule`、`concept`、`contrast`、`method`、`example`、`pitfall`、`memo`、`vocabulary`。
+- `data-test-config` 可包含 `questionLimit`、`timeLimitEnabled`、`timeLimitMinutes`、`shuffleQuestions`、`shuffleOptions`、`includeTypes`、`chapterFilter`。
+- 正文支持 `$...$`、`$$...$$`、`\(...\)`、`\[...\]` LaTeX；公式由本地 KaTeX 渲染。
 
-```json
-{ "questions": [{ "id": "exp-005", "type": "fill_in_the_blank", "question": "..." }] }
-```
+### 多笔记合并、筛选与导出
 
-笔记：
+- 多文件导入按照串行队列合并，避免同时选择多份笔记时互相覆盖。
+- 内容相同的知识点会跳过；每个小节保留自己的关联题库 ID。
+- 相同学科字段的笔记归为同一来源项；未填写学科时使用不带 `.html` / `.htm` 的文件名。
+- “更多”菜单：单份笔记只显示当前名称；多份笔记显示“显示全部”和各来源名称。切换后正文、目录与章节测试入口同步更新。
+- “导出笔记”生成一个 ZIP，包含全部原始笔记 HTML 与 `manifest.json`；在笔记页导入 ZIP 可恢复其中全部笔记。
 
-```html
-<article class="kp" data-id="math-explog-relation" data-question-id="exp-005">
-  <h4>对数与指数的关系</h4>
-  <div class="md"><p>笔记正文</p></div>
-</article>
-```
+## 笔记媒体与排版
 
-建议先导入题库，再导入 HTML 笔记。浏览器会把笔记包保存到本地存储；修改 HTML 后需要重新导入，或先清除旧笔记缓存。
+- 图片建议使用 `<figure class="note-image">`、`<img alt="…">` 和 `<figcaption>`；可添加 `float-right`，移动端会取消绕排。
+- 图片、链接应使用相对路径或 HTTPS 地址；图片提供准确 `alt`。
+- SVG 的文字显式指定 `font-size`；需要随主题变化的黑白文字使用 `currentColor`，彩色图形使用固定颜色。
+- 导入笔记不执行自带脚本。交互需求请使用本应用提供的目录、搜索、收藏、高亮、图片缩放和测试入口。
 
-### 标签类型说明
+## 数据、导入与隐私
 
-- 页面结构标签：`main`、`section`、`article`、`h1`、`h2`、`h3`、`h4`。
-- 笔记结构类名：`section.sec` 表示小节，`section.chap` 表示章节，`article.kp` 表示知识点，`.md` 表示正文，`.src` 表示来源，`.desc` 表示小节描述。
-- 正文文本标签：`p`、`br`、`strong`、`b`、`em`、`i`、`u`、`s`、`mark`、`code`、`pre`、`blockquote`。
-- 列表标签：`ul`、`ol`、`li`、`dl`、`dt`、`dd`。
-- 表格标签：`table`、`thead`、`tbody`、`tfoot`、`tr`、`th`、`td`。
-- 媒体和链接：`a`、`img`；图片应提供 `alt`，链接和图片路径应使用相对路径或允许的 HTTPS 地址。
-- 公式辅助标签：`sup`、`sub`；LaTeX 公式可直接写在正文文本中。
-- 笔记分类：`data-type="rule"` 规则、`concept` 概念、`contrast` 辨析、`method` 方法、`example` 例题、`pitfall` 易错、`memo` 记忆项、`vocabulary` 词汇。
-- 不支持或会被排除的标签：`script`、`style`、`iframe`、`object`、`embed`、`form`、表单控件、`meta`、`link`、`base`。
-
-### 必须与建议
-
-以下规则决定笔记能否正确显示标题、题库关联和测试入口；题库字段本身仍须先符合[题库 JSON 格式](#题库-json-格式)。
-
-- 使用 `main > section.sec > article.kp` 组织笔记；每个 `article.kp` 必须包含 `.md` 正文。
-- 使用 `h1`、`h2`、`h3` 表示标题层级；导入页面会使用本地界面重新渲染标题。
-- 学科可写在 `<main data-subject="学科">` 或 `<meta name="subject" content="学科">`。
-- 笔记与题库关联使用 `data-question-id`，其值填写题库 `questions[].id`（导入后作为 `rawId`），也可填写规范化后的 `uid`。仅填写相同学科不会关联具体题目。
-- 关联匹配顺序为：`data-question-id` → 笔记 `data-id` → 笔记标题与题干完全相同。
-- 当前小节至少有一个知识点关联成功时，标题右侧显示“开始测试”按钮；按钮进入测试模式，并应用 `data-test-config`。
-- 学习页“浏览整卷”顶部仅在当前题库存在关联笔记时显示“查看笔记”按钮；关联判断与小节“开始测试”使用同一套题目匹配规则。
-- 可在 `<main data-deck-id="题库 deck.id">` 显式绑定整份笔记与题库；例如高数使用 `data-deck-id="gaoshu-zhuanshengben"`。显式绑定用于目录和“查看笔记”入口，具体小节的“开始测试”仍需 `data-question-id` 关联题目。
-- `data-test-config` 可配置 `questionLimit`、`timeLimitEnabled`、`timeLimitMinutes`、`shuffleQuestions`、`shuffleOptions`、`includeTypes` 和 `chapterFilter`。
-- 正文中的 `**文字**` 会自动渲染为加粗；代码块中的符号会保持原样。
-- 正文中的 LaTeX 支持 `$...$`、`$$...$$`、`\(...\)` 和 `\[...\]`；公式由本地 KaTeX 渲染，并继承块内字体与字号。
-- 拖入 HTML 时会显示高斯模糊和虚线导入状态；重复导入的相同内容会自动跳过，并与已有笔记合并。
-- 多个 HTML 笔记合并时按文件导入时间戳排序，较早导入的内容在前；重复内容仍会自动跳过。
-- 不要在块内滥用加粗或 Emoji，避免整段强调，保持内容易读。
-- 不要写脚本、样式依赖或重复复制同一知识点；重复导入时应用会自动跳过相同内容。
-
-笔记正文的段落缩进、图片间距和题注样式见[图片框与题注规范](#图片框与题注规范)；HTML 中的 SVG 颜色和字号见 [SVG 字体与颜色规范](#svg-字体与颜色规范)。
-
-## UI 设计与组件规范
-
-### 图片框与题注规范
-
-本节是笔记 HTML 配图的编写规范；题库 JSON 中的图片资源字段请先参见[富媒体内容](#富媒体内容)。
-
-导入后的配图使用图片框限制尺寸：默认最大宽度为 `720px`，最小宽度为 `280px`（移动端自动使用容器宽度），高度按图片原始宽高比自动缩放；图片不会被裁切。推荐使用 `figure` 包裹图片，并使用 `figcaption` 写题注：
-
-```html
-<figure class="note-image">
-  <img src="assets/exp-log.svg" alt="指数函数与对数函数图像">
-  <figcaption>图 1｜指数函数与对数函数的对称关系</figcaption>
-</figure>
-```
-
-题注规范：使用“图：简短说明”的格式（需要编号时使用“图 N｜简短说明”）；说明对象、变量或结论，不重复正文；每张图提供准确的 `alt`；题注不使用整段加粗或 Emoji。题注由 `figcaption` 承载，位于图片下方，使用比正文小一级的正体字、弱化颜色并居中显示；图片与前后正文分别保留段前 `26px`、段后 `30px` 间距，移动端为 `20px`、`24px`。
-
-正文排版：笔记正文段落默认首行缩进 `2em`（两个汉字字符宽度）；标题、列表、引用、代码块和题注不缩进。
-
-推荐写法：
-
-```html
-<figure class="note-image">
-  <img src="assets/exp-log.svg" alt="y=2^x 与 y=log_2 x 的图像">
-  <figcaption>图：y=2^x 与 y=log_2 x 的图像，关于 y=x 对称</figcaption>
-</figure>
-```
-
-默认图片居中显示且不绕排。需要文字绕排时，给 `figure` 或图片添加 `float-right` 类；导入器会保留该类：
-
-```html
-<figure class="note-image float-right">
-  <img src="assets/diagram.svg" alt="函数图像">
-  <figcaption>图 2｜函数图像平移</figcaption>
-</figure>
-<p>这段文字会从图片左侧开始，并在图片旁边自动绕排。</p>
-```
-
-不要把绕排类用于装饰性小图；移动端会自动取消绕排并恢复全宽显示。
-
-### SVG 字体与颜色规范
-
-本节仅约束笔记 HTML 中嵌入或导入的 SVG；题库图片资源的声明方式见[题库 JSON 格式](#题库-json-格式)和[富媒体内容](#富媒体内容)。
-
-- SVG 内文字必须显式设置固定 `font-size`，不要依赖页面继承字号；建议统一使用 `font-size="16"` 或在 SVG 内部使用固定的 `px` 值。
-- 非黑白颜色必须显式固定，例如品牌色、曲线色和标注色不要使用 `currentColor`。
-- 黑色文字和白色文字允许随主题自动切换：使用 `fill="currentColor"`，或给元素添加 `data-theme-color="bw"`，由页面主题控制黑白颜色。
-- 黑白自动切换只适用于黑色/白色文字；彩色文字、曲线和图例保持原始颜色。
-- SVG 文字示例：
-
-```svg
-<text x="20" y="32" font-size="16" fill="currentColor">标题</text>
-<text x="20" y="58" font-size="16" fill="#e05252">固定颜色标注</text>
-```
-
-
-### SVG 配图
-
-笔记可以使用 SVG 配图，推荐使用外部或相对路径资源：
-
-```html
-<img src="assets/diagram.svg" alt="函数变化示意图">
-```
-
-SVG 应提供清晰的 `alt` 文本；导入器保留安全图片资源，禁止脚本化 SVG、事件处理器和不安全 URL。复杂交互图建议导出为静态 SVG，并将交互说明写在旁边的正文中。
-
-### 可交互组件
-
-交互组件应使用明确的语义 HTML 和按钮状态：
-
-```html
-<div class="ui-component" data-component="toggle" data-label="显示推导">
-  <button type="button" aria-expanded="false">显示推导</button>
-  <div hidden>这里是可展开的推导内容。</div>
-</div>
-```
-
-组件设计要求：
-
-- 使用 `button`、`details/summary`、`input` 等语义控件，不用普通文本模拟按钮。
-- 为按钮提供 `aria-label` 或可见文本，为展开控件同步 `aria-expanded` 和 `hidden`。
-- 状态使用 `data-*` 属性表达，避免把状态写死在颜色或图标中。
-- 交互区域应保留键盘焦点样式，并支持 Enter、Space 操作。
-- 导入笔记中的脚本、内联事件和危险属性会被过滤；需要交互时应由本地应用组件绑定行为。
-
-### UI Token
-
-组件应优先使用现有 CSS token，不直接写死颜色、圆角和动画时长：
-
-| 类别 | Token | 用途 |
-| --- | --- | --- |
-| 背景 | `--bg`、`--bg-elevated`、`--bg-soft`、`--bg-hover` | 页面、卡片、次级背景和悬停状态 |
-| 文字 | `--text`、`--text-soft`、`--text-faint` | 主文本、次级文本和辅助文本 |
-| 强调色 | `--accent`、`--accent-strong`、`--accent-shade`、`--accent-glow` | 主按钮、链接、焦点和高亮 |
-| 边框 | `--border`、`--border-soft` | 容器边框和分隔线 |
-| 圆角 | `--radius-sm`、`--radius-md`、`--radius-lg`、`--radius-pill` | 控件、卡片和胶囊标签 |
-| 阴影 | `--shadow-card`、`--shadow-pop`、`--shadow-glow` | 卡片、弹出层和强调状态 |
-| 动画 | `--dur-fast`、`--dur`、`--dur-slow`、`--ease` | 状态切换、展开和页面过渡 |
-| 字体 | `--font-ui`、`--font-content`、`--font-body`、`--font-symbol`、`--font-math` | UI、正文、输入、图标和公式 |
-
-深色和浅色主题会提供同名 token 的不同值，组件不要绕过 token 单独指定主题颜色。
-
-## 内置题库
-
-内置题库应逐步迁移为 `.json` 并采用 v2.1。缺失的可选同目录题库不会影响应用启动。
+- 应用使用浏览器本地存储保存设置、学习进度、题库来源、笔记、收藏、高亮、图片缩放和注释。
+- 设置页可导出题库 ZIP；笔记页可导出笔记 ZIP；数据导出功能用于备份应用学习数据。
+- “清空缓存”会删除当前题库、笔记和未完成会话等缓存内容，不会删除学习记录、错题本和复习本。
+- 数据不依赖服务端上传；清除浏览器站点数据会移除本地保存内容，请在操作前导出备份。
 
 ## 键盘操作
 
-- 闪卡模式：`Space` 翻面，`1`–`4` 选择 Again / Hard / Good / Easy。
-- 测试模式：`←` / `→` 浏览已作答题目；`Esc` 退出当前学习轮次。
-- 客观题通常可使用 `Enter` 提交；判断题使用 `1` / `2` 选择正误。
-- 简答题：桌面端使用 `Shift + Enter` 提交。
+- `Space`：在闪卡模式翻面或继续。
+- `1`～`4`：选择或评分（依当前题型 / 模式显示）。
+- `Enter`：提交当前答案或继续。
+- `Esc`：关闭弹窗。
 
-## 数据与隐私
+## 开发与验证
 
-学习设置、记录、题库进度和错题信息默认保存在浏览器本地 `localStorage` 中；在提供 `window.storage` 的运行环境中会优先使用该存储。项目不依赖后端服务，题库和学习记录不会自动上传。
+无需依赖安装或构建。修改 JavaScript 后可运行：
 
-可在“统计”页面导出数据 JSON 进行备份。导入数据时会与已有记录合并；清空全部数据前请先导出备份。
-
-## 项目结构
-
-```text
-index.html                 页面入口
-app.js                     应用逻辑、题库解析、学习模式与数据存储
-style.css                  页面样式、主题和响应式布局
-MEDIA_V2_SAMPLE.json      富媒体 v2.1 题库示例
-vendor/katex/              本地公式渲染资源
-Apple Color Emoji.woff     内嵌 Emoji 资源
-LICENSE                    MIT 许可证
+```bash
+node --check app.js
+git diff --check -- app.js style.css README.md
 ```
+
+修改界面后，请通过 `index.html` 的实际运行入口验证桌面端、移动端、深浅主题以及涉及的导入流程。
 
 ## 许可证
 
-本项目采用 [MIT License](LICENSE)。
-
-## 本地字体与公式排版
-
-仓库只发布必要的字体资源：`fonts/minion3/` 提供 Minion 3 的 8 个常用字重与斜体文件；`fonts/minion-math/` 提供 Minion Math 的常规、中等、半粗和粗体文件；`fonts/sf-pro/` 提供 SF Pro 实际用到字符的子集；`fonts/fz-new-book/FZNewBook-Full.woff2` 是由完整 `方正新书宋_GB18030.TTF` 转换并压缩的全字形 WOFF2；`fonts/hy-qihei/` 按 300/400/500/600/700/800/900 七个字重各保留一份“实际用到字符”子集，不再按字符范围拆分；`fonts/punctuation/` 是从方正 FW 筑紫 A 老明朝整理出的中文标点子集，提供 300/400/500/600/700/800 六个字重（覆盖通用标点、CJK 标点、竖排标点、兼容标点及全角标点）。完整字体包仍放在本机 `font/` 目录，并由 `.gitignore` 排除，不参与提交。
-
-
-完整字体包仅用于本地开发，不纳入 Git 跟踪或发布包；仓库只保留上述必要的字体资源，以控制授权与资源体积；方正新书宋虽然保留全字形，但使用 WOFF2 压缩以降低传输体积。保留本地字体文件时，UI 使用本地 SF Pro 与汉仪旗黑，正文使用 Minion 3 与方正新书宋，符号使用 SF Pro Symbol；Emoji 使用内嵌的 Apple Color Emoji WOFF。
-
-公式继续由本地 KaTeX 渲染，以保证浏览器中的数学字形度量、上下标和伸缩符号正确；当公式渲染器不可用时，回退为 Minion Math。仓库中的 MathTime Professional 2 为 TeX Type-1 资源包，不能直接作为浏览器 Web Font 使用，因此不会覆盖 KaTeX 的度量字体。
+[MIT](LICENSE)

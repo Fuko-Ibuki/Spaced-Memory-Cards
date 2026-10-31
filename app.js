@@ -5,24 +5,26 @@
 const QuestionTypes = {
   fillInTheBlank: { label:'填空题', short:'填空', objective:true,  defaultPoints:2,  icon:'✎' },
   singleChoice:   { label:'单选题', short:'单选', objective:true,  defaultPoints:2,  icon:'◉' },
+  reading:        { label:'阅读题', short:'阅读', objective:true,  defaultPoints:2,  icon:'▤' },
   multipleChoice: { label:'多选题', short:'多选', objective:true,  defaultPoints:3,  icon:'☑' },
   trueFalse:      { label:'判断题', short:'判断', objective:true,  defaultPoints:1,  icon:'✓' },
   shortAnswer:    { label:'简答题', short:'简答', objective:false, defaultPoints:5,  icon:'✍' },
   essay:          { label:'综合分析题', short:'综合分析', objective:false, defaultPoints:10, icon:'📑' }
 };
-const TYPE_ORDER = ['fillInTheBlank','singleChoice','multipleChoice','trueFalse','shortAnswer','essay'];
+const TYPE_ORDER = ['fillInTheBlank','singleChoice','reading','multipleChoice','trueFalse','shortAnswer','essay'];
 const SRS_INTERVAL_DAYS = [0,1,2,4,7,14,30,60]; // index = 记忆等级(level)
 const RATING_TO_PCT = { again:0, hard:50, good:80, easy:100 };
 const SELF_GRADE_FRACTION = { again:0, hard:1/3, good:2/3, easy:1 };
 const TIME_LIMIT_MAX_MINUTES = 240;
 const LEARNING_MODE_KEYS = ['flashcard','learn','test'];
-const STORAGE_KEYS = { settings:'settings', progress:'progress', lastDeck:'lastDeck', deckRegistry:'deckRegistry', activeSession:'activeSession', notesPackage:'notesPackage', notesBookmarks:'notesBookmarks', notesHighlights:'notesHighlights', notesImageZoom:'notesImageZoom', notesScrollY:'notesScrollY', notesTocCollapsed:'notesTocCollapsed', currentView:'currentView', recordDetailId:'recordDetailId' };
+const STORAGE_KEYS = { settings:'settings', progress:'progress', lastDeck:'lastDeck', deckRegistry:'deckRegistry', deckLibrary:'deckLibrary', activeSession:'activeSession', notesPackage:'notesPackage', notesBookmarks:'notesBookmarks', notesHighlights:'notesHighlights', notesImageZoom:'notesImageZoom', notesScrollY:'notesScrollY', notesTocCollapsed:'notesTocCollapsed', notesTocFavoritesOnly:'notesTocFavoritesOnly', currentView:'currentView', recordDetailId:'recordDetailId' };
 const VIEW_CACHE_KEY = 'smc-current-view';
 const TYPOGRAPHY_CACHE_KEY = 'smc-typography';
 function cacheCurrentView(view){ try{ localStorage.setItem(VIEW_CACHE_KEY,view); }catch(e){} }
 function cachedCurrentView(){ try{ return localStorage.getItem(VIEW_CACHE_KEY); }catch(e){ return null; } }
 function cacheTypography(settings){ try{ localStorage.setItem(TYPOGRAPHY_CACHE_KEY,JSON.stringify({uiFontFamily:settings?.uiFontFamily||'default',uiFontSize:settings?.uiFontSize||'default'})); }catch(e){} }
 const LOCAL_DECK_FILES = [
+  '高数题库.json',
   'XiThoughtQuiz.js',
   'AutoMechanicsQuiz.js',
   'PrintingQualityQuiz.js',
@@ -36,6 +38,7 @@ const LOCAL_DECK_GLOBALS = {
   'AlcoholAnalysisQuiz.js':'alcoholAnalysisQuiz',
   'BaiJiuTastingQuiz.js':'baiJiuTastingQuiz'
 };
+const LOCAL_NOTE_FILES = ['高数笔记.html'];
 
 /* ============================================================
    §1. 工具函数
@@ -98,6 +101,11 @@ const Utils = {
     a.href = url; a.download = filename;
     document.body.appendChild(a); a.click();
     setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); }, 400);
+  },
+  downloadBlob(filename, blob){
+    const url=URL.createObjectURL(blob), a=document.createElement('a');
+    a.href=url; a.download=filename; document.body.appendChild(a); a.click();
+    setTimeout(()=>{ a.remove(); URL.revokeObjectURL(url); },400);
   },
   readFileAsText(file){
     return new Promise((resolve,reject)=>{
@@ -312,7 +320,7 @@ function adaptDeckV2(raw){
       item.options=(q.options||[]).map(o=>({text:plainContent(o.content||o.text||''), content:normalizeContent(o.content||o.text||'')}));
       const keys=(q.answer&&q.answer.keys)||[];
       item.answer=keys.map(key=>(q.options||[]).findIndex(o=>o.key===key));
-      if(type==='singleChoice') item.answer=item.answer[0];
+      if(type==='singleChoice'||type==='reading') item.answer=item.answer[0];
     } else if(type==='trueFalse') item.answer=!!(q.answer&&q.answer.value);
     else if(type==='fillInTheBlank') item.answers=(q.blanks||[]).map(b=>(b.answers||[]).join('/'));
     else item.answer=q.referenceAnswer||q.answer||'';
@@ -420,6 +428,45 @@ function sanitizeNoteFragment(source){
   Array.from(source && source.childNodes || []).forEach(node=>out.appendChild(copy(node)));
   return out;
 }
+function renderNoteMath(latex, display){
+  try{
+    const katex=(window.katex&&typeof window.katex.renderToString==='function') ? window.katex : (window.katex&&window.katex.default);
+    return katex&&typeof katex.renderToString==='function' ? katex.renderToString(latex,{throwOnError:false,displayMode:display}) : renderMathFallback(latex);
+  }catch(e){ return renderMathFallback(latex); }
+}
+function repairLegacyNoteMathHtml(html){
+  const wrapper=document.createElement('div'); wrapper.innerHTML=String(html||''); let changed=false;
+  [...wrapper.querySelectorAll('.note-math[data-note-latex]')].forEach(node=>{
+    let latex=node.dataset.noteLatex||'';
+    const display=node.tagName==='DIV' || !!node.querySelector('.katex-display');
+    // Older imports split TeX at every comma, including the spacing command \,.
+    // A display formula has one block wrapper, so all adjacent comma pieces belong together.
+    while(display || /\\$/.test(latex)){
+      const delimiter=node.nextSibling, next=delimiter?.nextSibling;
+      if(delimiter?.nodeType!==Node.TEXT_NODE || !/^[,，]$/.test(delimiter.nodeValue||'') || !(next instanceof Element) || !next.classList.contains('note-math')) break;
+      latex+=delimiter.nodeValue+(next.dataset.noteLatex||''); delimiter.remove(); next.remove(); changed=true;
+    }
+    const rendered=renderNoteMath(latex,display);
+    if(node.dataset.noteLatex!==latex || node.innerHTML!==rendered){ node.dataset.noteLatex=latex; node.innerHTML=rendered; changed=true; }
+  });
+  return {html:wrapper.innerHTML,changed};
+}
+function notesPackageNeedsMathRepair(pack){
+  if (!pack || pack._mathRepairVersion===1) return false;
+  // 旧版错误只会把 TeX 在 \, / ，处分裂；不扫描或重渲染正常笔记。
+  return (pack.sections||[]).some(section=>(section.articles||[]).some(article=>
+    /class=["'][^"']*note-math[^"']*["'][^>]*data-note-latex=["'][^"']*\\(?:["']|&quot;)/.test(String(article.body||''))
+  ));
+}
+function repairNotesPackageMath(pack){
+  if (!notesPackageNeedsMathRepair(pack)) return false;
+  let changed=false;
+  (pack.sections||[]).forEach(section=>(section.articles||[]).forEach(article=>{
+    const repaired=repairLegacyNoteMathHtml(article.body); if(repaired.changed){ article.body=repaired.html; changed=true; }
+  }));
+  pack._mathRepairVersion=1;
+  return changed;
+}
 function sanitizeNoteHtml(element){
   const fragment=sanitizeNoteFragment(element);
   const wrapper=document.createElement('div'); wrapper.appendChild(fragment);
@@ -447,15 +494,9 @@ function sanitizeNoteHtml(element){
     while((match=mathPattern.exec(text))){
       if(match.index>last) frag.appendChild(document.createTextNode(text.slice(last,match.index)));
       const latex=match[1]||match[2]||match[3]||match[4]||''; const display=Boolean(match[1]||match[2]);
-      const parts=latex.split(/([,，])/);
-      parts.forEach(part=>{
-        if(!part) return;
-        if(/^[,，]$/.test(part)){ frag.appendChild(document.createTextNode(part)); return; }
-        const span=document.createElement(display?'div':'span'); span.className='note-math'; span.dataset.noteLatex=part;
-        try{ const katex=window.katex; span.innerHTML=katex&&katex.renderToString ? katex.renderToString(part,{throwOnError:false,displayMode:display}) : Utils.escapeHtml(part); }
-        catch(e){ span.textContent=part; span.classList.add('math-error'); }
-        frag.appendChild(span);
-      });
+      const span=document.createElement(display?'div':'span'); span.className='note-math'; span.dataset.noteLatex=latex;
+      span.innerHTML=renderNoteMath(latex,display);
+      frag.appendChild(span);
       last=match.index+match[0].length;
     }
     if(last<text.length) frag.appendChild(document.createTextNode(text.slice(last)));
@@ -498,25 +539,60 @@ function isNoteArticleLinked(article){
   if(!article||!App.deck) return false;
   return App.deck.questions.some(q=>noteArticleMatchesQuestion(article,q));
 }
-function startNoteTest(articleId){
-  const article=(App.notesPackage?.sections||[]).flatMap(section=>section.articles||[]).find(item=>item.id===articleId);
-  if(!article||!App.deck){ toast('请先加载对应题库',{icon:'⚠️'}); return; }
+async function startNoteTest(articleId){
+  const hit=(App.notesPackage?.sections||[]).map(section=>({section,article:(section.articles||[]).find(item=>item.id===articleId)})).find(item=>item.article);
+  const article=hit?.article;
+  if(!article){ toast('未找到此笔记内容',{icon:'⚠️'}); return; }
+  const linkedDeckId=hit.section.sourceDeckId||App.notesPackage?.deckId||'';
+  if(linkedDeckId && (!App.deck || App.deck.id!==linkedDeckId)){
+    const target=(App.localDecks||[]).find(deck=>deck.id===linkedDeckId);
+    if(target) await finishDeckLoad(Utils.deepClone(target),{switching:true});
+  }
+  if(!App.deck){ toast('请先导入关联题库',{icon:'⚠️'}); return; }
   const match=App.deck.questions.find(q=>
     (article.questionId && (q.uid===article.questionId || q.rawId===article.questionId)) ||
     q.uid===article.id || q.rawId===article.id || q.question===article.title
   );
-  if(!match){ toast('该笔记尚未关联题库题目',{icon:'⚠️'}); return; }
+  if(!match){ toast(linkedDeckId?'关联题库中未找到该题目':'该笔记尚未关联题库题目',{icon:'⚠️'}); return; }
   applyNoteTestConfig(article.testConfig);
-  saveSettings();
+  await saveSettings();
   startSession();
 }
+function jsonScriptData(value){ return JSON.stringify(value||{}).replace(/</g,'\\u003c'); }
+function notesPackageToHtml(pack, linkedDecks={}){
+  const esc=Utils.escapeHtml, sections=(pack.sections||[]).map(section=>`<section class="sec" id="${esc(section.id)}" data-date="${esc(section.noteDate||'')}" data-deck-id="${esc(section.sourceDeckId||pack.deckId||'')}"><h2>${esc(section.title)}</h2>${(section.articles||[]).map(article=>`<article class="kp" data-id="${esc(article.id)}" data-question-id="${esc(article.questionId||'')}" data-type="${esc(article.type||'note')}" data-num="${esc(article.number||'')}" data-path="${esc(article.path||'')}"${article.testConfig?` data-test-config="${esc(JSON.stringify(article.testConfig))}"`:''}><h3>${esc(article.title)}</h3><div class="md">${article.body}</div>${article.source?`<div class="src">${esc(article.source)}</div>`:''}</article>`).join('')}</section>`).join('');
+  const preserved=jsonScriptData(pack.originalSources||{}), decks=jsonScriptData(linkedDecks);
+  return '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="subject" content="'+esc(pack.subject||'')+'"><title>'+esc(pack.title||'笔记')+'</title></head><body><main data-subject="'+esc(pack.subject||'')+'" data-deck-id="'+esc(pack.deckId||'')+'"><h1>'+esc(pack.title||'笔记')+'</h1>'+sections+'</main><script type="application/json" id="smc-note-original-sources">'+preserved+'</script><script type="application/json" id="smc-linked-decks">'+decks+'</script></body></html>';
+}
+async function linkedDeckSourcesForNotes(pack){
+  const ids=new Set((pack.sections||[]).map(section=>section.sourceDeckId||pack.deckId).filter(Boolean));
+  const library=await Store.getJSON(STORAGE_KEYS.deckLibrary,[]), output={};
+  for(const entry of Array.isArray(library)?library:[]) if(ids.has(entry.id)) output[entry.id]={title:entry.title,sources:entry.sources||[]};
+  return output;
+}
+async function exportNotesHtml(){
+  const pack=App.notesPackage; if(!pack){ toast('没有可导出的笔记',{icon:'⚠️'}); return; }
+  const original=Object.entries(pack.originalSources||{}).filter(([,text])=>typeof text==='string'&&text.trim());
+  const fallbackName=`${(pack.title||'笔记').replace(/[\/:*?"<>|]/g,'_')}.html`;
+  const files=original.length ? original.map(([name,text],index)=>({name:`notes/${String(index+1).padStart(3,'0')}-${name.replace(/[\\/:*?"<>|]/g,'_')}`,text})) : [{name:`notes/001-${fallbackName}`,text:notesPackageToHtml(pack,await linkedDeckSourcesForNotes(pack))}];
+  const manifestFiles=files.map((file,index)=>({archive:file.name,name:original[index]?.[0]||fallbackName}));
+  files.push({name:'manifest.json',text:JSON.stringify({type:'smc-notes-library',version:1,exportedAt:Date.now(),files:manifestFiles},null,2)});
+  Utils.downloadBlob(`SpacedMemoryCards_笔记_${Utils.todayStr()}.zip`,makeStoredZip(files));
+  toast(`已导出 ${manifestFiles.length} 份笔记 ZIP`,{icon:'⬇️'});
+}
+
 function parseNotesHtmlPackage(text, filename){
   const source=String(text||'');
   if (!source.trim()) throw new Error('HTML 笔记包为空。');
   const parsed=new DOMParser().parseFromString(source,'text/html');
   if (parsed.querySelector('parsererror')) throw new Error('HTML 笔记包解析失败。');
   const root=parsed.querySelector('main') || parsed.body;
+  const readEmbedded=id=>{ const el=parsed.querySelector('#'+id); if(!el) return {}; try{return JSON.parse(el.textContent||'{}');}catch(e){return {}; } };
+  const originalSources=readEmbedded('smc-note-original-sources');
+  const linkedDecks=readEmbedded('smc-linked-decks');
   const subject=root.getAttribute('data-subject') || parsed.querySelector('meta[name=subject]')?.getAttribute('content') || '';
+  const sourceLabel=String(subject).trim() || String(filename||'notes').replace(/\.html?$/i,'');
+  const sourceKey=String(subject).trim() ? `subject:${String(subject).trim()}` : `file:${sourceLabel}`;
   const title=(root.querySelector('h1') || parsed.querySelector('title'))?.textContent.replace(/\s+/g,' ').trim() || (filename||'HTML 笔记包').replace(/\.html?$/i,'');
   const sectionNodes=Array.from(root.querySelectorAll('section.sec'));
   const articleNodes=Array.from(root.querySelectorAll('article.kp'));
@@ -535,32 +611,49 @@ function parseNotesHtmlPackage(text, filename){
     const chapter=node.closest('section.chap');
     const chapterHeading=chapter && chapter.querySelector(':scope > h2');
     const articles=Array.from(node.querySelectorAll(':scope > article.kp')).map((a,i)=>makeArticle(a,i,index,chapterHeading?.textContent.replace(/\s+/g,' ').trim()||'')).filter(Boolean);
-    if (articles.length) sections.push({ id:(node.id||`section-${index+1}`).replace(/[^a-zA-Z0-9_-]/g,'-'), path:node.getAttribute('data-path')||'', title:heading?.textContent.replace(/\s+/g,' ').trim()||'未命名小节', description:node.querySelector(':scope > .desc')?.textContent.replace(/\s+/g,' ').trim()||'', chapterTitle:chapterHeading?.textContent.replace(/\s+/g,' ').trim()||'', articles });
+    if (articles.length) sections.push({ id:(node.id||`section-${index+1}`).replace(/[^a-zA-Z0-9_-]/g,'-'), path:node.getAttribute('data-path')||'', noteDate:node.getAttribute('data-date')||chapter?.getAttribute('data-date')||root.getAttribute('data-date')||'', sourceDeckId:node.getAttribute('data-deck-id')||root.getAttribute('data-deck-id')||'', title:heading?.textContent.replace(/\s+/g,' ').trim()||'未命名小节', description:node.querySelector(':scope > .desc')?.textContent.replace(/\s+/g,' ').trim()||'', chapterTitle:chapterHeading?.textContent.replace(/\s+/g,' ').trim()||'', articles });
   };
   sectionNodes.forEach(addSection);
   if (!sections.length){
     const articles=articleNodes.map((a,i)=>makeArticle(a,i,'','')).filter(Boolean);
-    sections.push({id:'section-1',path:'',title:'笔记',description:'',chapterTitle:'',articles});
+    sections.push({id:'section-1',path:'',sourceDeckId:root.getAttribute('data-deck-id')||'',title:'笔记',description:'',chapterTitle:'',articles});
   }
   const count=sections.reduce((n,s)=>n+s.articles.length,0);
   if (!count) throw new Error('笔记包中没有可显示的正文。');
-  return { version:1, title, subject, deckId:root.getAttribute('data-deck-id')||'', sourceName:filename||'notes.html', importedAt:Date.now(), sections, totalArticles:count };
+  return { version:1, title, subject, sourceKey, sourceLabel, deckId:root.getAttribute('data-deck-id')||'', sourceName:filename||'notes.html', importedAt:Date.now(), originalSources:originalSources&&typeof originalSources==='object'?originalSources:{}, linkedDecks:linkedDecks&&typeof linkedDecks==='object'?linkedDecks:{}, sections, totalArticles:count };
 }
-async function handleNotesHtmlFile(file){
+let notesMergeQueue=Promise.resolve();
+function mergeNotesPackage(pack, opts={}){
+  const task=notesMergeQueue.then(()=>mergeNotesPackageNow(pack,opts));
+  notesMergeQueue=task.catch(()=>{});
+  return task;
+}
+async function mergeNotesPackageNow(pack, opts={}){
+  const existing=App.notesPackage;
+  const seen=new Set((existing?.sections||[]).flatMap(section=>(section.articles||[]).map(article=>`${article.questionId||article.id}|${article.title}|${article.body}`)));
+  const fresh=pack.sections.map(section=>({...section, sourceTimestamp:pack.importedAt, sourceName:pack.sourceName, sourceSubject:pack.subject||'', sourceKey:pack.sourceKey, sourceLabel:pack.sourceLabel, articles:(section.articles||[]).filter(article=>{ const key=`${article.questionId||article.id}|${article.title}|${article.body}`; if(seen.has(key)) return false; seen.add(key); return true; })})).filter(section=>section.articles.length);
+  const sourceNames=[...(existing?.sourceNames||String(existing?.sourceName||'').split(', ').filter(Boolean)),pack.sourceName].filter((value,index,list)=>value&&list.indexOf(value)===index);
+  const legacySections=(existing?.sections||[]).map(section=>{ const sourceName=section.sourceName||existing.sourceName?.split(', ')[0]||''; const sourceSubject=section.sourceSubject||existing.subject||''; const sourceLabel=section.sourceLabel||String(sourceSubject).trim()||sourceName.replace(/\.html?$/i,''); const sourceKey=section.sourceKey||(String(sourceSubject).trim()?`subject:${String(sourceSubject).trim()}`:`file:${sourceLabel}`); return {...section,sourceName,sourceSubject,sourceLabel,sourceKey,sourceTimestamp:section.sourceTimestamp||existing.importedAt||0}; });
+  const merged=existing ? {...existing, subject:existing.subject||pack.subject, deckId:existing.deckId||pack.deckId, sourceName:sourceNames.join(', '), sourceNames, originalSources:Object.assign({},existing.originalSources||{},pack.originalSources||{}), importedAt:Date.now(), sections:[...legacySections,...fresh].sort((a,b)=>(a.sourceTimestamp||0)-(b.sourceTimestamp||0)), totalArticles:(existing.totalArticles||0)+fresh.reduce((n,section)=>n+section.articles.length,0)} : {...pack,sourceNames:[pack.sourceName],sections:fresh};
+  App.notesPackage=merged;
+  await Store.setJSON(STORAGE_KEYS.notesPackage,merged);
+  return fresh.reduce((n,section)=>n+section.articles.length,0);
+}
+async function handleNotesHtmlFile(file, opts={}){
   const name=file?.name || 'notes.html';
-  if (!/\.html?$/i.test(name)){ toast('笔记导入只支持 .html 文件', {icon:'⚠️'}); return; }
+  if (!/\.html?$/i.test(name)){ toast('笔记导入只支持 .html 文件', {icon:'⚠️'}); return 0; }
   try{
     const text=await Utils.readFileAsText(file);
     const pack=parseNotesHtmlPackage(text,name);
-    const existing=App.notesPackage;
-    const seen=new Set((existing?.sections||[]).flatMap(section=>(section.articles||[]).map(article=>`${article.questionId||article.id}|${article.title}|${article.body}`)));
-    const fresh=pack.sections.map(section=>({...section, sourceTimestamp:pack.importedAt, sourceSubject:pack.subject||'', articles:(section.articles||[]).filter(article=>{ const key=`${article.questionId||article.id}|${article.title}|${article.body}`; if(seen.has(key)) return false; seen.add(key); return true; })})).filter(section=>section.articles.length);
-    const merged=existing ? {...existing, subject:existing.subject||pack.subject, sourceName:[existing.sourceName,pack.sourceName].filter(Boolean).join(', '), importedAt:Date.now(), sections:[...(existing.sections||[]).map(section=>({...section,sourceTimestamp:section.sourceTimestamp||existing.importedAt||0})),...fresh].sort((a,b)=>(a.sourceTimestamp||0)-(b.sourceTimestamp||0)), totalArticles:(existing.totalArticles||0)+fresh.reduce((n,section)=>n+section.articles.length,0)} : {...pack,sections:pack.sections.map(section=>({...section,sourceTimestamp:pack.importedAt}))};
-    await Store.setJSON(STORAGE_KEYS.notesPackage,merged);
-    App.notesPackage=merged; App.view='notes'; render();
-    toast(`已导入「${pack.title}」，新增 ${fresh.reduce((n,section)=>n+section.articles.length,0)} 条笔记`, {icon:'📖'});
-  }catch(e){ toast('笔记导入失败：'+e.message, {icon:'⚠️', duration:4200}); }
+    pack.originalSources=Object.assign({},pack.originalSources||{},{[name]:text});
+    // 笔记只保存关联 ID；导入笔记不会隐式载入题库。
+    const added=await mergeNotesPackage(pack,opts);
+    if(!opts.stayView){ App.view='notes'; render(); }
+    if(!opts.silent) toast(`已导入「${pack.title}」，新增 ${added} 条笔记`, {icon:'📖'});
+    return added;
+  }catch(e){ if(!opts.silent) toast('笔记导入失败：'+e.message, {icon:'⚠️', duration:4200}); return 0; }
 }
+
 
 function choiceOptionText(opt){
   return opt && typeof opt==='object' ? plainContent(opt.content || opt.text || '') : String(opt ?? '');
@@ -623,8 +716,12 @@ function normalizeDeck(raw, sourceName){
       };
       if (!base.question){ skipped.push(uid+':题目为空'); return; }
 
-      if (type==='singleChoice'){
+      if (type==='singleChoice' || type==='reading'){
         if (!Array.isArray(q.options) || !q.options.length){ skipped.push(uid+':缺少选项'); return; }
+        if (type==='reading') {
+          base.readingArticle = cleanDeckText(q.article || q.passage || q.reading || q.text || '').trim();
+          base.readingId = String(q.articleId || q.passageId || base.readingArticle || uid);
+        }
         const correctIdx = resolveChoiceAnswerIndex(q.options, q.answer);
         base.options = q.options.map((opt,i)=>({ text:cleanDeckText(opt&&typeof opt==='object' ? opt.text : opt), content:opt&&typeof opt==='object'&&Array.isArray(opt.content)?opt.content:null, correct:i===correctIdx }));
         if (!base.options.some(o=>o.correct)){ skipped.push(uid+':未找到匹配的正确选项(answer='+q.answer+')'); return; }
@@ -656,7 +753,8 @@ function normalizeDeck(raw, sourceName){
   const metaSrc = (src.meta && typeof src.meta==='object') ? src.meta : {};
   const meta = Object.assign({ title:sourceName||'未命名题库', subject:'', description:'', version:'' }, metaSrc);
   if (!metaSrc.title) meta.title = (sourceName||'未命名题库').replace(/\.(js|json)$/i,'');
-  const deckId = Utils.hashStr(deckFingerprint(meta, questions));
+  const declaredId=String(metaSrc.id || src.id || '').trim();
+  const deckId = declaredId || Utils.hashStr(deckFingerprint(meta, questions));
   return { id:deckId, meta, assets:(src.assets&&typeof src.assets==='object'?src.assets:{}), questions, byType, totalQuestions:questions.length, skipped, loadedAt:Date.now() };
 }
 
@@ -678,12 +776,16 @@ const App = {
   browseBackView:'setup',
   browseChapters:[],
   browseScrollByScope:{},
+  previewAnnotationEditors:{},
+  restorePreviewAnnotationFocus:'',
   formatGuideOpen:false,
   setupCollapse:{ range:false, answer:false, advanced:false },
   notesPackage:null,
   notesScrollY:0,
   notesTocReturnY:0,
   notesTocCollapsed:!!(window.matchMedia && window.matchMedia('(max-width:760px)').matches),
+  notesTocFavoritesOnly:false,
+  notesCalendarFocusKey:'',
   notesBookmarks:new Set(),
   notesHighlights:{},
   notesHighlightMode:false,
@@ -773,7 +875,7 @@ async function saveSettings(){
 function defaultProgress(){
   return { streak:{current:0,longest:0,lastDate:null}, sessions:[],
            totals:{totalSessions:0,totalQuestionsAnswered:0,totalScorePoints:0,totalMaxPoints:0,totalTimeMs:0},
-           reviewBook:{}, wrongBook:{}, questionStats:{} };
+           reviewBook:{}, wrongBook:{}, questionStats:{}, cardAnnotations:{} };
 }
 async function loadProgress(){
   const saved = await Store.getJSON(STORAGE_KEYS.progress, null);
@@ -785,7 +887,8 @@ async function loadProgress(){
     sessions:Array.isArray(saved.sessions) ? saved.sessions : [],
     reviewBook:saved.reviewBook && typeof saved.reviewBook==='object' ? saved.reviewBook : {},
     wrongBook:saved.wrongBook && typeof saved.wrongBook==='object' ? saved.wrongBook : {},
-    questionStats:saved.questionStats && typeof saved.questionStats==='object' ? saved.questionStats : {}
+    questionStats:saved.questionStats && typeof saved.questionStats==='object' ? saved.questionStats : {},
+    cardAnnotations:saved.cardAnnotations && typeof saved.cardAnnotations==='object' ? saved.cardAnnotations : {}
   });
 }
 async function saveProgress(){ await Store.setJSON(STORAGE_KEYS.progress, App.progress); }
@@ -793,6 +896,37 @@ async function saveProgress(){ await Store.setJSON(STORAGE_KEYS.progress, App.pr
 async function loadSrs(deckId){ return await Store.getJSON('srs:'+deckId, {}); }
 async function saveSrs(){ if (App.deck) await Store.setJSON('srs:'+App.deck.id, App.srs); }
 
+function mergeDeckInstances(base, incoming){
+  if (!base || base.id!==incoming.id) return incoming;
+  const questions=[...base.questions]; const known=new Map(questions.map((q,i)=>[q.uid,i]));
+  incoming.questions.forEach(q=>{ const index=known.get(q.uid); if(index==null){ known.set(q.uid,questions.length); questions.push(q); } else questions[index]=q; });
+  const byType={}; TYPE_ORDER.forEach(type=>byType[type]=questions.filter(q=>q.type===type));
+  return Object.assign({},base,incoming,{meta:Object.assign({},base.meta,incoming.meta),questions,byType,totalQuestions:questions.length,loadedAt:Date.now()});
+}
+async function saveDeckSource(deck, text, filename){
+  if (!text || !filename) return;
+  const library=await Store.getJSON(STORAGE_KEYS.deckLibrary, []);
+  const entries=Array.isArray(library)?library:[];
+  const index=entries.findIndex(item=>item&&item.id===deck.id);
+  const entry=index>=0?entries[index]:{id:deck.id,title:deck.meta.title,sources:[]};
+  entry.title=deck.meta.title;
+  entry.sources=Array.isArray(entry.sources)?entry.sources:[];
+  const content=String(text), sourceId=Utils.hashStr(`${filename}::${content}`);
+  const source={name:filename,sourceId,text:content,updatedAt:Date.now()};
+  const sourceIndex=entry.sources.findIndex(item=>(item.sourceId&&item.sourceId===sourceId)||(!item.sourceId&&item.name===filename&&item.text===content));
+  if(sourceIndex>=0) entry.sources[sourceIndex]=Object.assign({},entry.sources[sourceIndex],source); else entry.sources.push(source);
+  if(index>=0) entries[index]=entry; else entries.push(entry);
+  await Store.setJSON(STORAGE_KEYS.deckLibrary,entries);
+}
+async function loadDeckLibrary(){
+  const library=await Store.getJSON(STORAGE_KEYS.deckLibrary, []); const loaded=[];
+  for(const entry of Array.isArray(library)?library:[]){
+    let merged=null;
+    for(const source of entry.sources||[]){ try{ const deck=parseDeckFile(source.text,source.name); merged=merged?mergeDeckInstances(merged,deck):deck; }catch(e){} }
+    if(merged) loaded.push(merged);
+  }
+  return loaded;
+}
 async function registerDeck(deck){
   const reg = await Store.getJSON(STORAGE_KEYS.deckRegistry, []);
   const idx = reg.findIndex(d=>d.id===deck.id);
@@ -807,7 +941,7 @@ async function getKnownDeckIds(){
   const reg = await Store.getJSON(STORAGE_KEYS.deckRegistry, []);
   if (Array.isArray(reg)) reg.forEach(d=>d && d.id && ids.add(d.id));
   const p = App.progress || {};
-  ['reviewBook','wrongBook','questionStats'].forEach(k=>{
+  ['reviewBook','wrongBook','questionStats','cardAnnotations'].forEach(k=>{
     Object.keys(p[k] || {}).forEach(id=>ids.add(id));
   });
   (p.sessions || []).forEach(s=>s && s.deckId && ids.add(s.deckId));
@@ -881,6 +1015,40 @@ async function toggleReviewBook(uid){
   } else {
     await addToNotebook('review', uid, {toast:true});
   }
+}
+function getCardAnnotation(uid, deckId=App.deck?.id){
+  if (!uid || !deckId) return '';
+  return String(App.progress?.cardAnnotations?.[deckId]?.[uid] || '');
+}
+async function saveCardAnnotation(uid, value){
+  if (!App.deck || !uid) return;
+  const deckId=App.deck.id, text=String(value||'').trim();
+  const all=App.progress.cardAnnotations || (App.progress.cardAnnotations={});
+  const notes=all[deckId] || (all[deckId]={});
+  if (text) notes[uid]=text;
+  else { delete notes[uid]; if(!Object.keys(notes).length) delete all[deckId]; }
+  await saveProgress();
+}
+async function toggleCardAnnotationFace(){
+  const sess=App.session, card=sess?.queue?.[0];
+  if (!sess || !card || cardInteractionLocked(sess)) return;
+  if (sess.annotationOpen){
+    const input=document.getElementById('card-annotation-input');
+    await saveCardAnnotation(card.uid,input ? input.value : sess.annotationDraft);
+    sess.annotationOpen=false;
+    sess.annotationDraft='';
+    sess.annotationClosing=true;
+  } else {
+    sess.annotationOpen=true;
+    sess.annotationDraft=getCardAnnotation(card.uid);
+    sess.annotationClosing=false;
+  }
+  sess.suppressCardEnterOnce=true;
+  const flipDirection=sess.annotationClosing?'back':'forward';
+  persistActiveSession();
+  sess.cardFlipAnimating=flipDirection;
+  render();
+  setTimeout(()=>{ if(App.session===sess){ sess.annotationClosing=false; sess.cardFlipAnimating=''; } }, 460);
 }
 function getQuestionStats(deckId){
   if (!App.progress.questionStats) App.progress.questionStats = {};
@@ -1349,9 +1517,10 @@ async function waitForInitialTypography(){
   if (!document.fonts?.load) return;
   const family=App.settings?.uiFontFamily||'default';
   const faces=family==='serif' ? ['400 16px "SMC FZ New Book"','400 16px "SMC Minion"'] : ['400 16px "SMC HY QiHei"','400 16px "SMC SF Pro"'];
+  if (faces.every(face=>document.fonts.check(face,'中文Aa'))) return;
   await Promise.race([
     Promise.all(faces.map(face=>document.fonts.load(face,'中文Aa'))),
-    new Promise(resolve=>setTimeout(resolve,900))
+    new Promise(resolve=>setTimeout(resolve,120))
   ]);
 }
 function themeIcon(){
@@ -1370,6 +1539,7 @@ function themeTitle(){
   return App.settings.theme==='dark' ? '深色模式：已手动开启，点击恢复跟随系统' : '深色模式：已手动关闭，点击恢复跟随系统';
 }
 function toggleTheme(){
+  capturePreviewAnnotationEditors();
   const mode = App.settings.themeMode || 'auto';
   if (mode==='auto'){
     const sysTheme = systemPrefersDark() ? 'dark' : 'light';
@@ -1406,9 +1576,9 @@ function renderLoadView(container){
       <div class="dropzone" id="dropzone" tabindex="0">
         <div class="dz-icon">🗂️</div>
         <h3>拖拽题库文件到这里</h3>
-        <p>支持 .js（UMD / CommonJS 模块）、.json 题库与结构化 .html 笔记包<br>题型字段至少包含 fillInTheBlank / singleChoice / multipleChoice / trueFalse / shortAnswer / essay 中的一种或多种<br>分享题库建议使用 .json；.js 题库仅导入可信来源</p>
+        <p>支持 .js（UMD / CommonJS 模块）、.json 题库、应用导出的 .zip 与结构化 .html 笔记包<br>题库以稳定唯一 ID 合并；可同时选择同目录的题库与笔记<br>分享题库建议使用 .json；.js 题库仅导入可信来源</p>
         <button class="btn btn-primary" id="pick-file-btn" type="button">选择文件</button>
-        <input type="file" id="file-input" class="hidden-input" accept=".js,.json,.html,.htm,application/json,text/javascript,text/html">
+        <input type="file" id="file-input" class="hidden-input" multiple accept=".js,.json,.zip,.html,.htm,application/json,application/zip,text/javascript,text/html">
         <div class="dz-hint">或直接将文件拖入此区域</div>
       </div>
       ${localDeckHtml}
@@ -1444,20 +1614,71 @@ function renderLoadView(container){
   document.getElementById('pick-file-btn').onclick = (e)=>{ e.stopPropagation(); fileInput.click(); };
   dz.onclick = ()=>fileInput.click();
   dz.addEventListener('keydown', e=>{ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); fileInput.click(); } });
-  fileInput.onchange = (e)=>{ if (e.target.files[0]) handleFile(e.target.files[0]); fileInput.value=''; };
+  fileInput.onchange = (e)=>{ if (e.target.files.length) handleFiles(e.target.files); fileInput.value=''; };
 
   ['dragenter','dragover'].forEach(evt=>dz.addEventListener(evt, e=>{ e.preventDefault(); e.stopPropagation(); dz.classList.add('dragover'); }));
   ['dragleave','drop'].forEach(evt=>dz.addEventListener(evt, e=>{ e.preventDefault(); e.stopPropagation(); dz.classList.remove('dragover'); }));
-  dz.addEventListener('drop', e=>{ const file = e.dataTransfer.files && e.dataTransfer.files[0]; if (file) handleFile(file); });
+  dz.addEventListener('drop', e=>{ if (e.dataTransfer.files?.length) handleFiles(e.dataTransfer.files); });
 
   document.getElementById('load-demo-btn').onclick = ()=>loadDeckFromRaw(DEMO_DECK_RAW, '新手教程示例题库');
   container.querySelectorAll('[data-local-deck]').forEach(btn=>btn.onclick=()=>selectLocalDeck(btn.dataset.localDeck));
 }
+async function readStoredZip(file){
+  const bytes=new Uint8Array(await file.arrayBuffer()), view=new DataView(bytes.buffer), dec=new TextDecoder(), entries=[]; let offset=0;
+  while(offset+30<=bytes.length && view.getUint32(offset,true)===0x04034b50){ const flags=view.getUint16(offset+6,true), method=view.getUint16(offset+8,true), size=view.getUint32(offset+22,true), nameLength=view.getUint16(offset+26,true), extraLength=view.getUint16(offset+28,true); if(flags&8 || method!==0) throw new Error('ZIP 仅支持本应用导出的未压缩 ZIP。'); const name=dec.decode(bytes.slice(offset+30,offset+30+nameLength)), dataStart=offset+30+nameLength+extraLength; entries.push({name,text:dec.decode(bytes.slice(dataStart,dataStart+size))}); offset=dataStart+size; }
+  if(!entries.length) throw new Error('ZIP 中没有可读取的文件。'); return entries;
+}
+async function importDeckZip(file){
+  const entries=await readStoredZip(file); let manifest={};
+  try{ manifest=JSON.parse(entries.find(item=>item.name==='manifest.json')?.text||'{}'); }catch(e){}
+  if(manifest.type==='smc-notes-library') return importNotesZipEntries(entries,manifest);
+  const sourceNames=new Map((manifest.files||[]).map(item=>[item.archive,item.name])); let count=0;
+  for(const entry of entries.filter(item=>/\.(json|js)$/i.test(item.name)&&item.name!=='manifest.json')){
+    const name=sourceNames.get(entry.name)||entry.name.split('/').pop()||'deck.json', deck=parseDeckFile(entry.text,name);
+    await finishDeckLoad(deck,{sourceText:entry.text,sourceName:name}); count++;
+  }
+  if(!count) throw new Error('ZIP 中没有题库 JSON 或 JS 文件。'); toast(`已导入并合并 ${count} 个题库文件`,{icon:'📚'});
+}
+async function importNotesZipEntries(entries, manifest={}){
+  if(manifest.type && manifest.type!=='smc-notes-library') throw new Error('该 ZIP 不是笔记导出包。');
+  const sourceNames=new Map((manifest.files||[]).map(item=>[item.archive,item.name]));
+  const noteEntries=entries.filter(entry=>/\.html?$/i.test(entry.name));
+  if(!noteEntries.length) throw new Error('ZIP 中没有 HTML 笔记文件。');
+  let files=0, added=0;
+  for(const entry of noteEntries){
+    const name=sourceNames.get(entry.name)||entry.name.split('/').pop()||'notes.html';
+    const pack=parseNotesHtmlPackage(entry.text,name);
+    pack.originalSources=Object.assign({},pack.originalSources||{},{[name]:entry.text});
+    added+=await mergeNotesPackage(pack,{silent:true}); files++;
+  }
+  App.view='notes'; render();
+  toast(`已导入 ${files} 份笔记，新增 ${added} 条`,{icon:'📖'});
+  return added;
+}
+async function importNotesZip(file){
+  const entries=await readStoredZip(file); let manifest={};
+  try{ manifest=JSON.parse(entries.find(item=>item.name==='manifest.json')?.text||'{}'); }catch(e){}
+  return importNotesZipEntries(entries,manifest);
+}
+async function handleNotesImportFile(file, opts={}){
+  if(/\.zip$/i.test(file?.name||'')) return importNotesZip(file);
+  return handleNotesHtmlFile(file,opts);
+}
+async function handleFiles(fileList){
+  const files=Array.from(fileList||[]); if(!files.length) return;
+  const deckFiles=files.filter(file=>/\.(js|json|zip)$/i.test(file.name||''));
+  const noteFiles=files.filter(file=>/\.html?$/i.test(file.name||''));
+  const unsupported=files.filter(file=>!deckFiles.includes(file)&&!noteFiles.includes(file));
+  for(const file of deckFiles) await handleFile(file);
+  for(const file of noteFiles) await handleNotesHtmlFile(file,{stayView:deckFiles.length>0});
+  if(unsupported.length) showLoadError(`已忽略 ${unsupported.length} 个不支持的文件。`);
+}
 async function handleFile(file){
   const name = file.name || '未命名文件';
+  if (/\.zip$/i.test(name)){ try{ await importDeckZip(file); }catch(e){ showLoadError(e.message); } return; }
   if (/\.html?$/i.test(name)){ await handleNotesHtmlFile(file); return; }
   if (!/\.(js|json)$/i.test(name)){
-    showLoadError(`不支持的文件类型："${name}"。请上传 .js、.json 或 .html 文件。`);
+    showLoadError(`不支持的文件类型："${name}"。请上传 .js、.json、.zip 或 .html 文件。`);
     return;
   }
   if (/\.js$/i.test(name)){
@@ -1466,7 +1687,7 @@ async function handleFile(file){
   try{
     const text = await Utils.readFileAsText(file);
     const deck = parseDeckFile(text, name);
-    await finishDeckLoad(deck);
+    await finishDeckLoad(deck, {sourceText:text,sourceName:name});
   }catch(e){ showLoadError(e.message); }
 }
 async function loadDeckFromRaw(raw, name){
@@ -1511,10 +1732,11 @@ async function loadLocalDeckFiles(){
   await Promise.all(files.map(async filename=>{
     let deck = null;
     try{
-      const res = await fetch(filename, {cache:'no-store'});
+      const res = await fetch(filename, {cache:'force-cache'});
       if (res.ok){
         const text = await res.text();
         deck = parseDeckFile(text, filename);
+        if (deck) deck.sourceText=text;
       }
     }catch(e){}
     if (!deck) deck = await loadLocalDeckByScript(filename);
@@ -1524,6 +1746,24 @@ async function loadLocalDeckFiles(){
     }
   }));
   return loaded.sort((a,b)=>a.meta.title.localeCompare(b.meta.title, 'zh-Hans-CN'));
+}
+function localNoteFileNames(){
+  const fromWindow=Array.isArray(window.NOTE_FILES) ? window.NOTE_FILES : [];
+  return [...new Set(fromWindow.concat(LOCAL_NOTE_FILES).filter(Boolean))];
+}
+async function loadLocalAssociatedNotes(deckIds){
+  const allowed=new Set(deckIds||[]); let added=0;
+  for(const filename of localNoteFileNames()){
+    try{
+      const res=await fetch(filename,{cache:'no-store'}); if(!res.ok) continue;
+      const text=await res.text(), pack=parseNotesHtmlPackage(text,filename);
+      const associationIds=new Set([pack.deckId,...(pack.sections||[]).map(section=>section.sourceDeckId)].filter(Boolean));
+      if(!associationIds.size || ![...associationIds].some(id=>allowed.has(id))) continue;
+      pack.originalSources=Object.assign({},pack.originalSources||{},{[filename]:text});
+      added+=await mergeNotesPackage(pack,{silent:true});
+    }catch(e){}
+  }
+  return added;
 }
 async function selectLocalDeck(deckId){
   const deck = App.localDecks.find(d=>d.id===deckId);
@@ -1541,10 +1781,25 @@ function tfPolarityCountsFromQuestions(questions){
   const falseCount = tf.filter(q=>q.answer===false).length;
   return { total:tf.length, trueCount, falseCount };
 }
+async function mergeAndStoreDeck(deck, opts={}){
+  const known=(App.localDecks||[]).find(item=>item.id===deck.id) || (App.deck&&App.deck.id===deck.id?App.deck:null);
+  deck=known ? mergeDeckInstances(known,deck) : deck;
+  if (opts.sourceText) await saveDeckSource(deck,opts.sourceText,opts.sourceName||deck.meta.title+'.json');
+  App.localDecks=App.localDecks||[];
+  const localIndex=App.localDecks.findIndex(item=>item.id===deck.id);
+  if(localIndex>=0) App.localDecks[localIndex]=deck; else App.localDecks.push(deck);
+  await registerDeck(deck);
+  return deck;
+}
+async function importEmbeddedNoteDecks(linkedDecks){
+  for(const [deckId,entry] of Object.entries(linkedDecks||{})) for(const source of entry?.sources||[]){
+    try{ const deck=parseDeckFile(source.text,source.name||`${deckId}.json`); await mergeAndStoreDeck(deck,{sourceText:source.text,sourceName:source.name||`${deckId}.json`}); }catch(e){ console.warn('关联题库导入跳过',e); }
+  }
+}
 async function finishDeckLoad(deck, opts={}){
+  deck=await mergeAndStoreDeck(deck,opts);
   App.deck = deck;
   App.srs = await loadSrs(deck.id);
-  await registerDeck(deck);
   await Store.setJSON(STORAGE_KEYS.lastDeck, deck);
   await clearActiveSessionDraft();
   TYPE_ORDER.forEach(t=>{
@@ -1781,7 +2036,7 @@ function renderSetupView(container){
         <div class="deck-actions">
           ${hasRelatedNotesForDeck(deck) ? '<button class="btn btn-secondary" id="setup-notes-btn" type="button">查看笔记</button>' : ''}
           <button class="btn btn-secondary" id="browse-deck-btn" type="button">浏览整卷</button>
-          <button class="btn btn-secondary swap" id="swap-deck-btn" type="button">更换题库</button>
+          <button class="btn btn-secondary swap" id="swap-deck-btn" type="button">导入题库</button>
         </div>
       </div>
       ${localDeckSelector}
@@ -2096,7 +2351,7 @@ function gradeObjective(card, userInput){
     return { isCorrect, scoreEarned:isCorrect?points:0, maxScore:points,
       userAnswerDisplay: selectedTexts.length ? selectedTexts.join('、') : '(未作答)', correctAnswerDisplay: correctTexts.join('、') };
   }
-  if (card.type==='singleChoice' || card._dynamicChoice){
+  if ((card.type==='singleChoice' || card.type==='reading' || card._dynamicChoice)){
     const opt = card.options[userInput];
     const isCorrect = !!(opt && opt.correct);
     const correctOpt = card.options.find(o=>o.correct);
@@ -2302,7 +2557,7 @@ function startSession(){
     baseSrs:Utils.deepClone(App.srs||{}),
     questionSnapshots:queue.map(snapshotQuestion),
     paperUids:queue.map(q=>q.uid),
-    revealed:false, selectedOptionIdx:null, selectedOptionIdxs:[], selectedPerBlank:null, activeBlankIdx:0, selectedTF:null, userTextAnswer:'',
+    revealed:false, annotationOpen:false, annotationDraft:'', selectedOptionIdx:null, selectedOptionIdxs:[], selectedPerBlank:null, activeBlankIdx:0, selectedTF:null, userTextAnswer:'',
     feedbackFlash:null, lastUserInput:null, lastGradeCorrect:null,
     requeueCounts:{}, results:[], gradingIndex:0, answeredStack:[], completedUids:[],
     startedAt:Date.now(), cardStartedAt:Date.now(), paused:false, pausedAt:null, pausedMs:0,
@@ -2664,7 +2919,9 @@ function cardClasses(sess){
     cls += ' no-enter';
     sess.suppressCardEnterOnce = false;
   }
-  if (sess.mode==='flashcard' && sess.revealed) cls += ' flipping';
+  if (sess.cardFlipAnimating) cls += ' flipping';
+  if (sess.annotationOpen) cls += ' annotation-face';
+  if (sess.annotationClosing && sess.cardFlipAnimating==='back') cls += ' annotation-closing';
   if (sess.feedbackFlash==='good') cls += ' pulse-good';
   if (sess.feedbackFlash==='bad') cls += ' pulse-bad shake';
   return cls;
@@ -2726,14 +2983,27 @@ function renderSelfGradeGrid(points, selectedKey, confirmMode){
   </div>${confirmMode ? `<div class="qcard-actions"><button type="button" class="btn btn-primary" id="self-grade-confirm-btn" ${selectedKey?'':'disabled'}>确认 <span class="kbd">⏎</span></button></div>` : ''}`;
 }
 function renderCardHtml(sess, card){
+  if (sess.annotationOpen) return renderCardAnnotationFace(sess, card);
   return sess.mode==='flashcard' ? renderFlashcardFace(sess, card) : renderInteractiveFace(sess, card);
+}
+function renderCardAnnotationFace(sess, card){
+  const saved=sess.annotationDraft ?? getCardAnnotation(card.uid);
+  return `<div class="${cardClasses(sess)}" id="qcard-el">
+    ${renderQuestionTools(card)}
+    ${typeLabelHtml(card, '我的注释')}
+    <div class="qcard-question annotation-card-title">${renderQuestionText(card)}</div>
+    <div class="qcard-body annotation-card-body"><div class="annotation-editor-wrap"><textarea id="card-annotation-input" class="card-annotation-input" placeholder="记录理解、疑问或复习提示…">${Utils.escapeHtml(saved)}</textarea></div><div class="annotation-editor-footer"><p>再次点击注释按钮返回正面。</p><button type="button" class="annotation-clear-btn" data-card-annotation-clear ${saved.trim()?'':'hidden'}>清除</button></div></div>
+  </div>`;
 }
 function renderQuestionTools(card){
   if (!App.deck) return '';
   const starred = isInNotebook('review', card.uid, App.deck.id);
   const wrong = isInNotebook('wrong', card.uid, App.deck.id);
+  const hasAnnotation=Boolean(getCardAnnotation(card.uid));
+  const annotationActive=hasAnnotation || Boolean(App.session?.annotationOpen && App.session?.queue?.[0]?.uid===card.uid);
   return `<div class="qcard-tools">
     ${wrong ? `<span class="wrong-chip">错题本</span>` : ''}
+    <button type="button" class="annotation-btn ${annotationActive?'on':''}" data-card-annotation="${card.uid}" title="${annotationActive?'编辑注释':'添加注释'}" aria-label="${annotationActive?'编辑注释':'添加注释'}" aria-pressed="${annotationActive?'true':'false'}"><span class="icon-symbol">${annotationActive?'􀌳':'􀌲'}</span></button>
     <button type="button" class="bookmark-btn ${starred?'on':''}" data-bookmark="${card.uid}" title="${starred?'移出复习本':'加入复习本'}" aria-label="${starred?'移出复习本':'加入复习本'}" aria-pressed="${starred?'true':'false'}"><span class="icon-symbol">${starred?'★':'☆'}</span></button>
   </div>`;
 }
@@ -2861,7 +3131,7 @@ function renderInteractiveFace(sess, card){
         <span class="opt-key"><span class="icon-symbol">${isSel?'✓':String.fromCharCode(65+i)}</span></span><span class="opt-text">${renderOptionContent(o)}</span></button>`;
     }).join('') + `</div>`;
     if (!sess.revealed) actions = `<div class="qcard-actions"><button type="button" class="btn btn-primary" id="confirm-btn" ${selIdxs.length===0?'disabled':''}>确认 <span class="kbd">⏎</span></button></div>`;
-  } else if (card.type==='singleChoice' || card._dynamicChoice){
+  } else if ((card.type==='singleChoice' || card.type==='reading' || card._dynamicChoice)){
     const optListClass = card._dynamicChoice ? 'opt-list opt-list-free' : 'opt-list';
     body = `<div class="${optListClass}">` + card.options.map((o,i)=>{
       let cls = sess.selectedOptionIdx===i ? 'selected' : '';
@@ -2985,6 +3255,24 @@ function choosePerBlankOption(oi){
   render();
 }
 function bindCardEvents(sess, card){
+  document.querySelectorAll('[data-card-annotation]').forEach(btn=>btn.addEventListener('click', async e=>{
+    e.preventDefault(); e.stopPropagation(); await toggleCardAnnotationFace();
+  }));
+  const annotationInput=document.getElementById('card-annotation-input');
+  if (annotationInput){
+    annotationInput.addEventListener('input', async ()=>{ sess.annotationDraft=annotationInput.value; await saveCardAnnotation(card.uid,annotationInput.value); const active=Boolean(annotationInput.value.trim()) || Boolean(sess.annotationOpen); const clear=document.querySelector('[data-card-annotation-clear]'); if(clear) clear.hidden=!Boolean(annotationInput.value.trim()); document.querySelectorAll('[data-card-annotation]').forEach(btn=>{ btn.classList.toggle('on',active); btn.setAttribute('aria-pressed',String(active)); btn.title=active?'编辑注释':'添加注释'; btn.setAttribute('aria-label',btn.title); const icon=btn.querySelector('.icon-symbol'); if(icon) icon.textContent=active?'􀌳':'􀌲'; }); });
+    const clearAnnotation=document.querySelector('[data-card-annotation-clear]');
+    if (clearAnnotation) clearAnnotation.addEventListener('click', ()=>{ annotationInput.value=''; annotationInput.dispatchEvent(new Event('input',{bubbles:true})); annotationInput.focus(); });
+    // Annotation is the card back: any click outside the editor or its tools saves and returns to the question face.
+    if (sess.annotationOutsideClickHandler) document.removeEventListener('click', sess.annotationOutsideClickHandler);
+    sess.annotationOutsideClickHandler=async e=>{
+      if (!sess.annotationOpen || e.target.closest('#qcard-el')) return;
+      document.removeEventListener('click', sess.annotationOutsideClickHandler);
+      sess.annotationOutsideClickHandler=null;
+      await toggleCardAnnotationFace();
+    };
+    document.addEventListener('click', sess.annotationOutsideClickHandler);
+  }
   document.querySelectorAll('[data-bookmark]').forEach(btn=>btn.addEventListener('click', e=>{
     e.stopPropagation();
     toggleReviewBook(btn.dataset.bookmark);
@@ -3038,7 +3326,7 @@ function bindCardEvents(sess, card){
       const cb = document.getElementById('confirm-btn');
       if (cb) cb.onclick = ()=>{ if ((sess.selectedOptionIdxs||[]).length) submitObjectiveAnswer(sess.selectedOptionIdxs); };
     }
-  } else if (card.type==='singleChoice' || card._dynamicChoice){
+  } else if ((card.type==='singleChoice' || card.type==='reading' || card._dynamicChoice)){
     if (!sess.revealed){
       document.querySelectorAll('[data-opt]').forEach(btn=>btn.addEventListener('click', ()=>{ sess.selectedOptionIdx=+btn.dataset.opt; updateOptionSelectionUI(); persistActiveSession(); }));
       const cb = document.getElementById('confirm-btn');
@@ -3145,7 +3433,9 @@ function flipCurrentCard(){
   if (!sess || sess.mode!=='flashcard' || sess.revealed) return;
   sess.revealed = true;
   persistActiveSession();
+  sess.cardFlipAnimating='forward';
   render();
+  setTimeout(()=>{ if(App.session===sess) sess.cardFlipAnimating=''; }, 460);
 }
 function submitFlashcardRating(ratingKey){
   const sess = App.session, card = sess.queue[0];
@@ -3162,6 +3452,10 @@ function stashAnswerForCard(sess, card, input){
 }
 function resetAnswerStateForCard(sess, card){
   sess.revealed=false;
+  sess.annotationOpen=false;
+  sess.annotationClosing=false;
+  sess.cardFlipAnimating='';
+  sess.annotationDraft='';
   sess.selectedOptionIdx=null;
   sess.selectedOptionIdxs=[];
   sess.selectedTF=null;
@@ -3178,7 +3472,7 @@ function currentDraftAnswer(sess, card){
   if (card._perBlankChoice) return Array.isArray(sess.selectedPerBlank) ? sess.selectedPerBlank.slice() : undefined;
   if (isManualMultiBlank(card)) return Array.isArray(sess.blankInputs) ? sess.blankInputs.slice() : new Array(fillBlankCount(card)).fill('');
   if (card.type==='multipleChoice' || card._multiSelect) return Array.isArray(sess.selectedOptionIdxs) ? sess.selectedOptionIdxs.slice() : [];
-  if (card.type==='singleChoice' || card._dynamicChoice) return sess.selectedOptionIdx;
+  if ((card.type==='singleChoice' || card.type==='reading' || card._dynamicChoice)) return sess.selectedOptionIdx;
   if (card.type==='trueFalse') return sess.selectedTF;
   return sess.userTextAnswer || '';
 }
@@ -3205,7 +3499,7 @@ function restoreAnswerForCard(sess, card){
   if (card._perBlankChoice) sess.selectedPerBlank = Array.isArray(saved) ? saved.slice() : sess.selectedPerBlank;
   else if (isManualMultiBlank(card)) sess.blankInputs = Array.isArray(saved) ? saved.slice() : new Array(fillBlankCount(card)).fill('');
   else if (card.type==='multipleChoice' || card._multiSelect) sess.selectedOptionIdxs = Array.isArray(saved) ? saved.slice() : [];
-  else if (card.type==='singleChoice' || card._dynamicChoice) sess.selectedOptionIdx = saved;
+  else if ((card.type==='singleChoice' || card.type==='reading' || card._dynamicChoice)) sess.selectedOptionIdx = saved;
   else if (card.type==='trueFalse') sess.selectedTF = saved;
   else sess.userTextAnswer = saved || '';
 }
@@ -3398,6 +3692,9 @@ function handleGlobalKeydown(e){
   const inTextField = activeTag==='INPUT' || activeTag==='TEXTAREA';
   const currentAnswered = hasSessionResultForCard(sess, card);
 
+  // The annotation face is not a self-rating page; disable navigation and rating shortcuts everywhere on it.
+  if (sess.annotationOpen && e.key !== 'Escape') return;
+
   if (e.key==='Escape'){ e.preventDefault(); confirmExitSession(); return; }
   if (e.key==='ArrowLeft' && sess.mode==='test' && sess.answeredStack && sess.answeredStack.length && (!inTextField || currentAnswered)){
     e.preventDefault(); goToPreviousQuestion(); return;
@@ -3405,6 +3702,9 @@ function handleGlobalKeydown(e){
   if (e.key==='ArrowRight' && sess.mode==='test' && currentAnswered){
     e.preventDefault(); goToNextAnsweredQuestion(); return;
   }
+
+  // Never let quiz self-rating shortcuts consume digits typed into annotation/answer fields.
+  if (inTextField) return;
 
   if (sess.mode==='flashcard'){
     if (!sess.revealed){ if (e.key===' '){ e.preventDefault(); flipCurrentCard(); } return; }
@@ -3448,7 +3748,7 @@ function handleGlobalKeydown(e){
       updateMultiSelectUI();
       persistActiveSession();
     } else if (e.key==='Enter' && (sess.selectedOptionIdxs||[]).length){ e.preventDefault(); submitObjectiveAnswer(sess.selectedOptionIdxs); }
-  } else if (card.type==='singleChoice' || card._dynamicChoice){
+  } else if ((card.type==='singleChoice' || card.type==='reading' || card._dynamicChoice)){
     if (['1','2','3','4'].includes(e.key)){
       const idx = +e.key-1;
       if (idx<card.options.length){ e.preventDefault(); sess.selectedOptionIdx=idx; updateOptionSelectionUI(); persistActiveSession(); }
@@ -3470,7 +3770,7 @@ setupMobileViewSwipe();
    ============================================================ */
 function hasRelatedNotesForDeck(deck){
   if(!deck||!App.notesPackage) return false;
-  return App.notesPackage.deckId===deck.id || (App.notesPackage.sections||[]).some(section=>(section.articles||[]).some(article=>(deck.questions||[]).some(q=>noteArticleMatchesQuestion(article,q))));
+  return App.notesPackage.deckId===deck.id || (App.notesPackage.sections||[]).some(section=>section.sourceDeckId===deck.id || (section.articles||[]).some(article=>(deck.questions||[]).some(q=>noteArticleMatchesQuestion(article,q))));
 }
 function renderBrowseView(container){
   const deck = App.deck;
@@ -3505,7 +3805,7 @@ function renderBrowseView(container){
   const mobileSidebarHtml = hasNav ? renderPreviewSidebar(grouped, 'bq', {showChapters:true}) : '';
 
   const mainHtml = grouped.length ? grouped.map(g=>{
-    const items = g.questions.map((q,i)=>renderPreviewQuestion(q, i+1, {showAns, idPrefix:'bq', actions:true})).join('');
+    let previousReadingId=''; const items = g.questions.map((q,i)=>{ const shown=q.type==='reading'&&q.readingId===previousReadingId; previousReadingId=q.type==='reading'?q.readingId:''; return renderPreviewQuestion(q, i+1, {showAns, idPrefix:'bq', actions:true, readingArticleShown:shown}); }).join('');
     return `<div class="browse-section"><h3>${QuestionTypes[g.type].label}（${g.questions.length} 题）</h3>${items}</div>`;
   }).join('') : `<div class="empty-state browse-empty-state"><span class="e-icon">□</span><p>当前筛选下没有题目</p></div>`;
 
@@ -3682,6 +3982,14 @@ function renderInlineFillQuestion(q, showAns){
   if (Array.isArray(q.content) && q.content.length){
     return normalizeContent(q.content).map(block=>{
       if (block.type==='text') return renderText(block.text);
+      // V2题库把填空位作为独立 block；整卷预览必须在这里补回答案或空线。
+      if (block.type==='blank'){
+        const ans = answers[i] != null ? answers[i] : answers[answers.length-1];
+        i++;
+        return !showAns
+          ? '<span class="browse-blank-line" aria-hidden="true"></span>'
+          : `<span class="browse-inline-answer">${renderQuestionFormula(String(ans||'').split('/')[0])}</span>`;
+      }
       return renderRichContent([block], App.deck&&App.deck.assets);
     }).join('');
   }
@@ -3691,20 +3999,36 @@ function userAnswerParts(detail){
   if (!detail || !detail.userAnswer) return [];
   return String(detail.userAnswer).split(/[、/]/).map(s=>s.trim()).filter(Boolean);
 }
+function previewAnnotationEditorKey(uid){ return `${App.deck?.id||''}:${uid}`; }
+function capturePreviewAnnotationEditors(){
+  if (App.view!=='browse') return;
+  const state={};
+  document.querySelectorAll('[data-preview-annotation-slot]').forEach(slot=>{
+    const uid=slot.dataset.previewAnnotationSlot, input=slot.querySelector('[data-preview-annotation-input]');
+    if (!uid || !input) return;
+    state[previewAnnotationEditorKey(uid)]={editing:slot.classList.contains('editing'), value:input.value};
+    if (document.activeElement===input) App.restorePreviewAnnotationFocus=uid;
+  });
+  App.previewAnnotationEditors=state;
+}
 function renderPreviewQuestion(q, num, opts={}){
   const showAns = !!opts.showAns;
   const detail = opts.detail || null;
   const idPrefix = opts.idPrefix || 'bq';
+  const annotation = getCardAnnotation(q.uid, opts.deckId || App.deck?.id).trim();
+  const editorState = App.previewAnnotationEditors?.[previewAnnotationEditorKey(q.uid)];
+  const editorValue = editorState?.editing && typeof editorState.value==='string' ? editorState.value : annotation;
   const detailState = previewDetailState(detail, opts.mode);
   const status = detail ? detailState.cardStatus : '';
   const starred = App.deck && isInNotebook('review', q.uid, App.deck.id);
   const wrong = App.deck && isInNotebook('wrong', q.uid, App.deck.id);
   const actions = opts.actions ? `<div class="preview-actions">
     ${wrong ? `<button type="button" class="mini-remove-btn" data-wrong-remove="${q.uid}">移出错题本</button>` : ''}
+    <button type="button" class="preview-annotation-btn ${annotation?'on':''}" data-preview-annotation="${q.uid}" title="${annotation?'编辑注释':'添加注释'}" aria-label="${annotation?'编辑注释':'添加注释'}"><span class="icon-symbol">${annotation?'􀌳':'􀌲'}</span></button>
     <button type="button" class="bookmark-btn ${starred?'on':''}" data-review-toggle="${q.uid}" title="${starred?'移出复习本':'加入复习本'}" aria-label="${starred?'移出复习本':'加入复习本'}" aria-pressed="${starred?'true':'false'}"><span class="icon-symbol">${starred?'★':'☆'}</span></button>
   </div>` : '';
   let bodyHtml = '';
-  if ((q.type==='singleChoice' || q.type==='multipleChoice') && Array.isArray(q.options)){
+  if (((q.type==='singleChoice' || q.type==='reading' || q.type==='multipleChoice')) && Array.isArray(q.options)){
     const parts = userAnswerParts(detail);
     bodyHtml = `<div class="browse-q-opts">` + q.options.map((o,i)=>{
       const userPicked = parts.includes(o.text);
@@ -3717,24 +4041,29 @@ function renderPreviewQuestion(q, num, opts={}){
       const picked = detail && detail.userAnswer===(v?'对':'错');
       return `<div class="tf-mini ${correct?'is-correct':''} ${picked&&!correct?'is-wrong':''} ${picked?'is-picked':''}">${v?'对':'错'}${correct?' <span class="icon-symbol">✓</span>':''}${picked?' · 你的选择':''}</div>`;
     }).join('');
-    bodyHtml = `<div class="tf-mini-row">${choices}</div>`;
+    bodyHtml = `<div class="tf-mini-row">${choices}</div>${showAns ? `<div class="browse-answer">正确答案：${q.answer ? '对' : '错'}</div>` : ''}`;
   } else if (q.type==='fillInTheBlank'){
     if (detail) bodyHtml = `<div class="preview-user-line ${status==='ok'?'ok':(status==='mid'?'mid':(status==='good'?'good':(status==='unanswered'?'unanswered':'no')))}">你的答案：${renderFillAnswerPartsHtml(detail.userAnswer||'（未作答）', q.answers)}</div>`;
   } else if (q.type==='shortAnswer' || q.type==='essay'){
     if (detail) bodyHtml = `<div class="preview-user-line ${status==='ok'?'ok':(status==='mid'?'mid':(status==='good'?'good':'no'))}">你的答案：${Utils.escapeHtml(detail.userAnswer || '（未作答）')}</div>`;
-    if (showAns) bodyHtml += `<div class="browse-answer">${Utils.escapeHtml(q.reference || (detail&&detail.correctAnswer) || '')}</div>`;
+    if (showAns) bodyHtml += `<div class="browse-answer">${Utils.escapeHtml(q.reference || q.answer || (detail&&detail.correctAnswer) || '')}</div>`;
   } else if (showAns){
-    bodyHtml = `<div class="browse-answer">${Utils.escapeHtml(q.reference || (detail&&detail.correctAnswer) || '')}</div>`;
+    bodyHtml = `<div class="browse-answer">${Utils.escapeHtml(q.reference || q.answer || (detail&&detail.correctAnswer) || '')}</div>`;
   }
   if (!bodyHtml && showAns && detail && detail.correctAnswer){
     bodyHtml = `<div class="browse-answer">${Utils.escapeHtml(detail.correctAnswer)}</div>`;
   }
+  const annotationHtml = opts.actions ? `<div class="preview-annotation-slot ${annotation?'has-note':''} ${editorState?.editing?'editing':''}" data-preview-annotation-slot="${q.uid}">
+    <div class="question-annotation"><span class="question-annotation-label">我的注释：</span><span class="question-annotation-quote">“</span><strong class="question-annotation-text">${Utils.escapeHtml(annotation).replace(/\n/g,'<br>')}</strong><span class="question-annotation-quote">”</span></div>
+    <textarea class="preview-annotation-input" data-preview-annotation-input="${q.uid}" placeholder="记录理解、疑问或复习提示…">${Utils.escapeHtml(editorValue)}</textarea>
+  </div>` : (annotation ? `<div class="question-annotation"><span class="question-annotation-label">我的注释：</span><span class="question-annotation-quote">“</span><strong class="question-annotation-text">${Utils.escapeHtml(annotation).replace(/\n/g,'<br>')}</strong><span class="question-annotation-quote">”</span></div>` : '');
   const qText = q.type==='fillInTheBlank' ? renderInlineFillQuestion(q, showAns) : (q.content ? renderRichContent(q.content, App.deck&&App.deck.assets) : renderQuestionFormula(q.question));
+  const readingHtml = q.type==='reading' && q.readingArticle && !opts.readingArticleShown ? `<div class=\"reading-article\">${renderQuestionFormula(q.readingArticle)}</div>` : '';
   const statusBadge = detail ? detailState.badges.map(s=>`<span class="preview-status ${s}">${previewStatusLabel(s, opts.mode)}</span>`).join('') : '';
   return `<div class="browse-q ${detail?'with-status status-'+status:''}" id="${idPrefix}-${q.uid}">
     <div class="preview-q-head">
-      <div class="browse-q-text"><span class="browse-q-num">${num}.</span>${qText}</div>
-      ${actions}
+      <div class="browse-q-text">${readingHtml}<span class="browse-q-num">${num}.</span>${qText}${q.type==='reading'?actions:''}</div>
+      ${q.type==='reading'?'':actions}
     </div>
     <div class="preview-meta">
       ${q.chapter ? `<span class="chapter-pill">${Utils.escapeHtml(q.chapter)}</span>` : ''}
@@ -3742,11 +4071,72 @@ function renderPreviewQuestion(q, num, opts={}){
       ${detail ? `<span class="preview-score">${detailScoreText(detail)} 分</span>` : ''}
     </div>
     ${bodyHtml}
+    ${annotationHtml}
   </div>`;
 }
 function bindPreviewQuestionActions(container){
   container.querySelectorAll('[data-review-toggle]').forEach(btn=>btn.onclick=()=>toggleReviewBook(btn.dataset.reviewToggle));
   container.querySelectorAll('[data-wrong-remove]').forEach(btn=>btn.onclick=()=>removeFromNotebook('wrong', btn.dataset.wrongRemove, {toast:true}));
+  container.querySelectorAll('[data-preview-annotation]').forEach(btn=>btn.onclick=async ()=>{
+    const slot=container.querySelector(`[data-preview-annotation-slot="${btn.dataset.previewAnnotation}"]`);
+    if (!slot) return;
+    // One editing surface at a time: save and close any other question's editor first.
+    for (const other of [...container.querySelectorAll('[data-preview-annotation-slot].editing')]){
+      if (other===slot) continue;
+      const otherInput=other.querySelector('[data-preview-annotation-input]');
+      const otherUid=otherInput?.dataset.previewAnnotationInput;
+      if (!otherUid) continue;
+      const otherText=otherInput.value.trim();
+      await saveCardAnnotation(otherUid, otherText);
+      other.classList.remove('editing');
+      other.classList.toggle('has-note', Boolean(otherText));
+      App.previewAnnotationEditors[previewAnnotationEditorKey(otherUid)]={editing:false,value:otherInput.value};
+      const otherDisplay=other.querySelector('.question-annotation-text');
+      if (otherDisplay) otherDisplay.innerHTML=Utils.escapeHtml(otherText).replace(/\n/g,'<br>');
+      const otherButton=container.querySelector(`[data-preview-annotation="${otherUid}"]`);
+      if (otherButton){ otherButton.classList.toggle('on',Boolean(otherText)); otherButton.title=otherText?'编辑注释':'添加注释'; otherButton.setAttribute('aria-label',otherButton.title); const otherIcon=otherButton.querySelector('.icon-symbol'); if(otherIcon) otherIcon.textContent=otherText?'􀌳':'􀌲'; }
+    }
+    const editing=slot.classList.toggle('editing');
+    const input=slot.querySelector('[data-preview-annotation-input]');
+    if (editing && input) input.value=getCardAnnotation(btn.dataset.previewAnnotation).trim();
+    App.previewAnnotationEditors[previewAnnotationEditorKey(btn.dataset.previewAnnotation)]={editing,value:input?.value||''};
+    if (editing) input?.focus();
+  });
+  container.querySelectorAll('[data-preview-annotation-input]').forEach(input=>input.addEventListener('input', async ()=>{
+    const uid=input.dataset.previewAnnotationInput, slot=input.closest('[data-preview-annotation-slot]');
+    const text=input.value.trim();
+    App.previewAnnotationEditors[previewAnnotationEditorKey(uid)]={editing:!!slot?.classList.contains('editing'),value:input.value};
+    await saveCardAnnotation(uid, text);
+    if (!slot) return;
+    slot.classList.toggle('has-note', Boolean(text));
+    const display=slot.querySelector('.question-annotation-text');
+    if (display) display.innerHTML=Utils.escapeHtml(text).replace(/\n/g,'<br>');
+    const button=container.querySelector(`[data-preview-annotation="${uid}"]`);
+    if (button){ button.classList.toggle('on',Boolean(text)); button.title=text?'编辑注释':'添加注释'; button.setAttribute('aria-label',button.title); const icon=button.querySelector('.icon-symbol'); if(icon) icon.textContent=text?'􀌳':'􀌲'; }
+  }));
+  container.addEventListener('click', async e=>{
+    if (e.target.closest('[data-preview-annotation-input]') || e.target.closest('[data-preview-annotation]')) return;
+    const editingSlots=[...container.querySelectorAll('[data-preview-annotation-slot].editing')];
+    for (const slot of editingSlots){
+      const input=slot.querySelector('[data-preview-annotation-input]');
+      const uid=input?.dataset.previewAnnotationInput;
+      if (!uid) continue;
+      const text=input.value.trim();
+      await saveCardAnnotation(uid, text);
+      slot.classList.remove('editing');
+      slot.classList.toggle('has-note', Boolean(text));
+      App.previewAnnotationEditors[previewAnnotationEditorKey(uid)]={editing:false,value:input.value};
+      const display=slot.querySelector('.question-annotation-text');
+      if (display) display.innerHTML=Utils.escapeHtml(text).replace(/\n/g,'<br>');
+      const button=container.querySelector(`[data-preview-annotation="${uid}"]`);
+      if (button){ button.classList.toggle('on',Boolean(text)); button.title=text?'编辑注释':'添加注释'; button.setAttribute('aria-label',button.title); const icon=button.querySelector('.icon-symbol'); if(icon) icon.textContent=text?'􀌳':'􀌲'; }
+    }
+  });
+  if (App.restorePreviewAnnotationFocus){
+    const input=container.querySelector(`[data-preview-annotation-input="${App.restorePreviewAnnotationFocus}"]`);
+    if (input){ requestAnimationFrame(()=>{ input.focus(); input.setSelectionRange(input.value.length,input.value.length); }); }
+    App.restorePreviewAnnotationFocus='';
+  }
 }
 function setupBrowseScrollSpy(container, idPrefix='bq'){
   const cells = container.querySelectorAll('[data-jump]');
@@ -3781,6 +4171,8 @@ function renderReportView(container){
       ? renderFillAnswerPartsHtml(d.userAnswer, snapshot && snapshot.answers)
       : Utils.escapeHtml(d.userAnswer || '（未作答）');
     const statusIcon = (d.status==='mid' || d.status==='good') ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"></path></svg>' : {ok:'<span class="icon-symbol">✓</span>',no:'<span class="icon-symbol">✗</span>'}[d.status];
+    const annotation = getCardAnnotation(d.uid, r.deckId).trim();
+    const annotationHtml = annotation ? `<div class="row question-annotation-row"><div class="k">我的注释</div><div class="v question-annotation-text"><strong>“${Utils.escapeHtml(annotation).replace(/\n/g,'<br>')}”</strong></div></div>` : '';
     return `<div class="qa-item" data-qa="${i}">
       <div class="qa-head" tabindex="0" role="button" aria-expanded="false">
         <div class="qa-status ${d.status}">${statusIcon}</div>
@@ -3791,6 +4183,7 @@ function renderReportView(container){
       <div class="qa-detail"><div class="qa-detail-inner">
         <div class="row"><div class="k">你的答案</div><div class="v ${d.status==='ok'?'ok':(d.status==='no'?'no':'')}">${userAnswerHtml}</div></div>
         <div class="row"><div class="k">正确 / 参考答案</div><div class="v ok">${Utils.escapeHtml(d.correctAnswer)}</div></div>
+        ${annotationHtml}
       </div></div>
     </div>`;
   }).join('');
@@ -3936,7 +4329,7 @@ function renderRecordDetailView(container){
   const sidebarHtml = renderPreviewSidebar(grouped, 'rq', {detailMap, mode:record.mode});
   const contextLabel = recordContextLabel(record);
   const groupedHtml = grouped.map(g=>{
-    const qHtml = g.items.map((x,i)=>renderPreviewQuestion(x.question, i+1, {showAns, detail:x.detail, idPrefix:'rq', actions:false, mode:record.mode})).join('');
+    const qHtml = g.items.map((x,i)=>renderPreviewQuestion(x.question, i+1, {showAns, detail:x.detail, idPrefix:'rq', actions:false, mode:record.mode, deckId:record.deckId})).join('');
     return `<div class="browse-section"><h3>${QuestionTypes[g.type].label}（${g.items.length} 题）</h3>${qHtml}</div>`;
   }).join('');
   container.className = 'view-pad has-fixed-previewbar fade-in';
@@ -4030,10 +4423,14 @@ function bindDataManagement(container){
     }, { danger:true, confirmLabel:'清空' });
   };
 }
+function deckLibraryManagementHtml(){
+  const count=(App.localDecks||[]).length;
+  return `<div class="section-title settings-section-title" style="margin-top:26px;">题库管理<span class="line"></span></div><div class="panel deck-library-panel"><div class="settings-panel-heading"><div><h3>导出全部题库</h3><p class="muted">将本机已导入的 ${count} 个题库原始 JSON / JS 文件无损打包为 ZIP；同一唯一 ID 的多个来源文件会一并保留。ZIP 可从学习页导入并按题库 ID 合并。</p></div></div><div class="settings-actions"><button class="btn btn-secondary" id="settings-export-decks-btn" type="button">导出全部题库</button></div></div>`;
+}
+function bindDeckLibraryManagement(container){ const btn=container.querySelector('#settings-export-decks-btn'); if(btn) btn.onclick=exportAllDecksZip; }
 function cacheManagementHtml(){
-  return `<div class="section-title" style="margin-top:26px;">缓存管理<span class="line"></span></div>
-    <div class="panel">
-      <p class="muted" style="font-size:12.5px;margin:0 0 12px;">清空上次打开的题库、已导入笔记与未完成答题草稿，并恢复应用设置默认值；不影响学习记录、复习本和错题本。</p>
+  return `<div class="section-title settings-section-title" style="margin-top:26px;">缓存管理<span class="line"></span></div>
+    <div class="panel cache-management-panel"><div class="settings-panel-heading"><div><h3>清空缓存</h3><p class="muted">清空上次打开的题库、已导入笔记与未完成答题草稿，并恢复应用设置默认值；不影响学习记录、复习本和错题本。</p></div></div>
       <div class="settings-actions">
         <button class="btn btn-danger" id="clear-cache-btn" type="button">清空缓存</button>
       </div>
@@ -4051,12 +4448,18 @@ function bindCacheManagement(container){
       App.settings = defaultSettings();
       await saveSettings();
       App.session = null;
+      App.deck = null;
       App.notesPackage = null;
       App.notesScrollY = 0;
       App.notesBookmarks = new Set();
+      App.notesHighlights = {};
+      App.notesImageZoom = {};
+      App.notesTocFavoritesOnly = false;
       App.recordDetailId = null;
+      App.view = 'load';
+      try { localStorage.removeItem(VIEW_CACHE_KEY); localStorage.removeItem(STORAGE_KEYS.currentView); } catch(e) {}
       applyTheme();
-      toast('已清空缓存并恢复默认设置', {icon:'🧹'}); render();
+      toast('已清空缓存并返回导入页', {icon:'🧹'}); render();
     }, { danger:true, confirmLabel:'清空' });
   };
 }
@@ -4081,22 +4484,60 @@ function bindTypographySettings(container){
     renderSettingsView(container);
   }));
 }
+function noteCalendarDate(value){
+  const d=value instanceof Date?value:new Date(value);
+  return Number.isNaN(d.getTime())?null:d;
+}
+function noteCalendarKey(value){ const d=noteCalendarDate(value); return d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`:''; }
+function buildNotesCalendar(pack){
+  const days=new Map();
+  (pack?.sections||[]).forEach(section=>{
+    const key=noteCalendarKey(section.noteDate||section.sourceTimestamp||pack.importedAt); if(!key) return;
+    const items=days.get(key)||[]; items.push(section.id); days.set(key,items);
+  });
+  return days;
+}
+function currentNotesReadingDate(pack){
+  const sections=[...document.querySelectorAll('.notes-document .note-section')];
+  const reading=sections.reduce((best,section)=>{
+    const top=section.getBoundingClientRect().top;
+    return top<=120 && (!best || top>best.getBoundingClientRect().top) ? section : best;
+  },null) || sections[0];
+  const source=(pack?.sections||[]).find(section=>`notes-section-${section.id}`===reading?.id);
+  return noteCalendarKey(source?.noteDate||source?.sourceTimestamp||pack?.importedAt);
+}
+function notesCalendarModal(container,days,monthKey,readingKey=''){
+  const months=[...new Set([...days.keys()].map(key=>key.slice(0,7)))].sort(); if(!months.length) return;
+  const current=months.includes(monthKey)?monthKey:months[months.length-1], index=months.indexOf(current);
+  const [year,month]=current.split('-').map(Number), first=new Date(year,month-1,1), last=new Date(year,month,0), today=noteCalendarKey(Date.now());
+  const cells=[]; for(let i=0;i<first.getDay();i++) cells.push('<span class="notes-calendar-day blank" aria-hidden="true"></span>');
+  for(let day=1;day<=last.getDate();day++){
+    const key=`${current}-${String(day).padStart(2,'0')}`, ids=days.get(key), enabled=!!ids?.length, classes=['notes-calendar-day']; if(enabled) classes.push('has-notes'); if(key===readingKey) classes.push('is-reading');
+    cells.push(enabled?`<button type="button" class="${classes.join(' ')}" data-notes-calendar-target="notes-section-${Utils.escapeHtml(ids[0])}" aria-label="${key}，${ids.length} 个章节">${day}</button>`:`<span class="${classes.join(' ')}" aria-disabled="true">${day}</span>`);
+  }
+  const nav=months.length>1?`<button type="button" class="notes-calendar-nav" data-notes-calendar-month="${months[index-1]||''}" ${index===0?'disabled':''} aria-label="上一个有笔记的月份">􀆉</button><button type="button" class="notes-calendar-nav" data-notes-calendar-month="${months[index+1]||''}" ${index===months.length-1?'disabled':''} aria-label="下一个有笔记的月份">􀆊</button>`:'';
+  const todayTarget=days.get(today)?.[0] || '';
+  const overlay=document.createElement('div'); overlay.className='notes-calendar-overlay'; overlay.innerHTML=`<section class="notes-calendar-modal" role="dialog" aria-modal="true" aria-label="笔记日历"><header><div class="notes-calendar-title"><span>${year}年${month}月</span><button type="button" class="notes-calendar-today" data-notes-calendar-today="${Utils.escapeHtml(todayTarget)}">今天</button></div><button type="button" class="notes-calendar-close" aria-label="关闭日历">􀆄</button></header><div class="notes-calendar-month-nav">${nav}</div><div class="notes-calendar-week">${['日','一','二','三','四','五','六'].map(day=>`<span>${day}</span>`).join('')}</div><div class="notes-calendar-grid">${cells.join('')}</div></section>`;
+  const close=()=>overlay.remove();
+  overlay.addEventListener('click',event=>{ if(event.target===overlay) close(); });
+  overlay.querySelector('.notes-calendar-close').onclick=close;
+  overlay.querySelectorAll('[data-notes-calendar-month]').forEach(btn=>btn.onclick=()=>{ if(btn.disabled) return; overlay.remove(); notesCalendarModal(container,days,btn.dataset.notesCalendarMonth,readingKey); });
+  overlay.querySelector('[data-notes-calendar-today]').onclick=()=>{ const targetId=overlay.querySelector('[data-notes-calendar-today]').dataset.notesCalendarToday; const target=targetId&&document.getElementById(`notes-section-${targetId}`); if(target){ window.scrollTo({top:Math.max(0,target.getBoundingClientRect().top+window.scrollY-90),behavior:'auto'}); } };
+  overlay.querySelectorAll('[data-notes-calendar-target]').forEach(btn=>btn.onclick=()=>{ const target=document.getElementById(btn.dataset.notesCalendarTarget); close(); if(target) window.scrollTo({top:Math.max(0,target.getBoundingClientRect().top+window.scrollY-90),behavior:'auto'}); });
+  document.body.appendChild(overlay);
+}
+
 function renderNotesView(container){
   container.className='view-pad';
   const pack=App.notesPackage;
   if (!pack){
-    container.innerHTML=`<div class="center-col" style="min-height:72vh;"><div class="dropzone" id="notes-dropzone" tabindex="0"><div class="dz-icon">🗒️</div><h3>拖拽笔记文件到这里</h3><p>支持结构化 .html / .htm 格式<br>将按 main h1、section.sec、article.kp 与 .md 结构导入笔记<br>包内脚本和样式不会执行，内容将套用本地界面</p><button class="btn btn-primary" id="pick-notes-file-btn" type="button">选择文件</button><input type="file" id="notes-file-input" class="hidden-input" accept=".html,.htm,text/html"><div class="dz-hint">或直接将文件拖入此区域</div></div><details class="format-guide notes-format-guide"><summary><h4>笔记数据格式</h4></summary><div class="format-guide-body"><p>推荐使用 <code>main h1</code> 作为标题，使用 <code>section.sec</code> 表示小节，使用 <code>article.kp</code> 表示知识点；知识点正文放在 <code>.md</code>，来源信息放在 <code>.src</code>。</p><div class="format-item"><b>示例结构</b><span><code>&lt;main&gt; &lt;h1&gt;标题&lt;/h1&gt; &lt;section class="sec"&gt;...&lt;article class="kp"&gt;&lt;div class="md"&gt;正文&lt;/div&gt;&lt;/article&gt;&lt;/section&gt; &lt;/main&gt;</code></span></div></div></details></div>`;
+    container.innerHTML=`<div class="center-col" style="min-height:72vh;"><div class="dropzone" id="notes-dropzone" tabindex="0"><div class="dz-icon">🗒️</div><h3>拖拽笔记文件到这里</h3><p>支持结构化 .html / .htm 与应用导出的笔记 .zip<br>将按 main h1、section.sec、article.kp 与 .md 结构导入笔记<br>包内脚本和样式不会执行，内容将套用本地界面</p><button class="btn btn-primary" id="pick-notes-file-btn" type="button">选择文件</button><input type="file" id="notes-file-input" class="hidden-input" multiple accept=".html,.htm,.zip,text/html,application/zip"><div class="dz-hint">或直接将文件拖入此区域</div></div><details class="format-guide notes-format-guide"><summary><h4>笔记数据格式</h4></summary><div class="format-guide-body"><p>推荐使用 <code>main h1</code> 作为标题，使用 <code>section.sec</code> 表示小节，使用 <code>article.kp</code> 表示知识点；知识点正文放在 <code>.md</code>，来源信息放在 <code>.src</code>。</p><div class="format-item"><b>示例结构</b><span><code>&lt;main&gt; &lt;h1&gt;标题&lt;/h1&gt; &lt;section class="sec"&gt;...&lt;article class="kp"&gt;&lt;div class="md"&gt;正文&lt;/div&gt;&lt;/article&gt;&lt;/section&gt; &lt;/main&gt;</code></span></div></div></details></div>`;
     bindNotesImport(container); return;
   }
-  const tocGroups=[];
-  pack.sections.forEach(section=>{
-    const title=section.chapterTitle||'笔记';
-    let group=tocGroups.find(item=>item.title===title);
-    if(!group){ group={title,sections:[]}; tocGroups.push(group); }
-    group.sections.push(section);
-  });
   let toc='';
-  const notesFilter=App.notesFilter||{subject:'all',type:'all',bookmarked:false,search:''};
+  const notesFilter=App.notesFilter||{subject:'all',type:'all',bookmarked:false,search:'',sourceName:'all'};
+  const sourceFilter=notesFilter.sourceName||'all';
+  const noteSources=[...new Map((pack.sections||[]).map(section=>{ const sourceName=section.sourceName||pack.sourceName||''; const sourceSubject=section.sourceSubject||pack.subject||''; const label=section.sourceLabel||String(sourceSubject).trim()||sourceName.replace(/\.html?$/i,''); const key=section.sourceKey||(String(sourceSubject).trim()?`subject:${String(sourceSubject).trim()}`:`file:${label}`); return [key,{key,label}]; })).values()];
   const subjects=[...new Set((pack.sections||[]).map(section=>section.sourceSubject||pack.subject).filter(Boolean))];
   const types=[...new Set((pack.sections||[]).flatMap(section=>(section.articles||[]).map(article=>article.type||'concept')))];
   const selectedTypes=Array.isArray(notesFilter.type)?notesFilter.type:(notesFilter.type==='all'||!notesFilter.type?types:[notesFilter.type]);
@@ -4105,7 +4546,11 @@ function renderNotesView(container){
    * 暂时注释：笔记页面筛选逻辑。
    * 恢复筛选时，将下方全量 sections 替换回原来的 subject/type/bookmarked/search 条件。
    */
-  const filteredSections=(pack.sections||[]).map(section=>({...section,articles:[...(section.articles||[])]}));
+  const tocFavoritesOnly=Boolean(App.notesTocFavoritesOnly);
+  const filteredSections=(pack.sections||[])
+    .filter(section=>{ const key=section.sourceKey||(String(section.sourceSubject||pack.subject||'').trim()?`subject:${String(section.sourceSubject||pack.subject||'').trim()}`:`file:${(section.sourceLabel||section.sourceName||'').replace(/\.html?$/i,'')}`); return sourceFilter==='all'||key===sourceFilter; })
+    .map(section=>({...section,articles:[...(section.articles||[])].filter(article=>!tocFavoritesOnly||App.notesBookmarks.has(article.id))}))
+    .filter(section=>section.articles.length);
   const visibleTocGroups=[];
   filteredSections.forEach(section=>{
     const title=section.chapterTitle||'笔记';
@@ -4114,12 +4559,12 @@ function renderNotesView(container){
     group.sections.push(section);
   });
   toc=visibleTocGroups.map(group=>`<details open class="notes-toc-chapter"><summary data-note-target="notes-section-${Utils.escapeHtml(group.sections[0]?.id||'')}">${Utils.escapeHtml(noteTocTitle(group.title))}</summary><div class="notes-toc-chapter-body">${group.sections.map(section=>`<details open class="notes-toc-section"><summary data-note-target="notes-section-${Utils.escapeHtml(section.id)}">${Utils.escapeHtml(noteTocTitle(section.title))}</summary><div class="notes-toc-section-body">${section.articles.map(article=>{ const starred=App.notesBookmarks.has(article.id); const bookmark=starred ? `<span class="notes-toc-bookmark on" data-note-bookmark="${Utils.escapeHtml(article.id)}" role="button" tabindex="0" title="取消收藏" aria-label="取消收藏：${Utils.escapeHtml(article.title)}" aria-pressed="true">${noteBookmarkIcon()}</span>` : ''; return `<button type="button" class="notes-toc-link" data-note-target="note-${Utils.escapeHtml(article.id)}">${bookmark}${Utils.escapeHtml(noteTocTitle(article.title))}</button>`; }).join('')}</div></details>`).join('')}</div></details>`).join('');
-  const content=filteredSections.map(section=>{
+  const content=filteredSections.length ? filteredSections.map(section=>{
     const sectionTestArticle=section.articles.find(article=>article.testConfig && isNoteArticleLinked(article));
     return `<section class="note-section" id="notes-section-${Utils.escapeHtml(section.id)}"><header class="note-section-heading"><div><h2>${Utils.escapeHtml(section.title)}</h2><p class="note-section-description">${section.articles.length} 条${section.description?` ｜ ${Utils.escapeHtml(section.description)}`:''}</p></div><div class="note-section-tools">${sectionTestArticle?`<button type="button" class="btn btn-primary note-test-btn" data-note-test="${Utils.escapeHtml(sectionTestArticle.id)}" title="本节测试">本节测试</button>`:''}</div></header>${section.articles.map(article=>{ const starred=App.notesBookmarks.has(article.id); return `<article class="note-card" id="note-${Utils.escapeHtml(article.id)}"><header class="note-card-heading"><div><h3>${Utils.escapeHtml(article.title)}</h3></div><div class="note-card-tools">${noteTagHtml(article)}<button type="button" class="note-bookmark-btn ${starred?'on':''}" data-note-bookmark="${Utils.escapeHtml(article.id)}" title="${starred?'取消收藏':'收藏'}" aria-label="${starred?'取消收藏':'收藏'}：${Utils.escapeHtml(article.title)}" aria-pressed="${starred?'true':'false'}">${noteBookmarkIcon()}</button><button type="button" class="note-highlight-btn" title="高亮选中内容" aria-label="高亮选中内容" aria-pressed="false"><span aria-hidden="true">􀦇</span></button></div></header><div class="note-rich">${article.body}</div></article>`; }).join('')}</section>`;
-  }).join('');
+  }).join('') : '<div class="notes-empty-filter">暂无收藏内容</div>';
   const tocCollapsed=Boolean(App.notesTocCollapsed);
-  const documentTitle=tocGroups[0]?.title || pack.title;
+  const documentTitle=visibleTocGroups[0]?.title || pack.title;
   const chapterArticles=filteredSections.flatMap(section=>section.articles||[]);
   const hasSectionTest=chapterArticles.some(article=>article.testConfig && isNoteArticleLinked(article));
   const chapterTestArticle=hasSectionTest ? null : chapterArticles.find(isNoteArticleLinked);
@@ -4127,7 +4572,7 @@ function renderNotesView(container){
   const activeFilterCount=(notesFilter.subject==='all'?0:1)+(notesFilter.bookmarked?1:0)+typeFilterCount;
   const filterLabel=activeFilterCount?`已筛选 ${activeFilterCount} 项`:'全部笔记';
   const notesFilterMenu=`<div class="notes-filter-menu"><button type="button" class="notes-filter-menu-all" data-notes-heading-filter-reset>全部笔记</button><strong>范围</strong><label class="notes-filter-check"><input type="checkbox" data-notes-heading-bookmarked ${notesFilter.bookmarked?'checked':''}><span>仅收藏内容</span></label><strong>笔记本（学科）</strong><div class="notes-filter-choice-list">${[['all','全部笔记本'],...subjects.map(subject=>[subject,subject])].map(([value,label])=>`<label class="notes-filter-check"><input type="radio" name="notes-subject" value="${Utils.escapeHtml(value)}" data-notes-heading-subject ${notesFilter.subject===value?'checked':''}><span>${Utils.escapeHtml(label)}</span></label>`).join('')}</div><strong>分类</strong><div class="notes-filter-choice-list"><label class="notes-filter-check"><input type="checkbox" data-notes-heading-types-all ${selectedTypes.length===types.length?'checked':''}><span>全部类型</span></label>${types.map(type=>`<label class="notes-filter-check"><input type="checkbox" value="${Utils.escapeHtml(type)}" data-notes-heading-type ${selectedTypes.includes(type)?'checked':''}><span>${Utils.escapeHtml(NOTE_TYPE_LABELS[type]||type)}</span></label>`).join('')}</div></div>`;
-  container.innerHTML=`<div class="container notes-shell notes-has-package"><div class="notes-package-toolbar"><span>${Utils.escapeHtml(pack.subject||'')}</span><button type="button" class="notes-more-btn" aria-label="更多" aria-expanded="false"><svg class="notes-more-icon" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M4.166 8.501a1.499 1.499 0 1 1 0 2.998 1.499 1.499 0 0 1 0-2.998M10 8.501a1.499 1.499 0 1 1 0 2.998 1.499 1.499 0 0 1 0-2.998M15.833 8.501a1.5 1.5 0 1 1 0 2.999 1.5 1.5 0 0 1 0-2.999"></path></svg></button><div class="notes-more-menu" hidden><div class="notes-filter-group"><strong>筛选笔记本（学科）</strong>${[['all','全部笔记本'],...subjects.map(subject=>[subject,subject])].map(([value,label])=>`<button type="button" class="${notesFilter.subject===value?'active':''}" data-notes-filter-subject="${Utils.escapeHtml(value)}">${Utils.escapeHtml(label)}</button>`).join('')}</div><div class="notes-filter-group"><strong>筛选类型</strong>${[['all','全部类型'],...types.map(type=>[type,NOTE_TYPE_LABELS[type]||type])].map(([value,label])=>`<button type="button" class="${notesFilter.type===value?'active':''}" data-notes-filter-type="${Utils.escapeHtml(value)}">${Utils.escapeHtml(label)}</button>`).join('')}</div><button type="button" class="${notesFilter.bookmarked?'active':''}" data-notes-filter-bookmarked="true">${notesFilter.bookmarked?'显示全部':'仅显示收藏'}</button></div></div><div class="notes-layout${tocCollapsed?' toc-collapsed':''}"><aside class="notes-toc${tocCollapsed?' collapsed':''}" aria-label="笔记目录"><div class="notes-toc-head"><h2>目录</h2><button type="button" class="notes-toc-action" aria-label="${tocCollapsed?'展开目录':'收起目录'}" title="${tocCollapsed?'展开目录':'收起目录'}" aria-expanded="${tocCollapsed?'false':'true'}"><svg data-no-autosize="true" aria-hidden="true" class="Icon-X4VkKC" focusable="false" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M14.5 2.877a3.665 3.665 0 0 1 3.665 3.665v6.917a3.665 3.665 0 0 1-3.665 3.665h-9a3.665 3.665 0 0 1-3.665-3.665V6.542A3.665 3.665 0 0 1 5.5 2.877zM8.165 15.794H14.5a2.335 2.335 0 0 0 2.335-2.335V6.542A2.335 2.335 0 0 0 14.5 4.207H8.165zM5.5 4.207a2.335 2.335 0 0 0-2.335 2.335v6.917A2.335 2.335 0 0 0 5.5 15.794h1.335V4.207z"></path></svg></button></div><div class="notes-toc-body">${toc}</div></aside><main class="notes-document"><header class="notes-document-heading"><h1 class="notes-document-title">${Utils.escapeHtml(documentTitle)}</h1><div class="notes-heading-actions">${chapterTestArticle?`<button type="button" class="btn btn-primary note-test-btn" data-note-test="${Utils.escapeHtml(chapterTestArticle.id)}" title="开始测试">开始测试</button>`:''}</div></header>${content}</main></div></div>`;
+  container.innerHTML=`<div class="container notes-shell notes-has-package${!tocCollapsed?' notes-toc-expanded':''}"><div class="notes-package-toolbar"><span>${Utils.escapeHtml(pack.subject||'')}</span><button type="button" class="notes-calendar-btn" aria-label="笔记日历" title="笔记日历">􀉉</button><button type="button" class="notes-more-btn" aria-label="更多" aria-expanded="false"><svg class="notes-more-icon" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M4.166 8.501a1.499 1.499 0 1 1 0 2.998 1.499 1.499 0 0 1 0-2.998M10 8.501a1.499 1.499 0 1 1 0 2.998 1.499 1.499 0 0 1 0-2.998M15.833 8.501a1.5 1.5 0 1 1 0 2.999 1.5 1.5 0 0 1 0-2.999"></path></svg></button><div class="notes-more-menu" hidden><div class="notes-filter-group"><strong>筛选笔记本（学科）</strong>${[['all','全部笔记本'],...subjects.map(subject=>[subject,subject])].map(([value,label])=>`<button type="button" class="${notesFilter.subject===value?'active':''}" data-notes-filter-subject="${Utils.escapeHtml(value)}">${Utils.escapeHtml(label)}</button>`).join('')}</div><div class="notes-filter-group"><strong>筛选类型</strong>${[['all','全部类型'],...types.map(type=>[type,NOTE_TYPE_LABELS[type]||type])].map(([value,label])=>`<button type="button" class="${notesFilter.type===value?'active':''}" data-notes-filter-type="${Utils.escapeHtml(value)}">${Utils.escapeHtml(label)}</button>`).join('')}</div></div></div><div class="notes-layout${tocCollapsed?' toc-collapsed':''}"><aside class="notes-toc${tocCollapsed?' collapsed':''}" aria-label="笔记目录"><div class="notes-toc-head"><h2>目录</h2><div class="notes-toc-controls"><button type="button" class="notes-toc-action" aria-label="${tocCollapsed?'展开目录':'收起目录'}" title="${tocCollapsed?'展开目录':'收起目录'}" aria-expanded="${tocCollapsed?'false':'true'}"><svg data-no-autosize="true" aria-hidden="true" class="Icon-X4VkKC" focusable="false" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M14.5 2.877a3.665 3.665 0 0 1 3.665 3.665v6.917a3.665 3.665 0 0 1-3.665 3.665h-9a3.665 3.665 0 0 1-3.665-3.665V6.542A3.665 3.665 0 0 1 5.5 2.877zM8.165 15.794H14.5a2.335 2.335 0 0 0 2.335-2.335V6.542A2.335 2.335 0 0 0 14.5 4.207H8.165zM5.5 4.207a2.335 2.335 0 0 0-2.335 2.335v6.917A2.335 2.335 0 0 0 5.5 15.794h1.335V4.207z"></path></svg></button><button type="button" class="notes-toc-search" aria-label="搜索笔记" title="搜索笔记"><span class="icon-symbol">􀊫</span></button><button type="button" class="notes-toc-favorites-filter${tocFavoritesOnly?' on':''}" aria-label="${tocFavoritesOnly?'显示全部笔记':'仅显示收藏'}" title="${tocFavoritesOnly?'显示全部笔记':'仅显示收藏'}" aria-pressed="${tocFavoritesOnly?'true':'false'}">${noteBookmarkIcon()}</button></div></div><div class="notes-toc-body">${toc}</div></aside><main class="notes-document"><header class="notes-document-heading"><h1 class="notes-document-title">${Utils.escapeHtml(documentTitle)}</h1><div class="notes-heading-actions">${chapterTestArticle?`<button type="button" class="btn btn-primary note-test-btn" data-note-test="${Utils.escapeHtml(chapterTestArticle.id)}" title="开始测试">开始测试</button>`:''}</div></header>${content}</main></div></div>`;
   restoreNoteHighlights(container);
   container.querySelectorAll('.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg))').forEach(figure=>{
     const card=figure.closest('.note-card'); figure.dataset.imageZoomKey=`${card?.id||'notes'}:${[...container.querySelectorAll('.note-card')].indexOf(card)}:${[...card?.querySelectorAll('figure,img,svg')||[]].indexOf(figure)}`;
@@ -4164,12 +4609,14 @@ function renderNotesView(container){
   container.insertAdjacentHTML('afterbegin','<div class="notes-drag-overlay" aria-hidden="true"><div class="notes-drag-frame"><strong>松手以导入</strong><span>导入 HTML 笔记并合并内容</span></div></div>');
   bindNotesPageDrop(container);
   const moreBtn=container.querySelector('.notes-more-btn'), moreMenu=container.querySelector('.notes-more-menu'); if(moreBtn&&moreMenu){
-    moreMenu.innerHTML='<div class="notes-menu-actions"><button type="button" data-menu-import>导入笔记</button><button type="button" data-menu-search>搜索</button></div><div class="notes-menu-detail" hidden></div>';
+    const sourceMenu=noteSources.length?`<div class="notes-menu-divider" role="separator"></div><div class="notes-menu-sources">${noteSources.length>1?`<button type="button" class="${sourceFilter==='all'?'active':''}" data-notes-source="all">显示全部</button>`:''}${noteSources.map(source=>`<button type="button" class="${sourceFilter===source.key||(noteSources.length===1&&sourceFilter==='all')?'active':''}" data-notes-source="${Utils.escapeHtml(source.key)}">${Utils.escapeHtml(source.label)}</button>`).join('')}</div>`:'';
+    moreMenu.innerHTML=`<div class="notes-menu-actions"><button type="button" data-menu-import>导入笔记</button><button type="button" data-menu-export>导出笔记</button></div>${sourceMenu}<div class="notes-menu-detail" hidden></div>`;
     moreMenu.style.width='max-content';
     moreBtn.onclick=event=>{event.stopPropagation(); moreMenu.hidden=!moreMenu.hidden; moreBtn.setAttribute('aria-expanded',String(!moreMenu.hidden));};
     const detail=moreMenu.querySelector('.notes-menu-detail');
-    moreMenu.querySelector('[data-menu-import]').onclick=()=>{const input=document.createElement('input');input.type='file';input.accept='.html,.htm,text/html';input.onchange=e=>{if(e.target.files[0]) handleNotesHtmlFile(e.target.files[0]);};input.click();};
-    moreMenu.querySelector('[data-menu-search]').onclick=()=>{moreMenu.hidden=true;moreBtn.setAttribute('aria-expanded','false');openNotesSearchModal();};
+    moreMenu.querySelectorAll('[data-notes-source]').forEach(btn=>btn.onclick=()=>{App.notesFilter={...notesFilter,sourceName:btn.dataset.notesSource};render();});
+    moreMenu.querySelector('[data-menu-import]').onclick=()=>{const input=document.createElement('input');input.type='file';input.multiple=true;input.accept='.html,.htm,.zip,text/html,application/zip';input.onchange=e=>{if(e.target.files.length) Promise.all(Array.from(e.target.files).map(handleNotesImportFile));};input.click();};const exportNotesBtn=moreMenu.querySelector('[data-menu-export]');if(exportNotesBtn) exportNotesBtn.onclick=exportNotesHtml;
+
   }
   container.querySelectorAll('[data-notes-filter-subject]').forEach(btn=>btn.onclick=()=>{App.notesFilter={...notesFilter,subject:btn.dataset.notesFilterSubject};render();});
   const resetNotesHeadingFilter=()=>{App.notesFilter={...notesFilter,subject:'all',type:types,bookmarked:false,search:''};render();};
@@ -4183,10 +4630,13 @@ function renderNotesView(container){
   const bookmarkFilter=container.querySelector('[data-notes-filter-bookmarked]'); if(bookmarkFilter) bookmarkFilter.onclick=()=>{App.notesFilter={...notesFilter,bookmarked:!notesFilter.bookmarked};render();};
   const reimport=container.querySelector('#notes-reimport-btn'), input=container.querySelector('#notes-reimport-input');
   if (reimport&&input) reimport.onclick=()=>input.click();
-  if (input) input.onchange=e=>{ if(e.target.files[0]) handleNotesHtmlFile(e.target.files[0]); e.target.value=''; };
+  if (input) input.onchange=e=>{ if(e.target.files.length) Promise.all(Array.from(e.target.files).map(handleNotesHtmlFile)); e.target.value=''; };
+  const calendarBtn=container.querySelector('.notes-calendar-btn'); if(calendarBtn) calendarBtn.onclick=()=>{ const days=buildNotesCalendar(pack), readingKey=currentNotesReadingDate(pack); const activeMonth=days.has(readingKey)?readingKey.slice(0,7):(App.notesCalendarMonth||[...days.keys()].sort().at(-1)?.slice(0,7)||''); App.notesCalendarMonth=activeMonth; App.notesCalendarFocusKey=readingKey; notesCalendarModal(container,days,activeMonth,readingKey); };
+  const tocFavoritesFilter=container.querySelector('.notes-toc-favorites-filter'); if(tocFavoritesFilter) tocFavoritesFilter.onclick=()=>{ App.notesTocFavoritesOnly=!App.notesTocFavoritesOnly; Store.setJSON(STORAGE_KEYS.notesTocFavoritesOnly,App.notesTocFavoritesOnly); render(); };
   const notesLayout=container.querySelector('.notes-layout'), tocBox=container.querySelector('.notes-toc'), tocAction=container.querySelector('.notes-toc-action');
-  if (notesLayout&&tocBox&&tocAction) tocAction.onclick=()=>{ const opening=tocBox.classList.contains('collapsed'); if(opening) App.notesTocReturnY=Math.max(0,window.scrollY); const returnY=opening ? App.notesTocReturnY : Math.max(0,window.scrollY); App.notesTocCollapsed=!opening; Store.setJSON(STORAGE_KEYS.notesTocCollapsed,App.notesTocCollapsed); notesLayout.classList.toggle('toc-collapsed',App.notesTocCollapsed); tocBox.classList.toggle('collapsed',App.notesTocCollapsed); tocAction.setAttribute('aria-expanded',String(!App.notesTocCollapsed)); const label=App.notesTocCollapsed?'展开目录':'收起目录'; tocAction.setAttribute('aria-label',label); tocAction.title=label; requestAnimationFrame(()=>{ updateNotesHeadingClearance(); if(!opening) requestAnimationFrame(()=>{ alignNotesTocToActive(); window.scrollTo({top:returnY,behavior:'auto'}); }); }); };
-  const collapseMobileToc=()=>{ if(!window.matchMedia?.('(max-width:760px)').matches||tocBox.classList.contains('collapsed')) return; App.notesTocReturnY=Math.max(0,window.scrollY); App.notesTocCollapsed=true; Store.setJSON(STORAGE_KEYS.notesTocCollapsed,true); notesLayout.classList.add('toc-collapsed'); tocBox.classList.add('collapsed'); tocAction.setAttribute('aria-expanded','false'); tocAction.setAttribute('aria-label','展开目录'); tocAction.title='展开目录'; };
+  const tocSearch=container.querySelector('.notes-toc-search'); if(tocSearch) tocSearch.onclick=()=>openNotesSearchModal();
+  if (notesLayout&&tocBox&&tocAction) tocAction.onclick=()=>{ const opening=tocBox.classList.contains('collapsed'); App.notesTocCollapsed=!opening; Store.setJSON(STORAGE_KEYS.notesTocCollapsed,!opening); notesLayout.classList.toggle('toc-collapsed',!opening); tocBox.classList.toggle('collapsed',!opening); container.querySelector('.notes-shell')?.classList.toggle('notes-toc-expanded',opening); tocAction.setAttribute('aria-expanded',String(opening)); tocAction.setAttribute('aria-label',opening?'收起目录':'展开目录'); tocAction.title=opening?'收起目录':'展开目录'; const favorite=container.querySelector('.notes-toc-favorites-filter'); if(favorite) favorite.hidden=!opening; };
+  const collapseMobileToc=()=>{ if(!window.matchMedia?.('(max-width:760px)').matches||tocBox.classList.contains('collapsed')) return; App.notesTocReturnY=Math.max(0,window.scrollY); App.notesTocCollapsed=true; Store.setJSON(STORAGE_KEYS.notesTocCollapsed,true); notesLayout.classList.add('toc-collapsed'); tocBox.classList.add('collapsed'); container.querySelector('.notes-shell')?.classList.remove('notes-toc-expanded'); tocAction.setAttribute('aria-expanded','false'); tocAction.setAttribute('aria-label','展开目录'); tocAction.title='展开目录'; };
   if (notesLayout&&tocBox){ let touchStart=null; tocBox.addEventListener('touchmove',event=>event.stopPropagation(),{passive:true}); notesLayout.addEventListener('click',event=>{ if(!tocBox.contains(event.target)) collapseMobileToc(); }); notesLayout.addEventListener('touchstart',event=>{ if(event.target.closest?.('.notes-document')){ const point=event.touches[0]; touchStart={x:point.clientX,y:point.clientY}; } else touchStart=null; },{passive:true,capture:true}); notesLayout.addEventListener('touchend',event=>{ if(!touchStart) return; const point=event.changedTouches[0]; if(Math.hypot(point.clientX-touchStart.x,point.clientY-touchStart.y)>12) collapseMobileToc(); touchStart=null; },{passive:true,capture:true}); }
   const clearNotesBtn=container.querySelector('#notes-clear-btn');
   if (clearNotesBtn) clearNotesBtn.onclick=()=>confirmModal('清空笔记？','这会删除已导入的 HTML 笔记包和收藏，不影响题库和学习记录。',async()=>{ await Store.remove(STORAGE_KEYS.notesPackage); await Store.remove(STORAGE_KEYS.notesBookmarks); await Store.remove(STORAGE_KEYS.notesHighlights); await Store.remove(STORAGE_KEYS.notesScrollY); App.notesPackage=null; App.notesScrollY=0; App.notesBookmarks=new Set(); App.notesHighlights={}; toast('已清空笔记',{icon:'🗑️'}); render(); },{danger:true,confirmLabel:'清空'});
@@ -4236,11 +4686,23 @@ function updateNotesHeadingClearance(){
   if(!button){ headings.forEach(heading=>heading.classList.remove('needs-toc-clearance')); }
   if(button){ const buttonRect=button.getBoundingClientRect(); headings.forEach(heading=>{ const rect=heading.getBoundingClientRect(); heading.classList.toggle('needs-toc-clearance', buttonRect.right>rect.left && buttonRect.left<rect.right && buttonRect.bottom>rect.top && buttonRect.top<rect.bottom); }); }
   const moreRect=more?.getBoundingClientRect();
-  headings.forEach(heading=>{ const rect=heading.getBoundingClientRect(); const overlap=!!moreRect && moreRect.right>rect.left && moreRect.left<rect.right && moreRect.bottom>rect.top && moreRect.top<rect.bottom; heading.classList.toggle('needs-more-clearance',overlap); });
+  const calendar=document.querySelector('.notes-calendar-btn');
+  const calendarRect=calendar?.getBoundingClientRect();
+  headings.forEach(heading=>{
+    const rect=heading.getBoundingClientRect();
+    const moreOverlap=!!moreRect && moreRect.right>rect.left && moreRect.left<rect.right && moreRect.bottom>rect.top && moreRect.top<rect.bottom;
+    const calendarOverlap=!!calendarRect && calendarRect.right>rect.left && calendarRect.left<rect.right && calendarRect.bottom>rect.top && calendarRect.top<rect.bottom;
+    heading.classList.toggle('needs-more-clearance',moreOverlap);
+    heading.classList.toggle('needs-calendar-clearance',calendarOverlap);
+  });
 }
 if (!window.__smcNotesClearanceBound){
   window.__smcNotesClearanceBound=true;
-  const scheduleNotesHeadingClearance=()=>requestAnimationFrame(updateNotesHeadingClearance);
+  let notesClearanceFrame=0;
+  const scheduleNotesHeadingClearance=()=>{
+    if (notesClearanceFrame) return;
+    notesClearanceFrame=requestAnimationFrame(()=>{ notesClearanceFrame=0; updateNotesHeadingClearance(); });
+  };
   window.addEventListener('resize',scheduleNotesHeadingClearance,{passive:true});
   window.addEventListener('scroll',scheduleNotesHeadingClearance,{passive:true});
 }
@@ -4252,6 +4714,7 @@ async function toggleNotesBookmark(id, button){
   if (App.notesBookmarks.has(id)) App.notesBookmarks.delete(id); else App.notesBookmarks.add(id);
   await Store.setJSON(STORAGE_KEYS.notesBookmarks, [...App.notesBookmarks]);
   const on=App.notesBookmarks.has(id);
+  if (App.notesTocFavoritesOnly&&!on){ render(); return; }
   const fromToc=Boolean(button?.classList?.contains('notes-toc-bookmark'));
   document.querySelectorAll('[data-note-bookmark]').forEach(control=>{ if(control.dataset.noteBookmark!==id) return; control.classList.toggle('on',on); control.setAttribute('aria-pressed',String(on)); control.setAttribute('title',on?'取消收藏':'收藏'); if(control.classList.contains('note-bookmark-btn')){ const title=control.closest('.note-card')?.querySelector('h3')?.textContent?.trim()||''; control.setAttribute('aria-label',`${on?'取消收藏':'收藏'}：${title}`); } });
   requestAnimationFrame(()=>{ alignNotesTocToActive(); alignNotesTocToItem(id); });
@@ -4408,14 +4871,14 @@ function openNotesFilterModal(subjects,types){
   const root=document.getElementById('modal-root'); if(!root) return;
   const filter=App.notesFilter||{subject:'all',type:'all',bookmarked:false,search:''};
   const button=(kind,value,label,active)=>`<button type="button" class="notes-filter-choice${active?' active':''}" data-modal-filter-${kind}="${Utils.escapeHtml(value)}">${Utils.escapeHtml(label)}</button>`;
-  root.innerHTML=`<div class="modal-overlay notes-filter-overlay" id="modal-overlay"><div class="modal-box notes-filter-modal" role="dialog" aria-modal="true" aria-labelledby="notes-filter-title"><button type="button" class="notes-filter-close" aria-label="关闭">􀆄</button><h3 id="notes-filter-title">更多</h3><div class="notes-more-actions"><button type="button" data-modal-open-import>导入笔记</button><button type="button" data-modal-open-filter>筛选</button><button type="button" data-modal-open-search>搜索</button></div><button type="button" class="notes-filter-import" data-modal-import-notes>导入笔记</button><input class="hidden-input" type="file" accept=".html,.htm,text/html" data-modal-notes-input><div class="notes-filter-search"><input type="search" placeholder="搜索笔记标题或内容" value="${Utils.escapeHtml(filter.search||'')}" data-modal-notes-search><button type="button" data-modal-search-apply>搜索</button></div><div class="notes-filter-section"><h4>笔记本（学科）</h4><div class="notes-filter-choices">${button('subject','all','全部笔记本',filter.subject==='all')}${subjects.map(value=>button('subject',value,value,filter.subject===value)).join('')}</div></div><div class="notes-filter-section"><h4>类型</h4><div class="notes-filter-choices">${button('type','all','全部类型',filter.type==='all')}${types.map(value=>button('type',value,NOTE_TYPE_LABELS[value]||value,filter.type===value)).join('')}</div></div><button type="button" class="notes-filter-favorite${filter.bookmarked?' active':''}" data-modal-filter-bookmarked="true">${filter.bookmarked?'仅显示收藏（已启用）':'仅显示收藏'}</button></div></div>`;
+  root.innerHTML=`<div class="modal-overlay notes-filter-overlay" id="modal-overlay"><div class="modal-box notes-filter-modal" role="dialog" aria-modal="true" aria-labelledby="notes-filter-title"><button type="button" class="notes-filter-close" aria-label="关闭">􀆄</button><h3 id="notes-filter-title">更多</h3><div class="notes-more-actions"><button type="button" data-modal-open-import>导入笔记</button><button type="button" data-modal-open-filter>筛选</button><button type="button" data-modal-open-search>搜索</button></div><button type="button" class="notes-filter-import" data-modal-import-notes>导入笔记</button><input class="hidden-input" type="file" multiple accept=".html,.htm,text/html" data-modal-notes-input><div class="notes-filter-search"><input type="search" placeholder="搜索笔记标题或内容" value="${Utils.escapeHtml(filter.search||'')}" data-modal-notes-search><button type="button" data-modal-search-apply>搜索</button></div><div class="notes-filter-section"><h4>笔记本（学科）</h4><div class="notes-filter-choices">${button('subject','all','全部笔记本',filter.subject==='all')}${subjects.map(value=>button('subject',value,value,filter.subject===value)).join('')}</div></div><div class="notes-filter-section"><h4>类型</h4><div class="notes-filter-choices">${button('type','all','全部类型',filter.type==='all')}${types.map(value=>button('type',value,NOTE_TYPE_LABELS[value]||value,filter.type===value)).join('')}</div></div></div></div>`;
   root.querySelector('.notes-more-actions')?.remove(); root.querySelector('.notes-filter-import')?.remove(); root.querySelector('.notes-filter-search')?.remove(); root.querySelectorAll('.notes-filter-section,.notes-filter-favorite').forEach(el=>el.classList.add('is-visible')); const favoriteFilter=root.querySelector('.notes-filter-favorite'); const firstSection=root.querySelector('.notes-filter-section'); if(favoriteFilter&&firstSection) firstSection.parentNode.insertBefore(favoriteFilter,firstSection);
   root.querySelector('.notes-filter-close').onclick=closeModal;
   const filterOpen=root.querySelector('[data-modal-open-filter]'), searchOpen=root.querySelector('[data-modal-open-search]'); if(filterOpen) filterOpen.onclick=()=>{root.querySelectorAll('.notes-filter-section,.notes-filter-favorite').forEach(el=>el.classList.add('is-visible'));}; if(searchOpen) searchOpen.onclick=()=>{root.querySelector('.notes-filter-search').classList.add('is-visible');root.querySelector('[data-modal-notes-search]').focus();};
   const searchInput=root.querySelector('[data-modal-notes-search]'); const searchApply=root.querySelector('[data-modal-search-apply]'); if(searchApply) searchApply.onclick=()=>{App.notesFilter={...filter,search:searchInput.value};closeModal();render();};
   const importButton=root.querySelector('[data-modal-import-notes]'), importInput=root.querySelector('[data-modal-notes-input]');
   const importOpen=root.querySelector('[data-modal-open-import]'); if(importOpen&&importInput) importOpen.onclick=()=>importInput.click();
-  if(importButton&&importInput){ importButton.onclick=()=>importInput.click(); importInput.onchange=event=>{const file=event.target.files?.[0]; if(file){closeModal();handleNotesHtmlFile(file);} event.target.value='';}; }
+  if(importButton&&importInput){ importButton.onclick=()=>importInput.click(); importInput.onchange=event=>{const files=Array.from(event.target.files||[]); if(files.length){closeModal();Promise.all(files.map(handleNotesHtmlFile));} event.target.value='';}; }
   root.querySelectorAll('[data-modal-filter-subject]').forEach(btn=>btn.onclick=()=>{App.notesFilter={...filter,subject:btn.dataset.modalFilterSubject};closeModal();render();});
   root.querySelectorAll('[data-modal-filter-type]').forEach(btn=>btn.onclick=()=>{App.notesFilter={...filter,type:btn.dataset.modalFilterType};closeModal();render();});
   const fav=root.querySelector('[data-modal-filter-bookmarked]'); if(fav) fav.onclick=()=>{App.notesFilter={...filter,bookmarked:!filter.bookmarked};closeModal();render();};
@@ -4426,15 +4889,15 @@ function bindNotesPageDrop(container){
   const overlay=container.querySelector('.notes-drag-overlay');
   if(!overlay) return;
   let depth=0;
-  const isHtmlFile=file=>/\.html?$/i.test(file?.name||'') || file?.type==='text/html';
+  const isHtmlFile=file=>/\.(html?|zip)$/i.test(file?.name||'') || file?.type==='text/html' || file?.type==='application/zip';
   const hasFiles=e=>Array.from(e.dataTransfer?.types||[]).includes('Files') || !!e.dataTransfer?.files?.length;
   const hide=()=>{ depth=0; container.classList.remove('notes-dragging'); overlay.setAttribute('aria-hidden','true'); };
   const enter=e=>{ if(!hasFiles(e)) { hide(); return; } e.preventDefault(); e.stopPropagation(); depth++; container.classList.add('notes-dragging'); overlay.setAttribute('aria-hidden','false'); };
   const leave=e=>{ if(!hasFiles(e)) { hide(); return; } e.preventDefault(); e.stopPropagation(); depth=Math.max(0,depth-1); if(depth===0) hide(); };
   const end=()=>hide();
-  const drop=e=>{ if(!hasFiles(e)) { hide(); return; } e.preventDefault(); e.stopPropagation(); hide(); const file=e.dataTransfer.files?.[0]; if(isHtmlFile(file)) handleNotesHtmlFile(file); else toast('请导入 HTML 笔记文件',{icon:'⚠️'}); };
-  window.addEventListener('dragenter',enter); window.addEventListener('dragover',enter); window.addEventListener('dragleave',leave); window.addEventListener('dragend',end); window.addEventListener('drop',drop);
-  window.__smcNotesPageDropCleanup=()=>{ window.removeEventListener('dragenter',enter); window.removeEventListener('dragover',enter); window.removeEventListener('dragleave',leave); window.removeEventListener('dragend',end); window.removeEventListener('drop',drop); hide(); };
+  const drop=e=>{ if(!hasFiles(e)) { hide(); return; } e.preventDefault(); e.stopPropagation(); hide(); const files=Array.from(e.dataTransfer.files||[]).filter(isHtmlFile); if(files.length) Promise.all(files.map(handleNotesImportFile)); else toast('请导入 HTML 或笔记 ZIP 文件',{icon:'⚠️'}); };
+  window.addEventListener('dragenter',enter); window.addEventListener('dragover',enter); window.addEventListener('dragleave',leave); window.addEventListener('dragend',end); window.addEventListener('drop',drop); window.addEventListener('pointerup',end); window.addEventListener('blur',end); window.addEventListener('visibilitychange',end);
+  window.__smcNotesPageDropCleanup=()=>{ window.removeEventListener('dragenter',enter); window.removeEventListener('dragover',enter); window.removeEventListener('dragleave',leave); window.removeEventListener('dragend',end); window.removeEventListener('drop',drop); window.removeEventListener('pointerup',end); window.removeEventListener('blur',end); window.removeEventListener('visibilitychange',end); hide(); };
 }
 function bindNotesImport(container){
   const dz=container.querySelector('#notes-dropzone'), input=container.querySelector('#notes-file-input');
@@ -4444,15 +4907,16 @@ function bindNotesImport(container){
   if (pick) pick.onclick=e=>{ e.stopPropagation(); choose(); };
   dz.onclick=e=>{ if(e.target!==input) choose(); };
   dz.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault(); choose();} };
-  input.onchange=e=>{ if(e.target.files[0]) handleNotesHtmlFile(e.target.files[0]); e.target.value=''; };
+  input.onchange=e=>{ if(e.target.files.length) Promise.all(Array.from(e.target.files).map(handleNotesImportFile)); e.target.value=''; };
   ['dragenter','dragover'].forEach(type=>dz.addEventListener(type,e=>{e.preventDefault(); dz.classList.add('dragover');}));
   ['dragleave','drop'].forEach(type=>dz.addEventListener(type,e=>{e.preventDefault(); dz.classList.remove('dragover');}));
-  dz.addEventListener('drop',e=>{ const file=e.dataTransfer.files&&e.dataTransfer.files[0]; if(file) handleNotesHtmlFile(file); });
+  dz.addEventListener('drop',e=>{ if(e.dataTransfer.files?.length) Promise.all(Array.from(e.dataTransfer.files).filter(file=>/\.(html?|zip)$/i.test(file.name||'')).map(handleNotesImportFile)); });
 }
 function renderSettingsView(container){
   container.className='view-pad fade-in';
-  container.innerHTML=`<div class="container"><div class="section-title">设置<span class="line"></span></div><div class="panel settings-summary"><h3>应用设置</h3><p class="muted">主题可通过顶部右侧按钮切换；学习参数在学习页面中调整。</p></div>${typographySettingsHtml()}${cacheManagementHtml()}</div>`;
+  container.innerHTML=`<div class="container"><div class="section-title settings-section-title">设置<span class="line"></span></div><div class="panel settings-summary"><div class="settings-panel-heading"><div><h3>应用设置</h3><p class="muted">主题可通过顶部右侧按钮切换；学习参数在学习页面中调整。</p></div></div></div>${typographySettingsHtml()}${deckLibraryManagementHtml()}${cacheManagementHtml()}</div>`;
   bindTypographySettings(container);
+  bindDeckLibraryManagement(container);
   bindCacheManagement(container);
 }
 
@@ -4553,6 +5017,24 @@ function sanitizeProgressForExport(progress){
   out.reviewBook = normalizeNotebookMap(out.reviewBook);
   out.wrongBook = deriveWrongBookFromSessions(out.sessions, out.wrongBook);
   return out;
+}
+function zipCrc32(bytes){ let c=~0; for(const b of bytes){ c^=b; for(let i=0;i<8;i++) c=(c>>>1)^((c&1)?0xEDB88320:0); } return (~c)>>>0; }
+function zipU16(view,offset,value){ view.setUint16(offset,value,true); }
+function zipU32(view,offset,value){ view.setUint32(offset,value>>>0,true); }
+function makeStoredZip(files){
+  const enc=new TextEncoder(), parts=[], central=[]; let offset=0;
+  for(const file of files){ const name=enc.encode(file.name), data=typeof file.text==='string'?enc.encode(file.text):file.data, crc=zipCrc32(data), head=new Uint8Array(30+name.length); const v=new DataView(head.buffer); zipU32(v,0,0x04034b50); zipU16(v,4,20); zipU16(v,8,0); zipU32(v,14,crc); zipU32(v,18,data.length); zipU32(v,22,data.length); zipU16(v,26,name.length); head.set(name,30); parts.push(head,data); const cd=new Uint8Array(46+name.length); const cv=new DataView(cd.buffer); zipU32(cv,0,0x02014b50); zipU16(cv,4,20); zipU16(cv,6,20); zipU32(cv,16,crc); zipU32(cv,20,data.length); zipU32(cv,24,data.length); zipU16(cv,28,name.length); zipU32(cv,42,offset); cd.set(name,46); central.push(cd); offset+=head.length+data.length; }
+  const centralSize=central.reduce((n,x)=>n+x.length,0), end=new Uint8Array(22), ev=new DataView(end.buffer); zipU32(ev,0,0x06054b50); zipU16(ev,8,files.length); zipU16(ev,10,files.length); zipU32(ev,12,centralSize); zipU32(ev,16,offset); return new Blob([...parts,...central,end],{type:'application/zip'});
+}
+async function exportAllDecksZip(){
+  const library=await Store.getJSON(STORAGE_KEYS.deckLibrary, []), files=[], manifestFiles=[];
+  for(const entry of Array.isArray(library)?library:[]) (entry.sources||[]).forEach((source,index)=>{
+    const archive=`decks/${entry.id}/${String(index+1).padStart(3,'0')}-${String(source.name||'deck.json').replace(/[^\w.-]/g,'_')}`;
+    files.push({name:archive,text:source.text}); manifestFiles.push({archive,name:source.name||'deck.json',sourceId:source.sourceId||'',deckId:entry.id});
+  });
+  if(!files.length){ toast('没有可导出的已导入题库',{icon:'⚠️'}); return; }
+  files.push({name:'manifest.json',text:JSON.stringify({type:'smc-deck-library',version:2,exportedAt:Date.now(),files:manifestFiles,decks:(library||[]).map(x=>({id:x.id,title:x.title,sources:(x.sources||[]).map(s=>({name:s.name,sourceId:s.sourceId||''}))}))},null,2)});
+  Utils.downloadBlob(`SpacedMemoryCards_题库_${Utils.todayStr()}.zip`,makeStoredZip(files)); toast('题库 ZIP 已导出',{icon:'⬇️'});
 }
 async function exportAllData(){
   const progress = sanitizeProgressForExport(App.progress);
@@ -4681,6 +5163,12 @@ async function importHistoryObj(progressObj, opts={}){
       App.progress[k][deckId] = [...set];
     });
   });
+  const incomingAnnotations=progressObj.cardAnnotations && typeof progressObj.cardAnnotations==='object' ? progressObj.cardAnnotations : {};
+  App.progress.cardAnnotations=App.progress.cardAnnotations||{};
+  Object.entries(incomingAnnotations).forEach(([deckId,notes])=>{
+    if(!notes || typeof notes!=='object') return;
+    App.progress.cardAnnotations[deckId]=Object.assign({},App.progress.cardAnnotations[deckId]||{},notes);
+  });
   rebuildProgressDerivedState();
   await saveProgress();
   if (!opts.silent) toast(`已导入并合并 ${newOnes.length} 条新记录`, {icon:'✅'});
@@ -4728,13 +5216,25 @@ async function importData(file){
    §18. 启动初始化
    ============================================================ */
 async function initApp(){
+  // 先绘制可操作的导入页，后台再恢复本地状态；刷新不再停留在空白根节点。
+  document.body.classList.add('no-initial-view-transition');
+  App.settings = defaultSettings();
+  App.progress = defaultProgress();
+  App.view = 'load';
+  applyTheme();
+  document.documentElement.classList.remove('app-booting');
+  try{ render(); }catch(e){}
   try{
     App.settings = await loadSettings();
     App.progress = await loadProgress();
     App.notesPackage = await Store.getJSON(STORAGE_KEYS.notesPackage, null);
+    // 仅对可识别的旧版断裂 TeX 做一次迁移；正常笔记刷新不再整包解析并重绘公式。
+    if (repairNotesPackageMath(App.notesPackage)) await Store.setJSON(STORAGE_KEYS.notesPackage, App.notesPackage);
     App.notesScrollY = await Store.getJSON(STORAGE_KEYS.notesScrollY, 0);
     const savedTocCollapsed = await Store.getJSON(STORAGE_KEYS.notesTocCollapsed, null);
     if (typeof savedTocCollapsed === 'boolean') App.notesTocCollapsed = savedTocCollapsed;
+    const savedTocFavoritesOnly = await Store.getJSON(STORAGE_KEYS.notesTocFavoritesOnly, null);
+    if (typeof savedTocFavoritesOnly === 'boolean') App.notesTocFavoritesOnly = savedTocFavoritesOnly;
     App.notesBookmarks = new Set(await Store.getJSON(STORAGE_KEYS.notesBookmarks, []));
     App.notesHighlights = await Store.getJSON(STORAGE_KEYS.notesHighlights, {});
     App.notesImageZoom = await Store.getJSON(STORAGE_KEYS.notesImageZoom, {});
@@ -4746,8 +5246,20 @@ async function initApp(){
       else if (mq.addListener) mq.addListener(onSystemThemeChange);
     }
 
-    App.localDecks = await loadLocalDeckFiles();
+    // 已打开题库存在时，直接使用其规范化缓存恢复首屏；避免每次刷新重新下载、解析并合并全部本地题库源文件。
     const cachedDeck = await Store.getJSON(STORAGE_KEYS.lastDeck, null);
+    const hasCachedDeck = !!(cachedDeck && Array.isArray(cachedDeck.questions) && cachedDeck.questions.length);
+    if (hasCachedDeck){
+      App.localDecks = [cachedDeck];
+    } else {
+      App.localDecks = await loadLocalDeckFiles();
+      for (const localDeck of App.localDecks){
+        if(localDeck.sourceText){ await saveDeckSource(localDeck,localDeck.sourceText,localDeck.sourceName||`${localDeck.meta.title}.json`); delete localDeck.sourceText; }
+      }
+      for (const storedDeck of await loadDeckLibrary()){ const idx=App.localDecks.findIndex(item=>item.id===storedDeck.id); if(idx>=0) App.localDecks[idx]=mergeDeckInstances(App.localDecks[idx],storedDeck); else App.localDecks.push(storedDeck); }
+      // 已缓存笔记包时不在每次刷新中重复拉取并解析同目录 HTML。
+      if (!App.notesPackage) await loadLocalAssociatedNotes(App.localDecks.map(deck=>deck.id));
+    }
     const activeDraft = await Store.getJSON(STORAGE_KEYS.activeSession, null);
     let initialDeck = null;
     if (activeDraft && activeDraft.deckId){
@@ -4789,10 +5301,15 @@ async function initApp(){
     App.progress = App.progress || defaultProgress();
     App.view = 'load';
   }
-  document.body.classList.add('no-initial-view-transition');
-  render();
-  await waitForInitialTypography();
-  document.documentElement.classList.remove('app-booting');
+  // 本地字体使用 optional 策略，避免刷新后交换字体；状态恢复完成后直接更新页面。
+  try{
+    render();
+  }catch(e){
+    console.error('首屏渲染失败，回退到题库载入页', e);
+    App.view='load';
+    const view=document.getElementById('view');
+    if (view) view.innerHTML='<div class="view-pad"><div class="container"><div class="empty-state"><h2>载入题库</h2><p>请重新选择或拖入题库文件。</p></div></div></div>';
+  }
   requestAnimationFrame(()=>document.body.classList.remove('no-initial-view-transition'));
 }
 initApp();

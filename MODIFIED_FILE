@@ -5,43 +5,43 @@
    KaTeX keeps its own metric-matched webfonts; Minion Math is used when raw
    formula fallback text is shown. MTPro2 ships here as TeX Type-1 assets, not
    browser webfonts, so it is intentionally not declared as a CSS face. */
-@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Regular.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
-@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Italic.ttf") format("truetype"); font-weight:400; font-style:italic; font-display:swap; }
-@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Medium.ttf") format("truetype"); font-weight:500; font-style:normal; font-display:swap; }
-@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-MediumItalic.ttf") format("truetype"); font-weight:500; font-style:italic; font-display:swap; }
-@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Semibold.ttf") format("truetype"); font-weight:600; font-style:normal; font-display:swap; }
-@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-SemiboldItalic.ttf") format("truetype"); font-weight:600; font-style:italic; font-display:swap; }
-@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Bold.ttf") format("truetype"); font-weight:700; font-style:normal; font-display:swap; }
-@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-BoldItalic.ttf") format("truetype"); font-weight:700; font-style:italic; font-display:swap; }
-@font-face{ font-family:"SMC FZ New Book"; src:url("./fonts/fz-new-book/FZNewBook-Full.woff2") format("woff2"); font-weight:400; font-style:normal; font-display:swap; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
-@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-300.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-300.ttf") format("truetype"); font-weight:300; font-style:normal; font-display:swap; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
-@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-400.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-400.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:swap; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
-@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-500.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-500.ttf") format("truetype"); font-weight:500; font-style:normal; font-display:swap; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
-@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-600.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-600.ttf") format("truetype"); font-weight:600; font-style:normal; font-display:swap; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
-@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-700.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-700.ttf") format("truetype"); font-weight:700; font-style:normal; font-display:swap; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
-@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-800.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-800.ttf") format("truetype"); font-weight:800; font-style:normal; font-display:swap; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
-@font-face{ font-family:"SMC SF Pro"; src:url("./fonts/sf-pro/SF-Pro-Used.woff2?v=20261030.1") format("woff2"); font-weight:400 700; font-style:normal; font-display:swap; }
-@font-face{ font-family:"SMC SF Pro"; src:url("./fonts/sf-pro/SF-Pro-Italic-Used.woff2?v=20261030.1") format("woff2"); font-weight:400 700; font-style:italic; font-display:swap; }
-@font-face{ font-family:"SMC HY QiHei"; src:url("./fonts/hy-qihei/HYQiHei-300-Used.woff2") format("woff2"); font-weight:300; font-style:normal; font-display:swap; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
+@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Regular.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:optional; }
+@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Italic.ttf") format("truetype"); font-weight:400; font-style:italic; font-display:optional; }
+@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Medium.ttf") format("truetype"); font-weight:500; font-style:normal; font-display:optional; }
+@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-MediumItalic.ttf") format("truetype"); font-weight:500; font-style:italic; font-display:optional; }
+@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Semibold.ttf") format("truetype"); font-weight:600; font-style:normal; font-display:optional; }
+@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-SemiboldItalic.ttf") format("truetype"); font-weight:600; font-style:italic; font-display:optional; }
+@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Bold.ttf") format("truetype"); font-weight:700; font-style:normal; font-display:optional; }
+@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-BoldItalic.ttf") format("truetype"); font-weight:700; font-style:italic; font-display:optional; }
+@font-face{ font-family:"SMC FZ New Book"; src:url("./fonts/fz-new-book/FZNewBook-Full.woff2") format("woff2"); font-weight:400; font-style:normal; font-display:optional; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
+@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-300.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-300.ttf") format("truetype"); font-weight:300; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
+@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-400.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-400.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
+@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-500.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-500.ttf") format("truetype"); font-weight:500; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
+@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-600.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-600.ttf") format("truetype"); font-weight:600; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
+@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-700.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-700.ttf") format("truetype"); font-weight:700; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
+@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-800.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-800.ttf") format("truetype"); font-weight:800; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
+@font-face{ font-family:"SMC SF Pro"; src:url("./fonts/sf-pro/SF-Pro-Used.woff2?v=20261030.1") format("woff2"); font-weight:400 700; font-style:normal; font-display:optional; }
+@font-face{ font-family:"SMC SF Pro"; src:url("./fonts/sf-pro/SF-Pro-Italic-Used.woff2?v=20261030.1") format("woff2"); font-weight:400 700; font-style:italic; font-display:optional; }
+@font-face{ font-family:"SMC HY QiHei"; src:url("./fonts/hy-qihei/HYQiHei-300-Used.woff2") format("woff2"); font-weight:300; font-style:normal; font-display:optional; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
 /* UI punctuation follows HY QiHei; authored serif content keeps FZ FW筑紫A老明朝 punctuation. */
-@font-face{ font-family:"SMC HY QiHei Punctuation"; src:url("./fonts/hy-qihei/HYQiHei-300-Used.woff2") format("woff2"); font-weight:300; font-style:normal; font-display:swap; unicode-range:U+0021-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FF00-FF65; }
-@font-face{ font-family:"SMC HY QiHei Punctuation"; src:url("./fonts/hy-qihei/HYQiHei-400-Used.woff2") format("woff2"); font-weight:400; font-style:normal; font-display:swap; unicode-range:U+0021-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FF00-FF65; }
-@font-face{ font-family:"SMC HY QiHei Punctuation"; src:url("./fonts/hy-qihei/HYQiHei-500-Used.woff2") format("woff2"); font-weight:500; font-style:normal; font-display:swap; unicode-range:U+0021-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FF00-FF65; }
-@font-face{ font-family:"SMC HY QiHei Punctuation"; src:url("./fonts/hy-qihei/HYQiHei-600-Used.woff2") format("woff2"); font-weight:600; font-style:normal; font-display:swap; unicode-range:U+0021-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FF00-FF65; }
-@font-face{ font-family:"SMC HY QiHei Punctuation"; src:url("./fonts/hy-qihei/HYQiHei-700-Used.woff2") format("woff2"); font-weight:700; font-style:normal; font-display:swap; unicode-range:U+0021-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FF00-FF65; }
-@font-face{ font-family:"SMC HY QiHei Punctuation"; src:url("./fonts/hy-qihei/HYQiHei-800-Used.woff2") format("woff2"); font-weight:800; font-style:normal; font-display:swap; unicode-range:U+0021-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FF00-FF65; }
-@font-face{ font-family:"SMC HY QiHei Punctuation"; src:url("./fonts/hy-qihei/HYQiHei-900-Used.woff2") format("woff2"); font-weight:900; font-style:normal; font-display:swap; unicode-range:U+0021-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FF00-FF65; }
-@font-face{ font-family:"SMC HY QiHei"; src:url("./fonts/hy-qihei/HYQiHei-400-Used.woff2") format("woff2"); font-weight:400; font-style:normal; font-display:swap; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
-@font-face{ font-family:"SMC HY QiHei"; src:url("./fonts/hy-qihei/HYQiHei-500-Used.woff2") format("woff2"); font-weight:500; font-style:normal; font-display:swap; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
-@font-face{ font-family:"SMC HY QiHei"; src:url("./fonts/hy-qihei/HYQiHei-600-Used.woff2") format("woff2"); font-weight:600; font-style:normal; font-display:swap; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
-@font-face{ font-family:"SMC HY QiHei"; src:url("./fonts/hy-qihei/HYQiHei-700-Used.woff2") format("woff2"); font-weight:700; font-style:normal; font-display:swap; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
-@font-face{ font-family:"SMC HY QiHei"; src:url("./fonts/hy-qihei/HYQiHei-800-Used.woff2") format("woff2"); font-weight:800; font-style:normal; font-display:swap; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
-@font-face{ font-family:"SMC HY QiHei"; src:url("./fonts/hy-qihei/HYQiHei-900-Used.woff2") format("woff2"); font-weight:900; font-style:normal; font-display:swap; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
-@font-face{ font-family:"SMC Minion Math"; src:url("./fonts/minion-math/minion-math.otf") format("opentype"); font-weight:400; font-style:normal; font-display:swap; }
-@font-face{ font-family:"SMC Minion Math"; src:url("./fonts/minion-math/minion-math-medium.otf") format("opentype"); font-weight:500; font-style:normal; font-display:swap; }
-@font-face{ font-family:"SMC Minion Math"; src:url("./fonts/minion-math/minion-math-semibold.otf") format("opentype"); font-weight:600; font-style:normal; font-display:swap; }
-@font-face{ font-family:"SMC Minion Math"; src:url("./fonts/minion-math/minion-math-bold.otf") format("opentype"); font-weight:700; font-style:normal; font-display:swap; }
-@font-face{ font-family:"SMC Apple Emoji"; src:url("./font/Apple%20Color%20Emoji.ttc") format("truetype-collection"),url("./Apple%20Color%20Emoji.woff") format("woff"); font-display:swap; }
+@font-face{ font-family:"SMC HY QiHei Punctuation"; src:url("./fonts/hy-qihei/HYQiHei-300-Used.woff2") format("woff2"); font-weight:300; font-style:normal; font-display:optional; unicode-range:U+0021-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FF00-FF65; }
+@font-face{ font-family:"SMC HY QiHei Punctuation"; src:url("./fonts/hy-qihei/HYQiHei-400-Used.woff2") format("woff2"); font-weight:400; font-style:normal; font-display:optional; unicode-range:U+0021-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FF00-FF65; }
+@font-face{ font-family:"SMC HY QiHei Punctuation"; src:url("./fonts/hy-qihei/HYQiHei-500-Used.woff2") format("woff2"); font-weight:500; font-style:normal; font-display:optional; unicode-range:U+0021-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FF00-FF65; }
+@font-face{ font-family:"SMC HY QiHei Punctuation"; src:url("./fonts/hy-qihei/HYQiHei-600-Used.woff2") format("woff2"); font-weight:600; font-style:normal; font-display:optional; unicode-range:U+0021-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FF00-FF65; }
+@font-face{ font-family:"SMC HY QiHei Punctuation"; src:url("./fonts/hy-qihei/HYQiHei-700-Used.woff2") format("woff2"); font-weight:700; font-style:normal; font-display:optional; unicode-range:U+0021-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FF00-FF65; }
+@font-face{ font-family:"SMC HY QiHei Punctuation"; src:url("./fonts/hy-qihei/HYQiHei-800-Used.woff2") format("woff2"); font-weight:800; font-style:normal; font-display:optional; unicode-range:U+0021-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FF00-FF65; }
+@font-face{ font-family:"SMC HY QiHei Punctuation"; src:url("./fonts/hy-qihei/HYQiHei-900-Used.woff2") format("woff2"); font-weight:900; font-style:normal; font-display:optional; unicode-range:U+0021-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FF00-FF65; }
+@font-face{ font-family:"SMC HY QiHei"; src:url("./fonts/hy-qihei/HYQiHei-400-Used.woff2") format("woff2"); font-weight:400; font-style:normal; font-display:optional; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
+@font-face{ font-family:"SMC HY QiHei"; src:url("./fonts/hy-qihei/HYQiHei-500-Used.woff2") format("woff2"); font-weight:500; font-style:normal; font-display:optional; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
+@font-face{ font-family:"SMC HY QiHei"; src:url("./fonts/hy-qihei/HYQiHei-600-Used.woff2") format("woff2"); font-weight:600; font-style:normal; font-display:optional; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
+@font-face{ font-family:"SMC HY QiHei"; src:url("./fonts/hy-qihei/HYQiHei-700-Used.woff2") format("woff2"); font-weight:700; font-style:normal; font-display:optional; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
+@font-face{ font-family:"SMC HY QiHei"; src:url("./fonts/hy-qihei/HYQiHei-800-Used.woff2") format("woff2"); font-weight:800; font-style:normal; font-display:optional; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
+@font-face{ font-family:"SMC HY QiHei"; src:url("./fonts/hy-qihei/HYQiHei-900-Used.woff2") format("woff2"); font-weight:900; font-style:normal; font-display:optional; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
+@font-face{ font-family:"SMC Minion Math"; src:url("./fonts/minion-math/minion-math.otf") format("opentype"); font-weight:400; font-style:normal; font-display:optional; }
+@font-face{ font-family:"SMC Minion Math"; src:url("./fonts/minion-math/minion-math-medium.otf") format("opentype"); font-weight:500; font-style:normal; font-display:optional; }
+@font-face{ font-family:"SMC Minion Math"; src:url("./fonts/minion-math/minion-math-semibold.otf") format("opentype"); font-weight:600; font-style:normal; font-display:optional; }
+@font-face{ font-family:"SMC Minion Math"; src:url("./fonts/minion-math/minion-math-bold.otf") format("opentype"); font-weight:700; font-style:normal; font-display:optional; }
+@font-face{ font-family:"SMC Apple Emoji"; src:url("./font/Apple%20Color%20Emoji.ttc") format("truetype-collection"),url("./Apple%20Color%20Emoji.woff") format("woff"); font-display:optional; }
 *,*::before,*::after{ box-sizing:border-box; }
 html,body{ height:100%; }
 body{
@@ -122,7 +122,7 @@ a{ color:inherit; }
   --dur-slow:.5s;
 
   /* Typography tokens: the global family can switch the UI and authored content together. */
-  --font-sans:"SMC SF Pro","SMC HY QiHei Punctuation","SMC HY QiHei",sans-serif;
+  --font-sans:"SMC SF Pro Embedded","SMC SF Pro","SMC HY QiHei Punctuation","SMC HY QiHei",sans-serif;
   --font-serif:"SMC CJK Punctuation","SMC FZ New Book","SMC Minion",serif;
   --font-ui:var(--font-sans);
   --font-content:var(--font-serif);
@@ -143,6 +143,7 @@ a{ color:inherit; }
   --font-size-content-lg:22px;
   --font-size-sample:22px;
   --font-weight-thin:300;
+  --font-weight-light:400;
   --font-weight-regular:400;
   --font-weight-medium:500;
   --font-weight-semibold:600;
@@ -415,7 +416,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   border-radius:var(--radius-pill);
   border:none;
   padding:12px 22px;
-  font-size:14.5px; font-weight:700;
+  font-size:var(--font-size-ui-lg); font-weight:700;
   cursor:pointer;
   transition:transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease);
   white-space:nowrap;
@@ -485,7 +486,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   padding:26px;
 }
 .section-title{
-  font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  font-size:var(--font-size-ui-md); font-weight:700; letter-spacing:.08em; text-transform:uppercase;
   color:var(--text-faint); margin-bottom:14px; display:flex; align-items:center; gap:8px;
 }
 .section-title .line{ flex:1; height:1px; background:var(--border-soft); }
@@ -593,7 +594,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .deck-info-card p{ margin:4px 0 0; font-size:12.5px; color:var(--ink-soft); line-height:1.6; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 .deck-info-card .deck-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-left:auto;flex:0 0 auto;}
 .deck-info-card #browse-deck-btn{ margin-left:0; }
-.deck-info-card .swap{ margin-left:12px; }
+.deck-info-card .swap{ margin-left:0; }
 .deck-switcher{
   display:flex; flex-wrap:wrap; gap:8px; margin:-12px 0 24px; max-height:92px; overflow-y:auto; padding-right:2px;
 }
@@ -771,7 +772,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .qcard.leaving{ animation:cardOut .12s ease forwards !important; pointer-events:none; }
 @keyframes cardOut{ from{ opacity:1; } to{ opacity:0; } }
 .qcard.flipping{ animation:cardFlip .38s var(--ease); }
-@keyframes cardFlip{ 0%{ transform:scale(1) rotateX(0); opacity:1; } 45%{ transform:scale(.98) rotateX(5deg); opacity:.75;} 100%{ transform:scale(1) rotateX(0); opacity:1; } }
+@keyframes cardFlip{ 0%{ transform:perspective(1200px) rotateY(-88deg) scale(.96); opacity:.18; } 48%{ transform:perspective(1200px) rotateY(8deg) scale(.995); opacity:.82;} 100%{ transform:perspective(1200px) rotateY(0) scale(1); opacity:1; } }
 .qcard.shake{ animation:cardShake .32s ease; }
 @keyframes cardShake{ 0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(3px)} }
 .qcard.pulse-good{ box-shadow:var(--shadow-card), 0 0 0 3px var(--success); }
@@ -1054,8 +1055,11 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .note-item:last-child{ border-bottom:none; padding-bottom:0; }
 .note-type{ flex:0 0 auto; color:var(--accent); font-size:11px; font-weight:var(--weight-ui-label); }
 .note-question{ color:var(--text-soft); font-size:13px; line-height:1.6; }
-.settings-summary h3{ margin:0 0 6px; color:var(--text); font-size:16px; }
-.settings-summary p{ margin:0; font-size:12.5px; line-height:1.6; }
+.settings-summary h3{ margin:0 0 6px; color:var(--text); font-size:var(--font-size-ui-xl); }
+.settings-summary p{ margin:0; font-size:var(--font-size-ui-sm); line-height:1.6; }
+.settings-section-title{ font-size:var(--font-size-ui-md); }
+.deck-library-panel .settings-panel-heading,.cache-management-panel .settings-panel-heading{ align-items:flex-start; }
+.deck-library-panel .settings-panel-heading p,.cache-management-panel .settings-panel-heading p{ max-width:680px; }
 .settings-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
 
 /* ============================================================
@@ -1243,6 +1247,10 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .browse-q-opts .opt-row.is-wrong{ color:var(--danger-strong); background:var(--danger-bg); }
 .browse-q-opts .opt-row.is-picked{ font-weight:700; }
 .browse-answer{ font-family:var(--font-content); font-weight:var(--font-weight-regular); font-synthesis:weight style; margin-top:8px; padding:10px 14px; background:var(--success-bg); border-radius:var(--radius-sm); color:var(--success-strong); font-size:13px; line-height:1.7; white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
+.question-annotation{margin-top:9px;padding:10px 14px;border:0;border-radius:var(--radius-sm);background:var(--gold-bg);color:var(--gold);font-size:13px;line-height:1.7;white-space:normal;overflow-wrap:anywhere;word-break:break-word;}
+.question-annotation-label{font-size:13px;font-weight:700;color:var(--gold);}
+.question-annotation-text{font-family:var(--font-content);font-size:13px;color:inherit;}
+.qa-detail-inner .question-annotation-row{margin-top:8px;}
 .browse-blank-line{ display:inline-block; width:86px; border-bottom:2px solid var(--text-faint); height:1em; vertical-align:-4px; margin:0 3px; }
 .browse-inline-answer{
   display:inline-block; min-width:86px; min-height:1.2em; padding:0 7px 1px; margin:0 3px; border-bottom:2px solid var(--success);
@@ -1433,7 +1441,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   .big-stat .v{ font-size:21px; }
   .big-stat .l{ font-size:10.5px; line-height:1.25; }
   .settings-actions{ flex-wrap:nowrap; gap:6px; }
-  .settings-actions .btn{ flex:1 1 0; min-width:0; padding:10px 8px; font-size:12px; white-space:nowrap; }
+  .settings-actions .btn{ flex:1 1 0; min-width:0; padding:10px 8px; font-size:var(--font-size-ui-sm); white-space:nowrap; }
   .browse-topbar .browse-answer-fixed,
   .record-topbar .browse-answer-fixed{
     position:fixed; right:14px; bottom:calc(14px + env(safe-area-inset-bottom, 0px));
@@ -1615,6 +1623,8 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
 .notes-document-title{margin:0;color:var(--text);font-size:26px;line-height:1.35;text-align:left;}
 .notes-document-heading .notes-document-title{margin:0;}
 .notes-document-heading.needs-more-clearance{padding-right:52px;}
+.notes-document-heading.needs-calendar-clearance .notes-heading-actions{margin-right:52px;}
+@media (max-width:640px){.notes-document-heading.needs-calendar-clearance .notes-heading-actions{margin-right:44px;}}
 .notes-document-heading.needs-toc-clearance{padding-left:48px;}
 @media (max-width:640px){.notes-document-heading.needs-more-clearance{padding-right:44px;}.notes-document-heading.needs-toc-clearance{padding-left:40px;}}
 .note-section + .note-section{ margin-top:30px; }
@@ -1765,6 +1775,8 @@ html[data-theme="dark"] .notes-toc .notes-toc-link.active{ background:#3a4858; b
 .notes-more-menu{ position:absolute; top:34px; right:0; z-index:40; min-width:120px; padding:5px; border:1px solid var(--border); border-radius:9px; background:var(--bg-elevated); box-shadow:var(--shadow-soft); }
 .notes-more-menu button{ display:block; width:100%; padding:7px 9px; border:0; border-radius:6px; background:transparent; color:var(--text); text-align:left; cursor:pointer; }
 .notes-more-menu button:hover{ background:var(--bg-soft); }
+.notes-menu-divider{ height:1px; margin:5px 4px; background:var(--border); }
+.notes-menu-sources button.active{ color:var(--accent); font-weight:700; }
 .dropzone.dragover{
   border-style:dashed;
   border-width:2px;
@@ -1945,6 +1957,7 @@ html[data-theme="light"] .notes-search-result span{color:var(--text-soft);}
 html[data-theme="light"] .notes-search-result:hover{background:var(--bg-hover);}
 html[data-theme="light"] .notes-search-modal>.notes-filter-close{color:var(--text-soft)!important;background:var(--bg-soft)!important;}
 html[data-theme="light"] .note-rich mark.note-search-highlight{background:#ffe58a!important;color:#20252b!important;text-shadow:none;}
+html[data-theme="dark"] .note-rich mark.note-search-highlight{color:#1d2024!important;text-shadow:none;}
 /* Search dialog: half the viewport, bounded by the desktop width and the existing minimum. */
 .notes-search-modal{width:clamp(520px,50vw,766px);max-width:calc(100vw - 24px);}
 /* Search close control: centered icon with a rounded hover surface. */
@@ -2125,3 +2138,149 @@ html[data-theme="light"] .note-rich mark.note-search-highlight{background:#ffe58
   .notes-heading-actions .note-test-btn{display:inline-flex;visibility:visible;flex:0 0 auto;min-height:40px;padding:0 14px;}
   .note-section:first-of-type{margin-top:12px;}
 }
+/* Mobile study pages: titles and preview controls scroll with the page instead of staying pinned. */
+@media (max-width:640px){
+  .browse-topbar,
+  .record-topbar{position:relative;top:auto;z-index:auto;}
+}
+/* Mobile notes/learning sections: section titles scroll with their content. */
+@media (max-width:640px){
+  .note-section-heading{position:relative;top:auto;z-index:auto;}
+  .note-section-heading::before{display:none;}
+}
+/* Notes calendar: month navigation contains only months that have imported notes. */
+.notes-calendar-btn{width:36px;height:36px;padding:0;border:0;border-radius:8px;background:var(--bg-hover);color:var(--text-soft);font-family:var(--font-symbol);font-size:17px;line-height:1;cursor:pointer;pointer-events:auto;}
+.notes-calendar-btn:hover,.notes-calendar-btn:focus-visible{color:var(--text);background:var(--bg-soft);outline:none;}
+.notes-calendar-overlay{position:fixed;inset:0;z-index:190;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(8,12,16,.48);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.notes-calendar-modal{width:min(344px,calc(100vw - 32px));padding:18px;border:1px solid var(--border);border-radius:18px;background:var(--bg-elevated);box-shadow:var(--shadow-pop);}
+.notes-calendar-modal header{display:flex;align-items:center;justify-content:space-between;gap:10px;}.notes-calendar-title{display:flex;align-items:center;gap:10px;color:var(--text);font-size:17px;font-weight:700;}.notes-calendar-today{padding:5px 9px;border:1px solid var(--border);border-radius:999px;background:transparent;color:var(--text-soft);font:600 12px/1 var(--font-ui);cursor:pointer;}.notes-calendar-today:hover{border-color:var(--accent);color:var(--accent);}.notes-calendar-close{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:0;border-radius:8px;background:transparent;color:var(--text-faint);font-family:var(--font-symbol);font-size:16px;cursor:pointer;}.notes-calendar-close:hover{background:var(--bg-hover);color:var(--text);}
+.notes-calendar-month-nav{display:flex;justify-content:space-between;min-height:28px;margin:10px 0 4px;}.notes-calendar-nav{width:28px;height:28px;border:0;border-radius:8px;background:transparent;color:var(--text-soft);font-family:var(--font-symbol);font-size:15px;cursor:pointer;}.notes-calendar-nav:hover:not(:disabled){background:var(--bg-hover);color:var(--text);}.notes-calendar-nav:disabled{visibility:hidden;}
+.notes-calendar-week,.notes-calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;}.notes-calendar-week{margin:0 0 6px;color:var(--text-faint);font-size:11px;font-weight:700;}.notes-calendar-day{display:inline-flex;align-items:center;justify-content:center;min-height:34px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--text-faint);font:500 13px/1 var(--font-ui);}.notes-calendar-day.has-notes{border-color:var(--border);background:var(--bg-soft);color:var(--text);cursor:pointer;}.notes-calendar-day.has-notes:hover{border-color:var(--accent);background:var(--accent-glow);color:var(--accent);}.notes-calendar-day.today{box-shadow:inset 0 0 0 1px var(--accent);color:var(--accent);}.notes-calendar-day.blank{pointer-events:none;}
+@media (max-width:640px){.notes-calendar-btn{width:36px;height:36px;}.notes-package-toolbar{display:flex;align-items:center;gap:8px;}.notes-calendar-modal{padding:16px;}}
+
+/* Calendar and More controls form one spaced floating glass-control group. */
+.notes-package-toolbar{display:flex;align-items:center;gap:8px;}
+.notes-calendar-btn,.notes-more-btn{box-sizing:border-box;width:36px;height:36px;padding:0;border:0;border-radius:8px;background:color-mix(in srgb,var(--bg-elevated) 65%,transparent);color:var(--text-soft);box-shadow:none;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);}
+.notes-calendar-btn{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;font-family:var(--font-symbol);font-size:17px;line-height:1;}
+.notes-calendar-btn:hover,.notes-calendar-btn:focus-visible{background:var(--bg-hover);color:var(--text);outline:none;}
+@media (max-width:640px){.notes-calendar-btn,.notes-more-btn{width:36px;height:36px;}}
+/* Keep the bookmark filter beside the expanded directory control. */
+.notes-toc-controls{display:flex;align-items:center;gap:6px;margin-left:auto;}
+.notes-toc-favorites-filter{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:28px;height:28px;padding:0;border:0;border-radius:7px;background:transparent;color:var(--text-faint);cursor:pointer;}
+.notes-toc-favorites-filter:hover,.notes-toc-favorites-filter:focus-visible{background:var(--bg-soft);color:var(--text);outline:none;}
+.notes-toc-favorites-filter.on{background:var(--accent-glow);color:var(--accent);}
+.notes-toc.collapsed .notes-toc-controls{width:40px;height:40px;}
+.notes-empty-filter{margin:24px 0;padding:22px;border:1px dashed var(--border);border-radius:12px;color:var(--text-faint);text-align:center;}
+
+/* Study-card annotations use the SF Pro Light weight. */
+.annotation-btn{width:34px;height:34px;aspect-ratio:1;flex:0 0 34px;padding:0;border-radius:50%;border:1px solid var(--paper-line);background:var(--surface-lift-1);color:var(--ink-faint);cursor:pointer;font-size:18px;font-weight:var(--font-weight-light);line-height:1;display:flex;align-items:center;justify-content:center;transition:all var(--dur-fast) var(--ease);}
+.annotation-btn:hover{transform:translateY(-1px);background:var(--gold-bg);color:var(--gold);border-color:color-mix(in srgb,var(--gold) 60%,transparent);}
+.annotation-btn.on{background:var(--gold-bg);color:var(--gold);border-color:color-mix(in srgb,var(--gold) 60%,transparent);}
+.annotation-btn .icon-symbol{font-weight:var(--font-weight-light);-webkit-text-stroke:0;font-variation-settings:"wght" 400;}
+.annotation-card-body{display:grid;gap:10px;margin-top:18px;}.annotation-card-body label{font-size:12px;font-weight:700;color:var(--ink-faint);}.annotation-card-body p{margin:0;color:var(--ink-faint);font-size:12px;}.card-annotation-input{box-sizing:border-box;width:100%;min-height:178px;resize:vertical;padding:14px;border:1px solid var(--paper-line);border-radius:12px;background:var(--surface-lift-1);color:var(--color-content-primary);font:inherit;line-height:1.65;outline:none;}.card-annotation-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+/* The outlined day marks the imported note currently being read, not the calendar date. */
+.notes-calendar-day.today{box-shadow:none;color:var(--text-faint);}.notes-calendar-day.is-reading{box-shadow:inset 0 0 0 1px var(--accent);color:var(--accent);}
+
+/* Front/back card changes use a real perspective Y-axis flip. */
+.qcard.flipping{transform-style:preserve-3d;backface-visibility:hidden;will-change:transform,opacity;}
+.qcard.annotation-face .annotation-card-title{min-height:1.65em;}
+
+.qcard.annotation-closing{animation:cardFlipBack .42s var(--ease);}
+@keyframes cardFlipBack{0%{transform:perspective(1200px) rotateY(-88deg) scale(.96);opacity:.18;}48%{transform:perspective(1200px) rotateY(8deg) scale(.995);opacity:.82;}100%{transform:perspective(1200px) rotateY(0) scale(1);opacity:1;}}
+
+.question-annotation-quote{font-weight:400;}
+.question-annotation-text{font-weight:700;}
+
+.preview-annotation-btn{width:34px;height:34px;flex:0 0 34px;padding:0;border:1px solid var(--paper-line);border-radius:50%;background:var(--surface-lift-1);color:var(--ink-faint);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;font-weight:var(--font-weight-light);}
+.preview-annotation-btn:hover,.preview-annotation-btn.on{background:var(--gold-bg);color:var(--gold);border-color:color-mix(in srgb,var(--gold) 60%,transparent);}
+.preview-annotation-slot:not(.has-note):not(.editing){display:none;}
+.preview-annotation-slot .question-annotation{display:none;}
+.preview-annotation-slot.has-note:not(.editing) .question-annotation{display:block;}
+.preview-annotation-input{display:none;box-sizing:border-box;width:100%;min-height:92px;margin-top:9px;padding:10px 14px;border:1px solid color-mix(in srgb,var(--gold) 55%,var(--paper-line));border-radius:var(--radius-sm);background:var(--gold-bg);color:var(--color-content-primary);font:var(--font-weight-light) 13px/1.65 var(--font-content);resize:vertical;outline:none;}
+.preview-annotation-slot.editing .preview-annotation-input{display:block;}
+.preview-annotation-input:focus{box-shadow:0 0 0 3px color-mix(in srgb,var(--gold) 18%,transparent);}
+
+.preview-annotation-btn .icon-symbol{font-weight:var(--font-weight-light);-webkit-text-stroke:0;font-variation-settings:"wght" 400;}
+.annotation-editor-wrap{position:relative;}
+.annotation-editor-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:16px;}
+.annotation-editor-footer p{flex:1;font-size:13px;}
+.annotation-clear-btn{flex:0 0 auto;padding:0;border:0;background:transparent;color:var(--danger-strong);font:inherit;font-size:13px;font-weight:700;line-height:1.2;cursor:pointer;}
+.annotation-clear-btn:hover{color:var(--danger);text-decoration:underline;}
+.annotation-clear-btn[hidden]{display:none;}
+
+/* “今天”保持原本的药丸按钮样式。 */
+.notes-calendar-today{border:1px solid var(--border);background:transparent;border-radius:999px;width:auto;height:auto;min-width:0;min-height:0;padding:5px 9px;}
+.notes-calendar-today:hover{border-color:var(--accent);background:var(--accent-glow);color:var(--accent);}
+.notes-calendar-day.is-reading{box-shadow:none;background:var(--accent-glow);border-color:transparent;border-radius:50%;width:34px;height:34px;min-height:0;aspect-ratio:1;justify-self:center;}
+
+/* Place the directory toggle immediately to the left of the 目录 heading. */
+.notes-toc-head .notes-toc-controls{display:contents;}
+.notes-toc-head .notes-toc-action{order:-2;}
+.notes-toc-head h2{order:-1;}
+.notes-toc-head .notes-toc-favorites-filter{order:0;}
+.notes-toc-head{justify-content:flex-start;}
+.notes-toc-head h2{margin-right:auto;text-align:left;}
+.notes-toc-head .notes-toc-favorites-filter{margin-left:auto;}
+/* The favorites filter belongs to the expanded directory only; never show it beside the collapsed directory toggle. */
+.notes-toc.collapsed .notes-toc-favorites-filter{display:none!important;}
+/* Enabled favorites filter keeps the default control color and uses a solid bookmark fill. */
+.notes-toc-favorites-filter.on{background:var(--bg-soft);color:var(--text-faint);}
+.notes-toc-favorites-filter.on .note-bookmark-icon{fill:currentColor;}
+.notes-toc-favorites-filter.on{background:transparent;border-radius:0;}
+.notes-toc-favorites-filter:hover,.notes-toc-favorites-filter:focus-visible{background:transparent;border-radius:0;color:var(--text-faint);}
+
+.reading-article{margin:0 0 18px;padding:18px 20px;border-radius:14px;background:var(--bg-soft);color:var(--text);line-height:1.75;}
+
+/* 笔记搜索移到目录按钮右侧：与目录控件同尺寸、毛玻璃并参与挤压布局。 */
+.notes-toc-search{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:40px;height:40px;padding:0;border:0;border-radius:10px;background:color-mix(in srgb,var(--bg-elevated) 65%,transparent);color:var(--text-soft);box-shadow:none;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);font-family:var(--font-symbol);font-size:20px;line-height:1;cursor:pointer;transition:background .16s ease,color .16s ease,transform .16s ease;}
+.notes-toc-search:hover,.notes-toc-search:focus-visible{background:var(--bg-hover);color:var(--text);outline:none;}
+.notes-toc-search:active{transform:scale(.96);}
+.notes-toc-head .notes-toc-controls{display:flex;align-items:center;gap:8px;min-width:0;}
+@media (max-width:760px){.notes-toc-search{width:40px;height:40px;border-radius:10px;}.notes-toc-head .notes-toc-controls{gap:6px;}}
+
+/* 搜索按钮与目录按钮统一尺寸与悬停反馈，并允许标题在窄宽度下被控件挤压。 */
+.notes-toc-head h2{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.notes-toc-head .notes-toc-controls{flex:0 1 auto;}
+.notes-toc-search{width:28px;height:28px;border-radius:7px;background:color-mix(in srgb,var(--bg-elevated) 65%,transparent);font-size:18px;font-weight:var(--font-weight-light);}
+.notes-toc-search:hover,.notes-toc-search:focus-visible{background:var(--bg-soft);color:var(--text);}
+@media (max-width:760px){.notes-toc-search{width:28px;height:28px;border-radius:7px;font-size:18px;}}
+
+/* 移动端目录展开时让顶部日历与更多控件暂时让位，收起目录后恢复。 */
+@media (max-width:760px){
+  .notes-shell.notes-toc-expanded .notes-calendar-btn,
+  .notes-shell.notes-toc-expanded .notes-more-btn{display:none;}
+}
+
+/* 收起目录时仅保留目录切换按钮，避免打开时重新渲染整页。 */
+.notes-toc.collapsed .notes-toc-favorites-filter{display:none;}
+.notes-toc.collapsed .notes-toc-search{display:none;}
+
+/* 搜索控件最终对齐：图标本身继承 Light，按钮与目录控件形成紧凑挤压组。 */
+.notes-toc-head .notes-toc-controls{gap:0;flex-shrink:0;}
+.notes-toc-head .notes-toc-search{margin-left:-4px;z-index:1;font-weight:var(--font-weight-light);}
+.notes-toc-head .notes-toc-search .icon-symbol{font-weight:var(--font-weight-light);font-variation-settings:"wght" 300;-webkit-text-stroke:0;}
+.notes-toc-head .notes-toc-search:hover,.notes-toc-head .notes-toc-search:focus-visible{background:var(--bg-soft);color:var(--text);}
+
+/* 目录按钮固定在“目录”标题左侧；搜索与收藏保持在右侧。 */
+.notes-toc-head .notes-toc-controls{display:contents;}
+.notes-toc-head .notes-toc-action{order:-3;}
+.notes-toc-head h2{order:-2;}
+.notes-toc-head .notes-toc-search{order:0;margin-left:auto;}
+.notes-toc-head .notes-toc-favorites-filter{order:1;margin-left:0;}
+.notes-toc.collapsed .notes-toc-action{order:0;}
+
+/* 搜索按钮完全复用目录按钮的尺寸、颜色和悬停反馈。 */
+.notes-toc-head .notes-toc-search{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;box-sizing:border-box;padding:0;border:0;border-radius:7px;background:transparent;color:var(--text-faint);font-family:var(--font-symbol);font-size:18px;font-weight:var(--font-weight-light);line-height:1;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;}
+.notes-toc-head .notes-toc-search:hover,.notes-toc-head .notes-toc-search:focus-visible{background:var(--bg-soft);color:var(--text);outline:none;}
+.notes-toc-head .notes-toc-search .icon-symbol{font-size:18px;font-weight:var(--font-weight-light);color:inherit;}
+
+/* 搜索按钮不使用圆角矩形，改为正圆交互面。 */
+.notes-toc-head .notes-toc-search{border-radius:50%;}
+
+/* 仅保留整体悬停高亮，不显示底部色块。 */
+.notes-more-btn::after,.notes-toc-head .notes-toc-search::after{content:none!important;display:none!important;}
+
+/* 搜索按钮与“仅收藏”按钮完全同款：尺寸、字号、默认颜色一致且不显示悬停样式。 */
+.notes-toc-head .notes-toc-search{width:28px;height:28px;flex:0 0 28px;padding:0;border:0;border-radius:7px;background:transparent;color:var(--text-faint);font-size:18px;font-weight:var(--font-weight-light);box-shadow:none;transform:none;}
+.notes-toc-head .notes-toc-search:hover,.notes-toc-head .notes-toc-search:focus-visible,.notes-toc-head .notes-toc-search:active{background:transparent;color:var(--text-faint);outline:none;transform:none;}
+.notes-toc-head .notes-toc-search .icon-symbol{font-size:18px;font-weight:var(--font-weight-light);color:inherit;}
