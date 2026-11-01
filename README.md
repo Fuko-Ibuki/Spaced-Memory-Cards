@@ -5,8 +5,8 @@
 ## 功能概览
 
 - **三种学习模式**：闪卡（Again / Hard / Good / Easy 间隔重复）、学习（即时反馈与错题重排）、测试（完成后统一判分）。
-- **题库能力**：支持填空、单选、阅读、多选、判断、简答和综合分析；可按章节、题型、错题本、复习本与数量抽题。
-- **笔记能力**：导入 HTML / HTM 笔记或本应用导出的笔记 ZIP；提供目录、搜索、高亮、收藏、图片放大、日历与章节测试入口。
+- **题库能力**：支持填空、单选、阅读、多选、判断、简答和综合分析；兼容 v2 内容块、旧版字段与阅读文章分组；可按章节、题型、错题本、复习本与数量抽题。
+- **笔记能力**：导入 HTML / HTM 笔记或本应用导出的笔记 ZIP；提供目录、搜索、高亮、收藏、图片放大、日历与章节测试入口；目录展开/收起会保持正文当前阅读位置。
 - **多笔记管理**：同一学科的笔记合并显示；没有学科字段时按无后缀文件名区分；菜单可切换全部或单个来源，正文与目录同步筛选。
 - **关联学习**：笔记可通过题目 ID、笔记 ID 或标题关联题库；章节可携带测试配置并直接开始测试。
 - **数据与界面**：本地保存设置、进度、题库库、笔记、注释和高亮；支持深浅主题、桌面端与移动端、键盘操作。
@@ -57,9 +57,14 @@ python3 -m http.server 8000
       "id": "math-001",
       "type": "single_choice",
       "chapter": "第一章",
-      "question": "1 + 1 = ?",
-      "options": ["1", "2", "3", "4"],
-      "answer": "B",
+      "content": [{"type": "text", "text": "1 + 1 = ?"}],
+      "options": [
+        {"key": "A", "text": "1"},
+        {"key": "B", "text": "2"},
+        {"key": "C", "text": "3"},
+        {"key": "D", "text": "4"}
+      ],
+      "answer": {"keys": ["B"]},
       "explanation": "1 + 1 = 2"
     }
   ]
@@ -70,7 +75,7 @@ python3 -m http.server 8000
 
 | `type` | 说明 |
 | --- | --- |
-| `fill_blank` | 填空题；题干使用 `___`，答案使用 `answers` 或 v2 `blanks[].answers`。 |
+| `fill_blank` | 并列填空题；题干使用 `___`，答案使用 `answers` 或 v2 `blanks[].answers`，多个可接受答案保持为数组。 |
 | `single_choice` | 单选题。 |
 | `reading` | 阅读题；与单选题相同，并支持 `article` / `passage` 与 `articleId`。 |
 | `multiple_choice` | 多选题。 |
@@ -78,7 +83,7 @@ python3 -m http.server 8000
 | `short_answer` | 简答题。 |
 | `essay` | 综合分析题。 |
 
-题目可使用 `content`、`options[].content` 与 `explanation` 内容块。支持 `text`、`math`、`image`、`audio`、`blank` 和 `lineBreak`；公式 LaTeX 在 JSON 内需转义反斜杠，例如 `"\\frac{a}{b}"`。完整题库示例见 [`MEDIA_V2_SAMPLE.json`](MEDIA_V2_SAMPLE.json)，关联笔记示例见 [`MEDIA_V2_SAMPLE.html`](MEDIA_V2_SAMPLE.html)。
+题目可使用 `content`、`options[].content` 与 `explanation` 内容块。`explanation` 为可选字段：写入后会在答题反馈、测试结果或闪卡翻面中显示；主观题会同时显示参考答案与解析。旧版题库也可使用 `question`、字符串选项和字母答案。支持 `text`、`math`、`image`、`audio`、`blank` 和 `lineBreak`；公式 LaTeX 在 JSON 内需转义反斜杠，例如 `"\\frac{a}{b}"`。完整题库示例见 [`MEDIA_V2_SAMPLE.json`](MEDIA_V2_SAMPLE.json)，关联笔记示例见 [`MEDIA_V2_SAMPLE.html`](MEDIA_V2_SAMPLE.html)。
 
 ### 兼容输入
 
@@ -120,12 +125,12 @@ python3 -m http.server 8000
 
 ### 结构与字段
 
-- 使用 `main > section.chap > section.sec > article.kp` 组织内容；每个 `article.kp` 必须包含 `.md` 正文。
+- 使用 `main[data-subject][data-deck-id] > section.chap > section.sec > article.kp` 组织内容；每个 `article.kp` 必须包含 `.md` 正文。
 - 标题使用 `h1`、`h2`、`h3`、`h4`；小节说明使用 `.desc`，来源使用 `.src`。
 - 建议填写 1～4 个汉字的学科：`main[data-subject]` 或 `<meta name="subject">`，并与题库 `deck.subject` 保持一致。
 - `data-deck-id` 可写在 `main` 或 `section.sec`，用于选择关联题库。
 - `data-question-id` 优先关联 `questions[].id`；随后依次尝试笔记 `data-id` 和笔记标题与题干的完全匹配。
-- `data-type` 支持 `rule`、`concept`、`contrast`、`method`、`example`、`pitfall`、`memo`、`vocabulary`。
+- `data-type` 推荐使用 `concept`、`rule`、`method`、`contrast`、`pitfall`、`example`、`memo` 七类。
 - `data-test-config` 可包含 `questionLimit`、`timeLimitEnabled`、`timeLimitMinutes`、`shuffleQuestions`、`shuffleOptions`、`includeTypes`、`chapterFilter`。
 - 正文支持 `$...$`、`$$...$$`、`\(...\)`、`\[...\]` LaTeX；公式由本地 KaTeX 渲染。
 
@@ -139,9 +144,9 @@ python3 -m http.server 8000
 
 ## 笔记媒体与排版
 
-- 图片建议使用 `<figure class="note-image">`、`<img alt="…">` 和 `<figcaption>`；可添加 `float-right`，移动端会取消绕排。
+- 图片建议使用 `<p><img src="…" alt="…"></p>`，后接一个 `<p>` 作为说明文字。导入器会过滤不在白名单中的标签、脚本、样式和内联事件；SVG 也会递归按白名单保留。
 - 图片、链接应使用相对路径或 HTTPS 地址；图片提供准确 `alt`。
-- SVG 的文字显式指定 `font-size`；需要随主题变化的黑白文字使用 `currentColor`，彩色图形使用固定颜色。
+- SVG 的文字可显式指定 `font-size`；需要随主题变化的黑白文字使用 `currentColor`，彩色图形使用固定颜色。
 - 导入笔记不执行自带脚本。交互需求请使用本应用提供的目录、搜索、收藏、高亮、图片缩放和测试入口。
 
 ## 数据、导入与隐私
