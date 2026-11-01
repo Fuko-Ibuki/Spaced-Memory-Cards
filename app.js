@@ -4449,7 +4449,7 @@ function deckLibraryManagementHtml(){
 function bindDeckLibraryManagement(container){ const btn=container.querySelector('#settings-export-decks-btn'); if(btn) btn.onclick=exportAllDecksZip; }
 function cacheManagementHtml(){
   return `<div class="section-title settings-section-title" style="margin-top:26px;">缓存管理<span class="line"></span></div>
-    <div class="panel cache-management-panel"><div class="settings-panel-heading"><div><h3>清空缓存</h3><p class="muted">清空上次打开的题库、已导入笔记与未完成答题草稿，并恢复应用设置默认值；不影响学习记录、复习本和错题本。</p></div></div>
+    <div class="panel cache-management-panel"><div class="settings-panel-heading"><div><h3>清空缓存</h3><p class="muted">清空上次打开的题库、已导入题库源、题库索引、已导入笔记与未完成答题草稿，并恢复应用设置默认值；不影响学习记录、复习本和错题本。</p></div></div>
       <div class="settings-actions">
         <button class="btn btn-danger" id="clear-cache-btn" type="button">清空缓存</button>
       </div>
@@ -4458,8 +4458,10 @@ function cacheManagementHtml(){
 function bindCacheManagement(container){
   const clearBtn=container.querySelector('#clear-cache-btn');
   if (clearBtn) clearBtn.onclick = ()=>{
-    confirmModal('清空缓存？', '此操作会删除上次打开的题库、已导入笔记与未完成答题草稿，并恢复应用设置默认值；不会影响学习记录、复习本或错题本。', async ()=>{
+    confirmModal('清空缓存？', '此操作会删除上次打开的题库、已导入题库源、题库索引、已导入笔记与未完成答题草稿，并恢复应用设置默认值；不会影响学习记录、复习本或错题本。', async ()=>{
       await Store.remove(STORAGE_KEYS.lastDeck);
+      await Store.remove(STORAGE_KEYS.deckLibrary);
+      await Store.remove(STORAGE_KEYS.deckRegistry);
       await Store.remove(STORAGE_KEYS.notesPackage);
       await Store.remove(STORAGE_KEYS.notesBookmarks);
       await Store.remove(STORAGE_KEYS.notesScrollY);
