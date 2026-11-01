@@ -1,26 +1,418 @@
 {
   "schemaVersion": "2.1",
-  "deck": { "id": "rich-content-demo", "title": "富媒体题库示例", "language": "zh-CN", "version": "2.1" },
+  "deck": {
+    "id": "media-v2-practice",
+    "title": "综合能力测试题库（内嵌媒体版）",
+    "subject": "数学与科学基础",
+    "language": "zh-CN",
+    "version": "2.2.0",
+    "description": "覆盖单选、多选、判断、填空、简答与综合题，包含内嵌 SVG、公式和分步解析。"
+  },
   "assets": {
-    "atom": { "type": "image", "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMjAiIGhlaWdodD0iMTIwIiB2aWV3Qm94PSIwIDAgMzIwIDEyMCI+PHJlY3Qgd2lkdGg9IjMyMCIgaGVpZ2h0PSIxMjAiIGZpbGw9IiNmNmYzZWYiLz48Y2lyY2xlIGN4PSIxNjAiIGN5PSI2MCIgcj0iMTYiIGZpbGw9IiM5YzY2MzAiLz48ZWxsaXBzZSBjeD0iMTYwIiBjeT0iNjAiIHJ4PSIxMDAiIHJ5PSIzMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNDY3ZTc5IiBzdHJva2Utd2lkdGg9IjMiLz48dGV4dCB4PSIxMiIgeT0iMjQiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiMzOTNkM2YiPuWOn+WtkOe7k+aehDwvdGV4dD48L3N2Zz4=", "alt": "原子结构示意图", "caption": "内嵌 SVG 示例" }
+    "trend-graph": {
+      "type": "image",
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MjAgMjYwIj48cmVjdCB3aWR0aD0iNTIwIiBoZWlnaHQ9IjI2MCIgcng9IjIwIiBmaWxsPSIjZjdmOGYyIi8+PHBhdGggZD0iTTU1IDIxNUg0NzVNOTAgMjM1VjI4IiBzdHJva2U9IiMyNjMzMmQiIHN0cm9rZS13aWR0aD0iMyIvPjxwYXRoIGQ9Im00NzUgMjE1LTEyLTd2MTR6TTkwIDI4bC03IDEyaDE0eiIgZmlsbD0iIzI2MzMyZCIvPjxwYXRoIGQ9Ik05MCAxNTVDMTQ1IDE1MCAxODUgMTE4IDIyNSA4NXM3NS01NCAxMzAtNjciIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzM5YTg2NiIgc3Ryb2tlLXdpZHRoPSI2Ii8+PHBhdGggZD0iTTkwIDIwNUMxNDUgMTkyIDE5MCAxNjUgMjMwIDEzMHM3OC03NCAxNDUtODciIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzNlN2VkYiIgc3Ryb2tlLXdpZHRoPSI2Ii8+PHRleHQgeD0iMzkwIiB5PSI2MiIgZmlsbD0iIzNlN2VkYiIgZm9udC1zaXplPSIyMCI+eT1mKHgpPC90ZXh0Pjx0ZXh0IHg9IjExMCIgeT0iNTIiIGZpbGw9IiMzOWE4NjYiIGZvbnQtc2l6ZT0iMjAiPuWinumVv+i2i+WKvzwvdGV4dD48dGV4dCB4PSI0NjUiIHk9IjI0MCIgZm9udC1zaXplPSIxOCI+eDwvdGV4dD48dGV4dCB4PSI3MCIgeT0iMzUiIGZvbnQtc2l6ZT0iMTgiPnk8L3RleHQ+PC9zdmc+",
+      "alt": "函数增长趋势示意图",
+      "caption": "内嵌 SVG：增长趋势示意图"
+    }
   },
   "questions": [
     {
-      "id": "physics-001",
+      "id": "media-001",
       "type": "single_choice",
-      "chapter": "公式与图片",
+      "chapter": "一、函数理解",
+      "tags": [
+        "函数",
+        "图像"
+      ],
+      "difficulty": 1,
       "content": [
-        { "type": "text", "text": "根据牛顿第二定律：" },
-        { "type": "math", "latex": "F=m a", "display": true },
-        { "type": "image", "asset": "atom" },
-        { "type": "text", "text": "若 F=6 N、m=2 kg，则加速度是？" }
+        {
+          "type": "text",
+          "text": "观察下图，哪一条曲线表示函数值随 x 增大而持续增长？"
+        },
+        {
+          "type": "image",
+          "asset": "trend-graph"
+        }
       ],
       "options": [
-        { "key": "a", "content": [{ "type": "math", "latex": "2\\,\\mathrm{m/s^2}" }] },
-        { "key": "b", "content": [{ "type": "math", "latex": "3\\,\\mathrm{m/s^2}" }] }
+        {
+          "key": "a",
+          "content": [
+            {
+              "type": "text",
+              "text": "绿色曲线"
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "content": [
+            {
+              "type": "text",
+              "text": "蓝色曲线"
+            }
+          ]
+        },
+        {
+          "key": "c",
+          "content": [
+            {
+              "type": "text",
+              "text": "两条曲线都不是"
+            }
+          ]
+        },
+        {
+          "key": "d",
+          "content": [
+            {
+              "type": "text",
+              "text": "无法判断"
+            }
+          ]
+        }
       ],
-      "answer": { "keys": ["b"] },
-      "explanation": [{ "type": "math", "latex": "a=F/m=3\\,\\mathrm{m/s^2}", "display": true }]
+      "answer": {
+        "keys": [
+          "a"
+        ]
+      },
+      "explanation": [
+        {
+          "type": "text",
+          "text": "绿色曲线从左到右整体上升，因此表示函数值随 x 增大而持续增长。"
+        }
+      ]
+    },
+    {
+      "id": "media-002",
+      "type": "multiple_choice",
+      "chapter": "一、函数理解",
+      "tags": [
+        "定义域",
+        "性质"
+      ],
+      "difficulty": 2,
+      "content": [
+        {
+          "type": "text",
+          "text": "关于函数 "
+        },
+        {
+          "type": "math",
+          "latex": "f(x)=\\sqrt{x-1}"
+        },
+        {
+          "type": "text",
+          "text": "，下列说法正确的是（多选）："
+        }
+      ],
+      "options": [
+        {
+          "key": "a",
+          "content": [
+            {
+              "type": "text",
+              "text": "定义域为 "
+            },
+            {
+              "type": "math",
+              "latex": "[1,+\\infty)"
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "content": [
+            {
+              "type": "text",
+              "text": "当 x=2 时，"
+            },
+            {
+              "type": "math",
+              "latex": "f(x)=1"
+            }
+          ]
+        },
+        {
+          "key": "c",
+          "content": [
+            {
+              "type": "text",
+              "text": "函数图像关于 y 轴对称"
+            }
+          ]
+        },
+        {
+          "key": "d",
+          "content": [
+            {
+              "type": "text",
+              "text": "函数值恒为负数"
+            }
+          ]
+        }
+      ],
+      "answer": {
+        "keys": [
+          "a",
+          "b"
+        ]
+      },
+      "explanation": [
+        {
+          "type": "text",
+          "text": "根式内需满足 x−1≥0，所以定义域为 [1,+∞)；f(2)=1。该函数不具有 y 轴对称性，函数值也不为负。"
+        }
+      ]
+    },
+    {
+      "id": "media-003",
+      "type": "true_false",
+      "chapter": "二、导数基础",
+      "tags": [
+        "导数",
+        "判断"
+      ],
+      "difficulty": 1,
+      "content": [
+        {
+          "type": "text",
+          "text": "若函数在某点可导，则该点一定连续。"
+        }
+      ],
+      "answer": {
+        "value": true
+      },
+      "explanation": [
+        {
+          "type": "text",
+          "text": "可导必连续，但连续不一定可导。"
+        }
+      ]
+    },
+    {
+      "id": "media-004",
+      "type": "fill_in_the_blank",
+      "chapter": "二、导数基础",
+      "tags": [
+        "公式",
+        "填空"
+      ],
+      "difficulty": 1,
+      "content": [
+        {
+          "type": "text",
+          "text": "若 "
+        },
+        {
+          "type": "math",
+          "latex": "y=x^3+2x"
+        },
+        {
+          "type": "text",
+          "text": "，则 "
+        },
+        {
+          "type": "math",
+          "latex": "y'="
+        },
+        {
+          "type": "text",
+          "text": " ______。"
+        }
+      ],
+      "answers": [
+        "3x^2+2",
+        "3x²+2"
+      ],
+      "explanation": [
+        {
+          "type": "math",
+          "latex": "y'=3x^2+2",
+          "display": true
+        }
+      ]
+    },
+    {
+      "id": "media-005",
+      "type": "short_answer",
+      "chapter": "二、导数基础",
+      "tags": [
+        "应用",
+        "简答"
+      ],
+      "difficulty": 2,
+      "content": [
+        {
+          "type": "text",
+          "text": "说明导数 "
+        },
+        {
+          "type": "math",
+          "latex": "f'(x)"
+        },
+        {
+          "type": "text",
+          "text": " 在几何上的常见含义。"
+        }
+      ],
+      "answer": "曲线在该点处切线的斜率；也可表示函数在该点附近的瞬时变化率。",
+      "explanation": [
+        {
+          "type": "text",
+          "text": "在函数图像中，导数值等于对应点切线的斜率；在变化率语境中，它表示瞬时变化率。"
+        }
+      ]
+    },
+    {
+      "id": "media-006",
+      "type": "essay",
+      "chapter": "三、综合应用",
+      "tags": [
+        "积分",
+        "建模"
+      ],
+      "difficulty": 3,
+      "content": [
+        {
+          "type": "text",
+          "text": "求曲线 "
+        },
+        {
+          "type": "math",
+          "latex": "y=x^2"
+        },
+        {
+          "type": "text",
+          "text": " 与直线 "
+        },
+        {
+          "type": "math",
+          "latex": "y=2x"
+        },
+        {
+          "type": "text",
+          "text": " 围成图形的面积，并写出积分区间。"
+        }
+      ],
+      "answer": "交点为 x=0 与 x=2，面积为 ∫₀²(2x−x²)dx=4/3。",
+      "explanation": [
+        {
+          "type": "text",
+          "text": "先解 x²=2x 得交点横坐标 0、2。在区间 [0,2] 上直线位于抛物线上方，因此面积为："
+        },
+        {
+          "type": "math",
+          "latex": "S=\\int_0^2(2x-x^2)\\,dx=\\left[x^2-\\frac{x^3}{3}\\right]_0^2=\\frac{4}{3}",
+          "display": true
+        }
+      ]
+    },
+    {
+      "id": "media-007",
+      "type": "single_choice",
+      "chapter": "三、综合应用",
+      "tags": [
+        "极限",
+        "公式"
+      ],
+      "difficulty": 2,
+      "content": [
+        {
+          "type": "text",
+          "text": "计算极限："
+        },
+        {
+          "type": "math",
+          "latex": "\\lim_{x\\to 0}\\frac{\\sin x}{x}=?",
+          "display": true
+        }
+      ],
+      "options": [
+        {
+          "key": "a",
+          "content": [
+            {
+              "type": "math",
+              "latex": "0"
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "content": [
+            {
+              "type": "math",
+              "latex": "1"
+            }
+          ]
+        },
+        {
+          "key": "c",
+          "content": [
+            {
+              "type": "math",
+              "latex": "\\infty"
+            }
+          ]
+        },
+        {
+          "key": "d",
+          "content": [
+            {
+              "type": "text",
+              "text": "不存在"
+            }
+          ]
+        }
+      ],
+      "answer": {
+        "keys": [
+          "b"
+        ]
+      },
+      "explanation": [
+        {
+          "type": "text",
+          "text": "这是基本极限，结果为 1。"
+        }
+      ]
+    },
+    {
+      "id": "media-008",
+      "type": "true_false",
+      "chapter": "四、易错辨析",
+      "tags": [
+        "积分",
+        "判断"
+      ],
+      "difficulty": 2,
+      "content": [
+        {
+          "type": "text",
+          "text": "因为 "
+        },
+        {
+          "type": "math",
+          "latex": "\\int f(x)g(x)dx=\\int f(x)dx\\cdot\\int g(x)dx"
+        },
+        {
+          "type": "text",
+          "text": "，所以积分可以直接拆成乘积。"
+        }
+      ],
+      "answer": {
+        "value": false
+      },
+      "explanation": [
+        {
+          "type": "text",
+          "text": "一般不成立。乘积的积分不能拆成两个积分的乘积，需根据被积函数结构使用换元、分部积分等方法。"
+        }
+      ]
     }
   ]
 }
