@@ -1,7 +1,0 @@
-Font packaging update:
-- Converted all tracked runtime font assets to .woff.
-- Updated style.css @font-face declarations to use only .woff sources.
-- Removed tracked TTF, OTF, and WOFF2 runtime copies.
-- Added .gitignore rules preventing fonts/**/*.ttf, fonts/**/*.otf, and fonts/**/*.woff2 from future GitHub sync.
-- Apple Color Emoji remains a platform fallback and its ignored source stays outside synced files.
-- Moved Apple Color Emoji.woff into fonts/emoji/Apple-Color-Emoji.woff and restored its local @font-face mapping.
