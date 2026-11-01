@@ -34,7 +34,8 @@ python3 -m http.server 8000
 ├── index.html              # 静态入口
 ├── app.js                  # 应用状态、导入、学习、笔记与存储逻辑
 ├── style.css               # 深浅主题、桌面端与移动端样式
-├── MEDIA_V2_SAMPLE.json    # 富媒体 v2 题库示例
+├── MEDIA_V2_SAMPLE.json    # 富媒体 v2 题库示例（媒体已内嵌）
+├── MEDIA_V2_SAMPLE.html    # 与题库关联的结构化笔记示例（图片已内嵌）
 ├── fonts/                  # 浏览器使用的字体资源
 └── vendor/katex/           # 离线公式渲染资源（发布时需保留）
 ```
@@ -77,7 +78,7 @@ python3 -m http.server 8000
 | `short_answer` | 简答题。 |
 | `essay` | 综合分析题。 |
 
-题目可使用 `content`、`options[].content` 与 `explanation` 内容块。支持 `text`、`math`、`image`、`audio`、`blank` 和 `lineBreak`；公式 LaTeX 在 JSON 内需转义反斜杠，例如 `"\\frac{a}{b}"`。完整示例见 [`MEDIA_V2_SAMPLE.json`](MEDIA_V2_SAMPLE.json)。
+题目可使用 `content`、`options[].content` 与 `explanation` 内容块。支持 `text`、`math`、`image`、`audio`、`blank` 和 `lineBreak`；公式 LaTeX 在 JSON 内需转义反斜杠，例如 `"\\frac{a}{b}"`。完整题库示例见 [`MEDIA_V2_SAMPLE.json`](MEDIA_V2_SAMPLE.json)，关联笔记示例见 [`MEDIA_V2_SAMPLE.html`](MEDIA_V2_SAMPLE.html)。
 
 ### 兼容输入
 

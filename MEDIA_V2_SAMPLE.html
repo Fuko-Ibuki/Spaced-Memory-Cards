@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="subject" content="综合能力测试示例">
+  <title>综合能力测试示例笔记</title>
+</head>
+<body>
+<main data-subject="综合能力测试示例" data-deck-id="media-v2-practice">
+  <h1>综合能力测试示例笔记</h1>
+  <section class="sec">
+    <h2>一、函数与图像</h2>
+    <article class="kp" data-type="concept">
+      <h3>1. 函数的增长趋势</h3>
+      <div class="md">
+        <p>观察曲线时，先确认横轴与纵轴的含义，再判断函数值随自变量变化的方向。</p>
+        <figure class="note-image">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" role="img" aria-label="函数增长趋势示意图">
+            <rect width="520" height="260" rx="20" fill="#f7f8f2"/>
+            <path d="M55 215H475M90 235V28" stroke="#26332d" stroke-width="3"/>
+            <path d="m475 215-12-7v14zM90 28l-7 12h14z" fill="#26332d"/>
+            <path d="M90 155C145 150 185 118 225 85s75-54 130-67" fill="none" stroke="#39a866" stroke-width="6"/>
+            <path d="M90 205C145 192 190 165 230 130s78-74 145-87" fill="none" stroke="#3e7edb" stroke-width="6"/>
+            <text x="390" y="62" fill="#3e7edb" font-size="20">y=f(x)</text>
+            <text x="110" y="52" fill="#39a866" font-size="20">增长趋势</text>
+            <text x="465" y="240" font-size="18">x</text><text x="70" y="35" font-size="18">y</text>
+          </svg>
+          <figcaption>内嵌 SVG 图像：无需外部图片文件。</figcaption>
+        </figure>
+      </div>
+      <div class="src">关联题库：MEDIA_V2_SAMPLE.json · media-001</div>
+    </article>
+    <article class="kp" data-type="rule">
+      <h3>2. 根式函数定义域</h3>
+      <div class="md">
+        <p>对于 <span class="math">f(x)=√(x−1)</span>，根号内必须满足 <span class="math">x−1≥0</span>，因此定义域为 <span class="math">[1,+∞)</span>。</p>
+        <blockquote><strong>记忆：</strong>偶次根式先看被开方数非负，再检查题目中的其它限制。</blockquote>
+      </div>
+      <div class="src">关联题库：MEDIA_V2_SAMPLE.json · media-002</div>
+    </article>
+  </section>
+  <section class="sec">
+    <h2>二、导数与积分</h2>
+    <article class="kp" data-type="method">
+      <h3>3. 导数的几何意义</h3>
+      <div class="md">
+        <p>函数 <span class="math">y=f(x)</span> 在点 <span class="math">x₀</span> 处的导数 <span class="math">f′(x₀)</span> 等于曲线在该点处切线的斜率，也表示该点的瞬时变化率。</p>
+        <p>例如 <span class="math">y=x³+2x</span> 时，<span class="math">y′=3x²+2</span>。</p>
+      </div>
+      <div class="src">关联题库：MEDIA_V2_SAMPLE.json · media-004、media-005</div>
+    </article>
+    <article class="kp" data-type="example">
+      <h3>4. 面积建模</h3>
+      <div class="md">
+        <p>曲线 <span class="math">y=x²</span> 与直线 <span class="math">y=2x</span> 的交点横坐标为 <span class="math">0</span> 和 <span class="math">2</span>。</p>
+        <p class="formula">S=∫₀²(2x−x²)dx=4/3</p>
+        <p>在积分区间内，先判断上方函数，再用“上减下”建立定积分。</p>
+      </div>
+      <div class="src">关联题库：MEDIA_V2_SAMPLE.json · media-006</div>
+    </article>
+  </section>
+  <section class="sec">
+    <h2>三、易错辨析</h2>
+    <article class="kp" data-type="pitfall">
+      <h3>5. 不要拆分乘积积分</h3>
+      <div class="md">
+        <p>一般情况下，<span class="math">∫f(x)g(x)dx</span> 不等于 <span class="math">∫f(x)dx·∫g(x)dx</span>。遇到乘积结构，应优先检查换元法或分部积分法。</p>
+        <p><mark>本示例同时覆盖题库导入、公式渲染、图片内嵌、笔记导入、章节目录、标签和来源关联。</mark></p>
+      </div>
+      <div class="src">关联题库：MEDIA_V2_SAMPLE.json · media-008</div>
+    </article>
+  </section>
+</main>
+</body>
+</html>
