@@ -1,3 +1,6 @@
-style.css
-- Browse-page annotation textarea inherited the large question font.
-+ The textarea explicitly uses the same 13px content font and 1.65 line height as the displayed annotation.
+Typography taxonomy update:
+- UI Chinese: SMC HY QiHei; UI punctuation: SMC HY QiHei Punctuation.
+- Serif Chinese body: SMC FZ New Book; serif punctuation: SMC CJK Punctuation (FZ FW ZhuZi A).
+- English/numbers: SMC Minion (Minion 3).
+- Symbols/icons: SMC SF Pro.
+- Emoji: SMC Apple Emoji / Apple Color Emoji.

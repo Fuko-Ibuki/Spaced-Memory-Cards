@@ -467,6 +467,20 @@ function repairNotesPackageMath(pack){
   pack._mathRepairVersion=1;
   return changed;
 }
+function bindNoteMathPunctuation(root){
+  if (!root) return;
+  root.querySelectorAll('.note-math:not(div)').forEach(math=>{
+    const next=math.nextSibling;
+    if (!next || next.nodeType!==Node.TEXT_NODE) return;
+    const text=next.nodeValue||'';
+    const match=text.match(/^([、，。；：！？）】》〉])/);
+    if (!match) return;
+    const group=document.createElement('span'); group.className='note-math-punctuation';
+    math.before(group); group.append(math,document.createTextNode(match[1]));
+    next.nodeValue=text.slice(match[1].length);
+    if (!next.nodeValue) next.remove();
+  });
+}
 function sanitizeNoteHtml(element){
   const fragment=sanitizeNoteFragment(element);
   const wrapper=document.createElement('div'); wrapper.appendChild(fragment);
@@ -502,6 +516,7 @@ function sanitizeNoteHtml(element){
     if(last<text.length) frag.appendChild(document.createTextNode(text.slice(last)));
     node.replaceWith(frag);
   });
+  bindNoteMathPunctuation(wrapper);
   return wrapper.innerHTML;
 }
 function noteArticleTitle(article){
@@ -782,6 +797,7 @@ const App = {
   setupCollapse:{ range:false, answer:false, advanced:false },
   notesPackage:null,
   notesScrollY:0,
+  notesReadingState:{sourceName:'all',cardId:''},
   notesTocReturnY:0,
   notesTocCollapsed:!!(window.matchMedia && window.matchMedia('(max-width:760px)').matches),
   notesTocFavoritesOnly:false,
@@ -1271,14 +1287,18 @@ let notesScrollWriteTimer=0;
 function captureNotesScrollPosition(){
   if (App.view!=='notes') return;
   App.notesScrollY=Math.max(0, Math.round(window.scrollY||0));
+  const cards=[...document.querySelectorAll('.notes-document .note-card')];
+  const active=cards.find(card=>{ const rect=card.getBoundingClientRect(); return rect.top<=120 && rect.bottom>120; }) || cards.find(card=>card.getBoundingClientRect().top>120);
+  App.notesReadingState={sourceName:App.notesFilter?.sourceName||'all',cardId:active?.id||App.notesReadingState?.cardId||''};
   clearTimeout(notesScrollWriteTimer);
-  notesScrollWriteTimer=setTimeout(()=>Store.setJSON(STORAGE_KEYS.notesScrollY, App.notesScrollY),120);
+  notesScrollWriteTimer=setTimeout(()=>{ Store.setJSON(STORAGE_KEYS.notesScrollY, App.notesScrollY); Store.setJSON(STORAGE_KEYS.notesReadingState, App.notesReadingState); },120);
 }
 function flushNotesScrollPosition(){
   if (App.view!=='notes') return;
   clearTimeout(notesScrollWriteTimer);
   App.notesScrollY=Math.max(0, Math.round(window.scrollY||0));
   Store.setJSON(STORAGE_KEYS.notesScrollY, App.notesScrollY);
+  Store.setJSON(STORAGE_KEYS.notesReadingState, App.notesReadingState);
 }
 function restoreNotesScrollPosition(){
   const y=Number.isFinite(App.notesScrollY) ? Math.max(0, App.notesScrollY) : 0;
@@ -4572,7 +4592,17 @@ function renderNotesView(container){
   const activeFilterCount=(notesFilter.subject==='all'?0:1)+(notesFilter.bookmarked?1:0)+typeFilterCount;
   const filterLabel=activeFilterCount?`已筛选 ${activeFilterCount} 项`:'全部笔记';
   const notesFilterMenu=`<div class="notes-filter-menu"><button type="button" class="notes-filter-menu-all" data-notes-heading-filter-reset>全部笔记</button><strong>范围</strong><label class="notes-filter-check"><input type="checkbox" data-notes-heading-bookmarked ${notesFilter.bookmarked?'checked':''}><span>仅收藏内容</span></label><strong>笔记本（学科）</strong><div class="notes-filter-choice-list">${[['all','全部笔记本'],...subjects.map(subject=>[subject,subject])].map(([value,label])=>`<label class="notes-filter-check"><input type="radio" name="notes-subject" value="${Utils.escapeHtml(value)}" data-notes-heading-subject ${notesFilter.subject===value?'checked':''}><span>${Utils.escapeHtml(label)}</span></label>`).join('')}</div><strong>分类</strong><div class="notes-filter-choice-list"><label class="notes-filter-check"><input type="checkbox" data-notes-heading-types-all ${selectedTypes.length===types.length?'checked':''}><span>全部类型</span></label>${types.map(type=>`<label class="notes-filter-check"><input type="checkbox" value="${Utils.escapeHtml(type)}" data-notes-heading-type ${selectedTypes.includes(type)?'checked':''}><span>${Utils.escapeHtml(NOTE_TYPE_LABELS[type]||type)}</span></label>`).join('')}</div></div>`;
-  container.innerHTML=`<div class="container notes-shell notes-has-package${!tocCollapsed?' notes-toc-expanded':''}"><div class="notes-package-toolbar"><span>${Utils.escapeHtml(pack.subject||'')}</span><button type="button" class="notes-calendar-btn" aria-label="笔记日历" title="笔记日历">􀉉</button><button type="button" class="notes-more-btn" aria-label="更多" aria-expanded="false"><svg class="notes-more-icon" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M4.166 8.501a1.499 1.499 0 1 1 0 2.998 1.499 1.499 0 0 1 0-2.998M10 8.501a1.499 1.499 0 1 1 0 2.998 1.499 1.499 0 0 1 0-2.998M15.833 8.501a1.5 1.5 0 1 1 0 2.999 1.5 1.5 0 0 1 0-2.999"></path></svg></button><div class="notes-more-menu" hidden><div class="notes-filter-group"><strong>筛选笔记本（学科）</strong>${[['all','全部笔记本'],...subjects.map(subject=>[subject,subject])].map(([value,label])=>`<button type="button" class="${notesFilter.subject===value?'active':''}" data-notes-filter-subject="${Utils.escapeHtml(value)}">${Utils.escapeHtml(label)}</button>`).join('')}</div><div class="notes-filter-group"><strong>筛选类型</strong>${[['all','全部类型'],...types.map(type=>[type,NOTE_TYPE_LABELS[type]||type])].map(([value,label])=>`<button type="button" class="${notesFilter.type===value?'active':''}" data-notes-filter-type="${Utils.escapeHtml(value)}">${Utils.escapeHtml(label)}</button>`).join('')}</div></div></div><div class="notes-layout${tocCollapsed?' toc-collapsed':''}"><aside class="notes-toc${tocCollapsed?' collapsed':''}" aria-label="笔记目录"><div class="notes-toc-head"><h2>目录</h2><div class="notes-toc-controls"><button type="button" class="notes-toc-action" aria-label="${tocCollapsed?'展开目录':'收起目录'}" title="${tocCollapsed?'展开目录':'收起目录'}" aria-expanded="${tocCollapsed?'false':'true'}"><svg data-no-autosize="true" aria-hidden="true" class="Icon-X4VkKC" focusable="false" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M14.5 2.877a3.665 3.665 0 0 1 3.665 3.665v6.917a3.665 3.665 0 0 1-3.665 3.665h-9a3.665 3.665 0 0 1-3.665-3.665V6.542A3.665 3.665 0 0 1 5.5 2.877zM8.165 15.794H14.5a2.335 2.335 0 0 0 2.335-2.335V6.542A2.335 2.335 0 0 0 14.5 4.207H8.165zM5.5 4.207a2.335 2.335 0 0 0-2.335 2.335v6.917A2.335 2.335 0 0 0 5.5 15.794h1.335V4.207z"></path></svg></button><button type="button" class="notes-toc-search" aria-label="搜索笔记" title="搜索笔记"><span class="icon-symbol">􀊫</span></button><button type="button" class="notes-toc-favorites-filter${tocFavoritesOnly?' on':''}" aria-label="${tocFavoritesOnly?'显示全部笔记':'仅显示收藏'}" title="${tocFavoritesOnly?'显示全部笔记':'仅显示收藏'}" aria-pressed="${tocFavoritesOnly?'true':'false'}">${noteBookmarkIcon()}</button></div></div><div class="notes-toc-body">${toc}</div></aside><main class="notes-document"><header class="notes-document-heading"><h1 class="notes-document-title">${Utils.escapeHtml(documentTitle)}</h1><div class="notes-heading-actions">${chapterTestArticle?`<button type="button" class="btn btn-primary note-test-btn" data-note-test="${Utils.escapeHtml(chapterTestArticle.id)}" title="开始测试">开始测试</button>`:''}</div></header>${content}</main></div></div>`;
+  container.innerHTML=`<div class="container notes-shell notes-has-package${!tocCollapsed?' notes-toc-expanded':''}"><div class="notes-package-toolbar"><span>${Utils.escapeHtml(pack.subject||'')}</span><button type="button" class="notes-calendar-btn" aria-label="笔记日历" title="笔记日历">􀉉</button><button type="button" class="notes-more-btn" aria-label="更多" aria-expanded="false"><svg class="notes-more-icon" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M4.166 8.501a1.499 1.499 0 1 1 0 2.998 1.499 1.499 0 0 1 0-2.998M10 8.501a1.499 1.499 0 1 1 0 2.998 1.499 1.499 0 0 1 0-2.998M15.833 8.501a1.5 1.5 0 1 1 0 2.999 1.5 1.5 0 0 1 0-2.999"></path></svg></button><div class="notes-more-menu" hidden><div class="notes-filter-group"><strong>筛选笔记本（学科）</strong>${[['all','全部笔记本'],...subjects.map(subject=>[subject,subject])].map(([value,label])=>`<button type="button" class="${notesFilter.subject===value?'active':''}" data-notes-filter-subject="${Utils.escapeHtml(value)}">${Utils.escapeHtml(label)}</button>`).join('')}</div><div class="notes-filter-group"><strong>筛选类型</strong>${[['all','全部类型'],...types.map(type=>[type,NOTE_TYPE_LABELS[type]||type])].map(([value,label])=>`<button type="button" class="${notesFilter.type===value?'active':''}" data-notes-filter-type="${Utils.escapeHtml(value)}">${Utils.escapeHtml(label)}</button>`).join('')}</div></div></div><div class="notes-layout${tocCollapsed?' toc-collapsed':''}"><aside class="notes-toc${tocCollapsed?' collapsed':''}" aria-label="笔记目录"><div class="notes-toc-head"><h2>目录</h2><div class="notes-toc-controls"><button type="button" class="notes-toc-action" aria-label="${tocCollapsed?'展开目录':'收起目录'}" title="${tocCollapsed?'展开目录':'收起目录'}" aria-expanded="${tocCollapsed?'false':'true'}"><svg data-no-autosize="true" aria-hidden="true" class="Icon-X4VkKC" focusable="false" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M14.5 2.877a3.665 3.665 0 0 1 3.665 3.665v6.917a3.665 3.665 0 0 1-3.665 3.665h-9a3.665 3.665 0 0 1-3.665-3.665V6.542A3.665 3.665 0 0 1 5.5 2.877zM8.165 15.794H14.5a2.335 2.335 0 0 0 2.335-2.335V6.542A2.335 2.335 0 0 0 14.5 4.207H8.165zM5.5 4.207a2.335 2.335 0 0 0-2.335 2.335v6.917A2.335 2.335 0 0 0 5.5 15.794h1.335V4.207z"></path></svg></button><button type="button" class="notes-toc-search" aria-label="搜索笔记" title="搜索笔记"><span class="icon-symbol">􀊫</span></button><button type="button" class="notes-toc-favorites-filter${tocFavoritesOnly?' on':''}" aria-label="${tocFavoritesOnly?'显示全部笔记':'仅显示收藏'}" title="${tocFavoritesOnly?'显示全部笔记':'仅显示收藏'}" aria-pressed="${tocFavoritesOnly?'true':'false'}">${noteBookmarkIcon()}</button></div></div><div class="notes-toc-body">${toc}</div></aside><main class="notes-document"><header class="notes-document-heading"><h1 class="notes-document-title">${Utils.escapeHtml(documentTitle)}</h1><div class="notes-heading-actions">${chapterTestArticle?`<button type="button" class="btn btn-primary note-test-btn" data-note-test="${Utils.escapeHtml(chapterTestArticle.id)}" title="开始测试">开始测试</button>`:''}</div></header>${content}</main></div></div><button type="button" class="notes-back-to-top" aria-label="返回顶部" title="返回顶部"><span class="icon-symbol" aria-hidden="true">􀄨</span></button>`;
+  const notesBackToTop=container.querySelector('.notes-back-to-top');
+  if(notesBackToTop){
+    const updateNotesBackToTop=()=>notesBackToTop.classList.toggle('is-visible',(window.scrollY||0)>=480);
+    App.notesBackToTopAbort?.abort();
+    App.notesBackToTopAbort=new AbortController();
+    window.addEventListener('scroll',updateNotesBackToTop,{passive:true,signal:App.notesBackToTopAbort.signal});
+    updateNotesBackToTop();
+    notesBackToTop.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
+  }
+  container.querySelectorAll('.note-rich').forEach(bindNoteMathPunctuation);
   restoreNoteHighlights(container);
   container.querySelectorAll('.note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg))').forEach(figure=>{
     const card=figure.closest('.note-card'); figure.dataset.imageZoomKey=`${card?.id||'notes'}:${[...container.querySelectorAll('.note-card')].indexOf(card)}:${[...card?.querySelectorAll('figure,img,svg')||[]].indexOf(figure)}`;
@@ -5231,6 +5261,8 @@ async function initApp(){
     // 仅对可识别的旧版断裂 TeX 做一次迁移；正常笔记刷新不再整包解析并重绘公式。
     if (repairNotesPackageMath(App.notesPackage)) await Store.setJSON(STORAGE_KEYS.notesPackage, App.notesPackage);
     App.notesScrollY = await Store.getJSON(STORAGE_KEYS.notesScrollY, 0);
+    App.notesReadingState = await Store.getJSON(STORAGE_KEYS.notesReadingState, {sourceName:'all',cardId:''});
+    if (App.notesReadingState && typeof App.notesReadingState.sourceName==='string' && App.notesReadingState.sourceName !== 'all') App.notesFilter = {...App.notesFilter, sourceName:App.notesReadingState.sourceName};
     const savedTocCollapsed = await Store.getJSON(STORAGE_KEYS.notesTocCollapsed, null);
     if (typeof savedTocCollapsed === 'boolean') App.notesTocCollapsed = savedTocCollapsed;
     const savedTocFavoritesOnly = await Store.getJSON(STORAGE_KEYS.notesTocFavoritesOnly, null);

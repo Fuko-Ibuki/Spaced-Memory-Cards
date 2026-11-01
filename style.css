@@ -14,14 +14,15 @@
 @font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Bold.ttf") format("truetype"); font-weight:700; font-style:normal; font-display:optional; }
 @font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-BoldItalic.ttf") format("truetype"); font-weight:700; font-style:italic; font-display:optional; }
 @font-face{ font-family:"SMC FZ New Book"; src:url("./fonts/fz-new-book/FZNewBook-Full.woff2") format("woff2"); font-weight:400; font-style:normal; font-display:optional; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
+@font-face{ font-family:"SMC FZ New Book"; src:url("./fonts/fz-new-book/FZNewBook-Full.woff2") format("woff2"); font-weight:400; font-style:normal; font-display:optional; unicode-range:U+0020-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
 @font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-300.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-300.ttf") format("truetype"); font-weight:300; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
 @font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-400.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-400.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
 @font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-500.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-500.ttf") format("truetype"); font-weight:500; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
 @font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-600.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-600.ttf") format("truetype"); font-weight:600; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
 @font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-700.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-700.ttf") format("truetype"); font-weight:700; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
 @font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-800.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-800.ttf") format("truetype"); font-weight:800; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
-@font-face{ font-family:"SMC SF Pro"; src:url("./fonts/sf-pro/SF-Pro-Used.woff2?v=20261031.1") format("woff2"); font-weight:400 700; font-style:normal; font-display:optional; }
-@font-face{ font-family:"SMC SF Pro"; src:url("./fonts/sf-pro/SF-Pro-Italic-Used.woff2?v=20261031.1") format("woff2"); font-weight:400 700; font-style:italic; font-display:optional; }
+@font-face{ font-family:"SMC SF Pro"; src:url("./fonts/sf-pro/SF-Pro-Used.woff2?v=20261101.3") format("woff2"); font-weight:1 1000; font-style:normal; font-display:optional; }
+@font-face{ font-family:"SMC SF Pro"; src:url("./fonts/sf-pro/SF-Pro-Italic-Used.woff2?v=20261101.3") format("woff2"); font-weight:1 1000; font-style:italic; font-display:optional; }
 @font-face{ font-family:"SMC HY QiHei"; src:url("./fonts/hy-qihei/HYQiHei-300-Used.woff2") format("woff2"); font-weight:300; font-style:normal; font-display:optional; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
 /* UI punctuation follows HY QiHei; authored serif content keeps FZ FW筑紫A老明朝 punctuation. */
 @font-face{ font-family:"SMC HY QiHei Punctuation"; src:url("./fonts/hy-qihei/HYQiHei-300-Used.woff2") format("woff2"); font-weight:300; font-style:normal; font-display:optional; unicode-range:U+0021-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FF00-FF65; }
@@ -122,7 +123,7 @@ a{ color:inherit; }
   --dur-slow:.5s;
 
   /* Typography tokens: the global family can switch the UI and authored content together. */
-  --font-sans:"SMC SF Pro Embedded","SMC SF Pro","SMC HY QiHei Punctuation","SMC HY QiHei",sans-serif;
+  --font-sans:"SMC HY QiHei Punctuation","SMC HY QiHei","SMC Minion",sans-serif;
   --font-serif:"SMC CJK Punctuation","SMC FZ New Book","SMC Minion",serif;
   --font-ui:var(--font-sans);
   --font-content:var(--font-serif);
@@ -184,7 +185,7 @@ html[data-font-family="sans"]{
   --font-ui:var(--font-sans);
   --font-content:var(--font-ui); --font-global:var(--font-ui);
   --font-display:var(--font-ui); --font-body:var(--font-ui);
-  --font-num:"SMC SF Pro","SF Pro Display","SF Pro Text",sans-serif;
+  --font-num:"SMC Minion",serif;
 }
 
 html[data-theme="light"]{
@@ -794,6 +795,11 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .qcard-type{ font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:16px; padding-right:118px; display:flex; align-items:center; gap:8px; overflow-wrap:anywhere; }
 .qcard-type .dot{ width:5px;height:5px; flex:0 0 5px; aspect-ratio:1; border-radius:50%; background:currentColor; }
 .qcard-question{ font-family:var(--font-content); font-size:var(--font-size-content-lg); line-height:1.65; color:var(--color-content-primary); font-weight:var(--font-weight-regular); font-synthesis:weight style; flex:0 0 auto; white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
+.qcard-question,.reveal-answer,.browse-q-text,.browse-answer,.your-answer-box,.note-rich{ text-wrap:pretty; }
+.qcard-question,.reveal-answer,.browse-q-text,.browse-answer,.your-answer-box,.note-rich{ line-break:strict; hanging-punctuation:first last; text-spacing:trim-start allow-end; }
+.qcard-question .katex,.reveal-answer .katex,.browse-q-text .katex,.browse-answer .katex,.note-rich .katex,.note-rich .note-math{ hanging-punctuation:none; text-spacing:normal; }
+.note-rich .note-math-punctuation{ white-space:nowrap; hanging-punctuation:none; text-spacing:normal; }
+.note-rich :where(h1,h2,h3,h4,h5,h6),.notes-document-title,.note-section-heading h2,.note-card-heading h3{ text-wrap:balance; }
 .qcard-question .blank{ display:inline-block; width:86px; height:1.05em; vertical-align:-4px; border-bottom:3px solid var(--ink-faint); border-radius:0; margin:0 2px; }
 .inline-blank-choice{
   position:relative; display:inline-flex; align-items:center; justify-content:center; min-width:70px; min-height:1.45em; margin:0 4px; padding:0 10px 4px;
@@ -1226,6 +1232,13 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .browse-q-num{ font-family:var(--font-num); font-style:italic; color:var(--accent); font-weight:600; margin-right:6px; }
 .browse-q-text{ min-width:0; font-family:var(--font-content); font-size:var(--font-size-content-md); font-weight:var(--font-weight-regular); font-synthesis:weight style; color:var(--color-type-primary); line-height:1.7; overflow-wrap:anywhere; word-break:break-word; }
 .preview-q-head{ display:flex; align-items:flex-start; gap:12px; justify-content:space-between; }
+/* In paper preview, image questions use the full text flow; controls remain at the top right. */
+.preview-q-head:has(.question-image){ display:block; position:relative; }
+.preview-q-head:has(.question-image) > .browse-q-text{ width:100%; }
+.preview-q-head:has(.question-image) .question-image{ width:50%; margin-left:auto; margin-right:auto; }
+@media (max-width:640px){.preview-q-head:has(.question-image) .question-image{ width:100%; }}
+.preview-q-head:has(.question-image) > .preview-actions{ position:absolute; top:0; right:0; }
+
 .preview-actions{ display:flex; align-items:center; gap:8px; flex-shrink:0; }
 .mini-remove-btn{
   border:1px solid color-mix(in srgb, var(--danger) 35%, transparent); background:var(--danger-bg); color:var(--danger-strong);
@@ -1398,6 +1411,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   .report-hero .score-big{ font-size:56px; }
   .qa-list .qa-item:not(.open) .qa-detail{ max-height:0; }
   .deck-info-card{ flex-wrap:wrap; gap:12px; }
+  .deck-info-card .deck-actions{ width:100%; margin-left:0; justify-content:center; }
   .deck-info-card > div{ flex:1 1 calc(100% - 52px); }
   .deck-info-card #browse-deck-btn,.deck-info-card .swap{ flex:1 1 calc(50% - 6px); margin-left:0; }
   .self-grade-grid{ grid-template-columns:repeat(2,1fr); }
@@ -1570,6 +1584,13 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
 /* Imported HTML note packages are rendered with local UI chrome. The package's
    own styles and scripts never enter the document. */
 .notes-shell{ max-width:1180px; }
+.notes-back-to-top{ position:fixed; right:24px; bottom:24px; z-index:88; display:grid; place-items:center; width:36px; height:36px; padding:0; border:1px solid var(--border); border-radius:50%; background:var(--bg-elevated); color:var(--text-soft); box-shadow:var(--shadow-soft); font-family:var(--font-ui); font-size:22px; line-height:1; cursor:pointer; opacity:0; visibility:hidden; transform:translateY(10px); pointer-events:none; transition:opacity var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease); }
+.notes-back-to-top.is-visible{ opacity:1; visibility:visible; transform:translateY(0); pointer-events:auto; }
+.notes-back-to-top:hover,.notes-back-to-top:focus-visible{ background:var(--bg-hover); color:var(--text); outline:none; }
+.notes-back-to-top .icon-symbol{ font-size:17px; line-height:1; font-weight:300; -webkit-text-stroke:0; }
+.notes-toc.collapsed,.notes-toc.collapsed .notes-toc-head,.notes-toc.collapsed .notes-toc-controls,.notes-toc.collapsed .notes-toc-action{ width:36px; height:36px; max-height:36px; }
+@media (max-width:640px){.notes-back-to-top{right:16px;bottom:16px;width:36px;height:36px;}}
+
 .notes-empty-state{ max-width:700px; margin:8vh auto 0; padding:42px 28px; text-align:center; border:1px dashed var(--border); border-radius:var(--radius-lg); background:var(--bg-elevated); box-shadow:var(--shadow-card); }
 .notes-empty-icon{ width:48px; height:48px; margin:0 auto 15px; display:grid; place-items:center; border-radius:14px; background:var(--accent); color:#fff; font-size:27px; font-family:var(--font-symbol); }
 .notes-empty-state h2{ margin:0 0 8px; color:var(--text); font-size:21px; }
@@ -1592,10 +1613,10 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
 .notes-toc-action{ display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto; width:28px; height:28px; padding:0; border:0; border-radius:7px; background:transparent; color:var(--text-faint); font-family:var(--font-symbol); font-size:18px; line-height:1; cursor:pointer; }
 .notes-toc-action:hover,.notes-toc-action:focus-visible{ background:var(--bg-soft); color:var(--text); outline:none; }
 .notes-toc-body{ flex:1 1 auto; min-height:0; overflow:auto; padding:12px 14px 14px; }
-.notes-toc.collapsed{ position:fixed; left:20px; width:40px; height:40px; max-height:40px; overflow:visible; border:0; border-radius:10px; box-sizing:border-box; background:transparent; }
-.notes-toc.collapsed .notes-toc-head{ width:40px; height:40px; padding:0; border-bottom:0; border-radius:inherit; background:transparent; }
+.notes-toc.collapsed{ position:fixed; left:20px; width:36px; height:36px; max-height:36px; overflow:visible; border:0; border-radius:10px; box-sizing:border-box; background:transparent; }
+.notes-toc.collapsed .notes-toc-head{ width:36px; height:36px; padding:0; border-bottom:0; border-radius:inherit; background:transparent; }
 .notes-toc.collapsed .notes-toc-head h2,.notes-toc.collapsed .notes-toc-body{ display:none; }
-.notes-toc.collapsed .notes-toc-action{ width:40px; height:40px; border-radius:inherit; background:color-mix(in srgb,var(--bg-elevated) 65%,transparent); color:var(--text-soft); box-shadow:none; -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px); }
+.notes-toc.collapsed .notes-toc-action{ width:36px; height:36px; border-radius:inherit; background:color-mix(in srgb,var(--bg-elevated) 65%,transparent); color:var(--text-soft); box-shadow:none; -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px); }
 .notes-toc.collapsed .notes-toc-action:hover,.notes-toc.collapsed .notes-toc-action:focus-visible{ background:var(--bg-hover); color:var(--text); }
 .notes-toc-chapter + .notes-toc-chapter{ margin-top:8px; padding-top:8px; border-top:1px solid var(--border-soft); }
 .notes-toc-chapter > summary,
@@ -1644,12 +1665,13 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
 .note-card-tools{ display:flex; align-items:center; gap:8px; flex:0 0 auto; }
 .note-highlight-btn{ display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; padding:4px; border:0; border-radius:7px; background:transparent; color:var(--text-faint); font-family:var(--font-symbol); font-size:18px; line-height:1; cursor:pointer; transition:color var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease); }
 .note-highlight-btn.on{ color:var(--accent); background:var(--accent-glow); border-color:transparent; }
+@media (max-width:640px){.note-highlight-btn{ display:none; }}
 .note-bookmark-btn{ display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; padding:4px; border:0; border-radius:7px; background:transparent; color:var(--text-faint); cursor:pointer; transition:color var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease); }
 .note-bookmark-btn:hover{ color:var(--gold); background:var(--gold-bg); transform:translateY(-1px); }
 .note-bookmark-btn.on{ color:var(--gold); background:var(--gold-bg); }
 .note-bookmark-btn.on .note-bookmark-icon{ fill:currentColor; }
 .note-bookmark-btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
-.note-rich{ margin-top:14px; color:var(--text); font-family:var(--font-content); font-size:16px; line-height:1.9; letter-spacing:.01em; line-break:strict; word-break:normal; overflow-wrap:break-word; hanging-punctuation:first last allow-end; text-wrap:pretty; orphans:2; widows:2; }
+.note-rich{ margin-top:14px; color:var(--text); font-family:var(--font-content); font-size:16px; line-height:1.9; letter-spacing:.01em; line-break:strict; word-break:normal; overflow-wrap:break-word; hanging-punctuation:first last; text-wrap:pretty; orphans:2; widows:2; }
 .note-rich :where(p,li,blockquote,h1,h2,h3,h4,h5,h6){ font-family:inherit; font-size:inherit; color:inherit; }
 .note-rich p{ margin:0; text-indent:2em; }
 .note-rich > p,.note-rich .md > p{ text-indent:2em; }
@@ -1879,7 +1901,7 @@ html[data-theme="light"] .note-rich :where(figure.note-image,figure:has(> img),f
 .note-rich p:has(> svg,> img) + p{margin:0 0 30px;color:var(--text);font-size:.9em;line-height:1.6;font-style:normal!important;text-align:center;text-indent:0;}
 .note-rich p:has(> svg,> img) + p *{font-style:normal!important;}
 /* Directory and More controls share the same floating glass-button treatment. */
-.notes-toc.collapsed .notes-toc-action,.notes-more-btn{box-sizing:border-box;width:40px;height:40px;padding:0;border:0;border-radius:10px;background:color-mix(in srgb,var(--bg-elevated) 65%,transparent);color:var(--text-soft);box-shadow:none;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);}
+.notes-toc.collapsed .notes-toc-action{box-sizing:border-box;width:36px;height:36px;padding:0;border:0;border-radius:10px;background:color-mix(in srgb,var(--bg-elevated) 65%,transparent);color:var(--text-soft);box-shadow:none;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);}
 .notes-toc.collapsed .notes-toc-action,.notes-more-btn{display:inline-flex;align-items:center;justify-content:center;}
 .notes-toc.collapsed .notes-toc-action:hover,.notes-toc.collapsed .notes-toc-action:focus-visible,.notes-more-btn:hover,.notes-more-btn:active,.notes-more-btn[aria-expanded="true"],.notes-more-btn:focus-visible{background:var(--bg-hover);color:var(--text);outline:none;}
 .notes-more-icon{width:20px;height:20px;display:block;fill:currentColor;}
@@ -1914,7 +1936,7 @@ html[data-theme="light"] .note-rich :where(figure.note-image,figure:has(> img),f
 .notes-search-result{display:flex;flex-direction:column;gap:2px;width:100%;padding:10px 12px;border:0;border-radius:10px;background:transparent;color:var(--text);text-align:left;cursor:pointer;}
 .notes-search-result:hover{background:var(--bg-hover);}.notes-search-result strong{font-size:14px;}.notes-search-result span{display:block;overflow:hidden;color:var(--text);font-size:13px;line-height:1.5;text-overflow:ellipsis;white-space:nowrap;}.notes-search-result small{color:var(--text-faint);font-size:11px;}.notes-search-empty{margin:8px 4px;color:var(--text-faint);font-size:13px;}.note-search-highlight{padding:0 2px;border-radius:3px;background:#f5c542;color:#1d2024;}
 .note-rich :where(figure.note-image,figure:has(> img),figure:has(> svg)){position:relative;}
-.note-image-zoom{position:absolute;top:8px;right:8px;z-index:2;width:32px;height:32px;padding:0;border:1px solid color-mix(in srgb,var(--border) 72%,transparent);border-radius:9px;background:color-mix(in srgb,var(--bg-elevated) 82%,transparent);color:var(--text-soft);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",sans-serif;font-size:20px;line-height:1;cursor:pointer;opacity:.82;box-shadow:var(--shadow-soft);}
+.note-image-zoom{position:absolute;top:8px;right:8px;z-index:2;width:32px;height:32px;padding:0;border:1px solid color-mix(in srgb,var(--border) 72%,transparent);border-radius:9px;background:color-mix(in srgb,var(--bg-elevated) 82%,transparent);color:var(--text-soft);font-family:var(--font-symbol);font-size:20px;font-weight:400;-webkit-text-stroke:0;line-height:1;cursor:pointer;opacity:.82;box-shadow:var(--shadow-soft);}
 .note-image-zoom:hover,.note-image-zoom:focus-visible{background:var(--bg-hover);color:var(--text);opacity:1;outline:none;}
 .note-media-frame{position:relative!important;}
 .note-media-frame>.note-image-zoom{position:absolute;top:8px;right:8px;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;margin:0;padding:0;z-index:20;}
@@ -2169,7 +2191,7 @@ html[data-theme="dark"] .note-rich mark.note-search-highlight{color:#1d2024!impo
 .notes-toc-favorites-filter{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:28px;height:28px;padding:0;border:0;border-radius:7px;background:transparent;color:var(--text-faint);cursor:pointer;}
 .notes-toc-favorites-filter:hover,.notes-toc-favorites-filter:focus-visible{background:var(--bg-soft);color:var(--text);outline:none;}
 .notes-toc-favorites-filter.on{background:var(--accent-glow);color:var(--accent);}
-.notes-toc.collapsed .notes-toc-controls{width:40px;height:40px;}
+.notes-toc.collapsed .notes-toc-controls{width:36px;height:36px;}
 .notes-empty-filter{margin:24px 0;padding:22px;border:1px dashed var(--border);border-radius:12px;color:var(--text-faint);text-align:center;}
 
 /* Study-card annotations use the SF Pro Light weight. */
@@ -2284,3 +2306,12 @@ html[data-theme="dark"] .note-rich mark.note-search-highlight{color:#1d2024!impo
 .notes-toc-head .notes-toc-search{width:28px;height:28px;flex:0 0 28px;padding:0;border:0;border-radius:7px;background:transparent;color:var(--text-faint);font-size:18px;font-weight:var(--font-weight-light);box-shadow:none;transform:none;}
 .notes-toc-head .notes-toc-search:hover,.notes-toc-head .notes-toc-search:focus-visible,.notes-toc-head .notes-toc-search:active{background:transparent;color:var(--text-faint);outline:none;transform:none;}
 .notes-toc-head .notes-toc-search .icon-symbol{font-size:18px;font-weight:var(--font-weight-light);color:inherit;}
+
+/* Mobile math stays inside its text block; long formulas scroll within the formula only. */
+@media (max-width:640px){
+  input,textarea,select{ font-size:16px; }
+  .qcard-question,.reveal-answer,.browse-q-text,.browse-answer,.note-rich{ min-width:0; max-width:100%; height:auto; max-height:none; overflow-x:clip; overflow-y:visible; }
+  .qcard-question .katex-display,.reveal-answer .katex-display,.browse-q-text .katex-display,.browse-answer .katex-display,.note-rich .katex-display,
+  .qcard-question .note-math,.reveal-answer .note-math,.browse-q-text .note-math,.browse-answer .note-math,.note-rich .note-math{ max-width:100%; height:auto; max-height:none; overflow-x:auto; overflow-y:hidden; overscroll-behavior-x:contain; }
+  .qcard-question .katex,.reveal-answer .katex,.browse-q-text .katex,.browse-answer .katex,.note-rich .katex{ max-width:none; }
+}
