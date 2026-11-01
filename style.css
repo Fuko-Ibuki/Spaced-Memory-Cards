@@ -20,8 +20,8 @@
 @font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-600.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-600.ttf") format("truetype"); font-weight:600; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
 @font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-700.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-700.ttf") format("truetype"); font-weight:700; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
 @font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-800.woff2") format("woff2"),url("./fonts/punctuation/FZFWZhuZiA-Punctuation-800.ttf") format("truetype"); font-weight:800; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
-@font-face{ font-family:"SMC SF Pro"; src:url("./fonts/sf-pro/SF-Pro-Used.woff2?v=20261030.1") format("woff2"); font-weight:400 700; font-style:normal; font-display:optional; }
-@font-face{ font-family:"SMC SF Pro"; src:url("./fonts/sf-pro/SF-Pro-Italic-Used.woff2?v=20261030.1") format("woff2"); font-weight:400 700; font-style:italic; font-display:optional; }
+@font-face{ font-family:"SMC SF Pro"; src:url("./fonts/sf-pro/SF-Pro-Used.woff2?v=20261031.1") format("woff2"); font-weight:400 700; font-style:normal; font-display:optional; }
+@font-face{ font-family:"SMC SF Pro"; src:url("./fonts/sf-pro/SF-Pro-Italic-Used.woff2?v=20261031.1") format("woff2"); font-weight:400 700; font-style:italic; font-display:optional; }
 @font-face{ font-family:"SMC HY QiHei"; src:url("./fonts/hy-qihei/HYQiHei-300-Used.woff2") format("woff2"); font-weight:300; font-style:normal; font-display:optional; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
 /* UI punctuation follows HY QiHei; authored serif content keeps FZ FW筑紫A老明朝 punctuation. */
 @font-face{ font-family:"SMC HY QiHei Punctuation"; src:url("./fonts/hy-qihei/HYQiHei-300-Used.woff2") format("woff2"); font-weight:300; font-style:normal; font-display:optional; unicode-range:U+0021-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FF00-FF65; }
@@ -1581,7 +1581,7 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
 .notes-format-hint{ margin:15px auto 0 !important; font-size:11.5px !important; }
 .notes-format-hint code{ color:var(--accent); }
 .notes-package-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:20px; margin:0 0 24px; padding:18px 20px; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--bg-elevated); box-shadow:var(--shadow-soft); }
-.notes-package-head h1{ margin:0; color:var(--text); font-family:var(--font-content); font-size:22px; line-height:1.35; }
+.notes-package-head h1{ margin:0; color:var(--text); font-family:var(--font-ui); font-size:22px; line-height:1.35; }
 .notes-package-head p{ margin:6px 0 0; color:var(--text-faint); font-size:12px; }
 .notes-package-actions{ display:flex; gap:8px; flex:0 0 auto; }
 .notes-layout{ display:block; }
@@ -1620,7 +1620,7 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
 .notes-toc-link:hover,.notes-toc-link:focus-visible{ background:var(--bg-soft); color:var(--text); }
 .notes-document{ min-width:0; width:calc(100% - 262px); max-width:880px; margin-left:262px; transition:transform .24s var(--ease); }
 .notes-document-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 22px;min-height:56px;}
-.notes-document-title{margin:0;color:var(--text);font-family:var(--font-content);font-size:26px;line-height:1.35;text-align:left;}
+.notes-document-title{margin:0;color:var(--text);font-family:var(--font-ui);font-size:26px;line-height:1.35;text-align:left;}
 .notes-document-heading .notes-document-title{margin:0;}
 .notes-document-heading.needs-more-clearance{padding-right:52px;}
 .notes-document-heading.needs-calendar-clearance .notes-heading-actions{margin-right:52px;}
@@ -1629,12 +1629,12 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
 @media (max-width:640px){.notes-document-heading.needs-more-clearance{padding-right:44px;}.notes-document-heading.needs-toc-clearance{padding-left:40px;}}
 .note-section + .note-section{ margin-top:30px; }
 .note-section-heading{ display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid var(--border-soft); }
-.note-section-heading h2{ margin:0; color:var(--text); font-family:var(--font-content); font-size:19px; line-height:1.4; }
-.note-section-heading p{ margin:4px 0 0; color:var(--text-faint); font-family:var(--font-content); font-size:12px; line-height:1.5; }
+.note-section-heading h2{ margin:0; color:var(--text); font-family:var(--font-ui); font-size:19px; line-height:1.4; }
+.note-section-heading p{ margin:4px 0 0; color:var(--text-faint); font-family:var(--font-ui); font-size:12px; line-height:1.5; }
 .note-count{ flex:0 0 auto; color:var(--text-faint); font-size:11px; }
 .note-card{ margin:0 0 14px; padding:18px 20px 14px; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--bg-elevated); box-shadow:var(--shadow-soft); scroll-margin-top:90px; }
 .note-card-heading{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding-bottom:11px; border-bottom:1px solid var(--border-soft); }
-.note-card-heading h3{ margin:0; color:var(--text); font-family:var(--font-content); font-size:17px; line-height:1.45; font-weight:var(--weight-content-emphasis); }
+.note-card-heading h3{ margin:0; color:var(--text); font-family:var(--font-ui); font-size:17px; line-height:1.45; font-weight:var(--weight-content-emphasis); }
 .note-meta{ display:flex; align-items:center; gap:8px; margin-top:6px; color:var(--text-faint); font-family:var(--font-ui); font-size:10.5px; }
 .note-tag{ --note-color:var(--accent); display:inline-flex; align-items:center; gap:4px; padding:1px 6px; border:1px solid var(--note-color); color:var(--note-color); white-space:nowrap; font-size:11px; font-weight:var(--weight-ui-label); line-height:1.45; }
 .note-tag-icon{ flex:0 0 auto; display:block; }
@@ -1666,7 +1666,7 @@ button,.btn,.nav-tab,.seg button,.type-chip,.chapter-chip,.switch,.toggle-row .l
 .note-rich table{ width:100%; margin:12px 0; border-collapse:collapse; font-size:.92em; }
 .note-rich th,.note-rich td{ padding:7px 9px; border:1px solid var(--border-soft); text-align:left; vertical-align:top; }
 .note-rich th{ color:var(--text); background:var(--bg-soft); font-weight:var(--weight-ui-label); }
-.note-source{ margin:13px 0 0; padding-top:10px; border-top:1px solid var(--border-soft); color:var(--text-faint); font-family:var(--font-content); font-size:11px; }
+.note-source{ margin:13px 0 0; padding-top:10px; border-top:1px solid var(--border-soft); color:var(--text-faint); font-family:var(--font-ui); font-size:11px; }
 @media (max-width:760px){
   .topnav{ position:fixed; top:0; left:0; right:0; z-index:90; }
   main#view{ padding-top:76px; }
