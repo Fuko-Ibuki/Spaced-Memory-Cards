@@ -42,6 +42,7 @@
 @font-face{ font-family:"SMC Minion Math"; src:url("./fonts/minion-math/minion-math-medium.woff") format("woff"); font-weight:500; font-style:normal; font-display:optional; }
 @font-face{ font-family:"SMC Minion Math"; src:url("./fonts/minion-math/minion-math-semibold.woff") format("woff"); font-weight:600; font-style:normal; font-display:optional; }
 @font-face{ font-family:"SMC Minion Math"; src:url("./fonts/minion-math/minion-math-bold.woff") format("woff"); font-weight:700; font-style:normal; font-display:optional; }
+@font-face{ font-family:"SMC Apple Emoji"; src:url("./fonts/emoji/Apple-Color-Emoji.woff") format("woff"); font-display:optional; }
 *,*::before,*::after{ box-sizing:border-box; }
 html,body{ height:100%; }
 body{

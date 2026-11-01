@@ -42,3 +42,11 @@ ROLLBACK input: MODIFIED_FILE -> /tmp/smc-font-rollback.css
 ROLLBACK literal result: rollback restored /tmp/smc-font-rollback.css from MODIFIED_FILE snapshot; exact comparison passed.
 ROLLBACK exit status: 0
 Restored behavior/status: only .woff files remain in tracked fonts/; .gitignore blocks future TTF/OTF/WOFF2 sync; working tree retains the WOFF branch.
+
+Emoji font organization verification
+Changed branch/field: fonts/emoji/Apple-Color-Emoji.woff and style.css SMC Apple Emoji @font-face.
+Command: python3 emoji font validation script
+Input: fonts/emoji/Apple-Color-Emoji.woff, style.css
+Literal output/result: emoji font organization: passed; WOFF present in fonts/emoji and CSS mapped.
+Exit status: 0
+Restored behavior/status: Apple Color Emoji now loads from the organized fonts/emoji directory.
