@@ -850,7 +850,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
   display:flex; align-items:flex-start; gap:12px; text-align:left; min-width:0;
   padding:13px 16px; border-radius:var(--radius-md);
   border:1.5px solid var(--paper-line); background:var(--surface-lift-1);
-  color:var(--ink); font-family:var(--font-content); font-size:15px; cursor:pointer;
+  color:var(--ink); font-family:var(--font-sans); font-size:15px; cursor:pointer;
   transition:all var(--dur-fast) var(--ease);
 }
 .opt-btn:hover{ border-color:var(--ink-faint); background:var(--surface-lift-2); }
@@ -874,7 +874,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .blank-choice-opts{ display:flex; flex-wrap:wrap; gap:8px; }
 .mini-opt-btn{
   padding:8px 14px; border-radius:var(--radius-pill); border:1.5px solid var(--paper-line);
-  background:var(--surface-lift-1); color:var(--ink); font-family:var(--font-content); font-size:13px; cursor:pointer;
+  background:var(--surface-lift-1); color:var(--ink); font-family:var(--font-sans); font-size:13px; cursor:pointer;
   transition:all var(--dur-fast) var(--ease);
 }
 .mini-opt-btn:hover{ border-color:var(--ink-faint); background:var(--surface-lift-2); }
@@ -882,7 +882,7 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .mini-opt-btn.correct{ border-color:var(--success); background:var(--success-bg); color:var(--success-strong); font-weight:700; }
 .mini-opt-btn.wrong{ border-color:var(--danger); background:var(--danger-bg); color:var(--danger-strong); }
 .mini-opt-btn:disabled{ cursor:default; }
-.tf-btn{ flex:1; padding:22px 10px; border-radius:var(--radius-md); border:1.5px solid var(--paper-line); background:var(--surface-lift-1); font-family:var(--font-content); font-size:17px; font-weight:600; color:var(--ink); cursor:pointer; transition:all var(--dur-fast) var(--ease); text-align:center; }
+.tf-btn{ flex:1; padding:22px 10px; border-radius:var(--radius-md); border:1.5px solid var(--paper-line); background:var(--surface-lift-1); font-family:var(--font-sans); font-size:17px; font-weight:600; color:var(--ink); cursor:pointer; transition:all var(--dur-fast) var(--ease); text-align:center; }
 .tf-btn .kbd{ opacity:.4; margin-left:6px; }
 .tf-btn:hover{ background:var(--surface-lift-2); }
 .tf-btn.selected{ border-color:var(--accent); background:var(--accent-glow); }
