@@ -1604,21 +1604,25 @@ function renderLoadView(container){
       <details class="format-guide" ${App.formatGuideOpen?'open':''}>
         <summary><h4>题库数据格式</h4></summary>
         <div class="format-guide-body">
-          <p>文件导出一个对象即可，推荐直接使用 JSON；JS 文件可使用 <code>module.exports = {...}</code>，但会执行文件代码，请只导入可信来源。<code>meta</code> 为可选信息；题型字段至少包含 <code>fillInTheBlank</code> / <code>singleChoice</code> / <code>multipleChoice</code> / <code>trueFalse</code> / <code>shortAnswer</code> / <code>essay</code> 中的一种或多种。</p>
-          <div class="format-json-demo"><b>v2.1 JSON 富媒体示例</b><pre>{
+          <p>推荐 JSON v2 格式：顶层使用 <code>deck</code> 与 <code>questions</code>，<code>deck.id</code> 和题目 <code>id</code> 应稳定唯一。<code>explanation</code> 是可选字段，写入后会在答题反馈、测试结果或闪卡翻面中显示；主观题仍需填写 <code>answer</code> 作为参考答案。</p>
+          <div class="format-json-demo"><b>JSON v2 单选示例</b><pre>{
+  "deck": { "id": "eng-day0", "title": "英语第0天", "subject": "英语" },
   "questions": [{
-    "type": "single_choice",
-    "content": [{ "type": "math", "latex": "E=mc^2" }],
-    "answer": { "keys": ["a"] }
+    "id": "q-001", "type": "single_choice", "chapter": "词汇 W1D1",
+    "content": [{ "type": "text", "text": "Choose the correct answer." }],
+    "options": [{ "key": "A", "text": "go" }, { "key": "B", "text": "went" }],
+    "answer": { "keys": ["B"] }, "explanation": "The sentence describes a past event."
   }]
 }</pre></div>
           <div class="format-guide-grid">
-            <div class="format-item"><b>fillInTheBlank</b><span><code>question</code> 中使用三个下划线（<code>___</code>）表示空；答案写 <code>answers:["答案"]</code>。可选 <code>chapter</code>。</span></div>
-            <div class="format-item"><b>singleChoice</b><span><code>options:["A项","B项"]</code>，<code>answer:"A"</code> 或答案序号。</span></div>
-            <div class="format-item"><b>multipleChoice</b><span><code>answer:["A","C"]</code> 表示多选正确项；其它字段同单选。</span></div>
-            <div class="format-item"><b>trueFalse</b><span><code>answer:true</code> 表示“对”，<code>false</code> 表示“错”。</span></div>
-            <div class="format-item"><b>shortAnswer / essay</b><span><code>answer:"参考答案"</code>，测试模式下会进入自评判分。</span></div>
-            <div class="format-item"><b>通用字段</b><span><code>id</code> 建议填写；<code>chapter</code> 可用于筛选；题干字段统一为 <code>question</code>。</span></div>
+            <div class="format-item"><b>fill_blank</b><span>并列填空使用 <code>___</code>；答案写 <code>answers:["答案1","答案2"]</code>。可接受答案保留在数组中，不要用斜杠拼接。</span></div>
+            <div class="format-item"><b>single_choice</b><span>选项使用 <code>{key,text}</code> 或旧版字符串数组；v2 答案使用 <code>{"keys":["B"]}</code>。</span></div>
+            <div class="format-item"><b>reading</b><span>阅读题支持 <code>article</code> 与 <code>articleId</code>；同一篇文章连续排列时，页面只显示一次文章。</span></div>
+            <div class="format-item"><b>multiple_choice</b><span>多选题的 <code>answer.keys</code> 写多个选项键，例如 <code>["A","C"]</code>。</span></div>
+            <div class="format-item"><b>true_false</b><span>v2 使用 <code>answer:{"value":true}</code>；旧版可直接使用 <code>answer:true</code>。</span></div>
+            <div class="format-item"><b>short_answer / essay</b><span><code>answer</code> 写参考答案；<code>explanation</code> 可写补充讲解，测试模式进入自评。</span></div>
+            <div class="format-item"><b>内容块</b><span><code>content</code> 支持 <code>text</code>、<code>math</code>、<code>image</code>、<code>audio</code>、<code>blank</code>、<code>lineBreak</code>。</span></div>
+            <div class="format-item"><b>旧版兼容</b><span>仍支持 <code>question</code>、字符串选项、字母答案，以及 <code>singleChoice</code> 等历史顶层数组字段。</span></div>
           </div>
         </div>
       </details>
