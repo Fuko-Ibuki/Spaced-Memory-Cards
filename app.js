@@ -612,6 +612,10 @@ function parseNotesHtmlPackage(text, filename){
   const articleNodes=Array.from(root.querySelectorAll('article.kp'));
   if (!articleNodes.length) throw new Error('未找到知识点：请使用 section.sec > article.kp 结构，并在 article 内提供 .md 正文。');
   const sections=[];
+  const noteTimestampFromNode=node=>{
+    if(!node) return '';
+    return node.getAttribute('data-date') || node.getAttribute('data-source-time') || node.getAttribute('datetime') || node.querySelector('time[datetime]')?.getAttribute('datetime') || node.querySelector('time[data-epoch-ms]')?.getAttribute('data-epoch-ms') || '';
+  };
   const makeArticle=(article,index,sectionTitle,chapterTitle)=>{
     const body=article.querySelector('.md, .note-body, [data-note-body]');
     if (!body) return null;
@@ -625,16 +629,32 @@ function parseNotesHtmlPackage(text, filename){
     const chapter=node.closest('section.chap');
     const chapterHeading=chapter && chapter.querySelector(':scope > h2');
     const articles=Array.from(node.querySelectorAll(':scope > article.kp')).map((a,i)=>makeArticle(a,i,index,chapterHeading?.textContent.replace(/\s+/g,' ').trim()||'')).filter(Boolean);
-    if (articles.length) sections.push({ id:(node.id||`section-${index+1}`).replace(/[^a-zA-Z0-9_-]/g,'-'), path:node.getAttribute('data-path')||'', noteDate:node.getAttribute('data-date')||chapter?.getAttribute('data-date')||root.getAttribute('data-date')||'', sourceDeckId:node.getAttribute('data-deck-id')||root.getAttribute('data-deck-id')||'', title:heading?.textContent.replace(/\s+/g,' ').trim()||'未命名小节', description:node.querySelector(':scope > .desc')?.textContent.replace(/\s+/g,' ').trim()||'', chapterTitle:chapterHeading?.textContent.replace(/\s+/g,' ').trim()||'', articles });
+    if (articles.length) sections.push({ id:(node.id||`section-${index+1}`).replace(/[^a-zA-Z0-9_-]/g,'-'), path:node.getAttribute('data-path')||'', noteDate:node.getAttribute('data-date')||chapter?.getAttribute('data-date')||root.getAttribute('data-date')||noteTimestampFromNode(node.querySelector('article.kp'))||'', sourceDeckId:node.getAttribute('data-deck-id')||root.getAttribute('data-deck-id')||'', title:heading?.textContent.replace(/\s+/g,' ').trim()||'未命名小节', description:node.querySelector(':scope > .desc')?.textContent.replace(/\s+/g,' ').trim()||'', chapterTitle:chapterHeading?.textContent.replace(/\s+/g,' ').trim()||'', articles });
   };
   sectionNodes.forEach(addSection);
   if (!sections.length){
     const articles=articleNodes.map((a,i)=>makeArticle(a,i,'','')).filter(Boolean);
-    sections.push({id:'section-1',path:'',sourceDeckId:root.getAttribute('data-deck-id')||'',title:'笔记',description:'',chapterTitle:'',articles});
+    sections.push({id:'section-1',path:'',noteDate:root.getAttribute('data-date')||noteTimestampFromNode(articles[0] ? articleNodes[0] : null)||'',sourceDeckId:root.getAttribute('data-deck-id')||'',title:'笔记',description:'',chapterTitle:'',articles});
   }
   const count=sections.reduce((n,s)=>n+s.articles.length,0);
   if (!count) throw new Error('笔记包中没有可显示的正文。');
   return { version:1, title, subject, sourceKey, sourceLabel, deckId:root.getAttribute('data-deck-id')||'', sourceName:filename||'notes.html', importedAt:Date.now(), originalSources:originalSources&&typeof originalSources==='object'?originalSources:{}, linkedDecks:linkedDecks&&typeof linkedDecks==='object'?linkedDecks:{}, sections, totalArticles:count };
+}
+function hydrateNotesPackageTimestamps(pack){
+  if(!pack?.originalSources || !Array.isArray(pack.sections)) return false;
+  let changed=false;
+  for(const [filename,source] of Object.entries(pack.originalSources)){
+    if(typeof source!=='string') continue;
+    try{
+      const imported=parseNotesHtmlPackage(source,filename);
+      const byId=new Map(imported.sections.map(section=>[section.id,section.noteDate||'']));
+      pack.sections.forEach(section=>{
+        const timestamp=byId.get(section.id);
+        if(timestamp && section.noteDate!==timestamp){ section.noteDate=timestamp; changed=true; }
+      });
+    }catch(e){}
+  }
+  return changed;
 }
 let notesMergeQueue=Promise.resolve();
 function mergeNotesPackage(pack, opts={}){
@@ -1301,8 +1321,15 @@ function flushNotesScrollPosition(){
 }
 function restoreNotesScrollPosition(){
   const y=Number.isFinite(App.notesScrollY) ? Math.max(0, App.notesScrollY) : 0;
-  if (!y) return;
-  requestAnimationFrame(()=>requestAnimationFrame(()=>window.scrollTo({top:y, behavior:'auto'})));
+  const cardId=App.notesReadingState?.cardId||'';
+  const restore=()=>{
+    const target=cardId&&document.getElementById(cardId);
+    const top=target ? Math.max(0,target.getBoundingClientRect().top+window.scrollY-90) : y;
+    if(top) window.scrollTo({top,behavior:'auto'});
+  };
+  if (!y && !cardId) return;
+  const afterLayout=()=>requestAnimationFrame(()=>requestAnimationFrame(restore));
+  if(document.fonts?.ready) document.fonts.ready.then(afterLayout).catch(afterLayout); else afterLayout();
 }
 window.addEventListener('scroll', captureNotesScrollPosition, {passive:true});
 window.addEventListener('pagehide', flushNotesScrollPosition);
@@ -4510,10 +4537,15 @@ function bindTypographySettings(container){
   }));
 }
 function noteCalendarDate(value){
-  const d=value instanceof Date?value:new Date(value);
+  const raw=String(value??'').trim();
+  const d=value instanceof Date?value:/^\d{10,13}$/.test(raw)?new Date(Number(raw)):new Date(value);
   return Number.isNaN(d.getTime())?null:d;
 }
-function noteCalendarKey(value){ const d=noteCalendarDate(value); return d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`:''; }
+function noteCalendarKey(value){
+  const d=noteCalendarDate(value); if(!d) return '';
+  const calendarDate=new Date(d.getTime()+8*60*60*1000);
+  return `${calendarDate.getUTCFullYear()}-${String(calendarDate.getUTCMonth()+1).padStart(2,'0')}-${String(calendarDate.getUTCDate()).padStart(2,'0')}`;
+}
 function buildNotesCalendar(pack){
   const days=new Map();
   (pack?.sections||[]).forEach(section=>{
@@ -4540,14 +4572,24 @@ function notesCalendarModal(container,days,monthKey,readingKey=''){
     const key=`${current}-${String(day).padStart(2,'0')}`, ids=days.get(key), enabled=!!ids?.length, classes=['notes-calendar-day']; if(enabled) classes.push('has-notes'); if(key===readingKey) classes.push('is-reading');
     cells.push(enabled?`<button type="button" class="${classes.join(' ')}" data-notes-calendar-target="notes-section-${Utils.escapeHtml(ids[0])}" aria-label="${key}，${ids.length} 个章节">${day}</button>`:`<span class="${classes.join(' ')}" aria-disabled="true">${day}</span>`);
   }
-  const nav=months.length>1?`<button type="button" class="notes-calendar-nav" data-notes-calendar-month="${months[index-1]||''}" ${index===0?'disabled':''} aria-label="上一个有笔记的月份">􀆉</button><button type="button" class="notes-calendar-nav" data-notes-calendar-month="${months[index+1]||''}" ${index===months.length-1?'disabled':''} aria-label="下一个有笔记的月份">􀆊</button>`:'';
+  const previous=months.length>1?`<button type="button" class="notes-calendar-nav" data-notes-calendar-month="${months[index-1]||''}" ${index===0?'disabled':''} aria-label="上一个有笔记的月份">􀆉</button>`:'';
+  const next=months.length>1?`<button type="button" class="notes-calendar-nav" data-notes-calendar-month="${months[index+1]||''}" ${index===months.length-1?'disabled':''} aria-label="下一个有笔记的月份">􀆊</button>`:'';
   const todayTarget=days.get(today)?.[0] || '';
-  const overlay=document.createElement('div'); overlay.className='notes-calendar-overlay'; overlay.innerHTML=`<section class="notes-calendar-modal" role="dialog" aria-modal="true" aria-label="笔记日历"><header><div class="notes-calendar-title"><span>${year}年 ${month}月</span><button type="button" class="notes-calendar-today" data-notes-calendar-today="${Utils.escapeHtml(todayTarget)}">今天</button></div><button type="button" class="notes-calendar-close" aria-label="关闭日历">􀆄</button></header><div class="notes-calendar-month-nav">${nav}</div><div class="notes-calendar-week">${['日','一','二','三','四','五','六'].map(day=>`<span>${day}</span>`).join('')}</div><div class="notes-calendar-grid">${cells.join('')}</div></section>`;
+  const overlay=document.createElement('div'); overlay.className='notes-calendar-overlay'; overlay.innerHTML=`<section class="notes-calendar-modal" role="dialog" aria-modal="true" aria-label="笔记日历"><header><div class="notes-calendar-title"><span>${year}年 ${month}月</span><span class="notes-calendar-prev">${previous}</span><button type="button" class="notes-calendar-today" data-notes-calendar-today="${Utils.escapeHtml(todayTarget)}">今天</button><span class="notes-calendar-next">${next}</span></div><button type="button" class="notes-calendar-close" aria-label="关闭日历">􀆄</button></header><div class="notes-calendar-week">${['日','一','二','三','四','五','六'].map(day=>`<span>${day}</span>`).join('')}</div><div class="notes-calendar-grid">${cells.join('')}</div></section>`;
   const close=()=>overlay.remove();
   overlay.addEventListener('click',event=>{ if(event.target===overlay) close(); });
   overlay.querySelector('.notes-calendar-close').onclick=close;
   overlay.querySelectorAll('[data-notes-calendar-month]').forEach(btn=>btn.onclick=()=>{ if(btn.disabled) return; overlay.remove(); notesCalendarModal(container,days,btn.dataset.notesCalendarMonth,readingKey); });
-  overlay.querySelector('[data-notes-calendar-today]').onclick=()=>{ const targetId=overlay.querySelector('[data-notes-calendar-today]').dataset.notesCalendarToday; const target=targetId&&document.getElementById(`notes-section-${targetId}`); if(target){ window.scrollTo({top:Math.max(0,target.getBoundingClientRect().top+window.scrollY-90),behavior:'auto'}); } };
+  overlay.querySelector('[data-notes-calendar-today]').onclick=()=>{
+    const targetId=overlay.querySelector('[data-notes-calendar-today]').dataset.notesCalendarToday;
+    if(!targetId) return;
+    App.notesCalendarMonth=today.slice(0,7);
+    App.notesCalendarFocusKey=today;
+    overlay.remove();
+    notesCalendarModal(container,days,today.slice(0,7),today);
+    const target=document.getElementById(`notes-section-${targetId}`) || document.getElementById(targetId);
+    if(target){ window.scrollTo({top:Math.max(0,target.getBoundingClientRect().top+window.scrollY-90),behavior:'auto'}); }
+  };
   overlay.querySelectorAll('[data-notes-calendar-target]').forEach(btn=>btn.onclick=()=>{ const target=document.getElementById(btn.dataset.notesCalendarTarget); close(); if(target) window.scrollTo({top:Math.max(0,target.getBoundingClientRect().top+window.scrollY-90),behavior:'auto'}); });
   document.body.appendChild(overlay);
 }
@@ -5263,6 +5305,7 @@ async function initApp(){
     App.settings = await loadSettings();
     App.progress = await loadProgress();
     App.notesPackage = await Store.getJSON(STORAGE_KEYS.notesPackage, null);
+    if (hydrateNotesPackageTimestamps(App.notesPackage)) await Store.setJSON(STORAGE_KEYS.notesPackage, App.notesPackage);
     // 仅对可识别的旧版断裂 TeX 做一次迁移；正常笔记刷新不再整包解析并重绘公式。
     if (repairNotesPackageMath(App.notesPackage)) await Store.setJSON(STORAGE_KEYS.notesPackage, App.notesPackage);
     App.notesScrollY = await Store.getJSON(STORAGE_KEYS.notesScrollY, 0);

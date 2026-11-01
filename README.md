@@ -129,7 +129,21 @@ python3 -m http.server 8000
 - 标题使用 `h1`、`h2`、`h3`、`h4`；小节说明使用 `.desc`，来源使用 `.src`。
 - 建议填写 1～4 个汉字的学科：`main[data-subject]` 或 `<meta name="subject">`，并与题库 `deck.subject` 保持一致。
 - `data-deck-id` 可写在 `main` 或 `section.sec`，用于选择关联题库。
-- 笔记小节应写入 `data-date="2026-11-01T09:30:00-07:00"` 时间戳，可放在 `section.sec`、`section.chap` 或 `main`；日历优先使用小节时间戳，缺失时使用笔记导入时间。
+- 一个笔记只需要一个日期时，在 `main` 上添加时间戳即可：
+
+  ```html
+  <main
+    data-subject="英语"
+    data-date="2026-10-25T13:29:09+08:00">
+  ```
+
+  也可以使用 UTC：
+
+  ```html
+  data-date="2026-10-25T05:29:09.000Z"
+  ```
+
+  如果不同章节需要在日历中分别定位，则给每个 `section.sec` 单独添加 `data-date`。
 - `data-question-id` 优先关联 `questions[].id`；随后依次尝试笔记 `data-id` 和笔记标题与题干的完全匹配。
 - `data-type` 推荐使用 `concept`、`rule`、`method`、`contrast`、`pitfall`、`example`、`memo` 七类。
 - `data-test-config` 可包含 `questionLimit`、`timeLimitEnabled`、`timeLimitMinutes`、`shuffleQuestions`、`shuffleOptions`、`includeTypes`、`chapterFilter`。
