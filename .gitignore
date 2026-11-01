@@ -1,1 +1,5 @@
 font/
+# Keep source font containers out of synced web assets; committed runtime fonts are WOFF only.
+fonts/**/*.ttf
+fonts/**/*.otf
+fonts/**/*.woff2

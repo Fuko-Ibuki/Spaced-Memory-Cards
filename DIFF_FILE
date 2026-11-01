@@ -1,6 +1,6 @@
-Typography taxonomy update:
-- UI Chinese: SMC HY QiHei; UI punctuation: SMC HY QiHei Punctuation.
-- Serif Chinese body: SMC FZ New Book; serif punctuation: SMC CJK Punctuation (FZ FW ZhuZi A).
-- English/numbers: SMC Minion (Minion 3).
-- Symbols/icons: SMC SF Pro.
-- Emoji: SMC Apple Emoji / Apple Color Emoji.
+Font packaging update:
+- Converted all tracked runtime font assets to .woff.
+- Updated style.css @font-face declarations to use only .woff sources.
+- Removed tracked TTF, OTF, and WOFF2 runtime copies.
+- Added .gitignore rules preventing fonts/**/*.ttf, fonts/**/*.otf, and fonts/**/*.woff2 from future GitHub sync.
+- Apple Color Emoji remains a platform fallback and its ignored source stays outside synced files.
