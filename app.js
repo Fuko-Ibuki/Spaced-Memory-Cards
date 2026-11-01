@@ -24,7 +24,6 @@ function cacheCurrentView(view){ try{ localStorage.setItem(VIEW_CACHE_KEY,view);
 function cachedCurrentView(){ try{ return localStorage.getItem(VIEW_CACHE_KEY); }catch(e){ return null; } }
 function cacheTypography(settings){ try{ localStorage.setItem(TYPOGRAPHY_CACHE_KEY,JSON.stringify({uiFontFamily:settings?.uiFontFamily||'default',uiFontSize:settings?.uiFontSize||'default'})); }catch(e){} }
 const LOCAL_DECK_FILES = [
-  '高数题库.json',
   'XiThoughtQuiz.js',
   'AutoMechanicsQuiz.js',
   'PrintingQualityQuiz.js',
@@ -38,7 +37,7 @@ const LOCAL_DECK_GLOBALS = {
   'AlcoholAnalysisQuiz.js':'alcoholAnalysisQuiz',
   'BaiJiuTastingQuiz.js':'baiJiuTastingQuiz'
 };
-const LOCAL_NOTE_FILES = ['高数笔记.html'];
+const LOCAL_NOTE_FILES = [];
 
 /* ============================================================
    §1. 工具函数

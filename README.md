@@ -35,9 +35,6 @@ python3 -m http.server 8000
 ├── app.js                  # 应用状态、导入、学习、笔记与存储逻辑
 ├── style.css               # 深浅主题、桌面端与移动端样式
 ├── MEDIA_V2_SAMPLE.json    # 富媒体 v2 题库示例
-├── 高数题库.json            # 本地示例题库
-├── 高数笔记.html            # 本地示例笔记
-├── 英语.html                # 本地示例笔记
 ├── fonts/                  # 浏览器使用的字体资源
 └── vendor/katex/           # 离线公式渲染资源（发布时需保留）
 ```
