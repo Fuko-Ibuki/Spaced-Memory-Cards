@@ -17,7 +17,7 @@ const RATING_TO_PCT = { again:0, hard:50, good:80, easy:100 };
 const SELF_GRADE_FRACTION = { again:0, hard:1/3, good:2/3, easy:1 };
 const TIME_LIMIT_MAX_MINUTES = 240;
 const LEARNING_MODE_KEYS = ['flashcard','learn','test'];
-const STORAGE_KEYS = { settings:'settings', progress:'progress', lastDeck:'lastDeck', deckRegistry:'deckRegistry', deckLibrary:'deckLibrary', activeSession:'activeSession', notesPackage:'notesPackage', notesBookmarks:'notesBookmarks', notesHighlights:'notesHighlights', notesImageZoom:'notesImageZoom', notesScrollY:'notesScrollY', notesTocCollapsed:'notesTocCollapsed', notesTocFavoritesOnly:'notesTocFavoritesOnly', currentView:'currentView', recordDetailId:'recordDetailId' };
+const STORAGE_KEYS = { settings:'settings', progress:'progress', lastDeck:'lastDeck', deckRegistry:'deckRegistry', deckLibrary:'deckLibrary', activeSession:'activeSession', notesPackage:'notesPackage', notesBookmarks:'notesBookmarks', notesHighlights:'notesHighlights', notesImageZoom:'notesImageZoom', notesScrollY:'notesScrollY', notesReadingState:'notesReadingState', notesTocCollapsed:'notesTocCollapsed', notesTocFavoritesOnly:'notesTocFavoritesOnly', currentView:'currentView', recordDetailId:'recordDetailId' };
 const VIEW_CACHE_KEY = 'smc-current-view';
 const TYPOGRAPHY_CACHE_KEY = 'smc-typography';
 function cacheCurrentView(view){ try{ localStorage.setItem(VIEW_CACHE_KEY,view); }catch(e){} }
@@ -234,13 +234,9 @@ const DEMO_DECK_RAW = {
    §4. 数据解析：三层兜底策略
    1) 标准 JSON  2) UMD/CommonJS 模块 (module.exports)  3) 裸对象/数组表达式
    ============================================================ */
-const V2_TYPE_MAP = { single_choice:'singleChoice', multiple_choice:'multipleChoice', true_false:'trueFalse', fill_blank:'fillInTheBlank', short_answer:'shortAnswer', essay:'essay' };
+const V2_TYPE_MAP = { single_choice:'singleChoice', multiple_choice:'multipleChoice', true_false:'trueFalse', fill_blank:'fillInTheBlank', short_answer:'shortAnswer', essay:'essay', reading:'reading' };
 function cleanDeckText(value){
-  let text = String(value ?? '');
-  let doubleOpen = true, singleOpen = true;
-  text = text.replace(/"/g, ()=>{ const out=doubleOpen?'“':'”'; doubleOpen=!doubleOpen; return out; });
-  text = text.replace(/'/g, ()=>{ const out=singleOpen?'‘':'’'; singleOpen=!singleOpen; return out; });
-  return text;
+  return String(value ?? '');
 }
 
 function plainContent(blocks){
@@ -250,6 +246,34 @@ function plainContent(blocks){
     if (b.type==='text') return cleanDeckText(b.text||'');
     if (b.type==='math') return String(b.latex||'');
     if (b.type==='blank') return '___';
+    return '';
+  }).join('');
+}
+function plainAnswer(value){
+  if (value==null) return '';
+  if (typeof value==='string' || typeof value==='number' || typeof value==='boolean') return String(value);
+  if (Array.isArray(value)) return value.map(plainAnswer).filter(Boolean).join('；');
+  if (typeof value==='object'){
+    if (typeof value.text==='string') return value.text;
+    if (typeof value.value==='string' || typeof value.value==='number') return String(value.value);
+    if (Array.isArray(value.content)) return plainContent(value.content);
+    return Object.entries(value).map(([k,v])=>`${k}：${plainAnswer(v)}`).join('\n');
+  }
+  return '';
+}
+function hasLegacyObjectAnswer(deck){
+  return !!(deck && (deck.questions||[]).some(q=>
+    ['reference','answer'].some(key=>q && q[key]==='[object Object]')
+  ));
+}
+function contentPrompt(blocks){
+  if(!Array.isArray(blocks)) return '';
+  return blocks.map(block=>{
+    if(!block||typeof block!=='object') return '';
+    if(block.type==='text') return cleanDeckText(block.text||'');
+    if(block.type==='math') return String(block.latex||'');
+    if(block.type==='blank') return '___';
+    if(block.type==='lineBreak') return '\n';
     return '';
   }).join('');
 }
@@ -263,6 +287,26 @@ function normalizeContent(value){
   if (Array.isArray(value)) return value.filter(b=>b&&typeof b==='object');
   return [{type:'text', text:cleanDeckText(value||'')}];
 }
+// 题库文本允许使用四类安全的行内格式；先转义全部内容，再只还原白名单标签。
+function renderInlineText(value){
+  const text=cleanDeckText(value||'');
+  if (/<svg\b[\s\S]*?<\/svg>/i.test(text)) return text.split(/(<svg\b[\s\S]*?<\/svg>)/ig).map(part=>/^<svg\b/i.test(part)?renderInlineSvg(part):renderInlineText(part)).join('');
+  let html=Utils.escapeHtml(text);
+  return html.replace(/&lt;(\/?)(strong|b|em|i|del|s|u)&gt;/gi,'<$1$2>');
+}
+function renderInlineSvg(markup){
+  try{
+    const parsed=new DOMParser().parseFromString(String(markup||''),'text/html');
+    const svg=parsed.querySelector('svg');
+    if (!svg || svg.tagName.toUpperCase()!=='SVG') return '';
+    const holder=document.createElement('div');
+    // Pass an SVG root as a node, not as a fragment's children: the SVG root
+    // is itself essential for namespace and viewBox-based rendering.
+    const root=document.createDocumentFragment(); root.appendChild(svg.cloneNode(true));
+    holder.appendChild(sanitizeNoteFragment(root));
+    return holder.innerHTML;
+  }catch(e){ return '<span class="media-error">SVG 图形不可用</span>'; }
+}
 function richText(blocks){ return plainContent(blocks); }
 function renderMathFallback(latex){
   let t=Utils.escapeHtml(String(latex||''));
@@ -275,7 +319,12 @@ function renderMathFallback(latex){
 }
 function renderQuestionFormula(value){
   const latex=String(value||'');
-  if(!/[\\^_]/.test(latex)) return Utils.escapeHtml(cleanDeckText(latex));
+  if (/<svg\b[\s\S]*?<\/svg>/i.test(latex)) return renderInlineText(latex);
+  // 题库中也常用 Unicode 素材直接书写导数、分式（如 y′(t)/x′(t)、1/x），
+  // 这些内容没有反斜杠，但仍应按公式排版；含中文的混合选项继续按正文处理。
+  const looksLikeFormula=/[\\^_]/.test(latex) ||
+    (!/[\\u3400-\\u9fff]/.test(latex) && /[\\/＝=′″]/.test(latex));
+  if(!looksLikeFormula) return renderInlineText(latex);
   try{
     const katex=(window.katex&&typeof window.katex.renderToString==='function') ? window.katex : (window.katex&&window.katex.default);
     return katex&&typeof katex.renderToString==='function'
@@ -285,7 +334,7 @@ function renderQuestionFormula(value){
 }
 function renderRichContent(blocks, assets){
   return normalizeContent(blocks).map(block=>{
-    if (block.type==='text') return Utils.escapeHtml(cleanDeckText(block.text||''));
+    if (block.type==='text') return renderInlineText(block.text||'');
     if (block.type==='lineBreak') return '<br>';
     if (block.type==='math'){
       const latex=String(block.latex||'');
@@ -293,6 +342,7 @@ function renderRichContent(blocks, assets){
       try{ const katex=(window.katex&&typeof window.katex.renderToString==='function') ? window.katex : (window.katex&&window.katex.default); return katex&&typeof katex.renderToString==='function' ? katex.renderToString(latex,{throwOnError:true,displayMode:!!block.display}) : renderMathFallback(latex); }
       catch(e){ return renderMathFallback(latex); }
     }
+    if (block.type==='svg' || block.type==='inlineSvg') return renderInlineSvg(block.svg || block.markup || block.content || '');
     const asset=(assets&&block.asset&&assets[block.asset]) || block;
     if (block.type==='image' || asset.type==='image'){
       const src=safeMediaUrl(asset.src,'image'); if (!src) return '<span class="media-error">图片资源不可用</span>';
@@ -311,48 +361,35 @@ function adaptDeckV2(raw){
   const schemaMajor=raw.schemaVersion==null ? '2' : String(raw.schemaVersion).split('.')[0];
   if (schemaMajor!=='2') return raw;
   const out={ meta:Object.assign({},raw.deck||{}), assets:raw.assets||{} };
-  raw.questions.forEach(q=>{
+  const byKey=new Map();
+  raw.questions.forEach((q,index)=>{
     const type=V2_TYPE_MAP[q.type]; if (!type) return;
+    const key=q.chapter || type;
+    if(!byKey.has(key)) byKey.set(key,{});
+    const group=byKey.get(key);
+    const prev=group[type]||0; group[type]=prev+1;
+    const stableId=q.id ?? `${String(index+1).padStart(4,'0')}-${type}-${prev+1}`;
     (out[type]||(out[type]=[]));
-    const item={id:q.id, chapter:q.chapter, question:plainContent(q.content||q.stem||''), content:normalizeContent(q.content||q.stem||''), explanation:q.explanation, answer:q.referenceAnswer||q.answer};
+    const item={id:stableId, chapter:q.chapter, article:q.article, articleId:q.articleId, question:contentPrompt(q.content||q.stem||''), content:normalizeContent(q.content||q.stem||''), explanation:q.explanation, answer:q.referenceAnswer||q.answer, _sourceOrder:index};
     if (type==='singleChoice'||type==='multipleChoice'){
       item.options=(q.options||[]).map(o=>({text:plainContent(o.content||o.text||''), content:normalizeContent(o.content||o.text||'')}));
       const keys=(q.answer&&q.answer.keys)||[];
       item.answer=keys.map(key=>(q.options||[]).findIndex(o=>o.key===key));
       if(type==='singleChoice'||type==='reading') item.answer=item.answer[0];
     } else if(type==='trueFalse') item.answer=!!(q.answer&&q.answer.value);
-    else if(type==='fillInTheBlank') item.answers=(q.blanks||[]).map(b=>(b.answers||[]).join('/'));
-    else item.answer=q.referenceAnswer||q.answer||'';
+    else if(type==='fillInTheBlank') item.answers=(q.blanks||[]).map(b=>Array.isArray(b.answers)?b.answers.slice():[]);
+    else item.answer=plainAnswer(q.referenceAnswer||q.answer||'');
     out[type].push(item);
   });
+  out.questions=raw.questions;
   return out;
 }
 
 function parseDeckFile(text, filename){
-  const trimmed = String(text||'').trim();
-  const errors = [];
-
-  if (trimmed.startsWith('{') || trimmed.startsWith('[')){
-    try{ return normalizeDeck(JSON.parse(trimmed), filename); }
-    catch(e){ errors.push('按 JSON 解析失败：'+e.message); }
-  }
-  try{
-    const mod = { exports:{} };
-    const fn = new Function('module','exports','global','globalThis','self','window', trimmed);
-    fn(mod, mod.exports, window, window, window, window);
-    if (mod.exports && typeof mod.exports==='object' && Object.keys(mod.exports).length){
-      return normalizeDeck(mod.exports, filename);
-    }
-    errors.push('按模块执行成功，但未检测到 module.exports 导出内容');
-  }catch(e){ errors.push('按 UMD/CommonJS 模块执行失败：'+e.message); }
-  try{
-    const fn2 = new Function('return ('+trimmed+')');
-    const val = fn2();
-    if (val && typeof val==='object') return normalizeDeck(val, filename);
-    errors.push('裸表达式求值结果不是对象');
-  }catch(e){ errors.push('按裸对象表达式解析失败：'+e.message); }
-
-  throw new Error('无法识别该文件的数据格式，已尝试 JSON / UMD模块 / 裸对象三种方式均失败。\n\n'+errors.join('\n')+'\n\n请确认文件至少包含 fillInTheBlank / singleChoice / trueFalse / shortAnswer / essay 中的一种或多种；多选题可使用 multipleChoice。');
+  const trimmed=String(text||'').trim();
+  if (!trimmed.startsWith('{') && !trimmed.startsWith('[')) throw new Error('仅支持 JSON 题库；为避免导入文件执行任意代码，.js 题库请转换为 .json。');
+  try { return normalizeDeck(JSON.parse(trimmed), filename); }
+  catch(e){ throw new Error('JSON 题库解析失败：'+e.message); }
 }
 
 /*
@@ -361,8 +398,8 @@ function parseDeckFile(text, filename){
  * article .md 为正文，article .src 为来源。其它页面装饰会被丢弃。
  */
 const NOTE_ALLOWED_TAGS = new Set(['P','BR','STRONG','B','EM','I','U','S','CODE','PRE','BLOCKQUOTE','UL','OL','LI','TABLE','THEAD','TBODY','TFOOT','TR','TH','TD','H5','H6','DIV','SPAN','A','IMG','HR','SUP','SUB','MARK','DL','DT','DD']);
-const NOTE_SVG_TAGS = new Set(['SVG','G','PATH','CIRCLE','ELLIPSE','LINE','POLYLINE','POLYGON','RECT','DEFS','TITLE','DESC','USE','CLIPPATH','MASK','LINEARGRADIENT','RADIALGRADIENT','STOP']);
-const NOTE_SVG_ATTRS = new Set(['viewBox','width','height','fill','stroke','stroke-width','stroke-linecap','stroke-linejoin','stroke-miterlimit','fill-rule','clip-rule','d','cx','cy','r','rx','ry','x','y','x1','x2','y1','y2','points','offset','stop-color','stop-opacity','opacity','preserveAspectRatio','role','aria-label']);
+const NOTE_SVG_TAGS = new Set(['SVG','G','PATH','CIRCLE','ELLIPSE','LINE','POLYLINE','POLYGON','RECT','DEFS','TITLE','DESC','USE','TEXT','TSPAN','CLIPPATH','MASK','MARKER','LINEARGRADIENT','RADIALGRADIENT','STOP']);
+const NOTE_SVG_ATTRS = new Set(['xmlns','viewbox','width','height','fill','stroke','stroke-width','stroke-linecap','stroke-linejoin','stroke-miterlimit','fill-rule','clip-rule','clip-path','d','cx','cy','r','rx','ry','x','y','x1','x2','y1','y2','points','offset','stop-color','stop-opacity','opacity','preserveaspectratio','role','aria-label','marker-start','marker-mid','marker-end','markerwidth','markerheight','refx','refy','orient','gradientunits','gradienttransform','id','href','xlink:href','stroke-dasharray','stroke-dashoffset','stroke-opacity','transform','font-size','font-family','font-style','font-weight','text-anchor','dominant-baseline','color','vector-effect','display','visibility']);
 const NOTE_TYPE_LABELS = { rule:'规则', concept:'概念', contrast:'辨析', method:'方法', example:'例题', pitfall:'易错', memo:'记忆项', warning:'易错', vocabulary:'词汇' };
 const NOTE_TYPE_ICONS = {
   concept:'<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
@@ -391,12 +428,15 @@ function sanitizeNoteFragment(source){
     if (node.nodeType!==Node.ELEMENT_NODE) return document.createDocumentFragment();
     const tag = node.tagName.toUpperCase();
     if (tag==='SVG'){
-      const clone=node.cloneNode(true);
-      clone.querySelectorAll?.('text,tspan').forEach(textNode=>{
-        textNode.setAttribute('font-size','16');
-        textNode.style.setProperty('font-size','16px','important');
+      // Preserve and sanitize the SVG root itself. Its xmlns, viewBox and sizing
+      // attributes are required; walking only its children strips the root.
+      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+      Array.from(node.attributes).forEach(attr=>{
+        const name=attr.name.toLowerCase();
+        if(NOTE_SVG_ATTRS.has(name) && !/^on/i.test(name)) svg.setAttribute(name==='viewbox'?'viewBox':attr.name,attr.value.slice(0,20000));
       });
-      return clone;
+      Array.from(node.childNodes).forEach(child=>svg.appendChild(copy(child,true)));
+      return svg;
     }
     if (['SCRIPT','STYLE','NOSCRIPT','IFRAME','OBJECT','EMBED','FORM','INPUT','BUTTON','TEXTAREA','SELECT','OPTION','LINK','META','BASE'].includes(tag)) return document.createDocumentFragment();
     const svgNode = inSvg || tag==='SVG';
@@ -414,7 +454,10 @@ function sanitizeNoteFragment(source){
         target.setAttribute('alt',(node.getAttribute('alt')||'图片').slice(0,200));
         target.setAttribute('loading','lazy');
       } else if (svgNode){
-        Array.from(node.attributes).forEach(attr=>{ if (NOTE_SVG_ATTRS.has(attr.name) && !/^on/i.test(attr.name)) target.setAttribute(attr.name, attr.value.slice(0,200)); });
+        Array.from(node.attributes).forEach(attr=>{
+          const name=attr.name.toLowerCase();
+          if (NOTE_SVG_ATTRS.has(name) && !/^on/i.test(name)) target.setAttribute(name==='viewbox'?'viewBox':attr.name, attr.value.slice(0,20000));
+        });
       } else {
         ['colspan','rowspan','scope','datetime','lang'].forEach(name=>{ const value=node.getAttribute(name); if (value) target.setAttribute(name,value.slice(0,100)); });
       }
@@ -743,9 +786,10 @@ function normalizeDeck(raw, sourceName){
         rawId:q.id!=null ? q.id : idx,
         type,
         chapter:String(q.chapter||'').trim(),
-        question:cleanDeckText(q.question||'').trim(),
+        question:cleanDeckText(q.question || (Array.isArray(q.content)?contentPrompt(q.content):'') || q.prompt || q.title || '').trim(),
         content:Array.isArray(q.content) ? q.content : null,
         explanation:q.explanation ? normalizeContent(q.explanation) : null,
+        _sourceOrder:Number.isFinite(Number(q._sourceOrder))?Number(q._sourceOrder):questions.length,
         objective:QuestionTypes[type].objective
       };
       if (!base.question){ skipped.push(uid+':题目为空'); return; }
@@ -774,7 +818,7 @@ function normalizeDeck(raw, sourceName){
         base.answers = q.answers.map(String);
         base.blankCount = (base.question.match(/_{2,}/g)||[]).length || 1;
       } else {
-        base.reference = String(q.answer||'').trim();
+        base.reference = plainAnswer(q.answer).trim();
         if (!base.reference){ skipped.push(uid+':缺少参考答案'); return; }
       }
       questions.push(base);
@@ -783,6 +827,7 @@ function normalizeDeck(raw, sourceName){
   });
 
   if (!questions.length) throw new Error('题库解析后没有任何有效题目。跳过详情：\n'+skipped.join('\n'));
+  questions.sort((a,b)=>a._sourceOrder-b._sourceOrder);
 
   const metaSrc = (src.meta && typeof src.meta==='object') ? src.meta : {};
   const meta = Object.assign({ title:sourceName||'未命名题库', subject:'', description:'', version:'' }, metaSrc);
@@ -1197,7 +1242,8 @@ function matchesSourceScope(q, s, deckId){
 function snapshotQuestion(q){
   const out = {
     uid:q.uid, rawId:q.rawId, type:q.type, chapter:q.chapter||'',
-    question:q.question, objective:q.objective
+    question:q.question, objective:q.objective, content:q.content||null,
+    readingArticle:q.readingArticle||'', readingId:q.readingId||'', rawOrder:q._sourceOrder
   };
   if (q.options) out.options = q.options.map(o=>({text:o.text, correct:!!o.correct}));
   if (q.answer!=null) out.answer = q.answer;
@@ -1611,7 +1657,7 @@ function renderLoadView(container){
       <div class="local-deck-panel">
         <div class="local-deck-title">同目录题库</div>
         <div class="local-deck-list">
-          ${App.localDecks.map(d=>`<button type="button" class="local-deck-btn ${App.deck&&d.id===App.deck.id?'active':''}" data-local-deck="${d.id}">
+          ${App.localDecks.map(d=>`<button type="button" class="local-deck-btn ${App.deck&&d.id===App.deck.id?'active':''}" data-local-deck="${Utils.escapeHtml(d.id)}">
             <span>${Utils.escapeHtml(d.meta.title)}</span><b>${d.totalQuestions}题</b>
           </button>`).join('')}
         </div>
@@ -1752,30 +1798,7 @@ function localDeckFileNames(){
   const fromWindow = Array.isArray(window.QUIZ_BANK_FILES) ? window.QUIZ_BANK_FILES : [];
   return [...new Set(fromWindow.concat(LOCAL_DECK_FILES).filter(Boolean))];
 }
-function loadLocalDeckByScript(filename){
-  return new Promise(resolve=>{
-    const globalName = LOCAL_DECK_GLOBALS[filename];
-    const beforeKeys = new Set(Object.keys(window));
-    const script = document.createElement('script');
-    script.src = filename;
-    script.async = true;
-    script.onload = ()=>{
-      let raw = globalName ? window[globalName] : null;
-      if (!raw){
-        const newKeys = Object.keys(window).filter(k=>!beforeKeys.has(k));
-        for (const k of newKeys){
-          const v = window[k];
-          if (v && typeof v==='object' && (v.data || TYPE_ORDER.some(t=>Array.isArray(v[t])))){ raw = v; break; }
-        }
-      }
-      script.remove();
-      try{ resolve(raw ? normalizeDeck(raw, filename) : null); }
-      catch(e){ resolve(null); }
-    };
-    script.onerror = ()=>{ script.remove(); resolve(null); };
-    document.head.appendChild(script);
-  });
-}
+
 async function loadLocalDeckFiles(){
   const files = localDeckFileNames();
   const loaded = [];
@@ -1789,7 +1812,7 @@ async function loadLocalDeckFiles(){
         if (deck) deck.sourceText=text;
       }
     }catch(e){}
-    if (!deck) deck = await loadLocalDeckByScript(filename);
+    // Local decks are fetched and parsed as JSON only; never inject a script tag.
     if (deck){
       deck.sourceName = filename;
       if (!loaded.some(d=>d.id===deck.id)) loaded.push(deck);
@@ -1876,6 +1899,21 @@ function computeSelectedQuestions(deck, s){
     qs = qs.filter(q => !App.srs[q.uid] || App.srs[q.uid].dueAt<=now);
   }
   return qs;
+}
+function orderedDeckQuestions(deck){
+  const qs=(deck?.questions||[]).slice();
+  return qs.sort((a,b)=>{
+    const ao=Number(a._sourceOrder),bo=Number(b._sourceOrder);
+    const aHasOrder=Number.isFinite(ao),bHasOrder=Number.isFinite(bo);
+    if(aHasOrder&&bHasOrder&&ao!==bo) return ao-bo;
+    if(aHasOrder!==bHasOrder) return aHasOrder?-1:1;
+    const an=Number(a.rawId),bn=Number(b.rawId);
+    const aNum=Number.isFinite(an)&&String(a.rawId).trim()!=='';
+    const bNum=Number.isFinite(bn)&&String(b.rawId).trim()!=='';
+    if(aNum&&bNum&&an!==bn) return an-bn;
+    if(aNum!==bNum) return aNum?-1:1;
+    return String(a.rawId??'').localeCompare(String(b.rawId??''),undefined,{numeric:true});
+  });
 }
 const MODE_INFO = {
   flashcard:{ icon:'🗂️', title:'闪卡模式', desc:'单题聚焦卡片流，空格翻面、1-4 评分，配合间隔重复安排复习节奏。', tag:'Anki 式回顾' },
@@ -2051,7 +2089,7 @@ function renderSetupView(container){
   const manyLocalDecks = App.localDecks && App.localDecks.length>3;
   const localDeckSelector = App.localDecks && App.localDecks.length>1 ? `
     <div class="deck-switcher ${manyLocalDecks?'too-many':''}">
-      ${App.localDecks.map(d=>`<button type="button" class="${d.id===deck.id?'active':''}" data-local-deck="${d.id}">
+      ${App.localDecks.map(d=>`<button type="button" class="${d.id===deck.id?'active':''}" data-local-deck="${Utils.escapeHtml(d.id)}">
         <span>${Utils.escapeHtml(d.meta.title)}</span><b>${d.totalQuestions}</b>
       </button>`).join('')}
     </div>
@@ -2306,7 +2344,7 @@ function renderSetupView(container){
 function gradeFillInBlank(userInput, acceptedAnswers){
   const userNorm = Utils.normalizeAnswerText(userInput);
   if (!userNorm) return false;
-  return acceptedAnswers.some(ans => String(ans).split('/').map(Utils.normalizeAnswerText).includes(userNorm));
+  return acceptedAnswers.some(ans => (Array.isArray(ans)?ans:[ans]).map(Utils.normalizeAnswerText).includes(userNorm));
 }
 function fillBlankCount(card){
   return Math.max((card.question.match(/_{2,}/g)||[]).length, (card.answers||[]).length, card.blankCount||1, 1);
@@ -2327,7 +2365,7 @@ function gradeFillBlankParts(userInput, acceptedAnswers, blankTotal){
     userInput.slice(0, total).forEach(value=>{
       const userNorm = Utils.normalizeAnswerText(value);
       if (!userNorm) return;
-      const matchIdx = unused.findIndex(item=>String(item.answer).split('/').map(Utils.normalizeAnswerText).includes(userNorm));
+      const matchIdx = unused.findIndex(item=>(Array.isArray(item.answer)?item.answer:[item.answer]).map(Utils.normalizeAnswerText).includes(userNorm));
       if (matchIdx>=0){
         correct++;
         unused.splice(matchIdx, 1);
@@ -2365,7 +2403,7 @@ function fillAnswerPartStates(userAnswer, acceptedAnswers){
     const userNorm = Utils.normalizeAnswerText(part);
     let ok = false;
     if (userNorm){
-      const idx = unused.findIndex(answer=>answer.split('/').map(Utils.normalizeAnswerText).includes(userNorm));
+      const idx = unused.findIndex(answer=>(Array.isArray(answer)?answer:[answer]).flatMap(v=>String(v).split('\u0000')).map(Utils.normalizeAnswerText).includes(userNorm));
       if (idx>=0){
         ok = true;
         unused.splice(idx, 1);
@@ -2430,7 +2468,7 @@ function gradeSubjective(card, userText, ratingKey){
 function manualTextMatchesReference(userText, reference){
   const userNorm = Utils.normalizeAnswerText(userText);
   if (!userNorm) return false;
-  return String(reference || '').split('/').map(Utils.normalizeAnswerText).some(ans=>ans && ans===userNorm);
+  return (Array.isArray(reference)?reference:[reference]).map(Utils.normalizeAnswerText).some(ans=>ans && ans===userNorm);
 }
 function manualAnswerMatchesReference(card, input){
   if (!card) return false;
@@ -2513,7 +2551,7 @@ function finalizeGradingEntry(entry, ratingKey){
   entry.graded = true;
 }
 function isUnansweredDisplay(value){
-  return String(value || '').split('/').map(s=>s.trim()).every(s=>!s || s==='(未作答)');
+  return (Array.isArray(value)?value:[value]).map(s=>String(s).trim()).every(s=>!s || s==='(未作答)');
 }
 
 /* ============================================================
@@ -2532,10 +2570,10 @@ function buildDynamicChoiceOptions(card, pool, count){
 function buildFillBlankChoiceOptions(card, pool){
   const blankCount = (card.answers||[]).length;
   if (!blankCount) return null;
-  const correctTexts = card.answers.map(a=>String(a).split('/')[0].trim());
+  const correctTexts = card.answers.map(a=>String(a).trim());
   if (correctTexts.some(t=>!t)) return null;
   const others = pool.filter(p=>p.uid!==card.uid);
-  const candidateTexts = others.map(p=>String(p.answers[0]).split('/')[0].trim());
+  const candidateTexts = others.map(p=>String(p.answers[0]).trim());
   const uniqueCorrectSet = new Set(correctTexts);
   const perBlankOptions = [];
   for (const correctText of correctTexts){
@@ -2551,7 +2589,7 @@ function buildFillBlankChoiceOptions(card, pool){
   }
   return { blankCount, perBlankOptions };
 }
-function applySelectionMode(qs, deck){
+function applySelectionMode(qs, deck, testFillBlankOnly=false){
   const blankPool = deck.byType.fillInTheBlank || [];
   const shortPool = deck.byType.shortAnswer || [];
   return qs.map(q=>{
@@ -2561,7 +2599,7 @@ function applySelectionMode(qs, deck){
         if (res.blankCount<=1) return Object.assign({}, q, { options:res.perBlankOptions[0], _dynamicChoice:true });
         return Object.assign({}, q, { _perBlankChoice:true, _blankOptions:res.perBlankOptions });
       }
-    } else if (q.type==='shortAnswer'){
+    } else if (q.type==='shortAnswer' && !testFillBlankOnly){
       const opts = buildDynamicChoiceOptions(q, shortPool, 2);
       if (opts) return Object.assign({}, q, { options:opts, _dynamicChoice:true });
     }
@@ -2585,12 +2623,16 @@ function buildQueue(deck, s){
   } else {
     qs = computeSelectedQuestions(deck, s);
     if (s.shuffleQuestions) qs = Utils.shuffle(qs);
+    else qs.sort((a,b)=>(a._sourceOrder??0)-(b._sourceOrder??0));
     if (s.questionLimit!=='all') qs = qs.slice(0, s.questionLimit);
   }
   if (s.shuffleOptions){
     qs = qs.map(q => q.options ? Object.assign({}, q, { options:Utils.shuffle(q.options) }) : q);
   }
-  if (s.selectionMode && s.mode!=='flashcard'){
+  // 测试模式中的多空选词题按逐空选择作答；其它题型仍保留原有测试输入方式。
+  if (s.mode==='test'){
+    qs = applySelectionMode(qs, deck, true);
+  } else if (s.selectionMode && s.mode!=='flashcard'){
     qs = applySelectionMode(qs, deck);
   }
   return qs;
@@ -2980,7 +3022,11 @@ function typeLabelHtml(card, extra){
   return `<div class="qcard-type"><span class="dot"></span>${QuestionTypes[card.type].label}${extra?(' · '+extra):''}</div>`;
 }
 function renderQuestionText(card){
-  let text = card.content ? renderRichContent(card.content, App.deck&&App.deck.assets) : renderMathFallback(card.question);
+  let text = card.content ? renderRichContent(card.content, App.deck&&App.deck.assets) : renderQuestionFormula(card.question);
+  if (card.type==='reading' && card.readingArticle){
+    const article = Utils.escapeHtml(card.readingArticle).replace(/\n{2,}/g,'</p><p>').replace(/\n/g,'<br>');
+    text = `<div class="reading-article"><p>${article}</p></div>${text}`;
+  }
   if (card.type==='fillInTheBlank') text = text.replace(/_{2,}/g, '<span class="blank" aria-hidden="true"></span>');
   return text;
 }
@@ -2999,7 +3045,7 @@ function renderFilledBlankHtml(card){
   return Utils.escapeHtml(card.question).replace(/_{2,}/g, ()=>{
     const raw = answers[i] != null ? answers[i] : answers[answers.length-1];
     i++;
-    return `<b>${Utils.escapeHtml(String(raw).split('/')[0])}</b>`;
+    return `<b>${Utils.escapeHtml(String(raw))}</b>`;
   });
 }
 function renderRateGrid(card){
@@ -3053,7 +3099,7 @@ function renderQuestionTools(card){
   const annotationActive=hasAnnotation || Boolean(App.session?.annotationOpen && App.session?.queue?.[0]?.uid===card.uid);
   return `<div class="qcard-tools">
     ${wrong ? `<span class="wrong-chip">错题本</span>` : ''}
-    <button type="button" class="annotation-btn ${annotationActive?'on':''}" data-card-annotation="${card.uid}" title="${annotationActive?'编辑注释':'添加注释'}" aria-label="${annotationActive?'编辑注释':'添加注释'}" aria-pressed="${annotationActive?'true':'false'}"><span class="icon-symbol">${annotationActive?'􀌳':'􀌲'}</span></button>
+    <button type="button" class="annotation-btn ${annotationActive?'on':''}" data-card-annotation="${Utils.escapeHtml(card.uid)}" title="${annotationActive?'编辑注释':'添加注释'}" aria-label="${annotationActive?'编辑注释':'添加注释'}" aria-pressed="${annotationActive?'true':'false'}"><span class="icon-symbol">${annotationActive?'􀌳':'􀌲'}</span></button>
     <button type="button" class="bookmark-btn ${starred?'on':''}" data-bookmark="${card.uid}" title="${starred?'移出复习本':'加入复习本'}" aria-label="${starred?'移出复习本':'加入复习本'}" aria-pressed="${starred?'true':'false'}"><span class="icon-symbol">${starred?'★':'☆'}</span></button>
   </div>`;
 }
@@ -3078,7 +3124,7 @@ function renderFlashcardFace(sess, card){
       <div class="tf-btn ${revealed&&card.answer===false?'correct':''}" style="cursor:default;">错</div>
     </div>`;
   } else if ((card.type==='shortAnswer'||card.type==='essay') && revealed){
-    bodyHtml = `<div class="reveal-divider"></div><div class="reveal-label">参考答案</div><div class="reveal-answer">${card.explanation ? renderRichContent(card.explanation, App.deck&&App.deck.assets) : Utils.escapeHtml(card.reference)}</div>`;
+    bodyHtml = `<div class="reveal-divider"></div><div class="reveal-label">参考答案</div><div class="reveal-answer">${card.explanation ? renderRichContent(card.explanation, App.deck&&App.deck.assets) : Utils.escapeHtml(plainAnswer(card.reference))}</div>`;
   }
   const bottomHtml = revealed ? renderRateGrid(card) : `<div class="flip-hint"><span class="kbd">SPACE</span>翻面查看答案</div>`;
   return `<div class="${cardClasses(sess)}" id="qcard-el">
@@ -3161,7 +3207,10 @@ function renderInteractiveFace(sess, card){
         <span class="opt-key">${String.fromCharCode(65+oi)}</span><span class="opt-text">${renderOptionContent(o)}</span></button>`;
     }).join('');
     if (!sess.revealed){
-      body += `<div class="opt-list opt-list-free per-blank-options">${optsHtml}</div>`;
+      body += `<div class="per-blank-sheet" role="dialog" aria-label="第 ${active+1} 空选项">
+        <div class="per-blank-sheet-head"><strong>第 ${active+1} / ${card._blankOptions.length} 空</strong><span>请选择一个答案</span></div>
+        <div class="opt-list opt-list-free per-blank-options">${optsHtml}</div>
+      </div>`;
     }
     if (!sess.revealed){
       const allPicked = sel.every(v=>v!=null);
@@ -3213,7 +3262,7 @@ function renderInteractiveFace(sess, card){
       const questionHtml = Array.isArray(card.content) && card.content.length
         ? card.content.map(block=>{
             if (block.type==='blank') return inputHtml;
-            if (block.type==='text') return Utils.escapeHtml(cleanDeckText(block.text||''));
+            if (block.type==='text') return renderQuestionFormula(block.text||'');
             return renderRichContent([block], App.deck&&App.deck.assets);
           }).join('')
         : Utils.escapeHtml(card.question).split(/_{2,}/).join(inputHtml);
@@ -3236,14 +3285,14 @@ function renderInteractiveFace(sess, card){
     } else {
       const answerCls = manualAnswerMatchesReference(card, sess.userTextAnswer) ? ' correct' : ((sess.userTextAnswer&&sess.userTextAnswer.trim()) ? ' wrong' : '');
       body = `<div class="reveal-label">你的回答</div><div class="your-answer-box${answerCls}">${(sess.userTextAnswer&&sess.userTextAnswer.trim())?Utils.escapeHtml(sess.userTextAnswer):'（未作答）'}</div>
-        <div class="reveal-divider"></div><div class="reveal-label">参考答案</div><div class="reveal-answer">${card.explanation ? renderRichContent(card.explanation, App.deck&&App.deck.assets) : Utils.escapeHtml(card.reference)}</div>`;
+        <div class="reveal-divider"></div><div class="reveal-label">参考答案</div><div class="reveal-answer">${card.explanation ? renderRichContent(card.explanation, App.deck&&App.deck.assets) : Utils.escapeHtml(plainAnswer(card.reference))}</div>`;
       actions = renderSelfGradeGrid(App.settings.points[card.type], sess.selfGradeSelection, sess.selfGradeReviewing);
     }
   }
   const isChoiceStyled = card._dynamicChoice || card._perBlankChoice;
   const topQuestionHtml = card._perBlankChoice
     ? renderPerBlankQuestionHtml(card, sess.selectedPerBlank || new Array(card._blankOptions.length).fill(null), Utils.clamp(sess.activeBlankIdx||0, 0, card._blankOptions.length-1), sess.revealed)
-    : (isChoiceStyled ? Utils.escapeHtml(card.question).replace(/_{2,}/g,'<span class="blank" aria-hidden="true"></span>') : renderQuestionText(card));
+    : (isChoiceStyled ? renderQuestionFormula(card.question).replace(/_{2,}/g,'<span class="blank" aria-hidden="true"></span>') : renderQuestionText(card));
   const showTopQuestion = card._perBlankChoice || (card.type!=='fillInTheBlank' || isChoiceStyled);
   const modeLabel = (mode==='learn'?'学习模式':'测试模式') + (isChoiceStyled?(card._perBlankChoice?' · 选择模式':((card.type==='multipleChoice'||card._multiSelect)?' · 选择模式(可多选)':' · 选择模式')):(card.type==='multipleChoice'?' · 可多选':''));
   const bodyClass = `qcard-body${card._perBlankChoice ? ' per-blank-body' : (isChoiceStyled ? ' choice-mode-body' : '')}`;
@@ -3828,11 +3877,11 @@ function renderBrowseView(container){
   const scope = App.browseScope || 'all';
   const chapters = getChapters(deck);
   const selectedChapters = normalizeChapterSelection(chapters);
-  let qs = deck.questions.slice();
+  let qs = orderedDeckQuestions(deck);
   if (scope==='review') qs = qs.filter(q=>isInNotebook('review', q.uid, deck.id));
   if (scope==='wrong') qs = qs.filter(q=>isInNotebook('wrong', q.uid, deck.id));
   if (selectedChapters.length) qs = qs.filter(q=>selectedChapters.includes(q.chapter));
-  const grouped = TYPE_ORDER.map(t=>({type:t, questions:qs.filter(q=>q.type===t)})).filter(g=>g.questions.length);
+  const grouped = qs.length ? [{type:'paper',questions:qs}] : [];
   const wrongCount = getDeckUidList('wrong', deck.id).filter(uid=>findDeckQuestion(uid)).length;
   const scopeButtons = [
     {key:'all', label:'整卷', count:deck.totalQuestions},
@@ -3854,10 +3903,15 @@ function renderBrowseView(container){
   const sidebarHtml = hasNav ? renderPreviewSidebar(grouped, 'bq') : '';
   const mobileSidebarHtml = hasNav ? renderPreviewSidebar(grouped, 'bq', {showChapters:true}) : '';
 
-  const mainHtml = grouped.length ? grouped.map(g=>{
-    let previousReadingId=''; const items = g.questions.map((q,i)=>{ const shown=q.type==='reading'&&q.readingId===previousReadingId; previousReadingId=q.type==='reading'?q.readingId:''; return renderPreviewQuestion(q, i+1, {showAns, idPrefix:'bq', actions:true, readingArticleShown:shown}); }).join('');
-    return `<div class="browse-section"><h3>${QuestionTypes[g.type].label}（${g.questions.length} 题）</h3>${items}</div>`;
-  }).join('') : `<div class="empty-state browse-empty-state"><span class="e-icon">□</span><p>当前筛选下没有题目</p></div>`;
+  const mainHtml = qs.length ? (()=>{
+    let previousReadingId='';
+    const items = qs.map((q,i)=>{
+      const shown=q.type==='reading'&&q.readingId===previousReadingId;
+      previousReadingId=q.type==='reading'?q.readingId:'';
+      return renderPreviewQuestion(q, i+1, {showAns, idPrefix:'bq', actions:true, readingArticleShown:shown});
+    }).join('');
+    return `<div class="browse-section"><h3>整卷（${qs.length} 题）</h3>${items}</div>`;
+  })() : `<div class="empty-state browse-empty-state"><span class="e-icon">□</span><p>当前筛选下没有题目</p></div>`;
 
   container.className = 'view-pad has-fixed-previewbar fade-in';
   container.innerHTML = `
@@ -3972,9 +4026,9 @@ function renderPreviewSidebar(grouped, idPrefix, opts={}){
       const chapter = opts.showChapters ? (q.chapter || (entry.detail && entry.detail.chapter) || (d && d.chapter) || '') : '';
       const chapterLabel = chapter && chapter!==lastChapter ? `<div class="nav-chapter-label">${Utils.escapeHtml(chapter)}</div>` : '';
       if (chapter) lastChapter = chapter;
-      return `${chapterLabel}<a href="#${idPrefix}-${q.uid}" class="nav-cell${statusClass}" data-jump="${q.uid}" title="${Utils.escapeHtml(q.question.slice(0,30))}"><span class="nav-cell-num">${i+1}</span></a>`;
+      return `${chapterLabel}<a href="#${idPrefix}-${q.uid}" class="nav-cell${statusClass}" data-jump="${Utils.escapeHtml(q.uid)}" title="${Utils.escapeHtml(q.question.slice(0,30))}"><span class="nav-cell-num">${i+1}</span></a>`;
     }).join('');
-    return `<h5>${QuestionTypes[g.type].label} (${entries.length})</h5><div class="nav-grid">${cells}</div>`;
+    return `<h5>${g.type==='paper'?'整卷':QuestionTypes[g.type].label} (${entries.length})</h5><div class="nav-grid">${cells}</div>`;
   }).join('');
   return statusLegend + body;
 }
@@ -4026,7 +4080,7 @@ function renderInlineFillQuestion(q, showAns){
   const renderText = text=>String(text||'').split(/_{2,}/g).map((part,index)=>{
     if(index===0) return renderQuestionFormula(part);
     const ans = answers[i] != null ? answers[i] : answers[answers.length-1]; i++;
-    const blank=!showAns ? '<span class="browse-blank-line" aria-hidden="true"></span>' : `<span class="browse-inline-answer">${Utils.escapeHtml(String(ans||'').split('/')[0])}</span>`;
+    const blank=!showAns ? '<span class="browse-blank-line" aria-hidden="true"></span>' : `<span class="browse-inline-answer">${Utils.escapeHtml(String(ans||''))}</span>`;
     return blank + renderQuestionFormula(part);
   }).join('');
   if (Array.isArray(q.content) && q.content.length){
@@ -4038,7 +4092,7 @@ function renderInlineFillQuestion(q, showAns){
         i++;
         return !showAns
           ? '<span class="browse-blank-line" aria-hidden="true"></span>'
-          : `<span class="browse-inline-answer">${renderQuestionFormula(String(ans||'').split('/')[0])}</span>`;
+          : `<span class="browse-inline-answer">${renderQuestionFormula(String(ans||''))}</span>`;
       }
       return renderRichContent([block], App.deck&&App.deck.assets);
     }).join('');
@@ -4065,6 +4119,7 @@ function renderPreviewQuestion(q, num, opts={}){
   const showAns = !!opts.showAns;
   const detail = opts.detail || null;
   const idPrefix = opts.idPrefix || 'bq';
+  const deckId = opts.deckId || App.deck?.id;
   const annotation = getCardAnnotation(q.uid, opts.deckId || App.deck?.id).trim();
   const editorState = App.previewAnnotationEditors?.[previewAnnotationEditorKey(q.uid)];
   const editorValue = editorState?.editing && typeof editorState.value==='string' ? editorState.value : annotation;
@@ -4072,8 +4127,9 @@ function renderPreviewQuestion(q, num, opts={}){
   const status = detail ? detailState.cardStatus : '';
   const starred = App.deck && isInNotebook('review', q.uid, App.deck.id);
   const wrong = App.deck && isInNotebook('wrong', q.uid, App.deck.id);
+  const previewNumber=Number(String(q.rawId??'').match(/\d+/)?.[0])||num;
   const actions = opts.actions ? `<div class="preview-actions">
-    ${wrong ? `<button type="button" class="mini-remove-btn" data-wrong-remove="${q.uid}">移出错题本</button>` : ''}
+    ${wrong ? `<button type="button" class="mini-remove-btn" data-wrong-remove="${Utils.escapeHtml(q.uid)}">移出错题本</button>` : ''}
     <button type="button" class="preview-annotation-btn ${annotation?'on':''}" data-preview-annotation="${q.uid}" title="${annotation?'编辑注释':'添加注释'}" aria-label="${annotation?'编辑注释':'添加注释'}"><span class="icon-symbol">${annotation?'􀌳':'􀌲'}</span></button>
     <button type="button" class="bookmark-btn ${starred?'on':''}" data-review-toggle="${q.uid}" title="${starred?'移出复习本':'加入复习本'}" aria-label="${starred?'移出复习本':'加入复习本'}" aria-pressed="${starred?'true':'false'}"><span class="icon-symbol">${starred?'★':'☆'}</span></button>
   </div>` : '';
@@ -4096,12 +4152,12 @@ function renderPreviewQuestion(q, num, opts={}){
     if (detail) bodyHtml = `<div class="preview-user-line ${status==='ok'?'ok':(status==='mid'?'mid':(status==='good'?'good':(status==='unanswered'?'unanswered':'no')))}">你的答案：${renderFillAnswerPartsHtml(detail.userAnswer||'（未作答）', q.answers)}</div>`;
   } else if (q.type==='shortAnswer' || q.type==='essay'){
     if (detail) bodyHtml = `<div class="preview-user-line ${status==='ok'?'ok':(status==='mid'?'mid':(status==='good'?'good':'no'))}">你的答案：${Utils.escapeHtml(detail.userAnswer || '（未作答）')}</div>`;
-    if (showAns) bodyHtml += `<div class="browse-answer">${Utils.escapeHtml(q.reference || q.answer || (detail&&detail.correctAnswer) || '')}</div>`;
+    if (showAns) bodyHtml += `<div class="browse-answer">${Utils.escapeHtml(plainAnswer(q.reference || q.answer || (detail&&detail.correctAnswer) || ''))}</div>`;
   } else if (showAns){
-    bodyHtml = `<div class="browse-answer">${Utils.escapeHtml(q.reference || q.answer || (detail&&detail.correctAnswer) || '')}</div>`;
+    bodyHtml = `<div class="browse-answer">${Utils.escapeHtml(plainAnswer(q.reference || q.answer || (detail&&detail.correctAnswer) || ''))}</div>`;
   }
   if (!bodyHtml && showAns && detail && detail.correctAnswer){
-    bodyHtml = `<div class="browse-answer">${Utils.escapeHtml(detail.correctAnswer)}</div>`;
+    bodyHtml = `<div class="browse-answer">${Utils.escapeHtml(plainAnswer(detail.correctAnswer))}</div>`;
   }
   const annotationHtml = opts.actions ? `<div class="preview-annotation-slot ${annotation?'has-note':''} ${editorState?.editing?'editing':''}" data-preview-annotation-slot="${q.uid}">
     <div class="question-annotation"><span class="question-annotation-label">我的注释：</span><span class="question-annotation-quote">“</span><strong class="question-annotation-text">${Utils.escapeHtml(annotation).replace(/\n/g,'<br>')}</strong><span class="question-annotation-quote">”</span></div>
@@ -4112,7 +4168,7 @@ function renderPreviewQuestion(q, num, opts={}){
   const statusBadge = detail ? detailState.badges.map(s=>`<span class="preview-status ${s}">${previewStatusLabel(s, opts.mode)}</span>`).join('') : '';
   return `<div class="browse-q ${detail?'with-status status-'+status:''}" id="${idPrefix}-${q.uid}">
     <div class="preview-q-head">
-      <div class="browse-q-text">${readingHtml}<span class="browse-q-num">${num}.</span>${qText}${q.type==='reading'?actions:''}</div>
+      <div class="browse-q-text">${readingHtml}<span class="browse-q-num">${previewNumber}.</span>${qText}${q.type==='reading'?actions:''}</div>
       ${q.type==='reading'?'':actions}
     </div>
     <div class="preview-meta">
@@ -4120,7 +4176,7 @@ function renderPreviewQuestion(q, num, opts={}){
       ${statusBadge}
       ${detail ? `<span class="preview-score">${detailScoreText(detail)} 分</span>` : ''}
     </div>
-    ${bodyHtml}
+      ${bodyHtml}
     ${annotationHtml}
   </div>`;
 }
@@ -4219,7 +4275,7 @@ function renderReportView(container){
     const snapshot = snapshotMap.get(d.uid);
     const userAnswerHtml = d.type==='fillInTheBlank'
       ? renderFillAnswerPartsHtml(d.userAnswer, snapshot && snapshot.answers)
-      : Utils.escapeHtml(d.userAnswer || '（未作答）');
+      : Utils.escapeHtml(plainAnswer(d.userAnswer) || '（未作答）');
     const statusIcon = (d.status==='mid' || d.status==='good') ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"></path></svg>' : {ok:'<span class="icon-symbol">✓</span>',no:'<span class="icon-symbol">✗</span>'}[d.status];
     const annotation = getCardAnnotation(d.uid, r.deckId).trim();
     const annotationHtml = annotation ? `<div class="row question-annotation-row"><div class="k">我的注释</div><div class="v question-annotation-text"><strong>“${Utils.escapeHtml(annotation).replace(/\n/g,'<br>')}”</strong></div></div>` : '';
@@ -4232,7 +4288,7 @@ function renderReportView(container){
       </div>
       <div class="qa-detail"><div class="qa-detail-inner">
         <div class="row"><div class="k">你的答案</div><div class="v ${d.status==='ok'?'ok':(d.status==='no'?'no':'')}">${userAnswerHtml}</div></div>
-        <div class="row"><div class="k">正确 / 参考答案</div><div class="v ok">${Utils.escapeHtml(d.correctAnswer)}</div></div>
+        <div class="row"><div class="k">正确 / 参考答案</div><div class="v ok">${Utils.escapeHtml(plainAnswer(d.correctAnswer))}</div></div>
         ${annotationHtml}
       </div></div>
     </div>`;
@@ -4345,7 +4401,7 @@ function findSessionRecord(id){
 }
 function questionFromRecord(record, uid, detail){
   const snap = (record.questionSnapshots||[]).find(q=>q.uid===uid);
-  if (snap) return Object.assign({}, snap, { chapter:snap.chapter || (detail&&detail.chapter) || '' });
+  if (snap) return Object.assign({}, snap, { chapter:snap.chapter || (detail&&detail.chapter) || '', _sourceOrder:snap.rawOrder });
   if (App.deck && App.deck.id===record.deckId){
     const q = findDeckQuestion(uid);
     if (q) return Object.assign({}, q, { chapter:q.chapter || (detail&&detail.chapter) || '' });
@@ -4374,14 +4430,20 @@ function renderRecordDetailView(container){
   if (!record){ App.view='stats'; render(); return; }
   const showAns = App._recordShowAnswers !== false;
   const items = recordQuestionList(record);
-  const grouped = TYPE_ORDER.map(t=>({type:t, items:items.filter(x=>x.question.type===t)})).filter(g=>g.items.length);
+  const grouped = items.length ? [{type:'paper',items}] : [];
   const detailMap = new Map((record.details||[]).map(d=>[d.uid,d]));
   const sidebarHtml = renderPreviewSidebar(grouped, 'rq', {detailMap, mode:record.mode});
   const contextLabel = recordContextLabel(record);
-  const groupedHtml = grouped.map(g=>{
-    const qHtml = g.items.map((x,i)=>renderPreviewQuestion(x.question, i+1, {showAns, detail:x.detail, idPrefix:'rq', actions:false, mode:record.mode, deckId:record.deckId})).join('');
-    return `<div class="browse-section"><h3>${QuestionTypes[g.type].label}（${g.items.length} 题）</h3>${qHtml}</div>`;
-  }).join('');
+  const groupedHtml = items.length ? (()=>{
+    let previousReadingId='';
+    const qHtml = items.map((x,i)=>{
+      const q=x.question;
+      const shown=q.type==='reading'&&q.readingId===previousReadingId;
+      previousReadingId=q.type==='reading'?q.readingId:'';
+      return renderPreviewQuestion(q, i+1, {showAns, detail:x.detail, idPrefix:'rq', actions:false, mode:record.mode, deckId:record.deckId, readingArticleShown:shown});
+    }).join('');
+    return `<div class="browse-section"><h3>整卷（${items.length} 题）</h3>${qHtml}</div>`;
+  })() : '';
   container.className = 'view-pad has-fixed-previewbar fade-in';
   container.innerHTML = `
     <div class="container" style="max-width:1120px;">
@@ -4976,6 +5038,24 @@ function bindNotesPageDrop(container){
   window.addEventListener('dragenter',enter); window.addEventListener('dragover',enter); window.addEventListener('dragleave',leave); window.addEventListener('dragend',end); window.addEventListener('drop',drop); window.addEventListener('pointerup',end); window.addEventListener('blur',end); window.addEventListener('visibilitychange',end);
   window.__smcNotesPageDropCleanup=()=>{ window.removeEventListener('dragenter',enter); window.removeEventListener('dragover',enter); window.removeEventListener('dragleave',leave); window.removeEventListener('dragend',end); window.removeEventListener('drop',drop); window.removeEventListener('pointerup',end); window.removeEventListener('blur',end); window.removeEventListener('visibilitychange',end); hide(); };
 }
+function normalizeStoredNoteSvgs(pack){
+  if(!pack?.sections) return false;
+  let changed=false;
+  for(const section of pack.sections) for(const article of section.articles||[]){
+    const wrapper=document.createElement('div'); wrapper.innerHTML=article.body||'';
+    const svgs=[...wrapper.querySelectorAll('svg')];
+    if(!svgs.length) continue;
+    svgs.forEach(svg=>{
+      const source=document.createDocumentFragment(); source.appendChild(svg.cloneNode(true));
+      const clean=sanitizeNoteFragment(source), holder=document.createElement('div'); holder.appendChild(clean);
+      const next=holder.querySelector('svg');
+      if(next) svg.replaceWith(next); else svg.remove();
+    });
+    const body=wrapper.innerHTML;
+    if(body!==article.body){article.body=body;changed=true;}
+  }
+  return changed;
+}
 function bindNotesImport(container){
   const dz=container.querySelector('#notes-dropzone'), input=container.querySelector('#notes-file-input');
   if (!dz||!input) return;
@@ -5306,6 +5386,7 @@ async function initApp(){
     App.progress = await loadProgress();
     App.notesPackage = await Store.getJSON(STORAGE_KEYS.notesPackage, null);
     if (hydrateNotesPackageTimestamps(App.notesPackage)) await Store.setJSON(STORAGE_KEYS.notesPackage, App.notesPackage);
+    if (normalizeStoredNoteSvgs(App.notesPackage)) await Store.setJSON(STORAGE_KEYS.notesPackage, App.notesPackage);
     // 仅对可识别的旧版断裂 TeX 做一次迁移；正常笔记刷新不再整包解析并重绘公式。
     if (repairNotesPackageMath(App.notesPackage)) await Store.setJSON(STORAGE_KEYS.notesPackage, App.notesPackage);
     App.notesScrollY = await Store.getJSON(STORAGE_KEYS.notesScrollY, 0);
@@ -5327,7 +5408,17 @@ async function initApp(){
     }
 
     // 已打开题库存在时，直接使用其规范化缓存恢复首屏；避免每次刷新重新下载、解析并合并全部本地题库源文件。
-    const cachedDeck = await Store.getJSON(STORAGE_KEYS.lastDeck, null);
+    let cachedDeck = await Store.getJSON(STORAGE_KEYS.lastDeck, null);
+    // 旧版曾把对象型简答答案缓存为字面量 "[object Object]"。直接沿用该
+    // lastDeck 会让修正后的渲染器仍显示旧字符串，因此从原始题库源重建一次。
+    const hasBrokenAnswerCache = hasLegacyObjectAnswer(cachedDeck);
+    if (hasBrokenAnswerCache){
+      const restored=(await loadDeckLibrary()).find(deck=>deck.id===cachedDeck.id);
+      if (restored){
+        cachedDeck=restored;
+        await Store.setJSON(STORAGE_KEYS.lastDeck,cachedDeck);
+      }
+    }
     const hasCachedDeck = !!(cachedDeck && Array.isArray(cachedDeck.questions) && cachedDeck.questions.length);
     if (hasCachedDeck){
       App.localDecks = [cachedDeck];

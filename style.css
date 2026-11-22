@@ -5,22 +5,22 @@
    KaTeX keeps its own metric-matched webfonts; Minion Math is used when raw
    formula fallback text is shown. MTPro2 ships here as TeX Type-1 assets, not
    browser webfonts, so it is intentionally not declared as a CSS face. */
-@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Regular.woff") format("woff"); font-weight:400; font-style:normal; font-display:optional; }
-@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Italic.woff") format("woff"); font-weight:400; font-style:italic; font-display:optional; }
-@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Medium.woff") format("woff"); font-weight:500; font-style:normal; font-display:optional; }
-@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-MediumItalic.woff") format("woff"); font-weight:500; font-style:italic; font-display:optional; }
-@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Semibold.woff") format("woff"); font-weight:600; font-style:normal; font-display:optional; }
-@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-SemiboldItalic.woff") format("woff"); font-weight:600; font-style:italic; font-display:optional; }
-@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Bold.woff") format("woff"); font-weight:700; font-style:normal; font-display:optional; }
-@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-BoldItalic.woff") format("woff"); font-weight:700; font-style:italic; font-display:optional; }
-@font-face{ font-family:"SMC FZ New Book"; src:url("./fonts/fz-new-book/FZNewBook-Full.woff") format("woff"); font-weight:400; font-style:normal; font-display:optional; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
-@font-face{ font-family:"SMC FZ New Book"; src:url("./fonts/fz-new-book/FZNewBook-Full.woff") format("woff"); font-weight:400; font-style:normal; font-display:optional; unicode-range:U+0020-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
-@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-300.woff") format("woff"); font-weight:300; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
-@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-400.woff") format("woff"); font-weight:400; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
-@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-500.woff") format("woff"); font-weight:500; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
-@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-600.woff") format("woff"); font-weight:600; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
-@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-700.woff") format("woff"); font-weight:700; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
-@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-800.woff") format("woff"); font-weight:800; font-style:normal; font-display:optional; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
+@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Regular.woff") format("woff"); font-weight:400; font-style:normal; font-display:swap; }
+@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Italic.woff") format("woff"); font-weight:400; font-style:italic; font-display:swap; }
+@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Medium.woff") format("woff"); font-weight:500; font-style:normal; font-display:swap; }
+@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-MediumItalic.woff") format("woff"); font-weight:500; font-style:italic; font-display:swap; }
+@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Semibold.woff") format("woff"); font-weight:600; font-style:normal; font-display:swap; }
+@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-SemiboldItalic.woff") format("woff"); font-weight:600; font-style:italic; font-display:swap; }
+@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-Bold.woff") format("woff"); font-weight:700; font-style:normal; font-display:swap; }
+@font-face{ font-family:"SMC Minion"; src:url("./fonts/minion3/Minion3-BoldItalic.woff") format("woff"); font-weight:700; font-style:italic; font-display:swap; }
+@font-face{ font-family:"SMC FZ New Book"; src:url("./fonts/fz-new-book/FZNewBook-Full.woff") format("woff"); font-weight:400; font-style:normal; font-display:swap; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
+@font-face{ font-family:"SMC FZ New Book"; src:url("./fonts/fz-new-book/FZNewBook-Full.woff") format("woff"); font-weight:400; font-style:normal; font-display:swap; unicode-range:U+0020-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+00B7,U+2010-2027,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
+@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-300.woff") format("woff"); font-weight:300; font-style:normal; font-display:swap; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
+@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-400.woff") format("woff"); font-weight:400; font-style:normal; font-display:swap; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
+@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-500.woff") format("woff"); font-weight:500; font-style:normal; font-display:swap; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
+@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-600.woff") format("woff"); font-weight:600; font-style:normal; font-display:swap; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
+@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-700.woff") format("woff"); font-weight:700; font-style:normal; font-display:swap; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
+@font-face{ font-family:"SMC CJK Punctuation"; src:url("./fonts/punctuation/FZFWZhuZiA-Punctuation-800.woff") format("woff"); font-weight:800; font-style:normal; font-display:swap; unicode-range:U+2000-206F,U+2E00-2E7F,U+3000-303F,U+FE10-FE1F,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FF65; }
 @font-face{ font-family:"SMC SF Pro"; src:url("./fonts/sf-pro/SF-Pro-Used.woff?v=20261101.3") format("woff"); font-weight:1 1000; font-style:normal; font-display:optional; }
 @font-face{ font-family:"SMC SF Pro"; src:url("./fonts/sf-pro/SF-Pro-Italic-Used.woff?v=20261101.3") format("woff"); font-weight:1 1000; font-style:italic; font-display:optional; }
 @font-face{ font-family:"SMC HY QiHei"; src:url("./fonts/hy-qihei/HYQiHei-300-Used.woff") format("woff"); font-weight:300; font-style:normal; font-display:optional; unicode-range:U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+20000-2FA1F; }
@@ -66,6 +66,12 @@ a{ color:inherit; }
    1. 设计令牌 (Design Tokens)
    ============================================================ */
 :root{
+  --accent-bg:#dff5e6;
+  --on-accent:#102016;
+  --shadow-soft:0 8px 24px rgba(0,0,0,.18);
+  --success-ink:#0b3d22;
+  --blank-chars:2;
+  --notes-sticky-top:90px;
   /* -- 深色主题基调（中性深灰纸面） -- */
   --bg:#12161b;
   --bg-elevated:#1a2029;
@@ -796,6 +802,8 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .qcard-type .dot{ width:5px;height:5px; flex:0 0 5px; aspect-ratio:1; border-radius:50%; background:currentColor; }
 .qcard-question{ font-family:var(--font-content); font-size:var(--font-size-content-lg); line-height:1.65; color:var(--color-content-primary); font-weight:var(--font-weight-regular); font-synthesis:weight style; flex:0 0 auto; white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
 .qcard-question,.reveal-answer,.browse-q-text,.browse-answer,.your-answer-box,.note-rich{ text-wrap:pretty; }
+.qcard-question u,.reveal-answer u,.browse-q-text u,.browse-answer u{ text-decoration:underline; text-decoration-thickness:1.5px; text-underline-offset:2px; }
+.qcard-question del,.reveal-answer del,.browse-q-text del,.browse-answer del{ text-decoration:line-through; }
 .qcard-question,.reveal-answer,.browse-q-text,.browse-answer,.your-answer-box,.note-rich{ line-break:strict; hanging-punctuation:first last; text-spacing:trim-start allow-end; }
 .qcard-question .katex,.reveal-answer .katex,.browse-q-text .katex,.browse-answer .katex,.note-rich .katex,.note-rich .note-math{ hanging-punctuation:none; text-spacing:normal; }
 .note-rich .note-math-punctuation{ white-space:nowrap; hanging-punctuation:none; text-spacing:normal; }
@@ -835,6 +843,12 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
 .qcard-body{ margin-top:26px; flex:1; min-height:0; display:flex; flex-direction:column; }
 .qcard-body.choice-mode-body{ margin-top:30px; }
 .qcard-body.per-blank-body{ margin-top:30px; flex:0 0 auto; }
+.per-blank-sheet{position:fixed;left:50%;bottom:0;z-index:180;width:min(680px,calc(100vw - 28px));padding:14px 16px calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);border:1px solid var(--border);border-bottom:0;border-radius:18px 18px 0 0;background:color-mix(in srgb,var(--bg-elevated) 96%,transparent);box-shadow:0 -12px 32px rgba(0,0,0,.24);backdrop-filter:blur(16px)}
+.per-blank-sheet-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px;color:var(--text)}
+.per-blank-sheet-head span{color:var(--text-faint);font-size:12px}
+.per-blank-sheet .per-blank-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:0}
+.per-blank-sheet .opt-btn{min-height:48px}
+.per-blank-sheet .qcard-actions{margin-top:10px}
 .qcard-hint{ margin-top:auto; padding-top:18px; text-align:center; font-size:12px; color:var(--ink-faint); }
 
 .reveal-divider{ margin:20px 0 16px; border:none; border-top:1.5px dashed var(--paper-line); }
@@ -1304,6 +1318,8 @@ body.view-swipe-active{ overscroll-behavior-x:contain; }
    14. 响应式
    ============================================================ */
 @media (max-width:640px){
+.per-blank-sheet{width:100%;padding-left:12px;padding-right:12px;border-radius:16px 16px 0 0}
+.per-blank-sheet .per-blank-options{grid-template-columns:1fr}
   .topnav{
     position:relative;
     display:flex; align-items:center; justify-content:space-between;
