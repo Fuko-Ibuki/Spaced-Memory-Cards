@@ -2188,7 +2188,7 @@ function renderSetupView(container){
             <button type="button" class="switch ${s.shuffleOptions?'on':''}" data-switch="shuffleOptions" aria-label="选项顺序乱序" aria-pressed="${s.shuffleOptions?'true':'false'}"><span class="knob"></span></button>
           </div>
           <div class="toggle-row">
-            <div><div class="label">选择模式</div><div class="desc">简答题变单选、填空题按空逐项选择，混淆项随机取自题库其余题目</div></div>
+            <div><div class="label">选择模式</div><div class="desc">简答题与单空填空题可改为选项作答；多空填空题保留逐空输入</div></div>
             <button type="button" class="switch ${s.selectionMode?'on':''}" data-switch="selectionMode" aria-label="选择模式" aria-pressed="${s.selectionMode?'true':'false'}"><span class="knob"></span></button>
           </div>
           <div class="toggle-row">
@@ -2351,6 +2351,28 @@ function fillBlankCount(card){
 }
 function isManualMultiBlank(card){
   return card && card.type==='fillInTheBlank' && !card._dynamicChoice && !card._perBlankChoice && fillBlankCount(card)>1;
+}
+function restoreMultiBlankTextInputs(sess){
+  if(!sess||!Array.isArray(sess.queue)) return false;
+  let changed=false;
+  const card=sess.queue[0];
+  const selected=Array.isArray(sess.selectedPerBlank)?sess.selectedPerBlank:[];
+  const restored=card&&Array.isArray(card._blankOptions)
+    ? selected.map((index,i)=>{ const option=card._blankOptions[i]&&card._blankOptions[i][index]; return option&&option.text||''; })
+    : [];
+  sess.queue.forEach(card=>{
+    if(card&&card.type==='fillInTheBlank'&&card._perBlankChoice&&fillBlankCount(card)>1){
+      delete card._perBlankChoice;
+      delete card._blankOptions;
+      changed=true;
+    }
+  });
+  if(card&&card.type==='fillInTheBlank'&&fillBlankCount(card)>1){
+    const prior=Array.isArray(sess.blankInputs)?sess.blankInputs:[];
+    sess.blankInputs=Array.from({length:fillBlankCount(card)},(_,i)=>prior[i]||restored[i]||'');
+    sess.selectedPerBlank=null;
+  }
+  return changed;
 }
 function gradeFillBlankInput(userInput, acceptedAnswers){
   return gradeFillBlankParts(userInput, acceptedAnswers).isCorrect;
@@ -2597,7 +2619,8 @@ function applySelectionMode(qs, deck, testFillBlankOnly=false){
       const res = buildFillBlankChoiceOptions(q, blankPool);
       if (res){
         if (res.blankCount<=1) return Object.assign({}, q, { options:res.perBlankOptions[0], _dynamicChoice:true });
-        return Object.assign({}, q, { _perBlankChoice:true, _blankOptions:res.perBlankOptions });
+        // 多空题沿用原生逐空文本输入，避免把阅读选择题的选项面板套进填空题。
+        return q;
       }
     } else if (q.type==='shortAnswer' && !testFillBlankOnly){
       const opts = buildDynamicChoiceOptions(q, shortPool, 2);
@@ -3181,9 +3204,12 @@ function renderManualFillQuestionHtml(sess, card){
   };
   if (Array.isArray(card.content) && card.content.length){
     let blankIndex=0;
+    const renderTextWithInputs=text=>String(text||'').split(/_{2,}/g).map((part,index)=>
+      (index ? inputAt(blankIndex++) : '') + Utils.escapeHtml(cleanDeckText(part))
+    ).join('');
     return card.content.map(block=>{
       if (block.type==='blank') return inputAt(blankIndex++);
-      if (block.type==='text') return Utils.escapeHtml(cleanDeckText(block.text||''));
+      if (block.type==='text') return renderTextWithInputs(block.text);
       return renderRichContent([block], App.deck&&App.deck.assets);
     }).join('');
   }
@@ -5454,6 +5480,7 @@ async function initApp(){
       await Store.setJSON(STORAGE_KEYS.lastDeck, App.deck);
       if (activeDraft && activeDraft.deckId===App.deck.id && activeDraft.session && activeDraft.session.status==='active'){
         App.session = activeDraft.session;
+        if (restoreMultiBlankTextInputs(App.session)) await persistActiveSession();
         App.srs = activeDraft.srs || App.srs || {};
         App.view = App.session.phase==='grading' ? 'grading' : 'quiz';
       } else {
