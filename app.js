@@ -2188,7 +2188,7 @@ function renderSetupView(container){
             <button type="button" class="switch ${s.shuffleOptions?'on':''}" data-switch="shuffleOptions" aria-label="选项顺序乱序" aria-pressed="${s.shuffleOptions?'true':'false'}"><span class="knob"></span></button>
           </div>
           <div class="toggle-row">
-            <div><div class="label">选择模式</div><div class="desc">简答题与单空填空题可改为选项作答；多空填空题保留逐空输入</div></div>
+            <div><div class="label">选择模式</div><div class="desc">简答题与填空题改为选项作答；多空填空题逐空选择</div></div>
             <button type="button" class="switch ${s.selectionMode?'on':''}" data-switch="selectionMode" aria-label="选择模式" aria-pressed="${s.selectionMode?'true':'false'}"><span class="knob"></span></button>
           </div>
           <div class="toggle-row">
@@ -2354,6 +2354,7 @@ function isManualMultiBlank(card){
 }
 function restoreMultiBlankTextInputs(sess){
   if(!sess||!Array.isArray(sess.queue)) return false;
+  if(sess.selectionMode===true || (sess.selectionMode==null && App.settings?.selectionMode)) return false;
   let changed=false;
   const card=sess.queue[0];
   const selected=Array.isArray(sess.selectedPerBlank)?sess.selectedPerBlank:[];
@@ -2619,8 +2620,7 @@ function applySelectionMode(qs, deck, testFillBlankOnly=false){
       const res = buildFillBlankChoiceOptions(q, blankPool);
       if (res){
         if (res.blankCount<=1) return Object.assign({}, q, { options:res.perBlankOptions[0], _dynamicChoice:true });
-        // 多空题沿用原生逐空文本输入，避免把阅读选择题的选项面板套进填空题。
-        return q;
+        return Object.assign({}, q, { _perBlankChoice:true, _blankOptions:res.perBlankOptions });
       }
     } else if (q.type==='shortAnswer' && !testFillBlankOnly){
       const opts = buildDynamicChoiceOptions(q, shortPool, 2);
@@ -2652,12 +2652,8 @@ function buildQueue(deck, s){
   if (s.shuffleOptions){
     qs = qs.map(q => q.options ? Object.assign({}, q, { options:Utils.shuffle(q.options) }) : q);
   }
-  // 测试模式中的多空选词题按逐空选择作答；其它题型仍保留原有测试输入方式。
-  if (s.mode==='test'){
-    qs = applySelectionMode(qs, deck, true);
-  } else if (s.selectionMode && s.mode!=='flashcard'){
-    qs = applySelectionMode(qs, deck);
-  }
+  // 选择模式必须由设置显式开启；关闭时填空题维持原生文本输入。
+  if (s.selectionMode && s.mode!=='flashcard') qs = applySelectionMode(qs, deck, s.mode==='test');
   return qs;
 }
 function startSession(){
@@ -2665,7 +2661,7 @@ function startSession(){
   const queue = buildQueue(deck, s);
   if (!queue.length){ toast('没有可学习的题目，请检查题型筛选 / 到期范围设置', {icon:'⚠️'}); return; }
   App.session = {
-    mode:s.mode, status:'active', phase:'quiz',
+    mode:s.mode, selectionMode:!!s.selectionMode, status:'active', phase:'quiz',
     queue, totalInitial:queue.length,
     sourceScope:s.sourceScope||'all',
     chapterFilter:s.chapterFilter||'all',
@@ -3194,6 +3190,13 @@ function ensureManualBlankInputs(sess, card){
   sess.activeBlankIdx = Utils.clamp(sess.activeBlankIdx||0, 0, count-1);
   return sess.blankInputs;
 }
+function advanceManualBlankOnEnter(event, index, total, focusBlank, submit){
+  if(!event||event.key!=='Enter') return false;
+  event.preventDefault();
+  if(index+1<total) focusBlank(index+1);
+  else submit();
+  return true;
+}
 function renderManualFillQuestionHtml(sess, card){
   const values = ensureManualBlankInputs(sess, card);
   const count = values.length;
@@ -3219,6 +3222,25 @@ function renderManualFillQuestionHtml(sess, card){
     html += inputAt(i) + (parts[i+1] || '');
   }
   return html;
+}
+function renderSingleBlankQuestionHtml(card, inputHtml){
+  let inserted=false;
+  const renderText=text=>String(text||'').split(/_{2,}/g).map((part,index)=>{
+    const field=index&&!inserted ? (inserted=true,inputHtml) : '';
+    return field+renderQuestionFormula(part);
+  }).join('');
+  if(Array.isArray(card.content)&&card.content.length){
+    return card.content.map(block=>{
+      if(block.type==='blank'){
+        if(inserted) return '';
+        inserted=true;
+        return inputHtml;
+      }
+      if(block.type==='text') return renderText(block.text);
+      return renderRichContent([block],App.deck&&App.deck.assets);
+    }).join('');
+  }
+  return renderText(card.question);
 }
 function renderInteractiveFace(sess, card){
   const mode = sess.mode;
@@ -3285,13 +3307,7 @@ function renderInteractiveFace(sess, card){
     } else {
       const inputCls = sess.revealed ? (manualAnswerMatchesReference(card, sess.userTextAnswer) ? 'correct' : 'wrong') : '';
       const inputHtml = `<span class="blank-wrap" style="--blank-chars:${blankInputChars(sess.userTextAnswer||'')}"><input type="text" class="qcard-blank-input ${inputCls}" id="blank-input" value="${Utils.escapeHtml(sess.userTextAnswer||'')}" ${sess.revealed?'disabled':''} placeholder="" autocomplete="off" autocapitalize="off" spellcheck="false"><span class="blank-underline"></span></span>`;
-      const questionHtml = Array.isArray(card.content) && card.content.length
-        ? card.content.map(block=>{
-            if (block.type==='blank') return inputHtml;
-            if (block.type==='text') return renderQuestionFormula(block.text||'');
-            return renderRichContent([block], App.deck&&App.deck.assets);
-          }).join('')
-        : Utils.escapeHtml(card.question).split(/_{2,}/).join(inputHtml);
+      const questionHtml = renderSingleBlankQuestionHtml(card,inputHtml);
       body = `<div class="qcard-question">${questionHtml}</div>`;
       if (!sess.revealed){
         actions = `<div class="qcard-actions"><button type="button" class="btn btn-secondary self-eval-btn" id="self-eval-btn">自评</button><button type="button" class="btn btn-primary" id="confirm-btn">确认 <span class="kbd">⏎</span></button></div>`;
@@ -3495,10 +3511,7 @@ function bindCardEvents(sess, card){
             if (e.key==='Tab'){
               e.preventDefault();
               focusBlank(idx + (e.shiftKey ? -1 : 1));
-            } else if (e.key==='Enter'){
-              e.preventDefault();
-              submitObjectiveAnswer(values.slice());
-            }
+            } else advanceManualBlankOnEnter(e,idx,values.length,focusBlank,()=>submitObjectiveAnswer(values.slice()));
           });
         }
       });
