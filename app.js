@@ -24,19 +24,8 @@ function cacheCurrentView(view){ try{ localStorage.setItem(VIEW_CACHE_KEY,view);
 function cachedCurrentView(){ try{ return localStorage.getItem(VIEW_CACHE_KEY); }catch(e){ return null; } }
 function cacheTypography(settings){ try{ localStorage.setItem(TYPOGRAPHY_CACHE_KEY,JSON.stringify({uiFontFamily:settings?.uiFontFamily||'default',uiFontSize:settings?.uiFontSize||'default'})); }catch(e){} }
 const LOCAL_DECK_FILES = [
-  'XiThoughtQuiz.js',
-  'AutoMechanicsQuiz.js',
-  'PrintingQualityQuiz.js',
-  'AlcoholAnalysisQuiz.js',
-  'BaiJiuTastingQuiz.js'
+  '数字印刷.json'
 ];
-const LOCAL_DECK_GLOBALS = {
-  'XiThoughtQuiz.js':'xiGaiPrinciplesQuiz',
-  'AutoMechanicsQuiz.js':'autoMechanicsQuiz',
-  'PrintingQualityQuiz.js':'printingQualityQuiz',
-  'AlcoholAnalysisQuiz.js':'alcoholAnalysisQuiz',
-  'BaiJiuTastingQuiz.js':'baiJiuTastingQuiz'
-};
 const LOCAL_NOTE_FILES = [];
 
 /* ============================================================
@@ -3920,7 +3909,7 @@ function renderBrowseView(container){
   if (scope==='review') qs = qs.filter(q=>isInNotebook('review', q.uid, deck.id));
   if (scope==='wrong') qs = qs.filter(q=>isInNotebook('wrong', q.uid, deck.id));
   if (selectedChapters.length) qs = qs.filter(q=>selectedChapters.includes(q.chapter));
-  const grouped = qs.length ? [{type:'paper',questions:qs}] : [];
+  const grouped = buildBrowseSidebarGroups(qs);
   const wrongCount = getDeckUidList('wrong', deck.id).filter(uid=>findDeckQuestion(uid)).length;
   const scopeButtons = [
     {key:'all', label:'整卷', count:deck.totalQuestions},
@@ -4065,11 +4054,29 @@ function renderPreviewSidebar(grouped, idPrefix, opts={}){
       const chapter = opts.showChapters ? (q.chapter || (entry.detail && entry.detail.chapter) || (d && d.chapter) || '') : '';
       const chapterLabel = chapter && chapter!==lastChapter ? `<div class="nav-chapter-label">${Utils.escapeHtml(chapter)}</div>` : '';
       if (chapter) lastChapter = chapter;
-      return `${chapterLabel}<a href="#${idPrefix}-${q.uid}" class="nav-cell${statusClass}" data-jump="${Utils.escapeHtml(q.uid)}" title="${Utils.escapeHtml(q.question.slice(0,30))}"><span class="nav-cell-num">${i+1}</span></a>`;
+      const navNumber = Number.isInteger(entry.navNumber) ? entry.navNumber : i+1;
+      return `${chapterLabel}<a href="#${idPrefix}-${q.uid}" class="nav-cell${statusClass}" data-jump="${Utils.escapeHtml(q.uid)}" title="${Utils.escapeHtml(q.question.slice(0,30))}"><span class="nav-cell-num">${navNumber}</span></a>`;
     }).join('');
     return `<h5>${g.type==='paper'?'整卷':QuestionTypes[g.type].label} (${entries.length})</h5><div class="nav-grid">${cells}</div>`;
   }).join('');
   return statusLegend + body;
+}
+function buildBrowseSidebarGroups(questions){
+  if (!questions.length) return [];
+  const typeRank = new Map([['singleChoice',0],['multipleChoice',1],['trueFalse',2]]);
+  let previousRank = -1;
+  for (const q of questions){
+    const rank = typeRank.get(q.type);
+    if (rank===undefined || rank<previousRank) return [{type:'paper',questions}];
+    previousRank = rank;
+  }
+  const groups = [];
+  for (const type of ['singleChoice','multipleChoice','trueFalse']){
+    const items = [];
+    questions.forEach((question,index)=>{ if(question.type===type) items.push({question,navNumber:index+1}); });
+    if(items.length) groups.push({type,items});
+  }
+  return groups;
 }
 function flashcardHeatStatus(detail){
   if (!detail) return 'empty';
@@ -4602,6 +4609,7 @@ function bindCacheManagement(container){
       await saveSettings();
       App.session = null;
       App.deck = null;
+      App.localDecks = [];
       App.notesPackage = null;
       App.notesScrollY = 0;
       App.notesBookmarks = new Set();
@@ -5446,7 +5454,7 @@ async function initApp(){
       else if (mq.addListener) mq.addListener(onSystemThemeChange);
     }
 
-    // 已打开题库存在时，直接使用其规范化缓存恢复首屏；避免每次刷新重新下载、解析并合并全部本地题库源文件。
+    // 每次启动都检查部署包内声明的 JSON 题库；缓存的上次题库仍用于恢复当前学习位置。
     let cachedDeck = await Store.getJSON(STORAGE_KEYS.lastDeck, null);
     // 旧版曾把对象型简答答案缓存为字面量 "[object Object]"。直接沿用该
     // lastDeck 会让修正后的渲染器仍显示旧字符串，因此从原始题库源重建一次。
@@ -5459,17 +5467,14 @@ async function initApp(){
       }
     }
     const hasCachedDeck = !!(cachedDeck && Array.isArray(cachedDeck.questions) && cachedDeck.questions.length);
-    if (hasCachedDeck){
-      App.localDecks = [cachedDeck];
-    } else {
-      App.localDecks = await loadLocalDeckFiles();
-      for (const localDeck of App.localDecks){
-        if(localDeck.sourceText){ await saveDeckSource(localDeck,localDeck.sourceText,localDeck.sourceName||`${localDeck.meta.title}.json`); delete localDeck.sourceText; }
-      }
-      for (const storedDeck of await loadDeckLibrary()){ const idx=App.localDecks.findIndex(item=>item.id===storedDeck.id); if(idx>=0) App.localDecks[idx]=mergeDeckInstances(App.localDecks[idx],storedDeck); else App.localDecks.push(storedDeck); }
-      // 已缓存笔记包时不在每次刷新中重复拉取并解析同目录 HTML。
-      if (!App.notesPackage) await loadLocalAssociatedNotes(App.localDecks.map(deck=>deck.id));
+    App.localDecks = await loadLocalDeckFiles();
+    for (const localDeck of App.localDecks){
+      if(localDeck.sourceText){ await saveDeckSource(localDeck,localDeck.sourceText,localDeck.sourceName||`${localDeck.meta.title}.json`); delete localDeck.sourceText; }
     }
+    for (const storedDeck of await loadDeckLibrary()){ const idx=App.localDecks.findIndex(item=>item.id===storedDeck.id); if(idx>=0) App.localDecks[idx]=mergeDeckInstances(App.localDecks[idx],storedDeck); else App.localDecks.push(storedDeck); }
+    if (hasCachedDeck && !App.localDecks.some(deck=>deck.id===cachedDeck.id)) App.localDecks.unshift(cachedDeck);
+    // 已缓存笔记包时不在每次刷新中重复拉取并解析同目录 HTML。
+    if (!App.notesPackage) await loadLocalAssociatedNotes(App.localDecks.map(deck=>deck.id));
     const activeDraft = await Store.getJSON(STORAGE_KEYS.activeSession, null);
     let initialDeck = null;
     if (activeDraft && activeDraft.deckId){
